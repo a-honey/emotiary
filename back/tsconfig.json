@@ -12,8 +12,9 @@
       "skipLibCheck": false,
       "paths": {
         "*": ["node_modules/*", "src/*","src/customType"]
-      }
+      },
+      "resolveJsonModule": true
     },
-    "include": ["src/**/*"]
+    "include": ["src/**/*", "generateSwagger.ts"]
   }
   
