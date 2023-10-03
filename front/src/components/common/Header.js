@@ -2,7 +2,7 @@ const { default: Link } = require('next/link');
 
 const Header = () => {
   return (
-    <header className="w-full h-5vh flex flex-row justify-between items-center px-20 bg-white font-bold">
+    <header className="w-full h-5vh fixed top-0 right-0 left-0 flex flex-row justify-between items-center px-20 bg-white font-bold">
       <div>앱 이름</div>
       <nav className="flex flex-row justify-between gap-3.5">
         <Link href="/main">MY CALEANDAR</Link>

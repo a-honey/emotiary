@@ -1,5 +1,5 @@
 const Register = () => {
-  return <div>회원가입페이지입니다.</div>;
+  return <main>회원가입페이지입니다.</main>;
 };
 
 export default Register;
