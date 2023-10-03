@@ -1,8 +1,9 @@
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
+import styles from './index.module.scss';
 
-const FifthBox = ({ layout }) => {
+const FifthBox = () => {
   return (
-    <section className={`${layout}`}>
+    <section className={styles.block}>
       <div>프로젝트 설명</div>
       <div>
         <div>이모지1</div>

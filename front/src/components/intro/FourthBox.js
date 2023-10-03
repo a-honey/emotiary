@@ -1,6 +1,8 @@
-const FourthBox = ({ layout }) => {
+import styles from './index.module.scss';
+
+const FourthBox = () => {
   return (
-    <section className={`${layout} bg-white`}>
+    <section className={styles.white}>
       <div>프로젝트 설명</div>
       <div>
         <div>이모지1</div>

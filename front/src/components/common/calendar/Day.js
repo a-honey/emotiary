@@ -1,4 +1,12 @@
-import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from 'date-fns';
+import { useState } from 'react';
+import styles from './index.module.scss';
+import {
+  addDays,
+  endOfMonth,
+  endOfWeek,
+  startOfMonth,
+  startOfWeek,
+} from 'date-fns';
 
 const Day = ({ currentMonth, data }) => {
   const week = ['일', '월', '화', '수', '목', '금', '토'];
@@ -8,15 +16,22 @@ const Day = ({ currentMonth, data }) => {
   const startDate = startOfWeek(monthStart); // 현재 달력의 맨 앞칸
   const endDate = endOfWeek(monthEnd); // 현재 달력의 마지막 칸
 
-  console.log(data);
+  // 현재 날짜를 기준으로 날짜를 담아서 매핑
+  const days = [];
+  let currentDatePointer = startDate;
+
+  while (currentDatePointer <= endDate) {
+    days.push(currentDatePointer);
+    currentDatePointer = addDays(currentDatePointer, 1);
+  }
+
   return (
-    <div className="grid grid-rows-5 grid-cols-7 gap-4">
+    <div className={styles.dayBlock}>
       {week.map((el) => (
         <div key={el}>{el}</div>
       ))}
-
-      {data.map((el) => (
-        <div key={el}>{el}</div>
+      {days.map((day, index) => (
+        <div key={index}>{day.getDate()}</div>
       ))}
     </div>
   );
