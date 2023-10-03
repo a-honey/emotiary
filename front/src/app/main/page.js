@@ -2,6 +2,7 @@
 'use client';
 
 import Calender from '@/components/main/Calendar';
+import Providers from '@/utils/Provider';
 
 const Main = () => {
   return (
