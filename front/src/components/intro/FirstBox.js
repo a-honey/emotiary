@@ -1,6 +1,6 @@
-const FirstBox = () => {
+const FirstBox = ({ layout }) => {
   return (
-    <section>
+    <section className={`${layout}`}>
       <div>프로젝트 설명</div>
       <div>
         <div>이모지1</div>
