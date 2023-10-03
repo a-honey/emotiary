@@ -3,11 +3,15 @@ import cors from 'cors';
 import swaggerUi from "swagger-ui-express";
 import swaggerFile from "./swagger/swagger-output.json";
 import bodyParser from 'body-parser';
+import userAuthRouter from "./routes/userRouter";
+import passport from 'passport';
+
 // import axios, { AxiosResponse } from "axios";
 
 const app: Express = express();
 app.use(cors());
 app.use(bodyParser.json());
+app.use(passport.initialize());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -75,6 +79,8 @@ app.use(
 app.get("/", (req: Request, res: Response) => {
     res.send("기본 페이지");
 });
+
+app.use("/users", userAuthRouter);
 
 // // 정적 파일 제공을 위한 미들웨어 설정
 // app.use(express.static("public"));
