@@ -16,6 +16,10 @@ module.exports = {
         '5vh': '5vh', // h-10vh - Header
         '90vh': '90vh', // h-90vh - main
       },
+      colors: {
+        bg: '#fff2d7', // bg-bg
+        point: '#e9c578', // bg-point
+      },
     },
   },
   plugins: [],
