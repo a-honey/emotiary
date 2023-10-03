@@ -2,10 +2,11 @@ import { useState } from 'react';
 import Month from '../common/calendar/Month';
 import Day from '../common/calendar/Day';
 
-const { default: Week } = require('../common/calendar/Week');
-
 const Calender = () => {
-  const [currentMonth, setCurrentMonth] = useState(5);
+  // 현재 날짜 객체 생성
+  const currentDate = new Date();
+  // 현재 날짜의 Month를 currentMonth를 통해 상태 관리
+  const [currentMonth, setCurrentMonth] = useState(currentDate.getMonth() + 1);
 
   const handleBeforeMonth = () => {
     // 이전 달 달력으로 상태변경
@@ -25,10 +26,8 @@ const Calender = () => {
         handleBeforeMonth={handleBeforeMonth}
         handleNextMonth={handleNextMonth}
       />
-      {/* 요일 매핑 컴포넌트*/}
-      <Week />
       {/* props에 따른 날짜 매핑 컴포넌트*/}
-      <Day />
+      <Day currentMonth={currentMonth} />
     </div>
   );
 };
