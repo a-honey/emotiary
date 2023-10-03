@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>YouTube Music Player</title>
+</head>
+<body>
+    <div id="youtubePlayer"></div>
+
+    <script>
+        const songInfo = {
+            title: "Slowed Sad Songs  | (𝙨𝙡𝙤𝙬𝙚𝙙 + 𝙧𝙚𝙫𝙚𝙧𝙗) songs playlist | sad songs for broken hearts",
+            videoId: "-KoOFAE94yo"
+        };
+
+        // YouTube iframe API 스크립트 로드
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        // YouTube 동영상 플레이어를 생성하고 플레이어에 노래를 로드
+        let player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtubePlayer', {
+                height: '360',
+                width: '640',
+                videoId: songInfo.videoId,
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
+        }
+
+        // 플레이어가 준비되면 자동으로 재생
+        function onPlayerReady(event) {
+            event.target.playVideo();
+        }
+    </script>
+</body>
+</html>
