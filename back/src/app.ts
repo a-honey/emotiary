@@ -5,13 +5,21 @@ import swaggerFile from "./swagger/swagger-output.json";
 import bodyParser from 'body-parser';
 import userAuthRouter from "./routes/userRouter";
 import passport from 'passport';
-
+import { jwtStrategy, localStrategy } from "./passport-config/passport";
 // import axios, { AxiosResponse } from "axios";
 
 const app: Express = express();
 app.use(cors());
 app.use(bodyParser.json());
+
 app.use(passport.initialize());
+
+const localStrategyInstance = localStrategy;
+const jwtStrategyInstance = jwtStrategy;
+
+passport.use('local', localStrategyInstance);
+passport.use('jwt', jwtStrategyInstance);
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
