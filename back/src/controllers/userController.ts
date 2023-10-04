@@ -5,12 +5,12 @@ import {
     getUserInfo,
     updateUserService,
     deleteUserService,
+    forgotUserPassword,
+    resetUserPassword,
 } from '../services/authService';
 import { IRequest } from "types/user";
-import { sendEmail } from '../utils/email';
-import { generateRandomPassowrd } from '../utils/password';
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcrypt';
+
 const prisma = new PrismaClient();
 
 export const userRegister = async (req : Request, res : Response, next : NextFunction) => {
@@ -126,17 +126,7 @@ export const forgotPassword = async (req : IRequest, res : Response, next : Next
             return res.status(404).json({message : '사용자를 찾을 수 없습니다.'});
         }
 
-        const tempPassword = generateRandomPassowrd();
-        const saltRounds = 10;
-
-        const hashedPassword = await bcrypt.hash(tempPassword, saltRounds);
-
-        await prisma.user.update({
-            where : { id : user.id },
-            data : { password : hashedPassword },
-        });
-
-        await sendEmail(email, '비밀번호 재설정', `임시 비밀번호 : ${tempPassword}`);
+        await forgotUserPassword(email);
 
         return res.status(200).json({ message : '임시 비밀번호가 이메일로 전송되었습니다.'});
     }catch(error){
@@ -153,14 +143,8 @@ export const resetPassword = async(req : IRequest, res : Response, next : NextFu
         if(!user){
             return res.status(404).json({message : '사용자를 찾을 수 없습니다.'});
         }
-        const saltRounds = 10;
-
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-        await prisma.user.update({
-            where : { id : user.id },
-            data : { password : hashedPassword },
-        });
+        
+        await resetUserPassword(email, password);
 
         return res.status(200).json({ message : '비밀번호가 재설정되었습니다.'});
     }catch(error){
