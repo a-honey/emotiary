@@ -14,6 +14,8 @@ const Day = ({ currentDate, data }) => {
   // 현재 날짜를 기준으로 날짜를 담아서 매핑
   const [days, setDays] = useState([]);
 
+  const today = new Date();
+
   useEffect(() => {
     const monthStart = startOfMonth(
       new Date(currentDate.year, currentDate.month, 0),
@@ -22,7 +24,6 @@ const Day = ({ currentDate, data }) => {
     const startDate = startOfWeek(monthStart); // currentDate의 맨 앞칸
     const endDate = endOfWeek(monthEnd); // currentDate의 마지막 칸
 
-    console.log(monthStart, monthEnd, startDate, endDate);
     let currentDatePointer = startDate;
     const newDays = [];
 
@@ -35,13 +36,28 @@ const Day = ({ currentDate, data }) => {
   }, [currentDate]);
 
   return (
-    <div className={styles.dayBlock}>
-      {week.map((el) => (
-        <div key={el}>{el}</div>
-      ))}
-      {days.map((day, index) => (
-        <div key={index}>{day.getDate()}</div>
-      ))}
+    <div className={styles.dayContainer}>
+      <div className={styles.weekBlock}>
+        {week.map((el) => (
+          <div key={el}>{el}</div>
+        ))}
+      </div>
+      <div className={styles.dayBlock}>
+        {days.map((day, index) => (
+          <div
+            key={index}
+            className={
+              day.getFullYear() === today.getFullYear() &&
+              day.getMonth() === today.getMonth() &&
+              day.getDate() === today.getDate()
+                ? styles.today
+                : ''
+            }
+          >
+            {day.getDate()}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
