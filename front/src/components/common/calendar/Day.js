@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './index.module.scss';
 import {
   addDays,
@@ -8,22 +8,31 @@ import {
   startOfWeek,
 } from 'date-fns';
 
-const Day = ({ currentMonth, data }) => {
+const Day = ({ currentDate, data }) => {
   const week = ['일', '월', '화', '수', '목', '금', '토'];
 
-  const monthStart = startOfMonth(currentMonth); // 현재 월의 시작일
-  const monthEnd = endOfMonth(monthStart); // 현재 월의 종료일
-  const startDate = startOfWeek(monthStart); // 현재 달력의 맨 앞칸
-  const endDate = endOfWeek(monthEnd); // 현재 달력의 마지막 칸
-
   // 현재 날짜를 기준으로 날짜를 담아서 매핑
-  const days = [];
-  let currentDatePointer = startDate;
+  const [days, setDays] = useState([]);
 
-  while (currentDatePointer <= endDate) {
-    days.push(currentDatePointer);
-    currentDatePointer = addDays(currentDatePointer, 1);
-  }
+  useEffect(() => {
+    const monthStart = startOfMonth(
+      new Date(currentDate.year, currentDate.month, 0),
+    ); // 현재 월의 시작일
+    const monthEnd = endOfMonth(monthStart); // currentDate의 종료일
+    const startDate = startOfWeek(monthStart); // currentDate의 맨 앞칸
+    const endDate = endOfWeek(monthEnd); // currentDate의 마지막 칸
+
+    console.log(monthStart, monthEnd, startDate, endDate);
+    let currentDatePointer = startDate;
+    const newDays = [];
+
+    while (currentDatePointer <= endDate) {
+      newDays.push(currentDatePointer);
+      currentDatePointer = addDays(currentDatePointer, 1);
+    }
+
+    setDays(newDays);
+  }, [currentDate]);
 
   return (
     <div className={styles.dayBlock}>

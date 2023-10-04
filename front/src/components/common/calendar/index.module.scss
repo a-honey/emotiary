@@ -5,9 +5,12 @@
   justify-content: space-between;
   align-items: center;
   margin: 10px 0;
-  div {
-    font-size: 50px;
-    font-weight: 700;
+  > div {
+    display: flex;
+    div {
+      font-size: 50px;
+      font-weight: 700;
+    }
   }
   button {
     width: 40px;
