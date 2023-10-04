@@ -8,7 +8,7 @@ const fakeCalendarData = [
   { diary_id: 1, dateCreated: '23-10-3', emoji: ':angry:' },
 ];
 
-const Calendar = () => {
+const Calendar = ({ handleIsDiaryWriting }) => {
   const today = new Date();
   // 초반 currentDate에 현재 날짜를 보관
   const [currentDate, setCurrentDate] = useState({
@@ -55,7 +55,11 @@ const Calendar = () => {
         handleNextMonth={handleNextMonth}
       />
       {/* props에 따른 날짜 매핑 컴포넌트*/}
-      <Day currentDate={currentDate} data={fakeCalendarData} />
+      <Day
+        handleIsDiaryWriting={handleIsDiaryWriting}
+        currentDate={currentDate}
+        data={fakeCalendarData}
+      />
     </div>
   );
 };

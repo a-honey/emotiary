@@ -8,7 +8,7 @@ import {
   startOfWeek,
 } from 'date-fns';
 
-const Day = ({ currentDate, data }) => {
+const Day = ({ currentDate, data, handleIsDiaryWriting }) => {
   const week = ['일', '월', '화', '수', '목', '금', '토'];
 
   // 현재 날짜를 기준으로 날짜를 담아서 매핑
@@ -55,6 +55,14 @@ const Day = ({ currentDate, data }) => {
             }
           >
             {day.getDate()}
+            <button
+              className={styles.addBtn}
+              onClick={() => {
+                handleIsDiaryWriting(true);
+              }}
+            >
+              +
+            </button>
           </div>
         ))}
       </div>

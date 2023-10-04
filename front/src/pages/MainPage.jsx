@@ -11,8 +11,10 @@ const MainPage = () => {
 
   return (
     <main>
-      <Calendar />
-      <DiaryWriting handleIsDiaryWriting={handleIsDiaryWriting} />
+      <Calendar handleIsDiaryWriting={handleIsDiaryWriting} />
+      {isDiaryWriting && (
+        <DiaryWriting handleIsDiaryWriting={handleIsDiaryWriting} />
+      )}
     </main>
   );
 };

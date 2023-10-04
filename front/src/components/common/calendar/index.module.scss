@@ -51,6 +51,14 @@
         font-weight: 700;
       }
     }
+    .addBtn {
+      width: 40px;
+      height: 40px;
+      font-weight: 700;
+      border-radius: 50%;
+      background-color: map-get($colors, point);
+      color: white;
+    }
   }
 }
 
