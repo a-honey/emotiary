@@ -7,11 +7,14 @@ import {
     getUserId,
     updateUser,
     deleteUser,
+    forgotPassword,
+    resetPassword,
 } from '../controllers/userController';
 import { localAuthentication } from '../middlewares/authenticateLocal';
 import { jwtAuthentication } from '../middlewares/authenticateJwt';
 const userAuthRouter = Router();
 
+// 회원가입
 userAuthRouter.post('/register', userRegister);
 
 userAuthRouter.post('/login', localAuthentication, userLogin);
@@ -25,5 +28,10 @@ userAuthRouter.route('/:userId')
     .put(jwtAuthentication, updateUser)
     .delete(jwtAuthentication, deleteUser);
 
+// 비밀번호 재설정 이메일 보내기
+userAuthRouter.post('/forgot-password', forgotPassword);
+
+// 비밀번호 재설정
+userAuthRouter.post('/reset-password', jwtAuthentication, resetPassword);
 
 export default userAuthRouter;
