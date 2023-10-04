@@ -1,9 +1,12 @@
 import React from 'react';
+import UserCard from '../components/userId/UserCard';
+import Calendar from '../components/common/calendar/Calendar';
 
 const UserIdPage: React.FC = () => {
   return (
-    <main>
-      <div>유저의 페이지입니다.</div>
+    <main style={{ gap: '40px' }}>
+      <UserCard />
+      <Calendar />
     </main>
   );
 };

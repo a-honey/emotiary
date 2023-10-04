@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from './index.module.scss';
 import { handleImgError } from '../../utils/handleImg';
+import { useNavigate } from 'react-router-dom';
 
 const DiaryList = () => {
   return (
@@ -21,8 +22,15 @@ const DiaryList = () => {
 export default DiaryList;
 
 const DairyItem = () => {
+  const navigator = useNavigate();
+
   return (
-    <div className={styles.dairyItem}>
+    <div
+      className={styles.dairyItem}
+      onClick={() => {
+        navigator(`/user/${2}`);
+      }}
+    >
       <div className={styles.emoji}>😆</div>
       <p>
         일기 내용일기 내용일기 내용일기 내용일기 내용일기 내용일기 내용일기

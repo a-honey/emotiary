@@ -11,7 +11,7 @@ const fakeCalendarData = [
 const Calendar = ({
   handleIsDiaryWriting,
 }: {
-  handleIsDiaryWriting: (arg: boolean) => void;
+  handleIsDiaryWriting?: (arg: boolean) => void;
 }) => {
   const today = new Date();
   // 초반 currentDate에 현재 날짜를 보관

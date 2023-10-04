@@ -15,7 +15,7 @@ const Day = ({
 }: {
   currentDate: { year: number; month: number };
   data: object;
-  handleIsDiaryWriting: (arg: boolean) => void;
+  handleIsDiaryWriting?: (arg: boolean) => void;
 }) => {
   const week = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -63,14 +63,16 @@ const Day = ({
             }
           >
             {day.getDate()}
-            <button
-              className={styles.addBtn}
-              onClick={() => {
-                handleIsDiaryWriting(true);
-              }}
-            >
-              +
-            </button>
+            {handleIsDiaryWriting && (
+              <button
+                className={styles.addBtn}
+                onClick={() => {
+                  handleIsDiaryWriting(true);
+                }}
+              >
+                +
+              </button>
+            )}
           </div>
         ))}
       </div>
