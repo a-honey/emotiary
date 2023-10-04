@@ -4,7 +4,7 @@ import styles from './layout.module.scss';
 const Header = () => {
   return (
     <header className={styles.header}>
-      <div className={styles.logoContainer}>앱 이름</div>
+      <div className={styles.logoContainer}>EMOTIARY</div>
       <nav className={styles.navContainer}>
         <Link to="/">MY CALENDAR</Link>
         <Link to="/network">LATEST DIARY</Link>
