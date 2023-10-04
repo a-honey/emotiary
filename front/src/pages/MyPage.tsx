@@ -1,9 +1,13 @@
 import React from 'react';
 
+import MyCard from '../components/my/MyCard';
+import DiaryList from '../components/my/DiaryList';
+
 const MyPage: React.FC = () => {
   return (
-    <main>
-      <div>마이페이지입니다.</div>
+    <main style={{ gap: '40px' }}>
+      <MyCard />
+      <DiaryList />
     </main>
   );
 };

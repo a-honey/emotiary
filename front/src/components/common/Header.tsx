@@ -1,11 +1,12 @@
 import React from 'react';
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from './layout.module.scss';
 import { handleImgError } from '../../utils/handleImg';
 
 const Header = () => {
-  const isLogin = false;
+  const isLogin = true;
+  const navigator = useNavigate();
 
   return (
     <header className={styles.header}>
@@ -17,7 +18,12 @@ const Header = () => {
         <Link to="/analysis">ANALYSIS</Link>
       </nav>
       {isLogin ? (
-        <div className={styles.userInfo}>
+        <div
+          className={styles.userInfo}
+          onClick={() => {
+            navigator('/mypage');
+          }}
+        >
           <img src="" alt="의 프로필사진" onError={handleImgError} />
           <div>유저이름</div>
         </div>
