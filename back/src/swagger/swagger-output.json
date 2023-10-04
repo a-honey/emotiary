@@ -10,10 +10,198 @@
       "url": "http://localhost:5001"
     }
   ],
+  "tags": [
+    {
+      "name": "users",
+      "description": "Operations related to users"
+    }
+  ],
   "paths": {
     "/": {
       "get": {
-        "description": "",
+        "description": "root페이지",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/users/register": {
+      "post": {
+        "tags": ["users"],
+        "description": "회원가입",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "description": "회원가입 정보(JSON 형식)",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "이메일 주소"
+                  },
+                  "username" : {
+                    "type" : "string",
+                    "format" : "username",
+                    "description" : "유저이름"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "description": "비밀번호"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/login": {
+      "post": {
+        "tags": ["users"],
+        "description": "로그인",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "description": "로그인 정보(JSON 형식)",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "이메일 주소"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "description": "비밀번호"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/current": {
+      "get": {
+        "tags": ["users"],
+        "description": "현재사용자정보",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/users/allUser": {
+      "get": {
+        "tags": ["users"],
+        "description": "모든유저조회",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/users/{userId}": {
+      "get": {
+        "tags": ["users"],
+        "description": "특정유저정보",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": ["users"],
+        "description": "개인정보수정",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "description": "로그인 정보(JSON 형식)",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "이메일 주소"
+                  },
+                  "username": {
+                    "type": "string",
+                    "format": "username",
+                    "description": "유저이름"
+                  },
+                  "dscription" : {
+                    "type" : "string",
+                    "format" : "description",
+                    "description" : "간단한 소개"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["users"],
+        "description": "회원탈퇴",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"

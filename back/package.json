@@ -19,9 +19,9 @@
     "typescript": "^5.2.2"
   },
   "scripts": {
+    "swagger-autogen": "node ./generateSwagger.ts",
     "start": "nodemon --exec ts-node index.ts",
-    "lint": "eslint . --ext .ts",
-    "swagger-autogen": "node ./src/swagger/swagger.ts"
+    "lint": "eslint . --ext .ts"
   },
   "author": "",
   "license": "ISC",

@@ -21,7 +21,7 @@ userAuthRouter.get('/current', jwtAuthentication, getMyInfo);
 userAuthRouter.get('/allUser',getAllUser);
 
 userAuthRouter.route('/:userId')
-    .get(jwtAuthentication, getUserId)
+    .get(getUserId)
     .put(jwtAuthentication, updateUser)
     .delete(jwtAuthentication, deleteUser);
 
