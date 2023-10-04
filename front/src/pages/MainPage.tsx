@@ -11,7 +11,19 @@ const MainPage: React.FC = () => {
   };
 
   return (
-    <main>
+    <main style={{ gap: '20px' }}>
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '20px',
+        }}
+      >
+        <div style={{ backgroundColor: 'white' }}>박스1</div>
+        <div style={{ backgroundColor: 'white' }}>박스2</div>
+      </div>
       <Calendar handleIsDiaryWriting={handleIsDiaryWriting} />
       {isDiaryWriting && (
         <DiaryWriting handleIsDiaryWriting={handleIsDiaryWriting} />

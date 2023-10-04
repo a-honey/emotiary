@@ -36,10 +36,9 @@
   }
   .dayBlock {
     width: 100%;
-    height: map-get($sizes, vh) - 20vh;
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    grid-template-rows: repeat(5, 1fr);
+    grid-template-rows: repeat(6, 1fr);
     gap: 5px;
     div {
       background-color: pink;
@@ -67,9 +66,5 @@
   background-color: white;
   border-radius: 5px;
   padding: 20px;
-  height: map-get(
-    $sizes,
-    vh
-  ); // 80vh(모든 페이지의 컴포넌트 길이 통일 위한 변수 설정)
-  width: 50vw;
+  width: 100%;
 }
