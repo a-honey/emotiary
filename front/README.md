@@ -1,36 +1,28 @@
 # my-boilarplate
 
+## Stacks
+
+react, react-dom, react-router-dom
+axios
+recoil, react-query
+sass
+date-fns
+
 ## 디렉토리 구조
 
 ```
 ┠─ node_modules
 ┠─ public
 ┠─ src
-│    ├ components
-│    │    ├ common
-│    │    │    ├ header.js
-│    │    │    └ header.module.scss
-│    │    ├ main
-│    │    │    └ mainBox
-│    │    │         └ mainBox
-│    │    │              ├ index.module.scss
-│    │    │              └ index.module.scss
-│    │    └ user
-│    │         ├ Login.js
-│    │         ├ Register.js
-│    │         └ user.module.scss
-│    ├ containers
-│    │    ├ main
-│    │    │    └ index.js
-│    │    └ user
-│    │         └ index.js
-│    ├ pages
-│    │    ├ Layout.js
-│    │    ├ MainPage.js
-│    │    └ UserPage.js
-│    └ styles
-│         ├ global.scss
-│         └ variables.scss
+│    ├ assets  // 기타 이미지 등을 보관합니다
+│    ├ api  // axios, interceptor 등 api 요청관련 함수를 보관합니다
+│    ├ components  // 각 페이지별 컴포넌트를 보관합니다
+│    ├ hooks  // 기타 hook을 보관합니다
+│    ├ pages  // 컴포넌트를 담은 페이지를 보관합니다
+│    ├ states  // 전역 상태를 보관합니다
+│    ├ styles  // global.css, 변수 등을 보관합니다
+│    └ utils  // 기타 함수를 보관합니다
+│
 ├ .eslintrc.json
 ├ .gitignore
 ├ next-env.d.ts
@@ -47,4 +39,4 @@
 
 ---
 
-© 2023 AHoney. All rights reserved.
+All rights reserved.
