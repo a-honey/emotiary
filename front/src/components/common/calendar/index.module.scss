@@ -3,6 +3,20 @@
 .monthBlock {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  margin: 10px 0;
+  div {
+    font-size: 50px;
+    font-weight: 700;
+  }
+  button {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    background-color: map-get($colors, point);
+    color: white;
+    border-radius: 50%;
+  }
 }
 
 .dayBlock {
@@ -10,7 +24,9 @@
   height: 100%;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: 0.5fr repeat(5, 1fr);
+  grid-template-rows: 0.2fr repeat(5, 1fr);
+  background-color: pink;
+  gap: 5px;
   div {
     display: flex;
     justify-content: center;
@@ -18,10 +34,14 @@
   }
 }
 
+// dayBlock의 부모 컴포넌트(Month + Day)
 .calendarBlock {
   background-color: white;
   border-radius: 5px;
   padding: 20px;
-  height: map-get($sizes, vh);
+  height: map-get(
+    $sizes,
+    vh
+  ); // 80vh(모든 페이지의 컴포넌트 길이 통일 위한 변수 설정)
   width: 50vw;
 }
