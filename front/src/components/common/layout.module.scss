@@ -37,6 +37,19 @@
       font-weight: 700;
     }
   }
+  .userInfo {
+    display: flex;
+    align-items: center;
+
+    img {
+      width: 40px;
+      height: 40px;
+    }
+    div {
+      font-size: 15px;
+      font-weight: 500;
+    }
+  }
 }
 
 .footer {
