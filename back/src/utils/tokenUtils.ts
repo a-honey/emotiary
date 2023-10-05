@@ -7,7 +7,7 @@ import jwtSecret from '../passport-config/jwtSecret';
 
 export const generateAccessToken = (user: IUser): string => {
     const accessToken = jwt.sign({ id: user.id }, jwtSecret, {
-        expiresIn: '30s',
+        expiresIn: '15m',
     });
     return accessToken;
 };

@@ -75,12 +75,19 @@ export const updateUserService = async (
 
 export const deleteUserService = async (userId : string) => {
     try{
-        const deletedUser = await prisma.user.delete({
+        await prisma.refreshToken.deleteMany({
+            where: {
+                userId: userId,
+            },
+        });
+
+        await prisma.user.delete({
             where : {
                 id : userId,
             },
         });
-        return deletedUser;
+
+        return "사용자가 삭제되었습니다.";
     }catch(error){
         throw error;
     }
