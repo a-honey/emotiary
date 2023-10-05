@@ -1,3 +1,5 @@
+// 페이지네이션 추가, 공통된 타입 줄이기 예정
+
 // 네트워크 페이지에서 다른 유저의 다이어리를 불러옴
 export interface DairyItemType {
   diary_id: number;
