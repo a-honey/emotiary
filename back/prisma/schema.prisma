@@ -8,10 +8,24 @@ datasource db {
 }
 
 model User {
-  id          Int       @id @default(autoincrement())
-  username    String    @unique
-  email       String    @unique
-  password    String
-  description String?
+  id           Int     @id @default(autoincrement())
+  username     String  @unique
+  email        String  @unique
+  password     String
+  description  String?
   profileImage String?
+  Diary        Diary[]
+}
+
+model Diary {
+  id          String   @id @default(uuid())
+  author      User     @relation(fields: [authorId], references: [id])
+  authorId    Int
+  createdDate DateTime
+  title       String
+  content     String
+  is_public   String
+  emoji       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

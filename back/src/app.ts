@@ -1,10 +1,11 @@
 import express, { Express, Request, Response } from "express";
-import cors from 'cors';
+import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import swaggerFile from "./swagger/swagger-output.json";
-import bodyParser from 'body-parser';
+import bodyParser from "body-parser";
 import userAuthRouter from "./routes/userRouter";
-import passport from 'passport';
+import passport from "passport";
+import diaryRouter from "./routes/diaryRouter";
 
 // import axios, { AxiosResponse } from "axios";
 
@@ -15,7 +16,6 @@ app.use(passport.initialize());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
 
 // 유튜브
 // function analyzeEmotion(): string {
@@ -71,16 +71,17 @@ app.use(express.urlencoded({ extended: false }));
 // });
 
 app.use(
-    "/api-docs",
-    swaggerUi.serve,
-    swaggerUi.setup(swaggerFile, { explorer: true }),
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerFile, { explorer: true })
 );
 
 app.get("/", (req: Request, res: Response) => {
-    res.send("기본 페이지");
+  res.send("기본 페이지");
 });
 
 app.use("/users", userAuthRouter);
+app.use("/diary", diaryRouter);
 
 // // 정적 파일 제공을 위한 미들웨어 설정
 // app.use(express.static("public"));
