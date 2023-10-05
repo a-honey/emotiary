@@ -34,6 +34,17 @@ model RefreshToken {
     user      User     @relation(fields: [userId], references: [id])
 }
 
+
+model Friend {
+    id         String     @id @default(uuid())
+    userA      User    @relation("UserFriendA", fields: [userAId], references: [id])
+    userAId    String
+    userB      User    @relation("UserFriendB", fields: [userBId], references: [id])
+    userBId    String
+    status     Boolean @default(false)
+
+    @@unique([userAId, userBId])
+}
 model Diary {
   id          String   @id @default(uuid())
   author      User     @relation(fields: [authorId], references: [id])
