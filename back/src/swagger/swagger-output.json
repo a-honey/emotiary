@@ -10,12 +10,6 @@
       "url": "http://localhost:5001"
     }
   ],
-  "tags": [
-    {
-      "name": "users",
-      "description": "Operations related to users"
-    }
-  ],
   "paths": {
     "/": {
       "get": {
@@ -29,8 +23,10 @@
     },
     "/users/register": {
       "post": {
+        "tags": [
+          "Users"
+        ],
         "description": "",
-        "tags": ["users"],
         "responses": {
           "200": {
             "description": "OK"
@@ -60,77 +56,15 @@
     },
     "/users/login": {
       "post": {
-        "description": "",
-        "tags": ["users"],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "example": "any"
-                  },
-                  "password": {
-                    "example": "any"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users/forgot-password": {
-      "post": {
-        "description": "",
-        "tags": ["users"],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "example": "any"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users/reset-password": {
-      "post": {
-        "description": "",
-        "tags": ["users"],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
+        "tags": [
+          "Users"
         ],
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
         "requestBody": {
           "content": {
             "application/json": {
@@ -141,37 +75,6 @@
                     "example": "any"
                   },
                   "password": {
-                    "example": "any"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users/refresh-token": {
-      "post": {
-        "description": "",
-        "tags": ["users"],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "token": {
                     "example": "any"
                   }
                 }
@@ -183,8 +86,10 @@
     },
     "/users/current": {
       "get": {
+        "tags": [
+          "Users"
+        ],
         "description": "",
-        "tags": ["users"],
         "responses": {
           "200": {
             "description": "OK"
@@ -199,8 +104,10 @@
     },
     "/users/allUser": {
       "get": {
+        "tags": [
+          "Users"
+        ],
         "description": "",
-        "tags": ["users"],
         "responses": {
           "200": {
             "description": "OK"
@@ -210,8 +117,10 @@
     },
     "/users/{userId}": {
       "get": {
+        "tags": [
+          "Users"
+        ],
         "description": "",
-        "tags": ["users"],
         "parameters": [
           {
             "name": "userId",
@@ -234,8 +143,10 @@
         ]
       },
       "put": {
+        "tags": [
+          "Users"
+        ],
         "description": "",
-        "tags": ["users"],
         "parameters": [
           {
             "name": "userId",
@@ -281,8 +192,10 @@
         }
       },
       "delete": {
+        "tags": [
+          "Users"
+        ],
         "description": "",
-        "tags": ["users"],
         "parameters": [
           {
             "name": "userId",
@@ -304,6 +217,107 @@
           }
         ]
       }
+    },
+    "/users/forgot-password": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/reset-password": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "example": "any"
+                  },
+                  "password": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/refresh-token": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -311,6 +325,7 @@
       "bearerAuth": {
         "type": "http",
         "scheme": "bearer",
+        "in": "header",
         "bearerFormat": "JWT"
       }
     }
