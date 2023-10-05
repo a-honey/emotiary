@@ -8,7 +8,6 @@ function useIsScrollAnimation(triggerPoint = 200) {
     // 현재 스크롤 위치 확인
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      console.log('현재 위치', scrollY);
 
       // 스크롤 위치가 파라미터보다 크거나 같으면 애니메이션 활성화
       if (scrollY >= triggerPoint) {

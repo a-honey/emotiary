@@ -17,7 +17,18 @@
   background-color: white;
 }
 
-div.animation {
+@keyframes moveUpAndDown {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.animation {
+  animation: moveUpAndDown 2s forwards;
   background-color: pink;
 }
 
