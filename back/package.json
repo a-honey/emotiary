@@ -42,9 +42,12 @@
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^6.9.5",
     "passport": "^0.6.0",
+    "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
+    "redis": "^4.6.10",
     "swagger-autogen": "^2.23.6",
-    "swagger-ui-express": "^5.0.0"
+    "swagger-ui-express": "^5.0.0",
+    "uuid": "^9.0.1"
   }
 }

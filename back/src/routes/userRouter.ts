@@ -9,9 +9,11 @@ import {
     deleteUser,
     forgotPassword,
     resetPassword,
+    refresh,
 } from '../controllers/userController';
 import { localAuthentication } from '../middlewares/authenticateLocal';
 import { jwtAuthentication } from '../middlewares/authenticateJwt';
+import passport from 'passport';
 const userAuthRouter = Router();
 
 // 회원가입
@@ -33,5 +35,22 @@ userAuthRouter.post('/forgot-password', forgotPassword);
 
 // 비밀번호 재설정
 userAuthRouter.post('/reset-password', jwtAuthentication, resetPassword);
+
+// refresh token사용
+userAuthRouter.post('/refresh-token', refresh);
+
+
+
+
+
+userAuthRouter.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+// userAuthRouter.get(
+//     '/google/callback',
+//     passport.authenticate('google', { failureRedirect : '/'}),
+//     (req : Request, res : Response)=>{
+//         res.redirect('/');
+//     },
+// );
 
 export default userAuthRouter;

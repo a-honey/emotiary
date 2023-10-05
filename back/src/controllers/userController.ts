@@ -7,7 +7,12 @@ import {
     deleteUserService,
     forgotUserPassword,
     resetUserPassword,
+    getUserFromDatabase,
 } from '../services/authService';
+import {
+    generateAccessToken,
+    verifyRefreshToken,
+} from '../utils/tokenUtils'
 import { IRequest } from "types/user";
 import { PrismaClient } from '@prisma/client';
 
@@ -27,12 +32,13 @@ export const userLogin = async (req : IRequest, res : Response, next : NextFunct
     try{
         const user = {
             token: req.token,
+            refreshToken : req.refreshTokens,
             id: req.user.id,
             name: req.user.username,
             email: req.user.email,
             uploadFile: req.user.profileImage,
         };
-
+        console.log(user);
         return res.status(200).json(user);
     }catch(error){
         next(error);
@@ -73,7 +79,7 @@ export const getUserId = async(
     next : NextFunction
 ) => {
     try{
-        const userId = parseInt(req.params.userId, 10);
+        const userId = req.params.userId;
         const userInfo = await getUserInfo(userId);
 
         res.status(200).json(userInfo);
@@ -88,7 +94,7 @@ export const updateUser = async(
     next : NextFunction
 ) => {
     try{
-        const userId = parseInt(req.params.userId, 10);
+        const userId = req.params.userId;
 
         const updatedUser = await updateUserService(userId,{
             toUpdate : { ...req.body },
@@ -106,7 +112,7 @@ export const deleteUser = async(
     next : NextFunction
 ) => {
     try{
-        const userId = parseInt(req.params.userId, 10);
+        const userId = req.params.userId;
 
         const deletedUser = await deleteUserService(userId);
 
@@ -150,4 +156,25 @@ export const resetPassword = async(req : IRequest, res : Response, next : NextFu
     }catch(error){
         next(error);
     }
+}
+
+export const refresh = async (req : IRequest, res : Response, next : NextFunction) => {
+    const refreshToken = req.body.token;
+    console.log(req.body.token);
+    console.log(1111);
+    console.log(req.body.refreshToken);
+    if (!refreshToken) {
+        return res.status(401).json({ message: 'Refresh Token 없음' });
+    }
+
+    const userId = await verifyRefreshToken(refreshToken);
+
+    if (!userId) {
+        return res.status(403).json({ message: 'Refresh Token 만료 또는 유효하지 않음' });
+    }
+
+    const user = await getUserFromDatabase(userId);
+    const accessToken = generateAccessToken(user);
+
+    res.json({ accessToken });
 }

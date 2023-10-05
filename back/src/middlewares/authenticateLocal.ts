@@ -1,8 +1,11 @@
 import passport from "passport";
-import jwt from "jsonwebtoken";
 import { Response, NextFunction } from "express";
 import { IRequest, IUser } from "types/user";
-import jwtSecret from "../passport-config/jwtSecret";
+import { 
+    generateAccessToken,
+    generateRefreshToken, 
+    storeRefreshTokenInDatabase 
+} from "../utils/tokenUtils";
 
 export const localAuthentication = (
     req : IRequest,
@@ -13,7 +16,7 @@ export const localAuthentication = (
         passport.authenticate(
             "local",
             {session : false },
-            (error : Error, user : IUser, info : any) => {
+            async (error : Error, user : IUser, info : any) => {
                 if(error){
                     console.log(error);
                     next(error);
@@ -25,12 +28,14 @@ export const localAuthentication = (
                 }
 
                 if(user){
-                    const token = jwt.sign({ id : user.id }, jwtSecret, {
-                        expiresIn : "1d",
-                    });
-                    req.token = token;
+                    const accessToken = generateAccessToken(user);
+                    const refreshToken = generateRefreshToken(user);
+                    await storeRefreshTokenInDatabase(user.id, refreshToken);
+
+                    req.token = accessToken;
                     req.user = user;
-                    next();
+                    req.refreshTokens = [refreshToken];
+                    return next();
                 }
             }
         )(req,res,next);

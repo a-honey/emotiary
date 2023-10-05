@@ -1,7 +1,7 @@
 import { Request } from "express";
 
 export interface IUser {
-    id: number;
+    id: string;
     username: string;
     email: string;
     password: string;
@@ -14,4 +14,5 @@ export interface IUser {
   export interface IRequest extends Request{
     user : IUser | null;
     token : string;
+    refreshTokens: string[];
   }

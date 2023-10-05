@@ -1,4 +1,4 @@
-import { PrismaClient, User } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { sendEmail } from '../utils/email';
 import { generateRandomPassowrd } from '../utils/password';
 import bcrypt from 'bcrypt';
@@ -26,7 +26,7 @@ export const createUser = async (inputData : {
         }
 };
 
-export const myInfo = async (userId : number) => {
+export const myInfo = async (userId : string) => {
     try{
         const myInfo = await prisma.user.findUnique({
             where : {
@@ -39,7 +39,7 @@ export const myInfo = async (userId : number) => {
     }
 };
 
-export const getUserInfo = async(userId : number) => {
+export const getUserInfo = async(userId : string) => {
     try{
         const userInfo = await prisma.user.findUnique({
             where : {
@@ -53,7 +53,7 @@ export const getUserInfo = async(userId : number) => {
 };
 
 export const updateUserService = async (
-    userId : number, 
+    userId : string, 
     {toUpdate} : {toUpdate : Partial<IUser>}
     ) => {
     try{
@@ -73,7 +73,7 @@ export const updateUserService = async (
     }
 };
 
-export const deleteUserService = async (userId : number) => {
+export const deleteUserService = async (userId : string) => {
     try{
         const deletedUser = await prisma.user.delete({
             where : {
@@ -117,6 +117,19 @@ export const resetUserPassword = async (
             where : { email : email },
             data : { password : hashedPassword },
         });
+        }catch(error){
+            throw error;
+        }
+    }
+
+    export const getUserFromDatabase = async (userId : string) => {
+        try{
+            const user = await prisma.user.findUnique({
+                where : {
+                    id : userId,
+                },
+            });
+            return user;
         }catch(error){
             throw error;
         }
