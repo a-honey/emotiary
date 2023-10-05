@@ -29,18 +29,32 @@
     height: 100%;
     display: grid;
     grid-template-columns: repeat(4, 350px);
-    grid-template-rows: repeat(2, 320px);
+    grid-template-rows: repeat(2, 280px);
     gap: 20px;
   }
 }
 
 .dairyItem {
   position: relative;
-  background-color: pink;
+  border: 1px solid map-get($colors, bg);
+  border-radius: 5px;
   padding: 20px;
   display: flex;
+  h3 {
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 5px;
+  }
+  p {
+    font-size: 15px;
+    height: calc(15px * 10);
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
   .emoji {
     font-size: 100px;
+    line-height: 200px;
   }
   .userInfo {
     display: flex;

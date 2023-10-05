@@ -1,3 +1,5 @@
+@import '../../styles/variables.scss';
+
 .block {
   background-color: white;
   padding: 40px;
@@ -27,17 +29,19 @@
     height: 100%;
     display: grid;
     grid-template-columns: repeat(4, 350px);
-    grid-template-rows: repeat(2, 320px);
+    grid-template-rows: repeat(2, 280px);
     gap: 20px;
   }
 }
 
 .item {
-  background-color: pink;
+  border: 1px solid map-get($colors, bg);
+  border-radius: 5px;
   padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
+  cursor: pointer;
   div {
     position: relative;
     display: flex;
@@ -52,5 +56,10 @@
   img {
     width: 200px;
     height: 200px;
+  }
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
   }
 }
