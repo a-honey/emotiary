@@ -20,9 +20,11 @@ const prisma = new PrismaClient();
 
 export const userRegister = async (req : Request, res : Response, next : NextFunction) => {
     try{
-        const inputData = req.body;
-        const user = await createUser(inputData);
-        res.status(200).json(user);
+        // swagger 데이터전용
+        const {username, email, password} = req.body;
+
+        const user = await createUser(req.body);
+        res.status(200).json({ data: user, message: '성공' });
     }catch(error){
         next(error);
     }
@@ -30,6 +32,9 @@ export const userRegister = async (req : Request, res : Response, next : NextFun
 
 export const userLogin = async (req : IRequest, res : Response, next : NextFunction) => {
     try{
+        // swagger 데이터전용
+        const { email, password } = req.body;
+
         const user = {
             token: req.token,
             refreshToken : req.refreshTokens,
@@ -38,8 +43,8 @@ export const userLogin = async (req : IRequest, res : Response, next : NextFunct
             email: req.user.email,
             uploadFile: req.user.profileImage,
         };
-        console.log(user);
-        return res.status(200).json(user);
+
+        return res.status(200).json({ data: user, message: '성공' });
     }catch(error){
         next(error);
     }
@@ -54,7 +59,7 @@ export const getMyInfo = async(
         const userId = req.user.id;
         const currentUserInfo = await myInfo(userId);
         
-        res.status(200).json(currentUserInfo);
+        res.status(200).json({ data: currentUserInfo, message: '성공' });
     }catch(error){
         next(error);
     }
@@ -67,7 +72,7 @@ export const getAllUser = async(
 ) => {
     try{
         const allUsers = await prisma.user.findMany();
-        res.status(200).json(allUsers);
+        res.status(200).json({ data: allUsers, message: '성공' });
     }catch(error){
         next(error);
     }
@@ -82,7 +87,7 @@ export const getUserId = async(
         const userId = req.params.userId;
         const userInfo = await getUserInfo(userId);
 
-        res.status(200).json(userInfo);
+        res.status(200).json({ data: userInfo, message: '성공' });
     }catch(error){
         next(error);
     }
@@ -96,11 +101,14 @@ export const updateUser = async(
     try{
         const userId = req.params.userId;
 
+        // swagger 데이터전용
+        const { email, username, description, profileImage } = req.body;
+
         const updatedUser = await updateUserService(userId,{
             toUpdate : { ...req.body },
         });
 
-        res.status(200).json(updatedUser);
+        res.status(200).json({ data: updatedUser, message: '성공' });
     }catch(error){
         next(error);
     }
@@ -114,9 +122,9 @@ export const deleteUser = async(
     try{
         const userId = req.params.userId;
 
-        const deletedUser = await deleteUserService(userId);
+        const message = await deleteUserService(userId);
 
-        res.status(200).json(deletedUser);
+        res.status(200).json({ message });
     }catch(error){
         next(error);
     }
@@ -129,12 +137,12 @@ export const forgotPassword = async (req : IRequest, res : Response, next : Next
         const user = await prisma.user.findUnique({where : { email }});
 
         if(!user){
-            return res.status(404).json({message : '사용자를 찾을 수 없습니다.'});
+            return res.status(404).json({ data : [], message : '사용자를 찾을 수 없습니다.' });
         }
 
         await forgotUserPassword(email);
 
-        return res.status(200).json({ message : '임시 비밀번호가 이메일로 전송되었습니다.'});
+        return res.status(200).json({ message : '임시 비밀번호가 이메일로 전송되었습니다.' });
     }catch(error){
         next(error);
     }
@@ -143,11 +151,11 @@ export const forgotPassword = async (req : IRequest, res : Response, next : Next
 export const resetPassword = async(req : IRequest, res : Response, next : NextFunction ) => {
     try{
         const { email, password } = req.body;
-        console.log(req.body);
+
         const user = await prisma.user.findUnique({where : { email }});
 
         if(!user){
-            return res.status(404).json({message : '사용자를 찾을 수 없습니다.'});
+            return res.status(404).json({data : [], message : '사용자를 찾을 수 없습니다.'});
         }
         
         await resetUserPassword(email, password);
@@ -160,11 +168,9 @@ export const resetPassword = async(req : IRequest, res : Response, next : NextFu
 
 export const refresh = async (req : IRequest, res : Response, next : NextFunction) => {
     const refreshToken = req.body.token;
-    console.log(req.body.token);
-    console.log(1111);
-    console.log(req.body.refreshToken);
+
     if (!refreshToken) {
-        return res.status(401).json({ message: 'Refresh Token 없음' });
+        return res.status(401).json({ data : [], message: 'Refresh Token 없음' });
     }
 
     const userId = await verifyRefreshToken(refreshToken);
@@ -176,5 +182,5 @@ export const refresh = async (req : IRequest, res : Response, next : NextFunctio
     const user = await getUserFromDatabase(userId);
     const accessToken = generateAccessToken(user);
 
-    res.json({ accessToken });
+    res.json({ data: accessToken, message: '성공' });
 }

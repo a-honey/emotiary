@@ -41,9 +41,7 @@ userAuthRouter.post('/refresh-token', refresh);
 
 
 
-
-
-userAuthRouter.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+// userAuthRouter.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 // userAuthRouter.get(
 //     '/google/callback',
