@@ -21,6 +21,7 @@ const prisma = new PrismaClient();
 export const userRegister = async (req : Request, res : Response, next : NextFunction) => {
     try{
         // swagger 데이터전용
+        // #swagger.tags = ['Users']
         const {username, email, password} = req.body;
 
         const user = await createUser(req.body);
@@ -33,6 +34,7 @@ export const userRegister = async (req : Request, res : Response, next : NextFun
 export const userLogin = async (req : IRequest, res : Response, next : NextFunction) => {
     try{
         // swagger 데이터전용
+        // #swagger.tags = ['Users']
         const { email, password } = req.body;
 
         const user = {
@@ -56,6 +58,11 @@ export const getMyInfo = async(
     next : NextFunction
 ) => {
     try{
+        /* #swagger.tags = ['Users']
+         #swagger.security = [{
+               "bearerAuth": []
+        }] */
+
         const userId = req.user.id;
         const currentUserInfo = await myInfo(userId);
         
@@ -71,6 +78,8 @@ export const getAllUser = async(
     next : NextFunction
 ) => {
     try{
+        // #swagger.tags = ['Users']
+
         const allUsers = await prisma.user.findMany();
         res.status(200).json({ data: allUsers, message: '성공' });
     }catch(error){
@@ -84,6 +93,11 @@ export const getUserId = async(
     next : NextFunction
 ) => {
     try{
+        /* #swagger.tags = ['Users']
+         #swagger.security = [{
+               "bearerAuth": []
+        }] */
+
         const userId = req.params.userId;
         const userInfo = await getUserInfo(userId);
 
@@ -102,6 +116,10 @@ export const updateUser = async(
         const userId = req.params.userId;
 
         // swagger 데이터전용
+        /* #swagger.tags = ['Users']
+         #swagger.security = [{
+               "bearerAuth": []
+        }] */
         const { email, username, description, profileImage } = req.body;
 
         const updatedUser = await updateUserService(userId,{
@@ -120,6 +138,11 @@ export const deleteUser = async(
     next : NextFunction
 ) => {
     try{
+        /* #swagger.tags = ['Users']
+         #swagger.security = [{
+               "bearerAuth": []
+        }] */
+
         const userId = req.params.userId;
 
         const message = await deleteUserService(userId);
@@ -132,6 +155,8 @@ export const deleteUser = async(
 
 export const forgotPassword = async (req : IRequest, res : Response, next : NextFunction ) => {
     try{
+        // #swagger.tags = ['Users']
+
         const { email } = req.body;
 
         const user = await prisma.user.findUnique({where : { email }});
@@ -150,6 +175,11 @@ export const forgotPassword = async (req : IRequest, res : Response, next : Next
 
 export const resetPassword = async(req : IRequest, res : Response, next : NextFunction ) => {
     try{
+        /* #swagger.tags = ['Users']
+         #swagger.security = [{
+               "bearerAuth": []
+        }] */
+
         const { email, password } = req.body;
 
         const user = await prisma.user.findUnique({where : { email }});
@@ -167,6 +197,8 @@ export const resetPassword = async(req : IRequest, res : Response, next : NextFu
 }
 
 export const refresh = async (req : IRequest, res : Response, next : NextFunction) => {
+    // #swagger.tags = ['Users']
+
     const refreshToken = req.body.token;
 
     if (!refreshToken) {
