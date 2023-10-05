@@ -1,45 +1,37 @@
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+    provider = "mysql"
+    url      = env("DATABASE_URL")
 }
 
 model User {
-<<<<<<< HEAD
-  id           Int     @id @default(autoincrement())
-  username     String  @unique
-  email        String  @unique
-  password     String
-  description  String?
-  profileImage String?
-  Diary        Diary[]
-=======
-  id String @id @default(uuid())
-  username    String   @unique
-  email       String   @unique
-  password    String
-  description String?
-  profileImage String?
-  updatedAt DateTime @default(now()) // 기본값 추가
-  createdAt DateTime @default(now())
+    id String @id @default(uuid())
+    username    String   @unique
+    email       String   @unique
+    password    String
+    description String?
+    profileImage String?
+    updatedAt DateTime @default(now()) // 기본값 추가
+    createdAt DateTime @default(now())
+    friendA  Friend[]      @relation("UserFriendA")
+    friendB  Friend[]      @relation("UserFriendB")
 
-  // 사용자와 Refresh Token 간의 일대다 관계 설정
-  refreshTokens RefreshToken[]
+    // 사용자와 Refresh Token 간의 일대다 관계 설정
+    refreshTokens RefreshToken[]
 }
 
 model RefreshToken {
-  id        Int      @id @default(autoincrement())
-  token     String   @unique
-  userId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  // 사용자와의 관계 정의
-  user      User     @relation(fields: [userId], references: [id])
->>>>>>> b057ee19f7055a193bb42cc58ab632549ee8d1ef
+    id        Int      @id @default(autoincrement())
+    token     String   @unique
+    userId    String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // 사용자와의 관계 정의
+    user      User     @relation(fields: [userId], references: [id])
 }
 
 model Diary {
@@ -53,4 +45,15 @@ model Diary {
   emoji       String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Friend {
+    id         String     @id @default(uuid())
+    userA      User    @relation("UserFriendA", fields: [userAId], references: [id])
+    userAId    String
+    userB      User    @relation("UserFriendB", fields: [userBId], references: [id])
+    userBId    String
+    status     Boolean @default(false)
+
+    @@unique([userAId, userBId])
 }
