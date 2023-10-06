@@ -2,3 +2,7 @@
 node_modules
 package-lock.js
 migrations
+dist
+.gitignore
+.idea
+logs
