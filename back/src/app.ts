@@ -4,6 +4,7 @@ import swaggerUi from "swagger-ui-express";
 import swaggerFile from "./swagger/swagger-output.json";
 import bodyParser from 'body-parser';
 import userAuthRouter from "./routes/userRouter";
+import favoriteRouter from "./routes/favoriteRouter";
 import passport from 'passport';
 import { jwtStrategy, localStrategy } from "./passport-config/passport";
 // import axios, { AxiosResponse } from "axios";
@@ -89,6 +90,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/users", userAuthRouter);
+app.use("/favorites", favoriteRouter);
 
 // // 정적 파일 제공을 위한 미들웨어 설정
 // app.use(express.static("public"));
