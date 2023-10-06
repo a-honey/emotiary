@@ -69,7 +69,7 @@ export const getDiaryByUserIdService = async (
     where: { authorId: userId },
   });
   const totalItem = await prisma.diary.count({
-    where: { id: userId },
+    where: { authorId: userId },
   });
   const totalPage = Math.ceil(totalItem / page);
 
