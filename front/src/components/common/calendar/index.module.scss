@@ -36,6 +36,7 @@
   }
   .dayBlock {
     width: 100%;
+    height: 100%;
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     grid-template-rows: repeat(6, 1fr);
@@ -67,4 +68,6 @@
   border-radius: 5px;
   padding: 20px;
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
