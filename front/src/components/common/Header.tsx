@@ -10,7 +10,11 @@ const Header = () => {
 
   return (
     <header className={styles.header}>
-      <div className={styles.logoContainer}>EMOTIARY</div>
+      <div className={styles.logoContainer}>
+        <Link className={styles.logoContainer} to="/intro">
+          EMOTIARY
+        </Link>
+      </div>
       <nav className={styles.navContainer}>
         <Link to="/">MY CALENDAR</Link>
         <Link to="/network">LATEST DIARY</Link>
