@@ -5,14 +5,11 @@ import swaggerFile from "./swagger/swagger-output.json";
 import bodyParser from "body-parser";
 import userAuthRouter from "./routes/userRouter";
 import testAuthRouter from "./routes/testRouter";
-import passport from 'passport';
-import { jwtStrategy, localStrategy, googleStrategy } from "./passport-config/passport";
 import friendRouter from "./routes/friendRouter";
 import diaryRouter from "./routes/diaryRouter";
+import passport from 'passport';
+import { jwtStrategy, localStrategy, googleStrategy } from "./passport-config/passport";
 
-
-
-import { jwtStrategy, localStrategy } from "./passport-config/passport";
 // import axios, { AxiosResponse } from "axios";
 
 const app: Express = express();
