@@ -6,7 +6,7 @@ import bodyParser from "body-parser";
 import userAuthRouter from "./routes/userRouter";
 import passport from "passport";
 import diaryRouter from "./routes/diaryRouter";
-
+import favoriteRouter from "./routes/favoriteRouter";
 import friendRouter from "./routes/friendRouter";
 import { jwtStrategy, localStrategy } from "./passport-config/passport";
 // import {
@@ -104,6 +104,7 @@ app.use("/users", userAuthRouter);
 app.use("/test", testAuthRouter);
 app.use("/friend", friendRouter);
 app.use("/diary", diaryRouter);
+app.use("/favorites", favoriteRouter);
 
 // // 정적 파일 제공을 위한 미들웨어 설정
 // app.use(express.static("public"));

@@ -22,6 +22,8 @@ model User {
 
   // 사용자와 Refresh Token 간의 일대다 관계 설정
   refreshTokens RefreshToken[]
+
+  favorites   Favorite[]
 }
 
 model RefreshToken {
@@ -57,4 +59,14 @@ model Diary {
   emoji       String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  favorites   Favorite[]
+}
+
+model Favorite {
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  diary      Diary      @relation(fields: [diaryId], references: [id], onDelete: Cascade)
+  diaryId    String     @map("diary_id") 
+  userId     String     @map("user_id")
+  @@id([diaryId, userId])
 }
