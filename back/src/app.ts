@@ -4,9 +4,12 @@ import swaggerUi from "swagger-ui-express";
 import swaggerFile from "./swagger/swagger-output.json";
 import bodyParser from "body-parser";
 import userAuthRouter from "./routes/userRouter";
+import testAuthRouter from "./routes/testRouter";
+import passport from 'passport';
+import { jwtStrategy, localStrategy, googleStrategy } from "./passport-config/passport";
 import friendRouter from "./routes/friendRouter";
 import diaryRouter from "./routes/diaryRouter";
-import passport from "passport";
+
 
 
 import { jwtStrategy, localStrategy } from "./passport-config/passport";
@@ -20,9 +23,12 @@ app.use(passport.initialize());
 
 const localStrategyInstance = localStrategy;
 const jwtStrategyInstance = jwtStrategy;
+const googleStrategyInstance = googleStrategy;
 
-passport.use("local", localStrategyInstance);
-passport.use("jwt", jwtStrategyInstance);
+passport.use('local', localStrategyInstance);
+passport.use('jwt', jwtStrategyInstance);
+passport.use('google', googleStrategy);
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -92,6 +98,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/users", userAuthRouter);
+app.use("/test", testAuthRouter);
 app.use("/friend", friendRouter);
 app.use("/diary", diaryRouter);
 
