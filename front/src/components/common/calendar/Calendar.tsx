@@ -2,16 +2,14 @@ import React, { useState } from 'react';
 import styles from './index.module.scss';
 import Month from './Month';
 import Day from './Day';
-
-const fakeCalendarData = [
-  { diary_id: 1, dateCreated: '23-10-1', emoji: ':smile:' },
-  { diary_id: 1, dateCreated: '23-10-3', emoji: ':angry:' },
-];
+import { CalendarDiaryItemType } from '../../../types/diaryType';
 
 const Calendar = ({
-  handleIsDiaryWriting,
+  handleIsOpenDiaryWriting,
+  data,
 }: {
-  handleIsDiaryWriting?: (arg: boolean) => void;
+  handleIsOpenDiaryWriting?: (arg: boolean) => void;
+  data: CalendarDiaryItemType[];
 }) => {
   const today = new Date();
   // 초반 currentDate에 현재 날짜를 보관
@@ -60,9 +58,9 @@ const Calendar = ({
       />
       {/* props에 따른 날짜 매핑 컴포넌트*/}
       <Day
-        handleIsDiaryWriting={handleIsDiaryWriting}
+        handleIsOpenDiaryWriting={handleIsOpenDiaryWriting}
         currentDate={currentDate}
-        data={fakeCalendarData}
+        data={data}
       />
     </div>
   );

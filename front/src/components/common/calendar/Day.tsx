@@ -7,15 +7,17 @@ import {
   startOfMonth,
   startOfWeek,
 } from 'date-fns';
+import { CalendarDiaryItemType } from '../../../types/diaryType';
 
+// 메인페이지 UI 미확정으로 배치만 해둠 추후 변경 예정
 const Day = ({
   currentDate,
   data,
-  handleIsDiaryWriting,
+  handleIsOpenDiaryWriting,
 }: {
   currentDate: { year: number; month: number };
-  data: object;
-  handleIsDiaryWriting?: (arg: boolean) => void;
+  data: CalendarDiaryItemType[];
+  handleIsOpenDiaryWriting?: (arg: boolean) => void;
 }) => {
   const week = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -63,16 +65,11 @@ const Day = ({
             }
           >
             {day.getDate()}
-            {handleIsDiaryWriting && (
-              <button
-                className={styles.addBtn}
-                onClick={() => {
-                  handleIsDiaryWriting(true);
-                }}
-              >
-                +
-              </button>
-            )}
+            <DayItem
+              day={day.getDate()}
+              data={data}
+              handleIsOpenDiaryWriting={handleIsOpenDiaryWriting}
+            />
           </div>
         ))}
       </div>
@@ -81,3 +78,45 @@ const Day = ({
 };
 
 export default Day;
+
+const DayItem = ({
+  day,
+  data,
+  handleIsOpenDiaryWriting,
+}: {
+  day: number;
+  data: CalendarDiaryItemType[];
+  handleIsOpenDiaryWriting?: (arg: boolean) => void;
+}) => {
+  // day.getDate()와 일치하는 데이터를 찾아서 반환
+  // 날짜 전체로 비교, 오늘보다 큰 값들은 버튼 제거 예정
+  // 매번 데이터를 돌아야 하는가? 생각
+  const filteredData = data.filter(
+    (item) => day === item.dateCreated.getDate(),
+  );
+
+  if (filteredData.length > 0) {
+    const data = filteredData[0];
+    return (
+      <>
+        <div onClick={() => {}}>{data.emoji}</div>
+      </>
+    );
+  } else {
+    // 데이터가 없으면 게시글 작성 버튼
+    return (
+      <>
+        {handleIsOpenDiaryWriting && (
+          <button
+            className={styles.addBtn}
+            onClick={() => {
+              handleIsOpenDiaryWriting(true);
+            }}
+          >
+            +
+          </button>
+        )}
+      </>
+    );
+  }
+};

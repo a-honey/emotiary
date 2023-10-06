@@ -9,9 +9,9 @@ const initialData = {
 };
 
 const DiaryWriting = ({
-  handleIsDiaryWriting,
+  handleIsOpenDiaryWriting,
 }: {
-  handleIsDiaryWriting: (boolean: boolean) => void;
+  handleIsOpenDiaryWriting: (boolean: boolean) => void;
 }) => {
   const [content, setContent] = useState(initialData);
 
@@ -42,7 +42,7 @@ const DiaryWriting = ({
             className="cancelBtn"
             type="button"
             onClick={() => {
-              handleIsDiaryWriting(false);
+              handleIsOpenDiaryWriting(false);
             }}
           >
             작성취소

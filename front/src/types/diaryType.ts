@@ -19,3 +19,11 @@ export interface MyDairyItemType {
   dateCreated: Date;
   emoji: string;
 }
+
+// 캘린더에 들어갈 다이어리를 불러옴
+
+export interface CalendarDiaryItemType {
+  diary_id: number;
+  dateCreated: Date;
+  emoji: string;
+}

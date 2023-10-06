@@ -1,12 +1,12 @@
 import React from 'react';
 import { useState } from 'react';
-import Calendar from '../components/common/calendar/Calendar';
 import DiaryWriting from '../components/main/DiaryWriting';
+import CalendarContainer from '../components/main/CalendarContainer';
 
 const MainPage: React.FC = () => {
   const [isDiaryWriting, setIsDiaryWriting] = useState(false);
 
-  const handleIsDiaryWriting = (boolean: boolean) => {
+  const handleIsOpenDiaryWriting = (boolean: boolean) => {
     setIsDiaryWriting(boolean);
   };
 
@@ -24,9 +24,9 @@ const MainPage: React.FC = () => {
         <div style={{ backgroundColor: 'white' }}>박스1</div>
         <div style={{ backgroundColor: 'white' }}>박스2</div>
       </div>
-      <Calendar handleIsDiaryWriting={handleIsDiaryWriting} />
+      <CalendarContainer handleIsOpenDiaryWriting={handleIsOpenDiaryWriting} />
       {isDiaryWriting && (
-        <DiaryWriting handleIsDiaryWriting={handleIsDiaryWriting} />
+        <DiaryWriting handleIsOpenDiaryWriting={handleIsOpenDiaryWriting} />
       )}
     </main>
   );

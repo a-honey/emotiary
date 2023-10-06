@@ -6,7 +6,6 @@ const UserIdPage: React.FC = () => {
   return (
     <main style={{ gap: '40px' }}>
       <UserCard />
-      <Calendar />
     </main>
   );
 };
