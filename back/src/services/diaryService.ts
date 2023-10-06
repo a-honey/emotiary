@@ -1,5 +1,4 @@
 import { PrismaClient, Prisma } from "@prisma/client";
-import { IDiary } from "types/diary";
 import { v4 } from "uuid";
 
 const prisma = new PrismaClient();
@@ -12,7 +11,7 @@ const prisma = new PrismaClient();
  * @returns diary (새롭게 생성된 diary Object)
  */
 export const createDiaryService = async (
-  authorId: number,
+  authorId: string,
   inputData: Prisma.DiaryCreateInput
 ) => {
   const diary = await prisma.diary.create({
@@ -41,7 +40,7 @@ export const createDiaryService = async (
  * @returns diaries (limit 개수먄큼 반환)
  */
 export const getDiaryByUserIdService = async (
-  userId: number,
+  userId: string,
   page: number,
   limit: number
 ) => {
@@ -54,6 +53,37 @@ export const getDiaryByUserIdService = async (
   return diaries;
 };
 
+export const getDiaryByMonthService = async (userId: string, month: number) => {
+  const diary = await prisma.diary.findMany({
+    where: {
+      authorId: userId,
+      createdDate: {
+        gte: new Date(`2023-${month}`),
+        lt: new Date(`2023-${month + 1}`),
+      },
+    },
+  });
+
+  return diary;
+};
+
+// export const getDiaryByDateService = async (
+//   userId: string,
+//   month: number,
+//   day: number
+// ) => {
+//   const diary = await prisma.diary.findMany({
+//     where: {
+//       authorId: userId,
+//       createdDate: {
+//         gte: new Date(`2023-${month}-${day}`),
+//         lt: new Date(`2023-${month}-${day + 1}`),
+//       },
+//     },
+//   });
+
+//   return diary;
+// };
 /**
  * 다이어리 하나 가져오기
  * @param diaryId
@@ -67,11 +97,19 @@ export const getDiaryByDiaryIdService = async (diaryId: string) => {
   return diary;
 };
 
-// 내 친구들의 다이어리 가져오기
+/**
+ * @description 내 친구들의 다이어리 가져오기
+ * @param userId (로그인 한 유저의 userId)
+ * @param page
+ * @param limit
+ * @param select
+ * @returns
+ */
 export const getFriendsDiaryServcie = async (
   userId: string,
   page: number,
-  limit: number
+  limit: number,
+  select: string
 ) => {
   // step1. 친구 목록 읽어오기
   // step2. 친구들을 모두 검색하기
@@ -80,8 +118,15 @@ export const getFriendsDiaryServcie = async (
 };
 
 // 모든 유저의 다이어리 가져오기
-export const getAllDiaryService = async (page: number, limit: number) => {
+export const getAllDiaryService = async (
+  page: number,
+  limit: number,
+  select: string
+) => {
   const allDiary = await prisma.diary.findMany({
+    where: {
+      is_public: select,
+    },
     skip: (page - 1) * limit,
     take: limit,
   });

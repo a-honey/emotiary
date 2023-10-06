@@ -9,7 +9,7 @@ import {
     deleteFriend
 } from '../services/friendService';
 import { IRequest } from "types/user";
-import { PrismaClient } from '@prisma/client';
+
 
 
 /** @description 친구 요청 */
@@ -36,7 +36,6 @@ export const friendRequest = async (req : IRequest, res : Response, next : NextF
         }
         const request = await createFriends(userId, requestId);
         res.status(200).json({ message: '친구 요청 완료', request });
-        console.log(request)
     } catch (error) {
         console.error(error);
         error.status = 500;
@@ -88,8 +87,8 @@ export const friendReject = async (req : IRequest, res : Response, next : NextFu
 /** @description 친구 목록 */
 export const getFriends = async (req : IRequest, res : Response, next : NextFunction) => {
     try {
-        const page: number | null = req.query.page !== undefined ? Number(req.query.page) : null;
-        const limit: number | null = req.query.limit !== undefined ? Number(req.query.limit) : null;
+        const page = req.query.page !== undefined ? Number(req.query.page) : null;
+        const limit = req.query.limit !== undefined ? Number(req.query.limit) : null;
         const userId = req.user.id;
         const friendsList = await getMyFriends(userId, page, limit);
         res.status(200).json({ message: '친구 목록', friendsList });

@@ -18,6 +18,7 @@ export const weAreFriends = async (userId: string, requestId: string) => {
     }
 };
 
+/** @description 친구 요청 */
 export const createFriends = async (userAId: string, userBId: string) => {
     try {
         return await prisma.friend.create({
@@ -31,28 +32,6 @@ export const createFriends = async (userAId: string, userBId: string) => {
     }
 };
 
-// /** @description 친구 요청 */
-// export const requestFriend = async (userId: string, requestId: string) => {
-//     try {
-//         await prisma.friend.createMany({
-//             data: [
-//                 {
-//                     userAId: userId,
-//                     userBId: requestId,
-//                     // status: false,
-//                 },
-//                 {
-//                     userAId: requestId,
-//                     userBId: userId,
-//                     // status: false,
-//                 },
-//             ],
-//         });
-//         return requestFriend;
-//     } catch (error) {
-//         throw error;
-//     }
-//     };
 
     /** @description 친구 요청 목록 */
     export const friendRequestList = async (userId: string) => {
@@ -113,65 +92,15 @@ export const rejectFriend = async (userId: string, requestId: string) => {
 };
 
 
-/** @description 친구 목록 */
-// export const getMyFriends = async (userId: string, page: number, limit: number ) => {
-//     try {
-//         const paginationOptions =
-//             page !== null && limit !== null
-//                 ? { skip: (page - 1) * limit, take: limit }
-//                 : {};
-//         const allFrinedCount = await prisma.friend.count();
-//         const totalPages = Math.ceil(allFrinedCount / limit);
-//         const friends  = await prisma.friend.findMany({
-//             where: {
-//                 OR: [
-//                     { userAId: userId, status: true, },
-//                     { userBId: userId, status: true, },
-//                 ],
-//                 // userAId: userAId,
-//                 // status: true,
-//             },
-//             select: {
-//                 OR:[
-//                     {
-//                         userA: {
-//                             select: {
-//                                 id: true,
-//                                 username: true,
-//                                 profileImage: true,
-//                         },
-//                     },
-//                     },
-//                     userB: {
-//                         select: {
-//                             id: true,
-//                             username: true,
-//                             profileImage: true,
-//                         },
-//                         },
-//                         ],
-//                 // orderBy: { id: 'asc' },
-//                 ...paginationOptions,
-//             },
-//
-//         });
-//         return {
-//             user: friends,
-//             currentPage: page,
-//             totalPages: totalPages,
-//         };
-//     } catch (error) {
-//         throw error;
-//     }
-// };
+
 
 /** @description 친구 목록 */
 export const getMyFriends = async (userId: string, page: number, limit: number) => {
     try {
-        const paginationOptions =
-            page !== null && limit !== null
-                ? { skip: (page - 1) * limit, take: limit }
-                : {};
+        // const paginationOptions =
+        //     page !== null && limit !== null
+        //         ? { skip: (page - 1) * limit, take: limit }
+        //         : {};
         const myFriendsA = await prisma.friend.findMany({
             where: {
                 userAId: userId,
@@ -201,14 +130,18 @@ export const getMyFriends = async (userId: string, page: number, limit: number) 
                 id: {
                     in: uniqueFriendIds,
                 },
+
             },
             select: {
                 id: true,
                 username: true,
+                // ...paginationOptions,
             },
             // orderBy: { id: 'asc' },
-            // ...paginationOptions,
+            //  ...paginationOptions,
+
         });
+
         const allUserCount = await prisma.user.count({
             where: { id: { in: uniqueFriendIds } },
         });
@@ -222,6 +155,7 @@ export const getMyFriends = async (userId: string, page: number, limit: number) 
         throw error;
     }
 };
+
 
 /** @description 친구 삭제 */
 export const deleteFriend = async (userId: string, friendId: string) => {

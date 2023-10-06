@@ -6,7 +6,7 @@ import { IUser } from '../types/user';
 
 const prisma = new PrismaClient();
 
-export const createUser = async (inputData : { 
+export const createUser = async (inputData : {
     username : string,
     password: string,
     email : string,
@@ -53,7 +53,7 @@ export const getUserInfo = async(userId : string) => {
 };
 
 export const updateUserService = async (
-    userId : string, 
+    userId : string,
     {toUpdate} : {toUpdate : Partial<IUser>}
     ) => {
     try{
@@ -111,7 +111,7 @@ export const forgotUserPassword = async (email : string) => {
     }
 }
 
-export const resetUserPassword = async ( 
+export const resetUserPassword = async (
     email : string,
     password : string
     ) => {

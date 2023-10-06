@@ -5,8 +5,9 @@ import swaggerFile from "./swagger/swagger-output.json";
 import bodyParser from "body-parser";
 import userAuthRouter from "./routes/userRouter";
 import friendRouter from "./routes/friendRouter";
-import passport from "passport";
 import diaryRouter from "./routes/diaryRouter";
+import passport from "passport";
+
 
 import { jwtStrategy, localStrategy } from "./passport-config/passport";
 // import axios, { AxiosResponse } from "axios";
@@ -91,9 +92,9 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/users", userAuthRouter);
+app.use("/friend", friendRouter);
 app.use("/diary", diaryRouter);
 
-app.use("/friend", friendRouter);
 
 // // 정적 파일 제공을 위한 미들웨어 설정
 // app.use(express.static("public"));
