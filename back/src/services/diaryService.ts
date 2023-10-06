@@ -102,6 +102,23 @@ export const getDiaryByMonthService = async (userId: string, month: number) => {
   return diary;
 };
 
+// export const getDiaryByDateService = async (
+//   userId: string,
+//   month: number,
+//   day: number
+// ) => {
+//   const diary = await prisma.diary.findMany({
+//     where: {
+//       authorId: userId,
+//       createdDate: {
+//         gte: new Date(`2023-${month}-${day}`),
+//         lt: new Date(`2023-${month}-${day + 1}`),
+//       },
+//     },
+//   });
+
+//   return diary;
+// };
 /**
  * 다이어리 하나 가져오기
  * @param diaryId

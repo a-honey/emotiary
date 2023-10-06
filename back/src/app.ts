@@ -9,7 +9,14 @@ import diaryRouter from "./routes/diaryRouter";
 
 import friendRouter from "./routes/friendRouter";
 import { jwtStrategy, localStrategy } from "./passport-config/passport";
+// import {
+//   jwtStrategy,
+//   localStrategy,
+//   googleStrategy,
+// } from "./passport-config/passport";
 import { Logger } from "./config/logger";
+import testAuthRouter from "./routes/testRouter";
+
 // import axios, { AxiosResponse } from "axios";
 
 const app: Express = express();
@@ -21,9 +28,11 @@ app.use(passport.initialize());
 
 const localStrategyInstance = localStrategy;
 const jwtStrategyInstance = jwtStrategy;
+// const googleStrategyInstance = googleStrategy;
 
 passport.use("local", localStrategyInstance);
 passport.use("jwt", jwtStrategyInstance);
+// passport.use("google", googleStrategy);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -92,8 +101,9 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/users", userAuthRouter);
-app.use("/diary", diaryRouter);
+app.use("/test", testAuthRouter);
 app.use("/friend", friendRouter);
+app.use("/diary", diaryRouter);
 
 // // 정적 파일 제공을 위한 미들웨어 설정
 // app.use(express.static("public"));

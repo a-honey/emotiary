@@ -9,9 +9,9 @@ import {
   deleteFriend,
 } from "../services/friendService";
 import { IRequest } from "types/user";
-import { PrismaClient } from "@prisma/client";
 
 /** @description 친구 요청 */
+/** @Tag(name = "book service", description = "the book API with description tag annotation") */
 export const friendRequest = async (
   req: IRequest,
   res: Response,
@@ -36,7 +36,6 @@ export const friendRequest = async (
     }
     const request = await createFriends(userId, requestId);
     res.status(200).json({ message: "친구 요청 완료", request });
-    console.log(request);
   } catch (error) {
     console.error(error);
     error.status = 500;
@@ -54,6 +53,7 @@ export const requestList = async (
     const userId = req.user.id;
     const friendRequest = await friendRequestList(userId);
     res.status(200).json({ message: "친구 요청 리스트", friendRequest });
+    console.log(friendRequest);
   } catch (error) {
     console.error(error);
     error.status = 500;
@@ -108,6 +108,7 @@ export const getFriends = async (
       req.query.page !== undefined ? Number(req.query.page) : null;
     const limit: number | null =
       req.query.limit !== undefined ? Number(req.query.limit) : null;
+
     const userId = req.user.id;
     const friendsList = await getMyFriends(userId, page, limit);
     res.status(200).json({ message: "친구 목록", friendsList });
