@@ -163,6 +163,17 @@ export const rejectFriend = async (userId: string, requestId: string) => {
 //     }
 // };
 
+export const getMyWholeFriends = async (userId: string) => {
+  const friendList = await prisma.friend.findMany({
+    where: {
+      userAId: userId,
+      status: true,
+    },
+  });
+
+  return friendList;
+};
+
 /** @description 친구 목록 */
 export const getMyFriends = async (
   userId: string,

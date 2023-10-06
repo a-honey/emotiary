@@ -1,5 +1,6 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 import { v4 } from "uuid";
+import { getMyWholeFriends } from "./friendService";
 
 const prisma = new PrismaClient();
 
@@ -32,7 +33,7 @@ export const createDiaryService = async (
   return diary;
 };
 
-// TODO counting 중복 함수로 빼기
+// TODO counting 중복 함수로 뺄 수 있으면 빼기
 // const countItemPage = async (
 //   tableName: keyof PrismaClient,
 //   field: string,
@@ -129,10 +130,12 @@ export const getFriendsDiaryServcie = async (
   select: string
 ) => {
   // step1. 친구 목록 읽어오기
-  const friendsList = [
-    "067a401f-64be-4e7c-beb0-3a87f98a58ea",
-    "1620717b-a3ae-4a20-8d97-81279556a986",
-  ];
+
+  const friends = await getMyWholeFriends(userId);
+  const friendIdList = friends.map((friend) => {
+    return friend.userBId;
+  });
+  console.log(friendIdList);
 
   // step2. 친구들의 다이어리 가져오기
   const friendsDiary = await prisma.diary.findMany({
@@ -142,12 +145,23 @@ export const getFriendsDiaryServcie = async (
       NOT: {
         is_public: { contains: "private" },
       },
-      authorId: { in: friendsList },
+      authorId: { in: friendIdList },
     },
     orderBy: { createdDate: "desc" },
   });
 
-  console.log(friendsDiary);
+  const totalItem = await prisma.diary.count({
+    where: {
+      NOT: {
+        is_public: { contains: "private" },
+      },
+      authorId: { in: friendIdList },
+    },
+  });
+
+  const totalPage = Math.ceil(totalItem / limit);
+
+  return { data: friendsDiary, totalPage, totalItem, currentPage: page, limit };
 };
 
 // 모든 유저의 다이어리 가져오기
