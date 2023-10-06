@@ -15,11 +15,12 @@ import {
 } from '../controllers/userController';
 import { localAuthentication } from '../middlewares/authenticateLocal';
 import { jwtAuthentication } from '../middlewares/authenticateJwt';
+import { RegisterValidator, updateValidator } from '../utils/validators/userValidator';
 import passport from 'passport';
 const userAuthRouter = Router();
 
 // 회원가입
-userAuthRouter.post('/register', userRegister);
+userAuthRouter.post('/register', RegisterValidator, userRegister);
 
 userAuthRouter.post('/login', localAuthentication, userLogin);
 
@@ -31,7 +32,7 @@ userAuthRouter.get('/logout', jwtAuthentication, userLogout);
 
 userAuthRouter.route('/:userId')
     .get(getUserId)
-    .put(jwtAuthentication, updateUser)
+    .put(jwtAuthentication, updateValidator, updateUser)
     .delete(jwtAuthentication, deleteUser);
 
 // 비밀번호 재설정 이메일 보내기
