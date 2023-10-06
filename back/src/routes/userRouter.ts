@@ -10,6 +10,8 @@ import {
     forgotPassword,
     resetPassword,
     refresh,
+    loginCallback,
+    userLogout,
 } from '../controllers/userController';
 import { localAuthentication } from '../middlewares/authenticateLocal';
 import { jwtAuthentication } from '../middlewares/authenticateJwt';
@@ -25,6 +27,8 @@ userAuthRouter.get('/current', jwtAuthentication, getMyInfo);
 
 userAuthRouter.get('/allUser',getAllUser);
 
+userAuthRouter.get('/logout', jwtAuthentication, userLogout);
+
 userAuthRouter.route('/:userId')
     .get(getUserId)
     .put(jwtAuthentication, updateUser)
@@ -39,16 +43,17 @@ userAuthRouter.post('/reset-password', jwtAuthentication, resetPassword);
 // refresh token사용
 userAuthRouter.post('/refresh-token', refresh);
 
+userAuthRouter.get('/google',
+    passport.authenticate('google',{scope: [
+        'https://www.googleapis.com/auth/userinfo.email', 
+        'https://www.googleapis.com/auth/userinfo.profile'
+    ]})
+);
 
-
-// userAuthRouter.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-
-// userAuthRouter.get(
-//     '/google/callback',
-//     passport.authenticate('google', { failureRedirect : '/'}),
-//     (req : Request, res : Response)=>{
-//         res.redirect('/');
-//     },
-// );
+userAuthRouter.get(
+    '/google/callback',
+    passport.authenticate('google', { failureRedirect: '/' }),
+    loginCallback
+);
 
 export default userAuthRouter;

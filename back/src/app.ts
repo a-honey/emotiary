@@ -4,8 +4,9 @@ import swaggerUi from "swagger-ui-express";
 import swaggerFile from "./swagger/swagger-output.json";
 import bodyParser from 'body-parser';
 import userAuthRouter from "./routes/userRouter";
+import testAuthRouter from "./routes/testRouter";
 import passport from 'passport';
-import { jwtStrategy, localStrategy } from "./passport-config/passport";
+import { jwtStrategy, localStrategy, googleStrategy } from "./passport-config/passport";
 // import axios, { AxiosResponse } from "axios";
 
 const app: Express = express();
@@ -16,9 +17,11 @@ app.use(passport.initialize());
 
 const localStrategyInstance = localStrategy;
 const jwtStrategyInstance = jwtStrategy;
+const googleStrategyInstance = googleStrategy;
 
 passport.use('local', localStrategyInstance);
 passport.use('jwt', jwtStrategyInstance);
+passport.use('google', googleStrategy);
 
 
 app.use(express.json());
@@ -89,6 +92,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/users", userAuthRouter);
+app.use("/test", testAuthRouter);
 
 // // 정적 파일 제공을 위한 미들웨어 설정
 // app.use(express.static("public"));
