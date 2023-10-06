@@ -1,0 +1,75 @@
+@import './variables.scss';
+
+form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  border-radius: 5px;
+}
+
+label {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+input {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: border-color 0.3s ease-in-out;
+}
+
+textarea {
+  width: 100%;
+  display: block;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+::placeholder {
+  color: #999;
+}
+
+input:hover {
+  border-color: #66afe9;
+}
+
+input.wrong {
+  border: 2px solid #af0000;
+  box-shadow: 0 0 5px rgba(248, 0, 0, 0.5);
+  outline: none;
+}
+
+.modal {
+  background-color: rgba(89, 89, 89, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+}
+
+.doneBtn {
+  padding: 10px;
+  font-weight: 700;
+  border-radius: 5px;
+  background-color: #a4926a;
+  color: white;
+}
+
+.cancelBtn {
+  padding: 10px;
+  font-weight: 700;
+  border-radius: 5px;
+  background-color: #ededed;
+}

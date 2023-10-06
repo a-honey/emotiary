@@ -1,0 +1,23 @@
+.centerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.submitButton {
+  background-color: blue;
+  color: white;
+  padding: 10px 20px;
+  cursor: pointer;
+}
