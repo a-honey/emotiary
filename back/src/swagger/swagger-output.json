@@ -23,9 +23,7 @@
     },
     "/users/register": {
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "description": "",
         "responses": {
           "200": {
@@ -56,9 +54,7 @@
     },
     "/users/login": {
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "description": "",
         "responses": {
           "200": {
@@ -86,9 +82,7 @@
     },
     "/users/current": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "description": "",
         "responses": {
           "200": {
@@ -104,9 +98,7 @@
     },
     "/users/allUser": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "description": "",
         "responses": {
           "200": {
@@ -117,9 +109,7 @@
     },
     "/users/logout": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "description": "",
         "responses": {
           "200": {
@@ -135,9 +125,7 @@
     },
     "/users/{userId}": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "description": "",
         "parameters": [
           {
@@ -161,9 +149,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "description": "",
         "parameters": [
           {
@@ -210,9 +196,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "description": "",
         "parameters": [
           {
@@ -238,9 +222,7 @@
     },
     "/users/forgot-password": {
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "description": "",
         "responses": {
           "200": {
@@ -268,9 +250,7 @@
     },
     "/users/reset-password": {
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "description": "",
         "responses": {
           "200": {
@@ -306,9 +286,7 @@
     },
     "/users/refresh-token": {
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "description": "",
         "responses": {
           "200": {
@@ -359,9 +337,7 @@
     },
     "/test/google": {
       "get": {
-        "tags": [
-          "test"
-        ],
+        "tags": ["test"],
         "description": "",
         "responses": {
           "default": {
@@ -377,9 +353,7 @@
     },
     "/test/google/fake": {
       "get": {
-        "tags": [
-          "test"
-        ],
+        "tags": ["test"],
         "description": "",
         "responses": {
           "200": {

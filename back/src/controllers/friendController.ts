@@ -1,13 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 import {
-    weAreFriends,
-    createFriends,
-    friendRequestList,
-    acceptFriend,
-    rejectFriend,
-    getMyFriends,
-    deleteFriend
-} from '../services/friendService';
+  weAreFriends,
+  createFriends,
+  friendRequestList,
+  acceptFriend,
+  rejectFriend,
+  getMyFriends,
+  deleteFriend,
+} from "../services/friendService";
 import { IRequest } from "types/user";
 
 
@@ -42,6 +42,21 @@ export const friendRequest = async (req : IRequest, res : Response, next : NextF
         error.status = 500;
         next(error);
     }
+    const alreadyFriends = await weAreFriends(userId, requestId);
+    if (alreadyFriends) {
+      return res.status(400).json({ message: "이미 요청 했거나 우린 친구!" });
+    }
+    const existingFriendRequest = await weAreFriends(requestId, userId);
+    if (existingFriendRequest) {
+      return res.status(400).json({ message: "이미 요청 했거나 우린 친구!" });
+    }
+    const request = await createFriends(userId, requestId);
+    res.status(200).json({ message: "친구 요청 완료", request });
+  } catch (error) {
+    console.error(error);
+    error.status = 500;
+    next(error);
+  }
 };
 
 /** @description 친구 요청 목록 */
@@ -59,31 +74,39 @@ export const requestList = async (req : IRequest, res : Response, next : NextFun
 };
 
 /** @description 친구 수락 */
-export const friendAccept = async (req : IRequest, res : Response, next : NextFunction) => {
-    try {
-        const userId = req.user.id;
-        const requestId = req.params.userId;
-        const accept = await acceptFriend(userId, requestId);
-        res.status(200).json({ message: '친구 수락', accept });
-    } catch (error) {
-        console.error(error);
-        error.status = 500;
-        next(error);
-    }
+export const friendAccept = async (
+  req: IRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.user.id;
+    const requestId = req.params.userId;
+    const accept = await acceptFriend(userId, requestId);
+    res.status(200).json({ message: "친구 수락", accept });
+  } catch (error) {
+    console.error(error);
+    error.status = 500;
+    next(error);
+  }
 };
 
 /** @description 친구 거절 */
-export const friendReject = async (req : IRequest, res : Response, next : NextFunction) => {
-    try {
-        const userId = req.user.id;
-        const requestId = req.params.userId;
-        const reject = await rejectFriend(userId, requestId);
-        res.status(200).json({ message: '친구 거절', reject });
-    } catch (error) {
-        console.error(error);
-        error.status = 500;
-        next(error);
-    }
+export const friendReject = async (
+  req: IRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.user.id;
+    const requestId = req.params.userId;
+    const reject = await rejectFriend(userId, requestId);
+    res.status(200).json({ message: "친구 거절", reject });
+  } catch (error) {
+    console.error(error);
+    error.status = 500;
+    next(error);
+  }
 };
 
 /** @description 친구 목록 */
@@ -103,17 +126,19 @@ export const getFriends = async (req : IRequest, res : Response, next : NextFunc
 };
 
 /** @description 친구 삭제 */
-export const friendDelete = async (req : IRequest, res : Response, next : NextFunction) => {
-    try {
-        const userId = req.user.id;
-        const friendId = req.params.userId;
-        const dropFriend = await deleteFriend(userId, friendId);
-        res.status(200).json({ message: '친구 삭제', dropFriend });
-    } catch (error) {
-        console.error(error);
-        error.status = 500;
-        next(error);
-    }
+export const friendDelete = async (
+  req: IRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.user.id;
+    const friendId = req.params.userId;
+    const dropFriend = await deleteFriend(userId, friendId);
+    res.status(200).json({ message: "친구 삭제", dropFriend });
+  } catch (error) {
+    console.error(error);
+    error.status = 500;
+    next(error);
+  }
 };
-
-
