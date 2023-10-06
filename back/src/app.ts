@@ -8,12 +8,12 @@ import passport from "passport";
 import diaryRouter from "./routes/diaryRouter";
 import favoriteRouter from "./routes/favoriteRouter";
 import friendRouter from "./routes/friendRouter";
-import { jwtStrategy, localStrategy } from "./passport-config/passport";
-// import {
-//   jwtStrategy,
-//   localStrategy,
-//   googleStrategy,
-// } from "./passport-config/passport";
+// import { jwtStrategy, localStrategy } from "./passport-config/passport";
+import {
+  jwtStrategy,
+  localStrategy,
+  googleStrategy,
+} from "./passport-config/passport";
 import { Logger } from "./config/logger";
 import testAuthRouter from "./routes/testRouter";
 
@@ -28,11 +28,11 @@ app.use(passport.initialize());
 
 const localStrategyInstance = localStrategy;
 const jwtStrategyInstance = jwtStrategy;
-// const googleStrategyInstance = googleStrategy;
+const googleStrategyInstance = googleStrategy;
 
 passport.use("local", localStrategyInstance);
 passport.use("jwt", jwtStrategyInstance);
-// passport.use("google", googleStrategy);
+passport.use("google", googleStrategy);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
