@@ -40,10 +40,7 @@ userAuthRouter.post("/reset-password", jwtAuthentication, resetPassword);
 // refresh token사용
 userAuthRouter.post("/refresh-token", refresh);
 
-userAuthRouter.get(
-  "/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
+// userAuthRouter.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 // userAuthRouter.get(
 //     '/google/callback',

@@ -4,6 +4,7 @@ import {
   deleteDiaryService,
   getAllDiaryService,
   getDiaryByDiaryIdService,
+  getDiaryByMonthService,
   getDiaryByUserIdService,
   getFriendsDiaryServcie,
   updateDiaryService,
@@ -24,8 +25,8 @@ export const createDiary = async (
   try {
     const inputData = req.body;
     const { userId } = req.params;
-    const authorId = Number(userId);
-    const createdDiary = await createDiaryService(authorId, inputData);
+
+    const createdDiary = await createDiaryService(userId, inputData);
 
     return res.status(200).json(createdDiary);
   } catch (error) {
@@ -45,7 +46,7 @@ export const getDiaryByUserId = async (
   res: Response,
   next: NextFunction
 ) => {
-  const userId = Number(req.params.userId);
+  const { userId } = req.params;
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 10;
 
@@ -55,6 +56,22 @@ export const getDiaryByUserId = async (
   return res.status(200).json(diary);
 };
 
+export const getDiaryByDate = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { userId } = req.params;
+    const month = Number(req.query.month);
+
+    const diary = await getDiaryByMonthService(userId, month);
+
+    return res.status(200).json(diary);
+  } catch (error) {
+    next(error);
+  }
+};
 /**
  * 다이어리 하나 가져오기 (diaryId)
  * @param req
@@ -79,7 +96,7 @@ export const getDiaryByDiaryId = async (
   }
 };
 
-export const getAllDiary = async (
+export const getUsersDiary = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -92,8 +109,8 @@ export const getAllDiary = async (
 
     const allDiary =
       select == "friend"
-        ? await getFriendsDiaryServcie(userId, page, limit)
-        : await getAllDiaryService(page, limit);
+        ? await getFriendsDiaryServcie(userId, page, limit, select)
+        : await getAllDiaryService(page, limit, select as string);
 
     if (allDiary == null) return res.status(300).json([]);
 
@@ -112,7 +129,6 @@ export const updateDiary = async (
     const { diaryId } = req.params;
     const inputData = req.body;
     const updatedDiary = await updateDiaryService(diaryId, inputData);
-    console.log(updatedDiary);
     return res.status(200).send(updatedDiary);
   } catch (error) {
     next(error);
