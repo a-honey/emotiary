@@ -13,6 +13,7 @@ import { IRequest } from "types/user";
 
 
 /** @description 친구 요청 */
+/** @Tag(name = "book service", description = "the book API with description tag annotation") */
 export const friendRequest = async (req : IRequest, res : Response, next : NextFunction) => {
     try {
         const userId = req.user.id;
@@ -49,6 +50,7 @@ export const requestList = async (req : IRequest, res : Response, next : NextFun
         const userId = req.user.id;
         const friendRequest = await friendRequestList(userId);
         res.status(200).json({ message: '친구 요청 리스트', friendRequest });
+        console.log(friendRequest);
     } catch (error) {
         console.error(error);
         error.status = 500;
@@ -87,8 +89,9 @@ export const friendReject = async (req : IRequest, res : Response, next : NextFu
 /** @description 친구 목록 */
 export const getFriends = async (req : IRequest, res : Response, next : NextFunction) => {
     try {
-        const page = req.query.page !== undefined ? Number(req.query.page) : null;
-        const limit = req.query.limit !== undefined ? Number(req.query.limit) : null;
+        const page: number | null = req.query.page !== undefined ? Number(req.query.page) : null;
+        const limit: number | null = req.query.limit !== undefined ? Number(req.query.limit) : null;
+
         const userId = req.user.id;
         const friendsList = await getMyFriends(userId, page, limit);
         res.status(200).json({ message: '친구 목록', friendsList });

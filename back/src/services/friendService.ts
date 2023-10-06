@@ -92,15 +92,13 @@ export const rejectFriend = async (userId: string, requestId: string) => {
 };
 
 
-
-
 /** @description 친구 목록 */
 export const getMyFriends = async (userId: string, page: number, limit: number) => {
     try {
-        // const paginationOptions =
-        //     page !== null && limit !== null
-        //         ? { skip: (page - 1) * limit, take: limit }
-        //         : {};
+        const paginationOptions =
+            page !== null && limit !== null
+                ? { skip: (page - 1) * limit, take: limit }
+                : {};
         const myFriendsA = await prisma.friend.findMany({
             where: {
                 userAId: userId,
@@ -125,21 +123,19 @@ export const getMyFriends = async (userId: string, page: number, limit: number) 
             ...new Set(myFriendsA.map((friend) => friend.userBId)),
             ...new Set(myFriendsB.map((friend) => friend.userAId)),
         ];
+
         const user = await prisma.user.findMany({
             where: {
                 id: {
                     in: uniqueFriendIds,
                 },
-
             },
             select: {
                 id: true,
                 username: true,
-                // ...paginationOptions,
             },
-            // orderBy: { id: 'asc' },
-            //  ...paginationOptions,
-
+            orderBy: { id: 'asc' },
+            // ...paginationOptions,
         });
 
         const allUserCount = await prisma.user.count({
