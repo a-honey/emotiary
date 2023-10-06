@@ -1,32 +1,41 @@
 import express, { Express, Request, Response } from "express";
-import cors from 'cors';
+import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import swaggerFile from "./swagger/swagger-output.json";
-import bodyParser from 'body-parser';
+import bodyParser from "body-parser";
 import userAuthRouter from "./routes/userRouter";
+import passport from "passport";
+import diaryRouter from "./routes/diaryRouter";
+import favoriteRouter from "./routes/favoriteRouter";
+import friendRouter from "./routes/friendRouter";
+import { jwtStrategy, localStrategy } from "./passport-config/passport";
+// import {
+//   jwtStrategy,
+//   localStrategy,
+//   googleStrategy,
+// } from "./passport-config/passport";
+import { Logger } from "./config/logger";
 import testAuthRouter from "./routes/testRouter";
-import passport from 'passport';
-import { jwtStrategy, localStrategy, googleStrategy } from "./passport-config/passport";
+
 // import axios, { AxiosResponse } from "axios";
 
 const app: Express = express();
 app.use(cors());
 app.use(bodyParser.json());
+app.use(Logger);
 
 app.use(passport.initialize());
 
 const localStrategyInstance = localStrategy;
 const jwtStrategyInstance = jwtStrategy;
-const googleStrategyInstance = googleStrategy;
+// const googleStrategyInstance = googleStrategy;
 
-passport.use('local', localStrategyInstance);
-passport.use('jwt', jwtStrategyInstance);
-passport.use('google', googleStrategy);
-
+passport.use("local", localStrategyInstance);
+passport.use("jwt", jwtStrategyInstance);
+// passport.use("google", googleStrategy);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
 
 // 유튜브
 // function analyzeEmotion(): string {
@@ -82,17 +91,20 @@ app.use(express.urlencoded({ extended: false }));
 // });
 
 app.use(
-    "/api-docs",
-    swaggerUi.serve,
-    swaggerUi.setup(swaggerFile, { explorer: true }),
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerFile, { explorer: true })
 );
 
 app.get("/", (req: Request, res: Response) => {
-    res.send("기본 페이지");
+  res.send("기본 페이지");
 });
 
 app.use("/users", userAuthRouter);
 app.use("/test", testAuthRouter);
+app.use("/friend", friendRouter);
+app.use("/diary", diaryRouter);
+app.use("/favorites", favoriteRouter);
 
 // // 정적 파일 제공을 위한 미들웨어 설정
 // app.use(express.static("public"));

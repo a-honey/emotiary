@@ -8,17 +8,22 @@ datasource db {
 }
 
 model User {
-  id String @id @default(uuid())
-  username    String   @unique
-  email       String   @unique
-  password    String
-  description String?
+  id           String   @id @default(uuid())
+  username     String   @unique
+  email        String   @unique
+  password     String
+  description  String?
   profileImage String?
-  updatedAt DateTime @default(now()) // 기본값 추가
-  createdAt DateTime @default(now())
+  updatedAt    DateTime @default(now()) // 기본값 추가
+  createdAt    DateTime @default(now())
+  friendA      Friend[] @relation("UserFriendA")
+  friendB      Friend[] @relation("UserFriendB")
+  Diary        Diary[]
 
   // 사용자와 Refresh Token 간의 일대다 관계 설정
   refreshTokens RefreshToken[]
+
+  favorites   Favorite[]
 }
 
 model RefreshToken {
@@ -27,7 +32,41 @@ model RefreshToken {
   userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   // 사용자와의 관계 정의
-  user      User     @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Friend {
+  id      String  @id @default(uuid())
+  userA   User    @relation("UserFriendA", fields: [userAId], references: [id])
+  userAId String
+  userB   User    @relation("UserFriendB", fields: [userBId], references: [id])
+  userBId String
+  status  Boolean @default(false)
+
+  @@unique([userAId, userBId])
+}
+
+model Diary {
+  id          String   @id @default(uuid())
+  author      User     @relation(fields: [authorId], references: [id])
+  authorId    String
+  createdDate DateTime
+  title       String
+  content     String
+  is_public   String
+  emoji       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  favorites   Favorite[]
+}
+
+model Favorite {
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  diary      Diary      @relation(fields: [diaryId], references: [id], onDelete: Cascade)
+  diaryId    String     @map("diary_id") 
+  userId     String     @map("user_id")
+  @@id([diaryId, userId])
 }
