@@ -1,5 +1,5 @@
 import React, { FormEvent, useState } from 'react';
-// import './styles';
+import '../../styles/Signup.css';
 
 const Signup: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -22,36 +22,45 @@ const Signup: React.FC = () => {
       <div className='centerContainer'>
         <form onSubmit={handleSubmit} className='signupForm'>
           <div className='formGroup'>
-            <label htmlFor="email">이메일: </label>
-            <input
-              id="email"
-              type="email"
-              placeholder="이메일을 입력하세요"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+            <label htmlFor="email"></label>
+            <div className='inputGroup'>
+              <i className='box1'></i>
+              <input
+                id="email"
+                type="email"
+                placeholder="이메일을 입력하세요"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
           </div>
           <div className='formGroup'>
-            <label htmlFor="password">패스워드: </label>
-            <input
-              id="password"
-              type="password"
-              placeholder="패스워드를 입력하세요"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <label htmlFor="password"></label>
+            <div className='inputGroup'>
+              <i className='box2'></i>
+              <input
+                id="password"
+                type="password"
+                placeholder="패스워드를 입력하세요"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
           </div>
           <div className='formGroup'>
-            <label htmlFor="confirmPassword">패스워드 확인: </label>
-            <input
-              id="confirmPassword"
-              type="password"
-              placeholder="패스워드를 다시 입력하세요"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
+            <label htmlFor="confirmPassword"></label>
+            <div className='inputGroup'>
+              <i className='box2'></i>
+              <input
+                id="confirmPassword"
+                type="password"
+                placeholder="패스워드를 다시 입력하세요"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </div>
           </div>
-          <button type="submit" className='submitButton'>회원가입</button>
+          <button type="submit" className='submitButton'>SIGN UP</button>
         </form>
       </div>
     </>

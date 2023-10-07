@@ -1,7 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Signin from './pages/SigninPage';
-import Signup from './pages/SignupPage';
+import SigninPage from './pages/SigninPage';
+import SignupPage from './pages/SignupPage';
 import MainPage from './pages/MainPage';
 import IntroPage from './pages/IntroPage';
 import NetworkPage from './pages/NetworkPage';
@@ -13,8 +13,8 @@ const App = () => {
   return (
     <Routes>
       <Route path="/intro" element={<IntroPage />} />
-      <Route path="/signin" element={<Signin />} />
-      <Route path="/signup" element={<Signup />} />
+      <Route path="/signin" element={<SigninPage />} />
+      <Route path="/signup" element={<SignupPage />} />
       <Route path="/" element={<MainPage />} />
       <Route path="/network" element={<NetworkPage />} />
       <Route path="/users" element={<UsersPage />} />

@@ -6,7 +6,7 @@
 }
 
 /* 메인프레임 */
-.loginForm {
+.signupForm {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -14,9 +14,8 @@
   text-align: center;
   width: 405px;
   height: 305px;
-  background-image: url('./loginFrame.png');
+  background-image: url('./signupFrame.png');
 }
-
 
 .formGroup {
   margin-bottom: 20px;
