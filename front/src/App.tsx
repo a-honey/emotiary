@@ -1,13 +1,13 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import SigninPage from './pages/SigninPage';
-import SignupPage from './pages/SignupPage';
-import MainPage from './pages/MainPage';
-import IntroPage from './pages/IntroPage';
-import NetworkPage from './pages/NetworkPage';
-import UserIdPage from './pages/UserIdPage';
-import MyPage from './pages/MyPage';
-import UsersPage from './pages/UsersPage';
+import SigninPage from './pages/signin/Signin';
+import SignupPage from './pages/signup/Signup';
+import MainPage from './pages/main/Main';
+import IntroPage from './pages/intro/Intro';
+import NetworkPage from './pages/network/Network';
+import UserIdPage from './pages/userId/UserId';
+import MyPage from './pages/my/My';
+import UsersPage from './pages/users/Users';
 
 const App = () => {
   return (
