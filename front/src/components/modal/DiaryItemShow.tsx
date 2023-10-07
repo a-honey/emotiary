@@ -8,7 +8,7 @@ import DiaryReplyAdd from './DiaryReplyAdd';
 const DiaryItemShow = ({
   handleIsOpenModal,
 }: {
-  handleIsOpenModal: () => void;
+  handleIsOpenModal: (arg: boolean) => void;
 }) => {
   return (
     <div className="modal">
@@ -20,7 +20,12 @@ const DiaryItemShow = ({
         </div>
         <div className={styles.like}>♡</div>
         <DiaryComment />
-        <button className="cancelBtn" onClick={handleIsOpenModal}>
+        <button
+          className="cancelBtn"
+          onClick={() => {
+            handleIsOpenModal(false);
+          }}
+        >
           닫기
         </button>
       </div>
@@ -33,8 +38,8 @@ export default DiaryItemShow;
 const CommentItem = ({ isReply }: { isReply: boolean }) => {
   const [isAdding, setIsAdding] = useState(false);
 
-  const handleIsAdding = () => {
-    setIsAdding(false);
+  const handleIsAdding = (arg: boolean) => {
+    setIsAdding(arg);
   };
   return (
     <>

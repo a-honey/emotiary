@@ -1,6 +1,10 @@
 import React from 'react';
 
-const DiaryReplyAdd = ({ handleIsAdding }: { handleIsAdding: () => void }) => {
+const DiaryReplyAdd = ({
+  handleIsAdding,
+}: {
+  handleIsAdding: (arg: boolean) => void;
+}) => {
   return (
     <div>
       <input placeholder={`${'usernam'}님에게 답글을 입력해주세요.`} />
