@@ -16,5 +16,4 @@
       "resolveJsonModule": true
     },
     "include": ["src/**/*", "generateSwagger.ts"]
-  }
-  
+}
