@@ -101,8 +101,9 @@ const DiaryList = () => {
     <section className={styles.diaryList}>
       <h2>일기 모아보기</h2>
       <div className={styles.listBlock}>
-        {fakeDairyData &&
-          fakeDairyData.map((item) => <DiaryItem data={item} />)}
+        {fakeDairyData?.map((item) => (
+          <DiaryItem data={item} key={item.diary_id} />
+        ))}
       </div>
       <div>페이지네이션 자리</div>
     </section>

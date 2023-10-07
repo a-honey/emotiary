@@ -72,7 +72,9 @@ const UserList = () => {
         <div>내 친구만 보기</div>
       </div>
       <div className={styles.listBlock}>
-        {fakeData && fakeData.map((item) => <UserItem data={item} />)}
+        {fakeData?.map((item) => (
+          <UserItem data={item} key={item.user_id} />
+        ))}
       </div>
       <div>페이지네이션자리</div>
     </div>

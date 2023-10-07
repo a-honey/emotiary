@@ -98,7 +98,9 @@ const DiaryList = () => {
         <div>친구 일기만 보기</div>
       </div>
       <div className={styles.diaryListBlock}>
-        {mockDatas && mockDatas.map((item) => <DairyItem data={item} />)}
+        {mockDatas?.map((item) => (
+          <DairyItem data={item} key={item.diary_id} />
+        ))}
       </div>
       <div>페이지네이션자리</div>
     </div>
