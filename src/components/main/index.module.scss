@@ -1,0 +1,23 @@
+.container {
+  position: relative;
+  width: 50vw;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  padding: 40px;
+  .name {
+    font-size: 25px;
+    font-weight: 700;
+  }
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .btns {
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+  }
+}

@@ -1,0 +1,73 @@
+@import '../../../styles/variables.scss';
+
+.monthBlock {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0;
+  > div {
+    display: flex;
+    div {
+      font-size: 50px;
+      font-weight: 700;
+    }
+  }
+  button {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    background-color: map-get($colors, point);
+    color: white;
+    border-radius: 50%;
+  }
+}
+
+.dayContainer {
+  width: 100%;
+  height: 100%;
+  .weekBlock {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  .dayBlock {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    gap: 5px;
+    div {
+      background-color: pink;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      &.today {
+        font-size: 20px;
+        font-weight: 700;
+      }
+    }
+    .addBtn {
+      width: 40px;
+      height: 40px;
+      font-weight: 700;
+      border-radius: 50%;
+      background-color: map-get($colors, point);
+      color: white;
+    }
+  }
+}
+
+// dayBlock의 부모 컴포넌트(Month + Day)
+.calendarBlock {
+  background-color: white;
+  border-radius: 5px;
+  padding: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
