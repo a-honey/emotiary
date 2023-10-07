@@ -113,8 +113,8 @@ const DairyItem = ({ data }: { data: DairyItemType }) => {
   const navigator = useNavigate();
   const [isOpenDiary, setIsOpenDiary] = useState(false);
 
-  const handleIsOpenModal = (arg: boolean) => {
-    setIsOpenDiary(arg);
+  const handleIsOpenModal = () => {
+    setIsOpenDiary((prev) => !prev);
   };
 
   return (
