@@ -4,7 +4,7 @@ import Footer from './components/Layout.Footer';
 import Header from './components/Layout.Header';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { userNameSelector } from '../../states/selectors/userSelector';
+import { userIdSelector } from '../../states/selectors/userSelector';
 
 interface LayoutProps {
   children: ReactNode;
@@ -16,7 +16,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   // 현재 경로를 가져옴
   const currentPath = location.pathname;
   // userState에서 name을 가져옴
-  const userName = useRecoilValue(userNameSelector);
+  const userName = useRecoilValue(userIdSelector);
   // localStorage에서 token을 가져옴
   const token = localStorage.getItem('userToken');
 
