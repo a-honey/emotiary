@@ -27,13 +27,8 @@ function useIsScrollAnimation() {
     // 현재 스크롤 위치 확인
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      // 스크롤 위치가 파라미터보다 크거나 같으면 애니메이션 활성화
-      if (scrollY >= boxPosition.top - 50) {
-        setIsAnimated(true);
-      } else {
-        // 스크롤 위치가 파라미터보다 작으면 애니메이션 비활성화
-        setIsAnimated(false);
-      }
+      // 컴포넌트 상단 위치가 스크롤보다 크거나 같으면 true를 반환
+      setIsAnimated(scrollY >= boxPosition.top - 50);
     };
 
     window.addEventListener('scroll', handleScroll);
