@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { handleImgError } from '../../../utils/handleImg';
+import { handleImgError } from '../../../utils/imgHandlers';
 
 const UserCard = () => {
   return (

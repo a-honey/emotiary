@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './index.module.scss';
-import { handleImgError } from '../../../utils/handleImg';
+import { handleImgError } from '../../../utils/imgHandlers';
 import { useNavigate } from 'react-router-dom';
 import { UserItemType } from '../../../types/userType';
 

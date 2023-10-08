@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import styles from './index.module.scss';
-import { handleImgError } from '../../../utils/handleImg';
+import { handleImgError } from '../../../utils/imgHandlers';
 
 const Header = () => {
   const isLogin = false;

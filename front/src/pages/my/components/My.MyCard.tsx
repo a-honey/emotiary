@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import styles from './index.module.scss';
-import { handleImgError } from '../../../utils/handleImg';
+import { handleImgError } from '../../../utils/imgHandlers';
 
 const MyCard = () => {
   const [isEditing, setIsEditing] = useState(false);

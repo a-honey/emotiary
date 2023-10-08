@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { throttle } from '../utils/eventHandlers';
 
 // ref 객체를 반환하여 컴포넌트 위치를 가져와 해당 위치에 스크롤이 도달하면 true를 반환
 function useIsScrollAnimation() {
@@ -24,12 +25,12 @@ function useIsScrollAnimation() {
   }, []);
 
   useEffect(() => {
-    // 현재 스크롤 위치 확인
-    const handleScroll = () => {
+    // 500ms 간격으로 현재 스크롤 위치 확인
+    const handleScroll = throttle(() => {
       const scrollY = window.scrollY;
       // 컴포넌트 상단 위치가 스크롤보다 크거나 같으면 true를 반환
       setIsAnimated(scrollY >= boxPosition.top - 50);
-    };
+    }, 500);
 
     window.addEventListener('scroll', handleScroll);
 

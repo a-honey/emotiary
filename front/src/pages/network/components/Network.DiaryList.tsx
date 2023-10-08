@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styles from './index.module.scss';
-import { handleImgError } from '../../../utils/handleImg';
+import { handleImgError } from '../../../utils/imgHandlers';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { DairyItemType } from '../../../types/diaryType';
 import DiaryItemShow from '../../../components/modal/DiaryItemShow';
