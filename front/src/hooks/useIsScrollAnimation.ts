@@ -27,9 +27,11 @@ function useIsScrollAnimation() {
   useEffect(() => {
     // 500ms 간격으로 현재 스크롤 위치 확인
     const handleScroll = throttle(() => {
-      const scrollY = window.scrollY;
-      // 컴포넌트 상단 위치가 스크롤보다 크거나 같으면 true를 반환
-      setIsAnimated(scrollY >= boxPosition.top - 50);
+      window.requestAnimationFrame(() => {
+        const scrollY = window.scrollY;
+        // 컴포넌트 상단 위치가 스크롤보다 크거나 같으면 true를 반환
+        setIsAnimated(scrollY >= boxPosition.top);
+      });
     }, 500);
 
     window.addEventListener('scroll', handleScroll);
