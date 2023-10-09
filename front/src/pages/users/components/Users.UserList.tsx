@@ -3,6 +3,7 @@ import styles from './index.module.scss';
 import { handleImgError } from '../../../utils/imgHandlers';
 import { useNavigate } from 'react-router-dom';
 import { UserItemType } from '../../../types/userType';
+import { useGetUsersData } from '../../../api/get/useGetUserData';
 
 const UserList = () => {
   const fakeData = [
@@ -63,6 +64,8 @@ const UserList = () => {
       profileImage: 'profile8.jpg',
     },
   ];
+
+  const { data: userData, isLoading, isError, error } = useGetUsersData();
 
   return (
     <div className={styles.block}>
