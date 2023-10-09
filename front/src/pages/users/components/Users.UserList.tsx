@@ -2,8 +2,15 @@ import React from 'react';
 import styles from './index.module.scss';
 import { handleImgError } from '../../../utils/imgHandlers';
 import { useNavigate } from 'react-router-dom';
-import { UserItemType } from '../../../types/userType';
 import { useGetUsersData } from '../../../api/get/useGetUserData';
+
+interface UserItemType {
+  user_id: number;
+  useremail: string;
+  username: string;
+  description: string;
+  profileImage: string;
+}
 
 const UserList = () => {
   const fakeData = [
@@ -65,7 +72,7 @@ const UserList = () => {
     },
   ];
 
-  const { data: userData, isLoading, isError, error } = useGetUsersData();
+  const { data: userData, isLoading } = useGetUsersData();
 
   return (
     <div className={styles.block}>
@@ -75,9 +82,11 @@ const UserList = () => {
         <div>내 친구만 보기</div>
       </div>
       <div className={styles.listBlock}>
-        {fakeData?.map((item) => (
-          <UserItem data={item} key={item.user_id} />
-        ))}
+        {isLoading ? (
+          <div>로딩중</div>
+        ) : (
+          fakeData?.map((item) => <UserItem data={item} key={item.user_id} />)
+        )}
       </div>
       <div>페이지네이션자리</div>
     </div>
@@ -89,24 +98,26 @@ export default UserList;
 const UserItem = ({ data }: { data: UserItemType }) => {
   const navigator = useNavigate();
 
+  const { user_id, profileImage, username, description } = data;
+
   return (
     <div
       className={styles.item}
       onClick={() => {
-        navigator(`/user/${data.user_id}`);
+        navigator(`/user/${user_id}`);
       }}
     >
       <div>
         <img
-          src={data.profileImage}
-          alt={`${data.username}의 프로필사진`}
+          src={profileImage}
+          alt={`${username}의 프로필사진`}
           onError={handleImgError}
         />
         <div className={styles.emoji}>😆</div>
       </div>
       <div className={styles.content}>
-        <div>{data.username}</div>
-        <div>{data.description}</div>
+        <div>{username}</div>
+        <div>{description}</div>
       </div>
     </div>
   );
