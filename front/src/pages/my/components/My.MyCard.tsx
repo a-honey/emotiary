@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import styles from './index.module.scss';
 import { handleImgError } from '../../../utils/imgHandlers';
 import { useGetMyUserData } from '../../../api/get/useGetUserData';
-import { useQueryClient, useMutation } from 'react-query';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { instance } from '../../../api/instance';
 
 const MyCard = () => {
@@ -23,7 +23,7 @@ const MyCard = () => {
     {
       onSuccess: () => {
         // 업데이트가 성공하면 쿼리를 다시 실행하여 최신 데이터를 가져옵니다.
-        queryClient.invalidateQueries('myDataQuery');
+        queryClient.invalidateQueries({ queryKey: ['myUserData'] });
       },
     },
   );
