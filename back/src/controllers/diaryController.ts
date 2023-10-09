@@ -1,14 +1,15 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import {
   createDiaryService,
   deleteDiaryService,
   getAllDiaryService,
   getDiaryByDiaryIdService,
   getDiaryByMonthService,
-  getDiaryByUserIdService,
+  getAllMyDiariesService,
   getFriendsDiaryServcie,
   updateDiaryService,
 } from "../services/diaryService";
+import { IRequest } from "types/user";
 
 /**
  * 다이어리 생성
@@ -18,13 +19,13 @@ import {
  * @returns
  */
 export const createDiary = async (
-  req: Request,
+  req: IRequest,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const inputData = req.body;
-    const { userId } = req.params;
+    const { id: userId } = req.user;
 
     const createdDiary = await createDiaryService(userId, inputData);
 
@@ -35,37 +36,41 @@ export const createDiary = async (
 };
 
 /**
- * 특정 유저에 대한 다이어리 가져오기 (userId)
+ * 내 글 가져오기
  * @param req
  * @param res
  * @param next
  * @returns
  */
-export const getDiaryByUserId = async (
-  req: Request,
+export const getAllMyDiaries = async (
+  req: IRequest,
   res: Response,
   next: NextFunction
 ) => {
-  const { userId } = req.params;
-  const page = Number(req.query.page) || 1;
-  const limit = Number(req.query.limit) || 10;
+  try {
+    const { id: userId } = req.user;
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
 
-  const diary = await getDiaryByUserIdService(userId, page, limit);
-  if (diary == null) return res.status(300).json([]);
+    const diary = await getAllMyDiariesService(userId, page, limit);
+    if (diary == null) return res.status(300).json([]);
 
-  return res.status(200).json(diary);
+    return res.status(200).json(diary);
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const getDiaryByDate = async (
-  req: Request,
+  req: IRequest,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const { userId } = req.params;
+    const year = Number(req.query.year);
     const month = Number(req.query.month);
-
-    const diary = await getDiaryByMonthService(userId, month);
+    const diary = await getDiaryByMonthService(userId, year, month);
 
     return res.status(200).json(diary);
   } catch (error) {
@@ -80,14 +85,14 @@ export const getDiaryByDate = async (
  * @returns
  */
 export const getDiaryByDiaryId = async (
-  req: Request,
+  req: IRequest,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const { diaryId } = req.params;
-
-    const diary = await getDiaryByDiaryIdService(diaryId);
+    const { id: userId } = req.user;
+    const diary = await getDiaryByDiaryIdService(userId, diaryId);
     if (diary == null) return res.status(300).json([]);
 
     return res.status(200).json(diary);
@@ -97,19 +102,19 @@ export const getDiaryByDiaryId = async (
 };
 
 export const getUsersDiary = async (
-  req: Request,
+  req: IRequest,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const { userId } = req.params;
+    const { id: userId } = req.user;
     const { select } = req.query; // friend or all
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
 
     const allDiary =
       select == "friend"
-        ? await getFriendsDiaryServcie(userId, page, limit, select)
+        ? await getFriendsDiaryServcie(userId, page, limit)
         : await getAllDiaryService(page, limit, select as string);
 
     if (allDiary == null) return res.status(300).json([]);
@@ -121,7 +126,7 @@ export const getUsersDiary = async (
 };
 
 export const updateDiary = async (
-  req: Request,
+  req: IRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -136,13 +141,14 @@ export const updateDiary = async (
 };
 
 export const deleteDiary = async (
-  req: Request,
+  req: IRequest,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const { diaryId } = req.params;
-    const deletedDiary = await deleteDiaryService(diaryId);
+    const { id: userId } = req.user;
+    const deletedDiary = await deleteDiaryService(userId, diaryId);
 
     return res.status(200).json(deletedDiary);
   } catch (error) {

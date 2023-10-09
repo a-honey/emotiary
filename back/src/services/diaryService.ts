@@ -1,6 +1,6 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 import { v4 } from "uuid";
-import { getMyWholeFriends } from "./friendService";
+import { getMyWholeFriends, weAreFriends } from "./friendService";
 
 const prisma = new PrismaClient();
 
@@ -33,32 +33,14 @@ export const createDiaryService = async (
   return diary;
 };
 
-// TODO counting 중복 함수로 뺄 수 있으면 빼기
-// const countItemPage = async (
-//   tableName: keyof PrismaClient,
-//   field: string,
-//   searchKeyWord: string,
-//   page: number
-// ) => {
-//   const totalItem = await prisma[tableName].count({
-//     where: {
-//       [field]: searchKeyWord,
-//     },
-//   });
-
-//   const totalPage = Math.ceil(totalItem / page);
-
-//   return { totalItem, totalPage };
-// };
-
 /**
- * 특정 유저의 다이어리 목록 가져오기
+ * 내 글 가져오기
  * @param userId
  * @param page
  * @param limit
  * @returns diaries (limit 개수먄큼 반환)
  */
-export const getDiaryByUserIdService = async (
+export const getAllMyDiariesService = async (
   userId: string,
   page: number,
   limit: number
@@ -82,36 +64,26 @@ export const getDiaryByUserIdService = async (
   };
 };
 
-// export const getDiaryByDateService = async (
-//   userId: string,
-//   month: number,
-//   day: number
-// ) => {
-//   const diary = await prisma.diary.findMany({
-//     where: {
-//       authorId: userId,
-//       createdDate: {
-//         gte: new Date(`2023-${month}-${day}`),
-//         lt: new Date(`2023-${month}-${day + 1}`),
-//       },
-//     },
-//   });
-
-//   return diary;
-// };
 /**
  * @description 월별로 다이어리
  * @param userId
  * @param month
  * @returns
  */
-export const getDiaryByMonthService = async (userId: string, month: number) => {
+export const getDiaryByMonthService = async (
+  userId: string,
+  year: number,
+  month: number
+) => {
+  const ltMonth = month == 12 ? 1 : month + 1;
+  const ltYear = month == 12 ? year + 1 : year;
+
   const diary = await prisma.diary.findMany({
     where: {
       authorId: userId,
       createdDate: {
-        gte: new Date(`2023-${month}`),
-        lt: new Date(`2023-${month + 1}`),
+        gte: new Date(`${year}-${month}`),
+        lt: new Date(`${ltYear}-${ltMonth}`),
       },
     },
   });
@@ -119,38 +91,46 @@ export const getDiaryByMonthService = async (userId: string, month: number) => {
   return diary;
 };
 
-// export const getDiaryByDateService = async (
-//   userId: string,
-//   month: number,
-//   day: number
-// ) => {
-//   const diary = await prisma.diary.findMany({
-//     where: {
-//       authorId: userId,
-//       createdDate: {
-//         gte: new Date(`2023-${month}-${day}`),
-//         lt: new Date(`2023-${month}-${day + 1}`),
-//       },
-//     },
-//   });
-
-//   return diary;
-// };
 /**
  * 다이어리 하나 가져오기
  * @param diaryId
  * @returns
  */
-export const getDiaryByDiaryIdService = async (diaryId: string) => {
+export const getDiaryByDiaryIdService = async (
+  userId: string,
+  diaryId: string
+) => {
   const diary = await prisma.diary.findUnique({
     where: { id: diaryId },
   });
 
-  return diary;
+  //내 글 일 경우 Done
+  if (diary.authorId == userId) {
+    return diary;
+  }
+
+  // 친구 (friend.status == true)
+  // 친구 X 1. friend.status ==false  2. friend == null
+  //친구 글 일 경우
+  const friend = await weAreFriends(userId, diary.authorId);
+
+  // const isFriend = friend.status;
+  if (friend) {
+    // 친구인 경우
+    if (friend.status && diary.is_public != "private") return diary;
+
+    // 친구 신청 O 친구는 아님
+    if (!friend.status && diary.is_public == "all") return diary;
+  }
+
+  if (friend == null && diary.is_public == "all") return diary;
+
+  return null;
+  // 모르는 사람 글 일 경우
 };
 
 /**
- * @description 내 친구들의 다이어리 가져오기
+ * @description 내 친구들의 다이어리 가져오기 (최신순)
  * @param userId (로그인 한 유저의 userId)
  * @param page
  * @param limit
@@ -160,18 +140,15 @@ export const getDiaryByDiaryIdService = async (diaryId: string) => {
 export const getFriendsDiaryServcie = async (
   userId: string,
   page: number,
-  limit: number,
-  select: string
+  limit: number
 ) => {
-  // step1. 친구 목록 읽어오기
-
+  // 친구 목록 읽어오기
   const friends = await getMyWholeFriends(userId);
   const friendIdList = friends.map((friend) => {
     return friend.userBId;
   });
-  console.log(friendIdList);
 
-  // step2. 친구들의 다이어리 가져오기
+  // 친구들의 다이어리 가져오기 (최신순)
   const friendsDiary = await prisma.diary.findMany({
     skip: (page - 1) * limit,
     take: limit,
@@ -222,6 +199,7 @@ export const getAllDiaryService = async (
   return { data: allDiary, totalPage, totalItem, currentPage: page, limit };
 };
 
+//TODO 유저확인하고 update하는 절차 추가
 export const updateDiaryService = async (
   diaryId: string,
   inputData: Prisma.DiaryUpdateInput
@@ -234,11 +212,22 @@ export const updateDiaryService = async (
   return updatedDiary;
 };
 
-//TODO 유저확인하고 delete하는 절차 추가
-export const deleteDiaryService = async (diaryId: string) => {
-  const deletedDiary = await prisma.diary.delete({
+//TODO 검색 결과 없을 시
+export const deleteDiaryService = async (userId: string, diaryId: string) => {
+  const diary = await prisma.diary.findUnique({
     where: { id: diaryId },
   });
 
-  return deletedDiary;
+  if (diary.authorId == userId) {
+    const deletedDiary = await prisma.diary.delete({
+      where: { id: diaryId },
+    });
+
+    return deletedDiary;
+  }
+
+  if (diary.authorId != userId) {
+    //TODO 에러 수정
+    throw new Error("회원 불일치");
+  }
 };
