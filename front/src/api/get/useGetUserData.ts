@@ -10,3 +10,13 @@ export const useGetUsersData = () => {
     },
   });
 };
+
+export const useGetMyUserData = () => {
+  return useQuery({
+    queryKey: ['myUserData'],
+    queryFn: async () => {
+      const response = await instance.get('/users/current');
+      return response.data;
+    },
+  });
+};
