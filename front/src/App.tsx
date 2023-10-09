@@ -8,8 +8,8 @@ import NetworkPage from './pages/network/Network';
 import UserIdPage from './pages/userId/UserId';
 import MyPage from './pages/my/My';
 import UsersPage from './pages/users/Users';
-import Header from './pages/layout/components/Layout.Header';
-import Footer from './pages/layout/components/Layout.Footer';
+import Header from './components/layout/Layout.Header';
+import Footer from './components/layout/Layout.Footer';
 
 const App = () => {
   return (

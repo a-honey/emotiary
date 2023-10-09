@@ -68,12 +68,14 @@ const MyCard = () => {
           </div>
           <div className={styles.btns}>
             <button
+              className="doneBtn"
               onClick={() => {
                 setIsEditing(true);
               }}
             >
               수정하기
             </button>
+            <button className="doneBtn">비밀번호 변경</button>
             <button className="cancelBtn">회원탈퇴</button>
           </div>
         </>

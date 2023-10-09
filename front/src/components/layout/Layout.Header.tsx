@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import styles from './index.module.scss';
-import { handleImgError } from '../../../utils/imgHandlers';
+import { handleImgError } from '../../utils/imgHandlers';
 
 const Header = () => {
   const isLogin = false;
@@ -31,6 +31,7 @@ const Header = () => {
           >
             <img src="" alt="의 프로필사진" onError={handleImgError} />
             <div>유저이름</div>
+            <div>친구요청알림</div>
           </div>
         ) : (
           <div>

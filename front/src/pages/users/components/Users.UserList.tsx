@@ -110,6 +110,7 @@ const UserItem = ({ data }: { data: UserItemType }) => {
         <div>{username}</div>
         <div>{description}</div>
       </div>
+      <button className="doneBtn">친구요청</button>
     </div>
   );
 };
