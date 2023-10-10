@@ -1,0 +1,30 @@
+name: CI for Dev and Front Sync
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  sync_dev_with_front:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Merge changes from dev to front
+        run: |
+          git config user.name "ahyeon"
+          git config user.email "ahoney@gmail.com"
+          git checkout front
+          git merge --no-ff ${{ github.event.before }}
+          git push origin front
+
+      - name: Merge changes from front to dev
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git checkout dev
+          git merge --no-ff ${{ github.event.before }}
+          git push origin dev
