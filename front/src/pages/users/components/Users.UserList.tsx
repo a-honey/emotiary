@@ -63,7 +63,7 @@ const UserList = () => {
     },
   ];
 
-  const { data: userData, isLoading } = useGetUsersData();
+  const { data, isLoading } = useGetUsersData();
 
   return (
     <div className={styles.block}>
@@ -76,7 +76,9 @@ const UserList = () => {
         {isLoading ? (
           <div>로딩중</div>
         ) : (
-          fakeData?.map((item) => <UserItem data={item} key={item.user_id} />)
+          data?.data?.map((item: UserItemType) => (
+            <UserItem data={item} key={item.user_id} />
+          ))
         )}
       </div>
       <div>페이지네이션자리</div>
