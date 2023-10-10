@@ -1,24 +1,25 @@
-import { jwtAuthentication } from "../middlewares/authenticateJwt";
+import { jwtAuthentication } from '../middlewares/authenticateJwt';
 import {
   createDiary,
   deleteDiary,
   getDiaryByDiaryId,
   updateDiary,
   getDiaryByDate,
-  getUsersDiary,
+  getOtherUsersDiary,
   getAllMyDiaries,
-} from "../controllers/diaryController";
-import { Router } from "express";
+} from '../controllers/diaryController';
+import { Router } from 'express';
 
 const diaryRouter = Router();
 
-/** 1. 캘린더 페이지 (한달 치)
+/** (Done)
+ *  1. 캘린더 페이지 (한달 치)
  *    => input : userId, month , year
- *    //TODO service로직에서 year, month 추가하고 query year과 month를 추가해야할 듯
+ *
  *    1-1. 내 글 가져오기
  *    1-2. 다른 사람 글 가져오기
  *----------------------------------------------------------
- *
+ *  (Done)
  *  2. 글 하나 가져오기
  *    => input : userId, diary
  *    2-1. 내 글 가져오기
@@ -39,21 +40,25 @@ const diaryRouter = Router();
  */
 
 // 네트워크 페이지 (Done)
-diaryRouter.get("/views/users", jwtAuthentication, getUsersDiary);
+// /diary/views/users?select&page&limit
+diaryRouter.get('/views/users', jwtAuthentication, getOtherUsersDiary);
 
 // 캘린더 페이지 (Done)
-diaryRouter.get("/views/date/:userId", jwtAuthentication, getDiaryByDate);
+// /diary/views/date/:userId?year&month
+diaryRouter.get('/views/date/:userId', jwtAuthentication, getDiaryByDate);
 
 // 내 글 전체 가져오기 (Done)
-diaryRouter.get("/views", jwtAuthentication, getAllMyDiaries);
+// /diary/views?page&limit
+diaryRouter.get('/views', jwtAuthentication, getAllMyDiaries);
 
 // 다이어리 생성
-diaryRouter.post("/:userId", jwtAuthentication, createDiary);
+// /diary/:userId
+diaryRouter.post('/:userId', jwtAuthentication, createDiary);
 
+// /diary/:diaryId
 diaryRouter
-  .route("/:diaryId")
+  .route('/:diaryId')
   // 다이어리 하나 가져오기
-  // TODO 권한에 따른 접근 필요
   .get(jwtAuthentication, getDiaryByDiaryId)
   .put(jwtAuthentication, updateDiary)
   .delete(jwtAuthentication, deleteDiary);
