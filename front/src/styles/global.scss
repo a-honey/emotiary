@@ -1,0 +1,29 @@
+@import './variables.scss';
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: map-get($colors, bg);
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+main {
+  margin-top: $headerHeight;
+  min-height: 100vh -$headerHeight -$footerHeight;
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+main.footer {
+  min-height: 100vh -200px; // header 높이와 footer 높이만큼 제거
+}
