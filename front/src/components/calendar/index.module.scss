@@ -28,6 +28,7 @@
   .weekBlock {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 5px;
     div {
       display: flex;
       justify-content: center;
@@ -41,15 +42,29 @@
     grid-template-columns: repeat(7, 1fr);
     grid-template-rows: repeat(6, 1fr);
     gap: 5px;
-    div {
-      background-color: pink;
+    .dayItem {
+      border: 1px solid map-get($colors, bg);
       display: flex;
       justify-content: center;
       align-items: center;
+      position: relative;
       &.today {
-        font-size: 20px;
-        font-weight: 700;
+        div.day {
+          font-size: 20px;
+          font-weight: 700;
+        }
       }
+      .day {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+      }
+      .otherMonth {
+        color: #6d6d6d;
+      }
+    }
+    .emoji {
+      font-size: 50px;
     }
     .addBtn {
       width: 40px;
