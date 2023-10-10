@@ -15,6 +15,7 @@ import {
 } from "../controllers/userController";
 import { localAuthentication } from "../middlewares/authenticateLocal";
 import { jwtAuthentication } from "../middlewares/authenticateJwt";
+import { fileUpload } from "../middlewares/uploadMiddleware";
 import {
   RegisterValidator,
   updateValidator,
@@ -36,7 +37,7 @@ userAuthRouter.get("/logout", jwtAuthentication, userLogout);
 userAuthRouter
   .route("/:userId")
   .get(getUserId)
-  .put(jwtAuthentication, updateValidator, updateUser)
+  .put(jwtAuthentication, fileUpload, updateValidator, updateUser)
   .delete(jwtAuthentication, deleteUser);
 
 // 비밀번호 재설정 이메일 보내기

@@ -144,6 +144,7 @@ export const updateUser = async(
 ) => {
     try{
         const userId = req.params.userId;
+        console.log(req.body);
 
         // swagger 데이터전용
         /* #swagger.tags = ['Users']
@@ -156,7 +157,7 @@ export const updateUser = async(
         const updatedUser = await updateUserService(userId,{
             toUpdate : { ...req.body },
         });
-
+        
         res.status(200).json({ data: updatedUser, message: '성공' });
     }catch(error){
         next(error);
