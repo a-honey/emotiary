@@ -1,7 +1,7 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 import { v4 } from "uuid";
 import { getMyWholeFriends } from "./friendService";
-
+import axios from "axios";
 const prisma = new PrismaClient();
 
 /**
@@ -15,6 +15,19 @@ export const createDiaryService = async (
   authorId: string,
   inputData: Prisma.DiaryCreateInput
 ) => {
+  // flask 테스트용
+  const content = inputData.content;
+
+  const response = await axios.post('http://127.0.0.1:5000/predict', { text: content });
+
+  // 플라스크로부터 받은 응답에서 emoji 추출
+  const emoji = response.data.emoji;
+
+  // inputData에 emoji 추가
+  inputData.emoji = emoji;
+
+  // 여기까지 flask 테스트용용용
+
   const diary = await prisma.diary.create({
     data: {
       ...inputData,
