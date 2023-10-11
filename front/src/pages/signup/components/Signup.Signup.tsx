@@ -4,6 +4,7 @@ import axios from 'axios';
 // import '../../styles/Signup.css';
 
 const Signup: React.FC = () => {
+  const [username, setUsername] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
@@ -16,7 +17,7 @@ const Signup: React.FC = () => {
       return;
     }
 
-    const data = { email, password, confirmPassword };
+    const data = { username, email, password };
 
     try {
       const response = await axios.post('http://localhost:5001/users/register', data, {
@@ -35,6 +36,19 @@ const Signup: React.FC = () => {
     <>
       <div className='centerContainer'>
         <form onSubmit={handleSubmit} className='signupForm'>
+          <div className='formGroup'>
+            <label htmlFor="username"></label>
+            <div className='inputGroup'>
+              <i className='box'></i>
+              <input
+                id="username"
+                type="text"
+                placeholder="유저네임을 입력하세요"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </div>
+          </div>
           <div className='formGroup'>
             <label htmlFor="email"></label>
             <div className='inputGroup'>
@@ -78,7 +92,7 @@ const Signup: React.FC = () => {
         </form>
       </div>
     </>
-  );
+  );  
 }
 
 export default Signup;
