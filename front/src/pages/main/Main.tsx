@@ -11,18 +11,25 @@ const MainPage: React.FC = () => {
   };
 
   return (
-    <main style={{ gap: '20px' }}>
+    <main
+      style={{
+        gap: '20px',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '95vh',
+      }}
+    >
       <div
         style={{
           width: '100%',
           height: '100%',
           display: 'flex',
-          flexDirection: 'column',
           gap: '20px',
         }}
       >
-        <div style={{ backgroundColor: 'white' }}>박스1</div>
-        <div style={{ backgroundColor: 'white' }}>박스2</div>
+        <div style={{ backgroundColor: 'white' }}>최신글</div>
+        <div style={{ backgroundColor: 'white' }}>통계이미지</div>
+        <div style={{ backgroundColor: 'white' }}>명언및노래</div>
       </div>
       <CalendarContainer handleIsOpenDiaryWriting={handleIsOpenDiaryWriting} />
       {isDiaryWriting && (
