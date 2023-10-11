@@ -1,0 +1,17 @@
+stages:
+  - sync_dev_with_front
+
+variables:
+  FRONT_BRANCH: front
+  DEV_BRANCH: dev
+
+sync_dev_with_front:
+  stage: sync_dev_with_front
+  only:
+    - $DEV_BRANCH
+  script:
+    - git config user.name "ahyeon"
+    - git config user.email "ahoney@gmail.com"
+    - git checkout $FRONT_BRANCH
+    - git merge --no-ff $CI_COMMIT_SHA
+    - git push origin $FRONT_BRANCH
