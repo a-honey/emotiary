@@ -1,10 +1,12 @@
 import React, { FormEvent, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 // import '../../styles/Signin.css';
 
 const Signin: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
@@ -18,6 +20,7 @@ const Signin: React.FC = () => {
         },
       });
       console.log('로그인 성공!', response.data);
+      navigate('/');
     } catch (error) {
       console.log('로그인 실패!', error);
     }
