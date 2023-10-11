@@ -8,6 +8,7 @@ import {
   startOfWeek,
 } from 'date-fns';
 import { CalendarDiaryItemType } from '../../types/diaryType';
+import DiaryItemShow from '../modal/DiaryItemShow';
 
 // 메인페이지 UI 미확정으로 배치만 해둠 추후 변경 예정
 const Day = ({
@@ -102,8 +103,13 @@ const DayItem = ({
   data: CalendarDiaryItemType[];
   handleIsOpenDiaryWriting?: (arg: boolean) => void;
 }) => {
+  const [isOpenDiary, setIsOpenDiary] = useState(false);
+
+  const toggleIsOpenModal = () => {
+    setIsOpenDiary((prev) => !prev);
+  };
+
   // day.getDate()와 일치하는 데이터를 찾아서 반환
-  // 날짜 전체로 비교, 오늘보다 큰 값들은 버튼 제거 예정
   // 매번 데이터를 돌아야 하는가? 생각
   const filteredData = data.filter(
     (item) => day === item.dateCreated.getDate(),
@@ -113,9 +119,10 @@ const DayItem = ({
     const data = filteredData[0];
     return (
       <>
-        <div className={styles.emoji} onClick={() => {}}>
+        <div className={styles.emoji} onClick={toggleIsOpenModal}>
           {data.emoji}
         </div>
+        {isOpenDiary && <DiaryItemShow toggleIsOpenModal={toggleIsOpenModal} />}
       </>
     );
   } else {
