@@ -1,6 +1,7 @@
 
 import React, { FormEvent, useState } from 'react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { instance } from '../../../api/instance';
 // import '../../styles/Signup.css';
 
 const Signup: React.FC = () => {
@@ -8,6 +9,7 @@ const Signup: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
@@ -20,13 +22,13 @@ const Signup: React.FC = () => {
     const data = { username, email, password };
 
     try {
-      const response = await axios.post('http://localhost:5001/users/register', data, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await instance.post('http://localhost:5001/users/register', data);
       console.log('회원가입 성공', response.data);
+
+      // 로그인 경로로 이동
+      navigate('/signin');
     } catch (error) {
+      alert(`${error} 에러 발생.`)
       console.log('회원가입 실패', error);
     }
 

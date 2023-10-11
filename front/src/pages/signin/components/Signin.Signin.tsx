@@ -1,6 +1,6 @@
 import React, { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { instance } from '../../../api/instance';
 // import '../../styles/Signin.css';
 
 const Signin: React.FC = () => {
@@ -14,12 +14,15 @@ const Signin: React.FC = () => {
     const data = { email, password };
 
     try {
-      const response = await axios.post('http://localhost:5001/users/login', data, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await instance.post('http://localhost:5001/users/login', data);
       console.log('로그인 성공!', response.data);
+
+      // 로컬 스토리지에 로그인 성공값을 저장
+      localStorage.setItem('userId', response.data.id);
+      localStorage.setItem('username', response.data.username);
+      localStorage.setItem('token', response.data.token);
+
+      // 메인 경로로 이동
       navigate('/');
     } catch (error) {
       console.log('로그인 실패!', error);
