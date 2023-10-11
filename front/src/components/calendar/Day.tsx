@@ -60,16 +60,28 @@ const Day = ({
               day.getFullYear() === today.getFullYear() &&
               day.getMonth() === today.getMonth() &&
               day.getDate() === today.getDate()
-                ? styles.today
-                : ''
+                ? `${styles.dayItem} ${styles.today}`
+                : styles.dayItem
             }
           >
-            {day.getDate()}
-            <DayItem
-              day={day.getDate()}
-              data={data}
-              handleIsOpenDiaryWriting={handleIsOpenDiaryWriting}
-            />
+            <div
+              className={
+                day.getFullYear() === currentDate.year &&
+                day.getMonth() + 1 === currentDate.month
+                  ? styles.day
+                  : `${styles.day} ${styles.otherMonth}`
+              }
+            >
+              {day.getDate()}
+            </div>
+            {day.getFullYear() === currentDate.year &&
+              day.getMonth() + 1 === currentDate.month && (
+                <DayItem
+                  day={day.getDate()}
+                  data={data}
+                  handleIsOpenDiaryWriting={handleIsOpenDiaryWriting}
+                />
+              )}
           </div>
         ))}
       </div>
@@ -99,7 +111,9 @@ const DayItem = ({
     const data = filteredData[0];
     return (
       <>
-        <div onClick={() => {}}>{data.emoji}</div>
+        <div className={styles.emoji} onClick={() => {}}>
+          {data.emoji}
+        </div>
       </>
     );
   } else {

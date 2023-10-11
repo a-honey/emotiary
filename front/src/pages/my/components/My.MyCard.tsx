@@ -2,12 +2,36 @@ import React, { useState } from 'react';
 
 import styles from './index.module.scss';
 import { handleImgError } from '../../../utils/imgHandlers';
+import { useGetMyUserData } from '../../../api/get/useGetUserData';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
+import { instance } from '../../../api/instance';
 
 const MyCard = () => {
   const [isEditing, setIsEditing] = useState(false);
 
-  const handleUpdate = (e: React.FormEvent) => {
+  const { data: userData, isLoading } = useGetMyUserData();
+
+  const queryClient = useQueryClient();
+  const mutation = useMutation(
+    async () => {
+      await instance.put(`/users/${1}`, {
+        username: '가짜닉네임',
+        email: 'echkaaaa2@naver.com',
+        description: 'hi',
+      });
+    },
+    {
+      onSuccess: () => {
+        // 업데이트가 성공하면 쿼리를 다시 실행하여 최신 데이터를 가져옵니다.
+        queryClient.invalidateQueries({ queryKey: ['myUserData'] });
+      },
+    },
+  );
+
+  const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    mutation.mutate();
   };
 
   return (
@@ -44,12 +68,14 @@ const MyCard = () => {
           </div>
           <div className={styles.btns}>
             <button
+              className="doneBtn"
               onClick={() => {
                 setIsEditing(true);
               }}
             >
               수정하기
             </button>
+            <button className="doneBtn">비밀번호 변경</button>
             <button className="cancelBtn">회원탈퇴</button>
           </div>
         </>

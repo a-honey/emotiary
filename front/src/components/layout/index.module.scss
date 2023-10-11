@@ -1,4 +1,4 @@
-@import '../../../styles/variables.scss';
+@import '../../styles/variables.scss';
 
 .header {
   height: $headerHeight;
@@ -66,4 +66,18 @@
     display: flex;
     justify-content: space-between;
   }
+}
+
+.reqListContainer {
+  position: fixed;
+  background-color: white;
+  border: 2px solid map-get($colors, point);
+  top: $headerHeight;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.reqItemContainer {
+  display: flex;
 }
