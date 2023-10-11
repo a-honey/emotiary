@@ -71,6 +71,7 @@ export const getAllMyDiaries = async (
       return res.status(response.status).json(response);
     }
 
+    console.log(myDiaries);
     const diaryResponseDataList = myDiaries.data.map((diary) =>
       plainToClass(DiaryResponseDTO, diary, { excludeExtraneousValues: true }),
     );
@@ -82,7 +83,9 @@ export const getAllMyDiaries = async (
       '성공',
     );
 
-    return res.status(200).json(PaginationResponseData);
+    return res
+      .status(PaginationResponseData.status)
+      .json(PaginationResponseData);
   } catch (error) {
     next(error);
   }
@@ -105,7 +108,13 @@ export const getDiaryByDate = async (
       return res.status(response.status).json(response);
     }
 
-    const response = successApiResponseDTO(MonthlyDiary);
+    const diaryResponseData = MonthlyDiary.map((diary) => {
+      return plainToClass(DiaryResponseDTO, diary, {
+        excludeExtraneousValues: true,
+      });
+    });
+
+    const response = successApiResponseDTO(diaryResponseData);
     return res.status(response.status).json(response);
   } catch (error) {
     next(error);
@@ -185,7 +194,9 @@ export const getOtherUsersDiary = async (
       '성공',
     );
 
-    return res.status(200).json(PaginationResponseData);
+    return res
+      .status(PaginationResponseData.status)
+      .json(PaginationResponseData);
   } catch (error) {
     next(error);
   }

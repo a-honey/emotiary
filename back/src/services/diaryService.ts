@@ -48,21 +48,14 @@ export const getAllMyDiariesService = async (
     skip: (page - 1) * limit,
     take: limit,
     where: { authorId: userId },
+    include: { author: true },
     orderBy: { createdDate: 'desc' },
   });
 
-  //TODO 질문) totalItem, totalPage 계산하는 로직이 반복되는게 싫어서 함수로 따로 빼두었습니다.
-  //그런데 쿼리를 매개변수로 넘기는게 오히려 더 복잡해 보여서 이렇게 사용하는게 나을지 원래대로 (하단 주석부분)
-  //사용하는게 나을지 궁금합니다!
   const { totalItem, totalPage } = await calculatePageInfo(limit, {
     authorId: userId,
   });
 
-  // const totalItem = await prisma.diary.count({
-  //   where: { authorId: userId },
-  // });
-  // const totalPage = Math.ceil(totalItem / limit);
-  // return diaries;
   const pageInfo = { totalItem, totalPage, currentPage: page, limit };
 
   return {
@@ -93,6 +86,8 @@ export const getDiaryByMonthService = async (
         lt: new Date(`${ltYear}-${ltMonth}`),
       },
     },
+    include: { author: true },
+    orderBy: { createdDate: 'asc' },
   });
 
   return diary;
@@ -109,6 +104,7 @@ export const getDiaryByDiaryIdService = async (
 ) => {
   const diary = await prisma.diary.findUnique({
     where: { id: diaryId },
+    include: { author: true },
   });
 
   if (diary == null) return null;
@@ -165,6 +161,7 @@ export const getFriendsDiaryServcie = async (
       },
       authorId: { in: friendIdList },
     },
+    include: { author: true },
     orderBy: { createdDate: 'desc' },
   });
 
@@ -174,17 +171,6 @@ export const getFriendsDiaryServcie = async (
     },
     authorId: { in: friendIdList },
   });
-
-  // const totalItem = await prisma.diary.count({
-  //   where: {
-  //     NOT: {
-  //       is_public: { contains: 'private' },
-  //     },
-  //     authorId: { in: friendIdList },
-  //   },
-  // });
-
-  //const totalPage = Math.ceil(totalItem / limit);
 
   const pageInfo = { totalItem, totalPage, currentPage: page, limit };
 
@@ -203,18 +189,12 @@ export const getAllDiaryService = async (
     where: {
       is_public: select,
     },
+    include: { author: true },
     orderBy: { createdDate: 'desc' },
   });
   const { totalItem, totalPage } = await calculatePageInfo(limit, {
     is_public: select,
   });
-  // const totalItem = await prisma.diary.count({
-  //   where: {
-  //     is_public: select,
-  //   },
-  // });
-
-  // const totalPage = Math.ceil(totalItem / limit);
 
   const pageInfo = { totalItem, totalPage, currentPage: page, limit };
   return { data: allDiary, pageInfo };
@@ -228,6 +208,7 @@ export const updateDiaryService = async (
   const updatedDiary = await prisma.diary.update({
     where: { id: diaryId, authorId: userId },
     data: inputData,
+    include: { author: true },
   });
 
   return updatedDiary;
