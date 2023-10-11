@@ -24,6 +24,7 @@ model User {
   refreshTokens RefreshToken[]
 
   favorites   Favorite[]
+  comments    Comment[]
 }
 
 model RefreshToken {
@@ -61,6 +62,7 @@ model Diary {
   updatedAt   DateTime @updatedAt
 
   favorites   Favorite[]
+  comments    Comment[]
 }
 
 model Favorite {
@@ -69,4 +71,16 @@ model Favorite {
   diaryId    String     @map("diary_id") 
   userId     String     @map("user_id")
   @@id([diaryId, userId])
+}
+
+model Comment {
+  id          String   @id @default(uuid())   
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId    String
+  diary       Diary    @relation(fields: [diaryId], references: [id], onDelete: Cascade)
+  diaryId     String
+  content     String
+  nestedComment  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
