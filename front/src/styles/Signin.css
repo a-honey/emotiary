@@ -2,7 +2,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
 }
 
 /* 메인프레임 */
@@ -17,13 +16,12 @@
   background-image: url('./loginFrame.png');
 }
 
-
 .formGroup {
   margin-bottom: 20px;
 }
 
 .submitButton {
-  background-color: #E17171;
+  background-color: #e17171;
   color: white;
   padding: 10px 20px;
   width: 320px;
