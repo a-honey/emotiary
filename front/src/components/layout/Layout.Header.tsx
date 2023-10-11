@@ -6,7 +6,9 @@ import { handleImgError } from '../../utils/imgHandlers';
 import FriendReqList from './Layout.FriendReqList';
 
 const Header = () => {
-  const isLogin = false;
+  // 로컬 스토리지에서 토큰을 가져와서 로그인 상태 확인
+  const token = localStorage.getItem('token');
+  const isLogin = token !== null;
   const navigator = useNavigate();
 
   const [isOpenFriendReqList, setIsOpenFriendReqList] = useState(false);
@@ -27,7 +29,7 @@ const Header = () => {
           <Link to="/">MY CALENDAR</Link>
           <Link to="/network">LATEST DIARY</Link>
           <Link to="/users">ALL USERS</Link>
-          <Link to="/analysis">ANALYSIS</Link>
+          {/* <Link to="/analysis">ANALYSIS</Link> */}
         </nav>
         {isLogin ? (
           <>
