@@ -74,8 +74,10 @@ const Day = ({
             >
               {day.getDate()}
             </div>
+            {/* 현재 년월이 같고, 오늘보다 과거이면 내용 추가 */}
             {day.getFullYear() === currentDate.year &&
-              day.getMonth() + 1 === currentDate.month && (
+              day.getMonth() + 1 === currentDate.month &&
+              day.getDate() <= today.getDate() && (
                 <DayItem
                   day={day.getDate()}
                   data={data}
