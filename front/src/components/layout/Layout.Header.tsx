@@ -17,6 +17,15 @@ const Header = () => {
     handlesetIsOpenFriendReqList(arg);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('username');
+  
+    // 로그아웃 후 /users/logout 경로로 이동
+    navigator('/users/logout');
+  };
+
   return (
     <>
       <header className={styles.header}>
@@ -50,6 +59,9 @@ const Header = () => {
               </div>
             </div>
             {isOpenFriendReqList && <FriendReqList />}
+            <div onClick={handleLogout}>
+              로그아웃
+            </div>
           </>
         ) : (
           <div>
