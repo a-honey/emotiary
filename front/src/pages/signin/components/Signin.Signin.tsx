@@ -1,7 +1,7 @@
 import React, { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { instance } from '../../../api/instance';
-// import '../../styles/Signin.css';
+import styles from './index.module.scss';
 
 const Signin: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -31,12 +31,12 @@ const Signin: React.FC = () => {
 
   return (
     <>
-      <div className='centerContainer'>
-        <form onSubmit={handleSubmit} className='loginForm'>
-          <div className='formGroup'>
+      <div className={styles.centerContainer}>
+        <form onSubmit={handleSubmit} className={styles.loginForm}>
+          <div className={styles.formGroup}>
             <label htmlFor="email"></label>
-            <div className='inputGroup'>
-              <i className='box1'></i>
+            <div className={styles.inputGroup}>
+              <i className={styles.box1}></i>
               <input
                 type="email"
                 id="email"
@@ -46,10 +46,10 @@ const Signin: React.FC = () => {
               />
             </div>
           </div>
-          <div className='formGroup'>
+          <div className={styles.formGroup}>
             <label htmlFor="password"></label>
-            <div className='inputGroup'>
-              <i className='box2'></i>
+            <div className={styles.inputGroup}>
+              <i className={styles.box2}></i>
               <input
                 type="password"
                 id="password"
@@ -59,7 +59,7 @@ const Signin: React.FC = () => {
               />
             </div>
           </div>
-          <button type="submit" className='submitButton'>SIGN IN</button>
+          <button type="submit" className={styles.submitButton}>SIGN IN</button>
         </form>
       </div>
     </>

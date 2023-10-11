@@ -2,7 +2,7 @@
 import React, { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { instance } from '../../../api/instance';
-// import '../../styles/Signup.css';
+import styles from './index.module.scss';
 
 const Signup: React.FC = () => {
   const [username, setUsername] = useState<string>('');
@@ -36,25 +36,25 @@ const Signup: React.FC = () => {
 
   return (
     <>
-      <div className='centerContainer'>
-        <form onSubmit={handleSubmit} className='signupForm'>
-          <div className='formGroup'>
+      <div className={styles.centerContainer}>
+        <form onSubmit={handleSubmit} className={styles.signupForm}>
+          <div className={styles.formGroup}>
             <label htmlFor="username"></label>
-            <div className='inputGroup'>
-              <i className='box'></i>
+            <div className={styles.inputGroup}>
+              <i className={styles.box1}></i>
               <input
                 id="username"
                 type="text"
-                placeholder="유저네임을 입력하세요"
+                placeholder="이름을 한글/영어로만 입력하세요"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
             </div>
           </div>
-          <div className='formGroup'>
+          <div className={styles.formGroup}>
             <label htmlFor="email"></label>
-            <div className='inputGroup'>
-              <i className='box1'></i>
+            <div className={styles.inputGroup}>
+              <i className={styles.box1}></i>
               <input
                 id="email"
                 type="email"
@@ -64,10 +64,10 @@ const Signup: React.FC = () => {
               />
             </div>
           </div>
-          <div className='formGroup'>
+          <div className={styles.formGroup}>
             <label htmlFor="password"></label>
-            <div className='inputGroup'>
-              <i className='box2'></i>
+            <div className={styles.inputGroup}>
+              <i className={styles.box2}></i>
               <input
                 id="password"
                 type="password"
@@ -77,10 +77,10 @@ const Signup: React.FC = () => {
               />
             </div>
           </div>
-          <div className='formGroup'>
+          <div className={styles.formGroup}>
             <label htmlFor="confirmPassword"></label>
-            <div className='inputGroup'>
-              <i className='box2'></i>
+            <div className={styles.inputGroup}>
+              <i className={styles.box2}></i>
               <input
                 id="confirmPassword"
                 type="password"
@@ -90,7 +90,7 @@ const Signup: React.FC = () => {
               />
             </div>
           </div>
-          <button type="submit" className='submitButton'>SIGN UP</button>
+          <button type="submit" className={styles.submitButton}>SIGN UP</button>
         </form>
       </div>
     </>
