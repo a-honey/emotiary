@@ -8,7 +8,6 @@ import passport from "passport";
 import diaryRouter from "./routes/diaryRouter";
 import favoriteRouter from "./routes/favoriteRouter";
 import friendRouter from "./routes/friendRouter";
-// import { jwtStrategy, localStrategy } from "./passport-config/passport";
 import {
   jwtStrategy,
   localStrategy,
