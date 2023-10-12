@@ -1,6 +1,7 @@
 import { PrismaClient, Prisma } from '@prisma/client';
 import { getMyWholeFriends, weAreFriends } from './friendService';
 import { calculatePageInfo } from '../utils/pageInfo';
+import { countFavoriteByDiaryId } from './favoriteService';
 
 const prisma = new PrismaClient();
 
@@ -48,7 +49,6 @@ export const getAllMyDiariesService = async (
     skip: (page - 1) * limit,
     take: limit,
     where: { authorId: userId },
-    include: { author: true },
     orderBy: { createdDate: 'desc' },
   });
 
@@ -108,6 +108,10 @@ export const getDiaryByDiaryIdService = async (
   });
 
   if (diary == null) return null;
+  //TODO 좋아요 가져오기
+  const favorite = await countFavoriteByDiaryId(diaryId);
+
+  console.log(favorite);
   //내 글 일 경우 Done
   if (diary.authorId == userId) {
     return diary;
@@ -208,7 +212,6 @@ export const updateDiaryService = async (
   const updatedDiary = await prisma.diary.update({
     where: { id: diaryId, authorId: userId },
     data: inputData,
-    include: { author: true },
   });
 
   return updatedDiary;

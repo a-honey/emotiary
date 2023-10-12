@@ -17,10 +17,6 @@ export class ApiResponseDTO {
 
 export class PaginationResponseDTO extends ApiResponseDTO {
   pageInfo: any;
-  currentPage: number;
-  limit: number;
-  totalItem: number;
-  totalPage: number;
 
   constructor(status: number, data: any, pageInfo: any, message: string) {
     super(status, data, message);
