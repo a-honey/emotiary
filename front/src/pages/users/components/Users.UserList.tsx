@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useGetUsersData } from '../../../api/get/useGetUserData';
 
 interface UserItemType {
-  user_id: number;
+  id: number;
   username: string;
   description: string;
   profileImage: string;
@@ -14,6 +14,7 @@ interface UserItemType {
 const UserList = () => {
   const { data, isFetching } = useGetUsersData();
 
+  console.log(data);
   return (
     <div className={styles.block}>
       <h2>유저 모아보기</h2>
@@ -26,7 +27,7 @@ const UserList = () => {
           <div>로딩중</div>
         ) : (
           data?.data?.map((item: UserItemType) => (
-            <UserItem data={item} key={item.user_id} />
+            <UserItem data={item} key={item.id} />
           ))
         )}
       </div>
@@ -40,13 +41,13 @@ export default UserList;
 const UserItem = ({ data }: { data: UserItemType }) => {
   const navigator = useNavigate();
 
-  const { user_id, profileImage, username, description } = data;
+  const { id, profileImage, username, description } = data;
 
   return (
     <div
       className={styles.item}
       onClick={() => {
-        navigator(`/user/${user_id}`);
+        navigator(`/user/${id}`);
       }}
     >
       <div>
