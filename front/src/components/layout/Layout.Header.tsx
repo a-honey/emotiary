@@ -42,7 +42,7 @@ const Header = () => {
           {/* <Link to="/analysis">ANALYSIS</Link> */}
         </nav>
         {isLogin ? (
-          <>
+          <div>
             <div
               className={styles.userInfo}
               onClick={() => {
@@ -55,17 +55,17 @@ const Header = () => {
                 onError={handleImgError}
               />
               <div>{localStorage.getItem('username')}</div>
-              <div
-                onClick={() => {
-                  setIsOpenFriendReqList((prev) => !prev);
-                }}
-              >
-                친구요청알림
-              </div>
+            </div>
+            <div
+              onClick={() => {
+                setIsOpenFriendReqList((prev) => !prev);
+              }}
+            >
+              친구요청알림
             </div>
             {isOpenFriendReqList && <FriendReqList />}
             <div onClick={handleLogout}>로그아웃</div>
-          </>
+          </div>
         ) : (
           <div>
             <Link to="/signin">LOGIN</Link>
