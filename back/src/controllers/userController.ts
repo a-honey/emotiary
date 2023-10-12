@@ -8,6 +8,7 @@ import {
     forgotUserPassword,
     resetUserPassword,
     getUserFromDatabase,
+    areUsersFriends,
 } from '../services/authService';
 import {
     generateAccessToken,
@@ -85,9 +86,37 @@ export const getAllUser = async(
     try{
         // #swagger.tags = ['Users']
 
+        
+        const userId = req.user.id;
+
         // 모든 사용자 정보를 데이터베이스에서 가져오기
         const allUsers = await prisma.user.findMany();
-        res.status(200).json({ data: allUsers, message: '성공' });
+
+
+
+        console.log(userId);
+        for (const user of allUsers) {
+
+            const areFriends = await areUsersFriends(userId, user.id);
+            user.isFriend = areFriends;
+
+
+            const latestDiary = await prisma.diary.findFirst({
+                where : {
+                    authorId : user.id
+                },
+                orderBy : {
+                    createdAt : 'desc'
+                }
+            });
+            if(latestDiary) {
+                user.latestEmoji = latestDiary.emoji;
+            }
+        }
+
+        const totalUsers = allUsers.length;
+
+        res.status(200).json({ data: allUsers, message: '성공', totalUsers });
     }catch(error){
         next(error);
     }
@@ -144,6 +173,7 @@ export const updateUser = async(
 ) => {
     try{
         const userId = req.params.userId;
+        console.log(req.body);
 
         // swagger 데이터전용
         /* #swagger.tags = ['Users']
@@ -156,7 +186,7 @@ export const updateUser = async(
         const updatedUser = await updateUserService(userId,{
             toUpdate : { ...req.body },
         });
-
+        
         res.status(200).json({ data: updatedUser, message: '성공' });
     }catch(error){
         next(error);

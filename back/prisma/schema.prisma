@@ -25,6 +25,8 @@ model User {
 
   favorites   Favorite[]
   comments    Comment[]
+  latestEmoji String?
+  isFriend    Boolean @default(false)
 }
 
 model RefreshToken {
@@ -85,4 +87,18 @@ model Comment {
   updatedAt   DateTime @updatedAt
   reply       Comment? @relation("comment", fields: [nestedComment], references: [id])
   reComment   Comment[] @relation("comment")
+}
+model Emoji {
+  id      Int     @id @default(autoincrement())
+  type    String
+  sadness String?
+  surprise String?
+  happiness String?
+  aversion String?
+  unrest String?
+  anger String?
+  neutrality  String?
+
+
+  @@map("emojis")
 }
