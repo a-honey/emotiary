@@ -90,20 +90,6 @@ model Comment {
   reply         Comment?  @relation("comment", fields: [nestedComment], references: [id], onDelete: Cascade)
   reComment     Comment[] @relation("comment")
 }
-<<<<<<< HEAD
-
-model Emoji {
-  id      Int     @id @default(autoincrement())
-  type    String
-  sadness String?
-  surprise String?
-  happiness String?
-  aversion String?
-  unrest String?
-  anger String?
-  neutrality  String?
-
-=======
 
 model Emoji {
   id         Int     @id @default(autoincrement())
@@ -116,6 +102,5 @@ model Emoji {
   anger      String?
   neutrality String?
 
->>>>>>> 7c85f3a8e5a6f05c1254d17b8761248d3f7bd426
   @@map("emojis")
 }
