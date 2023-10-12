@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import Calendar from '../../../components/calendar/Calendar';
+import { fakeDiaryData } from '../../../mock/diary';
+import { useGetMyDiaryData } from '../../../api/get/useGetDiaryData';
 
 // 메인페이지, 유저별페이지에서 캘린더 컴포넌트 공통사용을 위해 데이터를 불러와서 전달만 하는 컴포넌트
 // 페이지에서 해도됨, 컨테이너 굳이? 근데 페이지는 레이아웃 구분이 잘 되었으면 해서 api 요청 안하고 싶음 나중에 생각
@@ -11,42 +13,20 @@ const CalendarContainer = ({
   handleIsOpenDiaryWriting?: (arg: boolean) => void;
 }) => {
   // delete하면, data 상태 바꿔야함, api 요청할때는 setData에 담기 => react-query가 해결가능한부분인가? 나중에 생각
-  const fakeData = [
-    {
-      diary_id: 1,
-      dateCreated: new Date('2023-10-01T12:00:00Z'),
-      emoji: '😀',
-    },
-    {
-      diary_id: 2,
-      dateCreated: new Date('2023-10-02T15:30:00Z'),
-      emoji: '😊',
-    },
-    {
-      diary_id: 3,
-      dateCreated: new Date('2023-10-03T08:45:00Z'),
-      emoji: '📖',
-    },
-    {
-      diary_id: 4,
-      dateCreated: new Date('2023-10-04T12:00:00Z'),
-      emoji: '😀',
-    },
-    {
-      diary_id: 5,
-      dateCreated: new Date('2023-10-05T15:30:00Z'),
-      emoji: '😊',
-    },
-    {
-      diary_id: 6,
-      dateCreated: new Date('2023-10-06T08:45:00Z'),
-      emoji: '📖',
-    },
-  ];
+
+  const today = new Date();
+
+  const [currentDate, setCurrentDate] = useState({
+    year: today.getFullYear(),
+    month: today.getMonth() + 1,
+  });
+
+  const { data, isFetching } = useGetMyDiaryData(currentDate.month);
 
   return (
     <Calendar
-      data={fakeData}
+      data={fakeDiaryData}
+      isFetching={isFetching}
       handleIsOpenDiaryWriting={handleIsOpenDiaryWriting}
     />
   );

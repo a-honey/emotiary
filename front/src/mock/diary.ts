@@ -81,3 +81,36 @@ export const fakeDiarysData = [
     emoji: '😆',
   },
 ];
+
+export const fakeDiaryData = [
+  {
+    diary_id: 1,
+    dateCreated: new Date('2023-10-01T12:00:00Z'),
+    emoji: '😀',
+  },
+  {
+    diary_id: 2,
+    dateCreated: new Date('2023-10-02T15:30:00Z'),
+    emoji: '😊',
+  },
+  {
+    diary_id: 3,
+    dateCreated: new Date('2023-10-03T08:45:00Z'),
+    emoji: '📖',
+  },
+  {
+    diary_id: 4,
+    dateCreated: new Date('2023-10-04T12:00:00Z'),
+    emoji: '😀',
+  },
+  {
+    diary_id: 5,
+    dateCreated: new Date('2023-10-05T15:30:00Z'),
+    emoji: '😊',
+  },
+  {
+    diary_id: 6,
+    dateCreated: new Date('2023-10-06T08:45:00Z'),
+    emoji: '📖',
+  },
+];

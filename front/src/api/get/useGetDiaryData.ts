@@ -20,7 +20,7 @@ export const useGetDiarysData = (
 };
 
 //** MYPAGE 나의 캘린더별 다이어리 조회 */
-export const useGetMyDiaryData = ({ month }: { month: number }) => {
+export const useGetMyDiaryData = (month: number) => {
   return useQuery({
     queryKey: ['myDiaryData'],
     queryFn: async () => {

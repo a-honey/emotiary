@@ -7,9 +7,11 @@ import { CalendarDiaryItemType } from '../../types/diaryType';
 const Calendar = ({
   handleIsOpenDiaryWriting,
   data,
+  isFetching,
 }: {
   handleIsOpenDiaryWriting?: (arg: boolean) => void;
   data: CalendarDiaryItemType[];
+  isFetching: boolean;
 }) => {
   const today = new Date();
   // 초반 currentDate에 현재 날짜를 보관
