@@ -52,16 +52,17 @@ model Friend {
 }
 
 model Diary {
-  id          String   @id @default(uuid())
-  author      User     @relation(fields: [authorId], references: [id])
-  authorId    String
-  createdDate DateTime
-  title       String
-  content     String
-  is_public   String
-  emoji       String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            String   @id @default(uuid())
+  author        User     @relation(fields: [authorId], references: [id])
+  authorId      String
+  createdDate   DateTime
+  title         String
+  content       String
+  is_public     String
+  emoji         String
+  favoriteCount Int      @default(value: 0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   favorites   Favorite[]
   comments    Comment[]
@@ -88,6 +89,7 @@ model Comment {
   reply       Comment? @relation("comment", fields: [nestedComment], references: [id])
   reComment   Comment[] @relation("comment")
 }
+
 model Emoji {
   id      Int     @id @default(autoincrement())
   type    String
@@ -98,7 +100,6 @@ model Emoji {
   unrest String?
   anger String?
   neutrality  String?
-
 
   @@map("emojis")
 }

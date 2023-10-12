@@ -61,6 +61,9 @@ export class DiaryResponseDTO {
   emoji: string;
 
   @Expose()
+  favoriteCount: number;
+
+  @Expose()
   @Type(() => AuthorInDiaryDTO)
   author: AuthorInDiaryDTO;
 }

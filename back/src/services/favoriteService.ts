@@ -18,6 +18,14 @@ export async function addFavorite(diary_id: string, user_id: string) {
     const favorite = await prisma.favorite.create({
       data: { diaryId: diary_id, userId: user_id },
     });
+
+    const favoriteCount = (await countFavoriteByDiaryId(diary_id)) + 1;
+    await prisma.diary.update({
+      where: { id: diary_id },
+      data: {
+        favoriteCount,
+      },
+    });
     return favorite;
   } catch (error) {
     throw error;

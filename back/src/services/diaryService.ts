@@ -19,31 +19,31 @@ export const createDiaryService = async (
   inputData: Prisma.DiaryCreateInput,
 ) => {
   // flask 테스트용
-  const content = inputData.content;
+  // const content = inputData.content;
 
-  const response = await axios.post('http://127.0.0.1:5000/predict', {
-    text: content,
-  });
+  // const response = await axios.post('http://127.0.0.1:5000/predict', {
+  //   text: content,
+  // });
 
-  // const emotion = response.data.emoji;
-  const emotion = response.data;
+  // // const emotion = response.data.emoji;
+  // const emotion = response.data;
 
-  const emotionType = emotion.emoji;
-  let emojiProperty: keyof Emoji = emojiMapping[emotion];
+  // const emotionType = emotion.emoji;
+  // let emojiProperty: keyof Emoji = emojiMapping[emotion];
 
-  const emojis = await prisma.emoji.findMany({
-    where: {
-      type: emotionType, // 이모지 테이블의 감정 유형 필드에 따라 변경
-    },
-  });
+  // const emojis = await prisma.emoji.findMany({
+  //   where: {
+  //     type: emotionType, // 이모지 테이블의 감정 유형 필드에 따라 변경
+  //   },
+  // });
 
-  const randomEmoji: Emoji = emojis[Math.floor(Math.random() * emojis.length)];
+  // const randomEmoji: Emoji = emojis[Math.floor(Math.random() * emojis.length)];
 
-  emojiProperty = emojiMapping[emotionType] as keyof Emoji;
+  // emojiProperty = emojiMapping[emotionType] as keyof Emoji;
 
-  // inputData에 emoji 추가
-  inputData.emoji = String(randomEmoji[emojiProperty]);
-  // 여기까지 flask 테스트용용용
+  // // inputData에 emoji 추가
+  // inputData.emoji = String(randomEmoji[emojiProperty]);
+  // // 여기까지 flask 테스트용용용
 
   const diary = await prisma.diary.create({
     data: {
@@ -138,9 +138,7 @@ export const getDiaryByDiaryIdService = async (
 
   if (diary == null) return null;
   //TODO 좋아요 가져오기
-  const favorite = await countFavoriteByDiaryId(diaryId);
 
-  console.log(favorite);
   //내 글 일 경우 Done
   if (diary.authorId == userId) {
     return diary;
