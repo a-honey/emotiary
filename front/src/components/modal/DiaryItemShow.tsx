@@ -36,7 +36,7 @@ const DiaryItemShow = ({
     {
       onSuccess: () => {
         // 다이어리가 새로 생겼으므로, myAllDiarysData, myDiaryData 변경 필요
-        queryClient.invalidateQueries(['diaryData']);
+        queryClient.invalidateQueries(['diaryData', diaryId]);
       },
     },
   );
