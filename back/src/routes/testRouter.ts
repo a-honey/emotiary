@@ -1,7 +1,45 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import passport from 'passport';
 
 const testAuthRouter = Router();
+
+import axios from "axios";
+
+testAuthRouter.post('/predict', async(req : Request, res :Response, next : NextFunction) => {
+  try{
+    const text : string = req.body.text as string;
+
+    const response = await axios.post('http://127.0.0.1:5000/predict', { text });
+
+    const result : any = response.data.result;
+    if (response.status === 200) {
+      // 성공적으로 처리됐을 때
+      console.log(response.data); // 이것이 Python Flask 서버에서 반환한 JSON 데이터
+  } else {
+      // 서버에서 오류 응답을 반환했을 때
+      console.error('에러:', response.data);
+  }
+    res.json({result});
+  }catch(error){
+    console.log('에러 : ',error);
+    next(error);
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // 모의 소셜 로그인을 위한 라우트
 testAuthRouter.get('/google', (req: Request, res: Response) => {
