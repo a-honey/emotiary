@@ -60,7 +60,7 @@ export const requestCancel = async (req : IRequest, res : Response, next : NextF
     const userId = req.user.id;
     const requestId = req.params.userId;
     const cancel = await cancelRequest(userId, requestId);
-    res.status(200).json({ data: cancel, message: '요청 취소' });
+    res.status(200).json({ message: '요청 취소' });
 } catch (error) {
     console.error(error);
     error.status = 500;
@@ -89,7 +89,7 @@ export const friendAccept = async (req : IRequest, res : Response, next : NextFu
     const userId = req.user.id;
     const requestId = req.params.userId;
     const accept = await acceptFriend(userId, requestId);
-    res.status(200).json({ data: accept, message: '친구 수락' });
+    res.status(200).json({ message: '친구 수락' });
   } catch (error) {
     console.error(error);
     error.status = 500;
@@ -103,7 +103,7 @@ export const friendReject = async (req : IRequest, res : Response, next : NextFu
     const userId = req.user.id;
     const requestId = req.params.userId;
     const reject = await rejectFriend(userId, requestId);
-    res.status(200).json({ data: reject, message: '친구 거절' });
+    res.status(200).json({ message: '친구 거절' });
 } catch (error) {
     console.error(error);
     error.status = 500;
@@ -133,7 +133,7 @@ export const friendDelete = async (req : IRequest, res : Response, next : NextFu
     const userId = req.user.id;
     const friendId = req.params.userId;
     const dropFriend = await deleteFriend(userId, friendId);
-    res.status(200).json({ data: dropFriend, message: '친구 삭제' });
+    res.status(200).json({ message: '친구 삭제' });
 } catch (error) {
     console.error(error);
     error.status = 500;
