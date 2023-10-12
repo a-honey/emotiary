@@ -14,18 +14,23 @@ const Signin: React.FC = () => {
     const data = { email, password };
 
     try {
-      const response = await instance.post('http://localhost:5001/users/login', data);
-      console.log('로그인 성공!', response.data);
+      const response = await instance.post(
+        'http://localhost:5001/users/login',
+        data,
+      );
+      console.log('로그인 성공!', response.data.data);
 
       // 로컬 스토리지에 로그인 성공값을 저장
-      localStorage.setItem('userId', response.data.id);
-      localStorage.setItem('username', response.data.username);
-      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('userId', response.data.data.id);
+      localStorage.setItem('username', response.data.data.name);
+      localStorage.setItem('token', response.data.data.token);
+      localStorage.setItem('userImg', response.data.data.uploadFile);
+      localStorage.setItem('refreshToken', response.data.data.refreshToken);
 
       // 메인 경로로 이동
       navigate('/');
-    } catch (error) {
-      console.log('로그인 실패!', error);
+    } catch (error: any) {
+      console.log('로그인 실패!', error?.message);
     }
   };
 
@@ -59,7 +64,9 @@ const Signin: React.FC = () => {
               />
             </div>
           </div>
-          <button type="submit" className={styles.submitButton}>SIGN IN</button>
+          <button type="submit" className={styles.submitButton}>
+            SIGN IN
+          </button>
         </form>
       </div>
     </>
@@ -79,7 +86,6 @@ export default Signin;
 
 // 네이버 로그인
 // /users/auth/google
-
 
 // import React, { FormEvent, useState } from 'react';
 // import { useMutation } from 'react-query';

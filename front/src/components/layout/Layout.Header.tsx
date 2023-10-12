@@ -21,9 +21,10 @@ const Header = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     localStorage.removeItem('username');
-  
-    // 로그아웃 후 /users/logout 경로로 이동
-    navigator('/users/logout');
+    localStorage.removeItem('refreshToken');
+
+    // 로그아웃 후 /intro 경로로 이동
+    navigator('/intro');
   };
 
   return (
@@ -59,11 +60,7 @@ const Header = () => {
               </div>
             </div>
             {isOpenFriendReqList && <FriendReqList />}
-
-            <div onClick={handleLogout}>
-              로그아웃
-            </div>
-            
+            <div onClick={handleLogout}>로그아웃</div>
           </>
         ) : (
           <div>
