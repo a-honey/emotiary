@@ -122,7 +122,12 @@ const DayItem = ({
         <div className={styles.emoji} onClick={toggleIsOpenModal}>
           {data.emoji}
         </div>
-        {isOpenDiary && <DiaryItemShow toggleIsOpenModal={toggleIsOpenModal} />}
+        {isOpenDiary && (
+          <DiaryItemShow
+            toggleIsOpenModal={toggleIsOpenModal}
+            id={data.diary_id}
+          />
+        )}
       </>
     );
   } else {

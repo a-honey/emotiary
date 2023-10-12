@@ -6,8 +6,8 @@ import DiaryItemShow from '../../../components/modal/DiaryItemShow';
 import { useGetDiarysData } from '../../../api/get/useGetDiaryData';
 
 interface DairyItemType {
-  diary_id: number;
-  user_id: number;
+  diary_id: string;
+  user_id: string;
   username: string;
   profileImage: string;
   title: string;
@@ -67,7 +67,12 @@ const DairyItem = ({ data }: { data: DairyItemType }) => {
 
   return (
     <>
-      {isOpenDiary && <DiaryItemShow toggleIsOpenModal={toggleIsOpenModal} />}
+      {isOpenDiary && (
+        <DiaryItemShow
+          toggleIsOpenModal={toggleIsOpenModal}
+          id={data.diary_id}
+        />
+      )}
       <div
         className={styles.dairyItem}
         onClick={() => {

@@ -44,3 +44,14 @@ export const useGetMyAllDiarysData = (page: number, limit: number) => {
     },
   });
 };
+
+//** 다이어리 모달 id로 조회 */
+export const useGetDiaryData = (id: string) => {
+  return useQuery({
+    queryKey: ['diaryData'],
+    queryFn: async () => {
+      const response = await instance.get(`/diary/${id}`);
+      return response.data;
+    },
+  });
+};
