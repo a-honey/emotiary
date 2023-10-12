@@ -25,6 +25,9 @@ const MyCard = () => {
         // 업데이트가 성공하면 쿼리를 다시 실행하여 최신 데이터를 가져옵니다.
         queryClient.invalidateQueries({ queryKey: ['myUserData'] });
       },
+      onError: (error) => {
+        console.error('useMutation api 요청 에러', error);
+      },
     },
   );
 

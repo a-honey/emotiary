@@ -38,6 +38,9 @@ const DiaryItemShow = ({
         // 다이어리가 새로 생겼으므로, myAllDiarysData, myDiaryData 변경 필요
         queryClient.invalidateQueries(['diaryData', diaryId]);
       },
+      onError: (error) => {
+        console.error('useMutation api 요청 에러', error);
+      },
     },
   );
 
