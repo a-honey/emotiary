@@ -29,11 +29,13 @@ const DiaryList = () => {
     8,
   );
 
+  /*
   useEffect(() => {
     if (!userId) {
       navigator('/intro');
     }
   }, [userId, navigator]);
+  */
   return (
     <div className={styles.diaryBlock}>
       <h2>다른 유저의 일기 모아보기</h2>
