@@ -6,13 +6,25 @@ import { handleImgError } from '../../utils/imgHandlers';
 import FriendReqList from './Layout.FriendReqList';
 
 const Header = () => {
-  const isLogin = false;
+  // 로컬 스토리지에서 토큰을 가져와서 로그인 상태 확인
+  const token = localStorage.getItem('token');
+  const isLogin = token !== null;
   const navigator = useNavigate();
 
   const [isOpenFriendReqList, setIsOpenFriendReqList] = useState(false);
 
   const handlesetIsOpenFriendReqList = (arg: boolean) => {
     handlesetIsOpenFriendReqList(arg);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('username');
+    localStorage.removeItem('refreshToken');
+
+    // 로그아웃 후 /intro 경로로 이동
+    navigator('/intro');
   };
 
   return (
@@ -27,7 +39,7 @@ const Header = () => {
           <Link to="/">MY CALENDAR</Link>
           <Link to="/network">LATEST DIARY</Link>
           <Link to="/users">ALL USERS</Link>
-          <Link to="/analysis">ANALYSIS</Link>
+          {/* <Link to="/analysis">ANALYSIS</Link> */}
         </nav>
         {isLogin ? (
           <>
@@ -37,8 +49,12 @@ const Header = () => {
                 navigator('/mypage');
               }}
             >
-              <img src="" alt="의 프로필사진" onError={handleImgError} />
-              <div>유저이름</div>
+              <img
+                src={localStorage.getItem('userImg') as string}
+                alt={`${localStorage.getItem('username')}의 프로필사진`}
+                onError={handleImgError}
+              />
+              <div>{localStorage.getItem('username')}</div>
               <div
                 onClick={() => {
                   setIsOpenFriendReqList((prev) => !prev);
@@ -48,6 +64,7 @@ const Header = () => {
               </div>
             </div>
             {isOpenFriendReqList && <FriendReqList />}
+            <div onClick={handleLogout}>로그아웃</div>
           </>
         ) : (
           <div>
