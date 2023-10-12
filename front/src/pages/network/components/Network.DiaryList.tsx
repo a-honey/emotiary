@@ -113,13 +113,13 @@ const DairyItem = ({ data }: { data: DairyItemType }) => {
   const navigator = useNavigate();
   const [isOpenDiary, setIsOpenDiary] = useState(false);
 
-  const handleIsOpenModal = () => {
+  const toggleIsOpenModal = () => {
     setIsOpenDiary((prev) => !prev);
   };
 
   return (
     <>
-      {isOpenDiary && <DiaryItemShow handleIsOpenModal={handleIsOpenModal} />}
+      {isOpenDiary && <DiaryItemShow toggleIsOpenModal={toggleIsOpenModal} />}
       <div
         className={styles.dairyItem}
         onClick={() => {

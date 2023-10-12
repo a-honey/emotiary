@@ -6,9 +6,9 @@ import DiaryReplyAdd from './DiaryReplyAdd';
 // 작성자 id가 로그인 id와 같을 경우, 수정 버튼 활성화, 다를경우 비활성화
 // 비공개일 경우 그냥 안띄우기, 친구공개일 경우 자물쇠 아이콘 + 친구만 볼 수 있습니다 모달 안에 띄우기
 const DiaryItemShow = ({
-  handleIsOpenModal,
+  toggleIsOpenModal,
 }: {
-  handleIsOpenModal: () => void;
+  toggleIsOpenModal: () => void;
 }) => {
   return (
     <div className="modal">
@@ -20,7 +20,7 @@ const DiaryItemShow = ({
         </div>
         <div className={styles.like}>♡</div>
         <DiaryComment />
-        <button className="cancelBtn" onClick={handleIsOpenModal}>
+        <button className="cancelBtn" onClick={toggleIsOpenModal}>
           닫기
         </button>
       </div>
