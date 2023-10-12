@@ -20,10 +20,14 @@ export const useGetDiarysData = (
 };
 
 //** MAINPAGE 나의 캘린더별, USERIDPAGE 캘린더 다이어리 조회 */
-export const useGetMyDiaryData = (user_id: string, month: number) => {
+export const useGetMyDiaryData = (
+  user_id: string,
+  year: number,
+  month: number,
+) => {
   return useQuery(['myDiaryData'], async () => {
     const response = await instance.get(
-      `/diary/views/date/${user_id}?month=${month}`,
+      `/diary/views/date/${user_id}?year=${year}month=${month}`,
     );
     return response.data;
   });

@@ -23,6 +23,7 @@ const CalendarContainer = ({
 
   const { data, isFetching } = useGetMyDiaryData(
     `${localStorage.getItem('userId')}`,
+    currentDate.year,
     currentDate.month,
   );
 
