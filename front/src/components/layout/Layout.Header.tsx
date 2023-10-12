@@ -49,8 +49,12 @@ const Header = () => {
                 navigator('/mypage');
               }}
             >
-              <img src="" alt="의 프로필사진" onError={handleImgError} />
-              <div>유저이름</div>
+              <img
+                src={localStorage.getItem('userImg') as string}
+                alt={`${localStorage.getItem('username')}의 프로필사진`}
+                onError={handleImgError}
+              />
+              <div>{localStorage.getItem('username')}</div>
               <div
                 onClick={() => {
                   setIsOpenFriendReqList((prev) => !prev);
