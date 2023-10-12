@@ -21,7 +21,10 @@ const CalendarContainer = ({
     month: today.getMonth() + 1,
   });
 
-  const { data, isFetching } = useGetMyDiaryData(currentDate.month);
+  const { data, isFetching } = useGetMyDiaryData(
+    `${localStorage.getItem('userId')}`,
+    currentDate.month,
+  );
 
   return (
     <Calendar

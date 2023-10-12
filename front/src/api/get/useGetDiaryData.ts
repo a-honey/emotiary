@@ -19,12 +19,27 @@ export const useGetDiarysData = (
   });
 };
 
-//** MYPAGE 나의 캘린더별 다이어리 조회 */
-export const useGetMyDiaryData = (month: number) => {
+//** MAINPAGE 나의 캘린더별, USERIDPAGE 캘린더 다이어리 조회 */
+export const useGetMyDiaryData = (user_id: string, month: number) => {
   return useQuery({
     queryKey: ['myDiaryData'],
     queryFn: async () => {
-      const response = await instance.get(`/diary/views/date?month=${month}`);
+      const response = await instance.get(
+        `/diary/views/date/${user_id}?month=${month}`,
+      );
+      return response.data;
+    },
+  });
+};
+
+//** 마이페이지 모든  다이어리 조회 */
+export const useGetMyAllDiarysData = (page: number, limit: number) => {
+  return useQuery({
+    queryKey: ['myAllDiarysData'],
+    queryFn: async () => {
+      const response = await instance.get(
+        `/diary/views?page=${page}&limit${limit}`,
+      );
       return response.data;
     },
   });
