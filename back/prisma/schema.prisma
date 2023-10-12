@@ -24,6 +24,7 @@ model User {
   refreshTokens RefreshToken[]
 
   favorites   Favorite[]
+  comments    Comment[]
   latestEmoji String?
   isFriend    Boolean @default(false)
 }
@@ -63,6 +64,7 @@ model Diary {
   updatedAt   DateTime @updatedAt
 
   favorites   Favorite[]
+  comments    Comment[]
 }
 
 model Favorite {
@@ -73,6 +75,19 @@ model Favorite {
   @@id([diaryId, userId])
 }
 
+model Comment {
+  id          String   @id @default(uuid())   
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId    String
+  diary       Diary    @relation(fields: [diaryId], references: [id], onDelete: Cascade)
+  diaryId     String
+  content     String
+  nestedComment  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  reply       Comment? @relation("comment", fields: [nestedComment], references: [id])
+  reComment   Comment[] @relation("comment")
+}
 model Emoji {
   id      Int     @id @default(autoincrement())
   type    String
