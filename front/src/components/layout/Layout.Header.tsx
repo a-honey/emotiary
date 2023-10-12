@@ -59,9 +59,11 @@ const Header = () => {
               </div>
             </div>
             {isOpenFriendReqList && <FriendReqList />}
+
             <div onClick={handleLogout}>
               로그아웃
             </div>
+            
           </>
         ) : (
           <div>
