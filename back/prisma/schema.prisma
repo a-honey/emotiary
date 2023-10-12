@@ -24,6 +24,8 @@ model User {
   refreshTokens RefreshToken[]
 
   favorites   Favorite[]
+  latestEmoji String?
+  isFriend    Boolean @default(false)
 }
 
 model RefreshToken {
@@ -69,4 +71,19 @@ model Favorite {
   diaryId    String     @map("diary_id") 
   userId     String     @map("user_id")
   @@id([diaryId, userId])
+}
+
+model Emoji {
+  id      Int     @id @default(autoincrement())
+  type    String
+  sadness String?
+  surprise String?
+  happiness String?
+  aversion String?
+  unrest String?
+  anger String?
+  neutrality  String?
+
+
+  @@map("emojis")
 }

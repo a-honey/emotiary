@@ -1,7 +1,8 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 import { v4 } from "uuid";
 import { getMyWholeFriends } from "./friendService";
-
+import axios from "axios";
+import { Emoji, emojiMapping, Emotion } from "../types/emoji";
 const prisma = new PrismaClient();
 
 /**
@@ -15,6 +16,31 @@ export const createDiaryService = async (
   authorId: string,
   inputData: Prisma.DiaryCreateInput
 ) => {
+  // flask 테스트용
+  const content = inputData.content;
+
+  const response = await axios.post('http://127.0.0.1:5000/predict', { text: content });
+
+  // const emotion = response.data.emoji;
+  const emotion = response.data;
+
+  const emotionType = emotion.emoji;
+  let emojiProperty : keyof Emoji = emojiMapping[emotion];
+  
+  const emojis = await prisma.emoji.findMany({
+    where: {
+      type: emotionType // 이모지 테이블의 감정 유형 필드에 따라 변경
+    }
+  });
+
+  const randomEmoji : Emoji = emojis[Math.floor(Math.random() * emojis.length)];
+
+  emojiProperty = emojiMapping[emotionType] as keyof Emoji; 
+
+  // inputData에 emoji 추가
+  inputData.emoji = String(randomEmoji[emojiProperty]);
+  // 여기까지 flask 테스트용용용
+
   const diary = await prisma.diary.create({
     data: {
       ...inputData,

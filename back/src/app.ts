@@ -8,7 +8,6 @@ import passport from "passport";
 import diaryRouter from "./routes/diaryRouter";
 import favoriteRouter from "./routes/favoriteRouter";
 import friendRouter from "./routes/friendRouter";
-// import { jwtStrategy, localStrategy } from "./passport-config/passport";
 import {
   jwtStrategy,
   localStrategy,
@@ -32,10 +31,10 @@ const googleStrategyInstance = googleStrategy;
 
 passport.use("local", localStrategyInstance);
 passport.use("jwt", jwtStrategyInstance);
-passport.use("google", googleStrategy);
+passport.use("google", googleStrategyInstance);
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 
 // 유튜브
@@ -109,5 +108,6 @@ app.use("/favorites", favoriteRouter);
 
 // // 정적 파일 제공을 위한 미들웨어 설정
 // app.use(express.static("public"));
+app.use(express.static("imageUpload"));
 
 export { app };
