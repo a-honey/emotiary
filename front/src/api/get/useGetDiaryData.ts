@@ -21,37 +21,28 @@ export const useGetDiarysData = (
 
 //** MAINPAGE 나의 캘린더별, USERIDPAGE 캘린더 다이어리 조회 */
 export const useGetMyDiaryData = (user_id: string, month: number) => {
-  return useQuery({
-    queryKey: ['myDiaryData'],
-    queryFn: async () => {
-      const response = await instance.get(
-        `/diary/views/date/${user_id}?month=${month}`,
-      );
-      return response.data;
-    },
+  return useQuery(['myDiaryData'], async () => {
+    const response = await instance.get(
+      `/diary/views/date/${user_id}?month=${month}`,
+    );
+    return response.data;
   });
 };
 
 //** 마이페이지 모든  다이어리 조회 */
 export const useGetMyAllDiarysData = (page: number, limit: number) => {
-  return useQuery({
-    queryKey: ['myAllDiarysData'],
-    queryFn: async () => {
-      const response = await instance.get(
-        `/diary/views?page=${page}&limit${limit}`,
-      );
-      return response.data;
-    },
+  return useQuery(['myAllDiarysData'], async () => {
+    const response = await instance.get(
+      `/diary/views?page=${page}&limit${limit}`,
+    );
+    return response.data;
   });
 };
 
-//** 다이어리 모달 id로 조회 */
+//** 다이어리 모달 id로 조회 ['diaryData', id] */
 export const useGetDiaryData = (id: string) => {
-  return useQuery({
-    queryKey: ['diaryData'],
-    queryFn: async () => {
-      const response = await instance.get(`/diary/${id}`);
-      return response.data;
-    },
+  return useQuery(['diaryData', id], async () => {
+    const response = await instance.get(`/diary/${id}`);
+    return response.data;
   });
 };
