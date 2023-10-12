@@ -80,7 +80,7 @@ export const getAllMyDiariesService = async (
     where: { authorId: userId },
     orderBy: { createdDate: 'desc' },
   });
-
+  console.log('!!!!!!!!!!!!!!!!!service', diaries);
   const { totalItem, totalPage } = await calculatePageInfo(limit, {
     authorId: userId,
   });
@@ -223,6 +223,7 @@ export const getAllDiaryService = async (
     include: { author: true },
     orderBy: { createdDate: 'desc' },
   });
+
   const { totalItem, totalPage } = await calculatePageInfo(limit, {
     is_public: select,
   });
