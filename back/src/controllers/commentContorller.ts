@@ -6,6 +6,12 @@ import {
   updatedComment,
   deletedComment,
 } from '../services/commentService';
+import { plainToClass } from 'class-transformer';
+import { commentResponseDTO } from '../dtos/commentDTO';
+import { emptyApiResponseDTO } from '../utils/emptyResult';
+import { successApiResponseDTO } from '../utils/successResult';
+import { nonAuthorizedApiResponseDTO } from '../utils/nonAuthorizeResult';
+import { IsObject } from 'class-validator';
 
 export const createComment = async (
   req: IRequest,
@@ -23,7 +29,13 @@ export const createComment = async (
 
     const comment = await createdComment(inputData, authorId, diary_id);
 
-    res.status(200).json({ data: comment, message: '댓글을 달았어요!' });
+    const commentResponseData = plainToClass(commentResponseDTO, comment, {
+      excludeExtraneousValues: true,
+    });
+
+    const response = successApiResponseDTO(commentResponseData);
+
+    res.status(response.status).json(response);
   } catch (error) {
     next(error);
   }
@@ -40,7 +52,20 @@ export const getComment = async (
 
     const comment = await getCommentByDiaryId(diary_id);
 
-    res.status(200).json(comment);
+    if (comment.data.length == 0) {
+      const response = emptyApiResponseDTO();
+      return res.status(response.status).json(response);
+    }
+
+    const commentResponseDataList = comment.data.map((comment) =>
+      plainToClass(commentResponseDTO, comment, {
+        excludeExtraneousValues: true,
+      }),
+    );
+
+    const response = successApiResponseDTO(commentResponseDataList);
+
+    res.status(response.status).json(response);
   } catch (error) {
     next(error);
   }
@@ -62,7 +87,18 @@ export const updateComment = async (
 
     const comment = await updatedComment(inputData, comment_id, authorId);
 
-    res.status(200).json(comment);
+    if (comment.data == undefined) {
+      const response = nonAuthorizedApiResponseDTO();
+      return res.status(response.status).json(response);
+    }
+
+    const commentResponseData = plainToClass(commentResponseDTO, comment, {
+      excludeExtraneousValues: true,
+    });
+
+    const response = successApiResponseDTO(commentResponseData);
+
+    return res.status(response.status).json(response);
   } catch (error) {
     next(error);
   }
@@ -83,7 +119,18 @@ export const deleteComment = async (
 
     const comment = await deletedComment(comment_id, authorId);
 
-    res.status(200).json(comment);
+    if (comment == null) {
+      const response = nonAuthorizedApiResponseDTO();
+      return res.status(response.status).json(response);
+    }
+
+    const commentResponseData = plainToClass(commentResponseDTO, comment, {
+      excludeExtraneousValues: true,
+    });
+
+    const response = successApiResponseDTO(commentResponseData);
+
+    return res.status(response.status).json(response);
   } catch (error) {
     next(error);
   }

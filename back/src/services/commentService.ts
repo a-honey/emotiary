@@ -95,13 +95,13 @@ export async function deletedComment(comment_id: string, authorId: string) {
       where: { id: comment_id },
     });
     if (userCheck.authorId == authorId) {
-      await prisma.comment.deleteMany({
+      const comment = await prisma.comment.deleteMany({
         where: { id: comment_id },
       });
 
-      return { message: '해당 댓글을 삭제했어요!' };
+      return { data: comment };
     } else {
-      return { message: '작성자가 아니므로 삭제가 불가합니다.' };
+      return null;
     }
   } catch (error) {
     throw error;
