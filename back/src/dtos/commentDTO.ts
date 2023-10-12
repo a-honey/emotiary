@@ -50,6 +50,9 @@ export class commentResponseDTO {
   updatedAt: Date;
 
   @Expose()
+  reComment: string;
+
+  @Expose()
   @Type(() => AuthorInCommentDTO)
   author: AuthorInCommentDTO;
 }

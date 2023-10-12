@@ -92,7 +92,7 @@ export const updateComment = async (
       return res.status(response.status).json(response);
     }
 
-    const commentResponseData = plainToClass(commentResponseDTO, comment, {
+    const commentResponseData = plainToClass(commentResponseDTO, comment.data, {
       excludeExtraneousValues: true,
     });
 
