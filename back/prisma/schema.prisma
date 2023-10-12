@@ -16,8 +16,8 @@ model User {
   profileImage String?
   updatedAt    DateTime @default(now()) // 기본값 추가
   createdAt    DateTime @default(now())
-  friendA      Friend[] @relation("UserFriendA")
-  friendB      Friend[] @relation("UserFriendB")
+  friendS      Friend[] @relation("UserFriendS")
+  friendR      Friend[] @relation("UserFriendR")
   Diary        Diary[]
 
   // 사용자와 Refresh Token 간의 일대다 관계 설정
@@ -26,7 +26,7 @@ model User {
   favorites   Favorite[]
   comments    Comment[]
   latestEmoji String?
-  isFriend    Boolean @default(false)
+  isFriend    Boolean    @default(false)
 }
 
 model RefreshToken {
@@ -41,14 +41,14 @@ model RefreshToken {
 }
 
 model Friend {
-  id      String  @id @default(uuid())
-  userA   User    @relation("UserFriendA", fields: [userAId], references: [id])
-  userAId String
-  userB   User    @relation("UserFriendB", fields: [userBId], references: [id])
-  userBId String
-  status  Boolean @default(false)
+  id             String  @id @default(uuid())
+  sentUser       User    @relation("UserFriendS", fields: [sentUserId], references: [id])
+  sentUserId     String
+  receivedUser   User    @relation("UserFriendR", fields: [receivedUserId], references: [id])
+  receivedUserId String
+  status         Boolean @default(false)
 
-  @@unique([userAId, userBId])
+  @@unique([sentUserId, receivedUserId])
 }
 
 model Diary {
@@ -63,42 +63,43 @@ model Diary {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  favorites   Favorite[]
-  comments    Comment[]
+  favorites Favorite[]
+  comments  Comment[]
 }
 
 model Favorite {
-  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  diary      Diary      @relation(fields: [diaryId], references: [id], onDelete: Cascade)
-  diaryId    String     @map("diary_id") 
-  userId     String     @map("user_id")
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  diary   Diary  @relation(fields: [diaryId], references: [id], onDelete: Cascade)
+  diaryId String @map("diary_id")
+  userId  String @map("user_id")
+
   @@id([diaryId, userId])
 }
 
 model Comment {
-  id          String   @id @default(uuid())   
-  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId    String
-  diary       Diary    @relation(fields: [diaryId], references: [id], onDelete: Cascade)
-  diaryId     String
-  content     String
-  nestedComment  String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  reply       Comment? @relation("comment", fields: [nestedComment], references: [id])
-  reComment   Comment[] @relation("comment")
+  id            String    @id @default(uuid())
+  author        User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId      String
+  diary         Diary     @relation(fields: [diaryId], references: [id], onDelete: Cascade)
+  diaryId       String
+  content       String
+  nestedComment String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  reply         Comment?  @relation("comment", fields: [nestedComment], references: [id], onDelete: Cascade)
+  reComment     Comment[] @relation("comment")
 }
-model Emoji {
-  id      Int     @id @default(autoincrement())
-  type    String
-  sadness String?
-  surprise String?
-  happiness String?
-  aversion String?
-  unrest String?
-  anger String?
-  neutrality  String?
 
+model Emoji {
+  id         Int     @id @default(autoincrement())
+  type       String
+  sadness    String?
+  surprise   String?
+  happiness  String?
+  aversion   String?
+  unrest     String?
+  anger      String?
+  neutrality String?
 
   @@map("emojis")
 }

@@ -181,7 +181,7 @@ export const getFriendsDiaryServcie = async (
   // 친구 목록 읽어오기
   const friends = await getMyWholeFriends(userId);
   const friendIdList = friends.map((friend) => {
-    return friend.userBId;
+    return friend.receivedUserId;
   });
 
   // 친구들의 다이어리 가져오기 (최신순)
