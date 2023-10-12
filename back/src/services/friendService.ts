@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
+
 /** @description 친구 여부 */
 export const weAreFriends = async (userId: string, requestId: string) => {
   try {
@@ -9,8 +10,8 @@ export const weAreFriends = async (userId: string, requestId: string) => {
         userAId_userBId: {
           userAId: userId,
           userBId: requestId,
-        },
       },
+    },
     });
   } catch (error) {
     throw error;
@@ -31,21 +32,58 @@ export const createFriends = async (userAId: string, userBId: string) => {
   }
 };
 
-/** @description 친구 요청 목록 */
-export const friendRequestList = async (userId: string) => {
+/** @description 보낸 친구 요청 목록 */
+export const listRequestsSent = async (userId: string) => {
+  try {
+    return await prisma.friend.findMany({
+      where: {
+        userAId: userId,
+        status: false,
+    },
+    select: {
+        userB: {
+          select: {
+            id: true,
+            username: true,
+            profileImage: true,
+        },
+        },
+      },
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+/** @description 요청 취소 */
+export const cancelRequest = async (userId: string, requestId: string) => {
+  try {
+    return await prisma.friend.deleteMany({
+      where: {
+        userAId: userId,
+        userBId: requestId,
+      },
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+/** @description 받은 친구 요청 목록 */
+export const listRequestsReceived = async (userId: string) => {
   try {
     return await prisma.friend.findMany({
       where: {
         userBId: userId,
         status: false,
-      },
-      select: {
+    },
+    select: {
         userA: {
           select: {
             id: true,
             username: true,
             profileImage: true,
-          },
+        },
         },
       },
     });
@@ -59,13 +97,11 @@ export const acceptFriend = async (userId: string, requestId: string) => {
   try {
     return await prisma.friend.updateMany({
       where: {
-        OR: [
-          { userAId: requestId, userBId: userId },
-          { userAId: userId, userBId: requestId },
-        ],
+        userAId: requestId,
+        userBId: userId,
       },
       data: {
-        status: true,
+          status: true,
       },
     });
   } catch (error) {
@@ -78,10 +114,8 @@ export const rejectFriend = async (userId: string, requestId: string) => {
   try {
     return await prisma.friend.deleteMany({
       where: {
-        OR: [
-          { userAId: requestId, userBId: userId },
-          { userAId: userId, userBId: requestId },
-        ],
+        userAId: requestId,
+        userBId: userId,
       },
     });
   } catch (error) {
@@ -100,12 +134,10 @@ export const getMyWholeFriends = async (userId: string) => {
   return friendList;
 };
 
+
+// TODO 페이지네이션... 수정
 /** @description 친구 목록 */
-export const getMyFriends = async (
-  userId: string,
-  page: number,
-  limit: number
-) => {
+export const getMyFriends = async (userId: string, page: number, limit: number) => {
   try {
     const paginationOptions =
       page !== null && limit !== null
@@ -131,22 +163,22 @@ export const getMyFriends = async (
       },
     });
 
-    const uniqueFriendIds: any[] = [
-      ...new Set(myFriendsA.map((friend: any) => friend.userBId)),
-      ...new Set(myFriendsB.map((friend: any) => friend.userAId)),
+    const uniqueFriendIds: string[] = [
+      ...new Set(myFriendsA.map((friend) => friend.userBId)),
+      ...new Set(myFriendsB.map((friend) => friend.userAId)),
     ];
 
     const user = await prisma.user.findMany({
       where: {
-        id: {
-          in: uniqueFriendIds,
-        },
+          id: {
+              in: uniqueFriendIds,
+          },
       },
       select: {
-        id: true,
-        username: true,
+          id: true,
+          username: true,
       },
-      orderBy: { id: "asc" },
+      orderBy: { id: 'asc' },
       // ...paginationOptions,
     });
 
@@ -160,7 +192,7 @@ export const getMyFriends = async (
       totalPages: totalPages,
     };
   } catch (error) {
-    throw error;
+      throw error;
   }
 };
 
@@ -176,7 +208,7 @@ export const deleteFriend = async (userId: string, friendId: string) => {
         ],
       },
     });
-  } catch (error) {
+} catch (error) {
     throw error;
   }
 };
