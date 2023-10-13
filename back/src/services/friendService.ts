@@ -1,6 +1,22 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
+export const checkFriend = async (userId: string, requestId: string) => {
+  try {
+    const friend = await prisma.friend.findUnique({
+      where: {
+        sentUserId_receivedUserId: {
+          sentUserId: userId,
+          receivedUserId: requestId,
+        },
+        status: true,
+      },
+    });
+    return friend;
+  } catch (error) {
+    throw error;
+  }
+};
 
 /** @description 친구 여부 */
 // export const weAreFriends = async (userId: string, requestId: string) => {
@@ -46,7 +62,10 @@ export const weAreFriends = async (userId: string, requestId: string) => {
 //     throw error;
 //   }
 // };
-export const createFriends = async (sentUserId: string, receivedUserId: string) => {
+export const createFriends = async (
+  sentUserId: string,
+  receivedUserId: string,
+) => {
   try {
     const createdFriend = await prisma.friend.create({
       data: {
@@ -252,7 +271,6 @@ export const getMyWholeFriends = async (userId: string) => {
   return friendList;
 };
 
-
 // TODO 페이지네이션... 수정
 /** @description 친구 목록 */
 // export const getMyFriends = async (userId: string, page: number, limit: number) => {
@@ -314,9 +332,16 @@ export const getMyWholeFriends = async (userId: string) => {
 //   }
 // };
 
-export const getMyFriends = async (userId: string, page: number, limit: number) => {
+export const getMyFriends = async (
+  userId: string,
+  page: number,
+  limit: number,
+) => {
   try {
-    const paginationOptions = page !== null && limit !== null ? { skip: (page - 1) * limit, take: limit } : {};
+    const paginationOptions =
+      page !== null && limit !== null
+        ? { skip: (page - 1) * limit, take: limit }
+        : {};
 
     const myFriendsSent = await prisma.friend.findMany({
       where: {
