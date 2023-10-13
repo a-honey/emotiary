@@ -18,7 +18,7 @@ const Day = ({
 }: {
   currentDate: { year: number; month: number };
   data: CalendarDiaryItemType[];
-  handleIsOpenDiaryWriting?: (arg: boolean) => void;
+  handleIsOpenDiaryWriting?: () => void;
 }) => {
   const week = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -101,7 +101,7 @@ const DayItem = ({
 }: {
   day: number;
   data: CalendarDiaryItemType[];
-  handleIsOpenDiaryWriting?: (arg: boolean) => void;
+  handleIsOpenDiaryWriting?: () => void;
 }) => {
   const [isOpenDiary, setIsOpenDiary] = useState(false);
 
@@ -123,10 +123,7 @@ const DayItem = ({
           {data.emoji}
         </div>
         {isOpenDiary && (
-          <DiaryItemShow
-            toggleIsOpenModal={toggleIsOpenModal}
-            id={data.diary_id}
-          />
+          <DiaryItemShow toggleIsOpenModal={toggleIsOpenModal} id={data.id} />
         )}
       </>
     );
@@ -135,12 +132,7 @@ const DayItem = ({
     return (
       <>
         {handleIsOpenDiaryWriting && (
-          <button
-            className={styles.addBtn}
-            onClick={() => {
-              handleIsOpenDiaryWriting(true);
-            }}
-          >
+          <button className={styles.addBtn} onClick={handleIsOpenDiaryWriting}>
             +
           </button>
         )}
