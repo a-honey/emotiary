@@ -1,5 +1,12 @@
 // user.dto.ts
-import { IsString, IsDate, IsNotEmpty, IsUUID } from 'class-validator';
+import {
+  IsString,
+  IsDate,
+  IsNotEmpty,
+  IsUUID,
+  IsNumber,
+  IsOptional,
+} from 'class-validator';
 import { Exclude, Expose, Type } from 'class-transformer';
 import 'reflect-metadata';
 
@@ -66,4 +73,23 @@ export class DiaryResponseDTO {
   @Expose()
   @Type(() => AuthorInDiaryDTO)
   author: AuthorInDiaryDTO;
+}
+
+export class DiaryValidateDTO {
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  createdDate?: Date;
+
+  @IsOptional()
+  @IsString()
+  title: string;
+
+  @IsOptional()
+  @IsString()
+  content: string;
+
+  @IsOptional()
+  @IsString()
+  is_public?: string;
 }
