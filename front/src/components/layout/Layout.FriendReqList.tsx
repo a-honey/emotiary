@@ -5,9 +5,9 @@ import { useGetFriendData } from '../../api/get/useFriendData';
 const FriendReqList = () => {
   const [isReqList, setIsReqList] = useState(true);
 
-  const { data, isFetching } = useGetFriendData(
-    isReqList ? 'received' : 'sent',
-  );
+  const { data, isFetching } = useGetFriendData({
+    userReqListType: isReqList ? 'received' : 'sent',
+  });
 
   const toggleIsReqList = () => {
     setIsReqList((prev) => !prev);

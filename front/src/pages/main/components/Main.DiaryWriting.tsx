@@ -4,24 +4,26 @@ import { useState } from 'react';
 import styles from './index.module.scss';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { instance } from '../../../api/instance';
+import getUserId from '../../../utils/localStorageHandlers';
 
-const initialData = {
+const DIARY_WRITING_INITIAL_DATA = {
   title: '',
   content: '',
   is_public: 'all',
 };
+
 const DiaryWriting = ({
   handleIsOpenDiaryWriting,
 }: {
-  handleIsOpenDiaryWriting: (boolean: boolean) => void;
+  handleIsOpenDiaryWriting: (args: boolean) => void;
 }) => {
-  const [formData, setFormData] = useState(initialData);
+  const [formData, setFormData] = useState(DIARY_WRITING_INITIAL_DATA);
 
   const queryClient = useQueryClient();
 
   const mutation = useMutation(
     async () => {
-      await instance.post(`/users/${localStorage.getItem('userId')}`, formData);
+      await instance.post(`/users/${getUserId}`, formData);
     },
     {
       onSuccess: () => {
