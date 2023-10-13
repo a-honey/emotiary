@@ -176,14 +176,19 @@ export const getDiaryByDiaryIdService = async (
   }
 
   const friend = await checkFriend(userId, diary.authorId);
-  //내 글 일 경우
-  const isMyDiary = diary.authorId == userId;
-  // 친구 글이면서 공개범위 priavate아닌 것
-  const isFriendDiaryToLook = friend && diary.is_public != 'private';
-  // 공개 범위 all인것 (친구 비친구)
-  const isPublicDiary = diary.is_public == 'all';
+  // //내 글 일 경우
+  // const isMyDiary = diary.authorId == userId;
+  // // 친구 글이면서 공개범위 priavate아닌 것
+  // const isFriendDiaryToLook = friend && diary.is_public != 'private';
+  // // 공개 범위 all인것 (친구 비친구)
+  // const isPublicDiary = diary.is_public == 'all';
 
-  if (isMyDiary || isFriendDiaryToLook || isPublicDiary) {
+  const isAccessible =
+    diary.authorId == userId ||
+    (friend && diary.is_public != 'private') ||
+    diary.is_public == 'all';
+
+  if (isAccessible) {
     const diaryResponseData = plainToClass(DiaryResponseDTO, diary, {
       excludeExtraneousValues: true,
     });
@@ -280,7 +285,12 @@ export const getAllDiaryService = async (
     take: limit,
     where: {
       OR: [
-        { is_public: select },
+        {
+          is_public: select,
+          NOT: {
+            authorId: userId,
+          },
+        },
         {
           NOT: {
             is_public: { contains: 'private' },
@@ -359,3 +369,5 @@ export const deleteDiaryService = async (userId: string, diaryId: string) => {
   const response = successApiResponseDTO(diaryResponseData);
   return response;
 };
+
+//TODO 같은 감정의 일기 보여주기
