@@ -164,12 +164,12 @@ export const areUsersFriends = async (userId1 : string, userId2 : string) => {
       where : {
         OR : [
           {
-            userAId : userId1,
-            userBId : userId2,
+            sentUserId : userId1,
+            receivedUserId : userId2,
           },
           {
-            userAId : userId2,
-            userBId : userId1,
+            sentUserId : userId2,
+            receivedUserId : userId1,
           },
         ]
       }

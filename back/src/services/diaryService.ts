@@ -43,7 +43,7 @@ export const createDiaryService = async (
 
   // // inputData에 emoji 추가
   // inputData.emoji = String(randomEmoji[emojiProperty]);
-  // 여기까지 flask 테스트용용용
+  // // 여기까지 flask 테스트용용용
 
   const diary = await prisma.diary.create({
     data: {
@@ -80,7 +80,7 @@ export const getAllMyDiariesService = async (
     where: { authorId: userId },
     orderBy: { createdDate: 'desc' },
   });
-
+  console.log('!!!!!!!!!!!!!!!!!service', diaries);
   const { totalItem, totalPage } = await calculatePageInfo(limit, {
     authorId: userId,
   });
@@ -138,9 +138,7 @@ export const getDiaryByDiaryIdService = async (
 
   if (diary == null) return null;
   //TODO 좋아요 가져오기
-  const favorite = await countFavoriteByDiaryId(diaryId);
 
-  console.log(favorite);
   //내 글 일 경우 Done
   if (diary.authorId == userId) {
     return diary;
@@ -181,7 +179,7 @@ export const getFriendsDiaryServcie = async (
   // 친구 목록 읽어오기
   const friends = await getMyWholeFriends(userId);
   const friendIdList = friends.map((friend) => {
-    return friend.userBId;
+    return friend.receivedUserId;
   });
 
   // 친구들의 다이어리 가져오기 (최신순)
@@ -225,6 +223,7 @@ export const getAllDiaryService = async (
     include: { author: true },
     orderBy: { createdDate: 'desc' },
   });
+
   const { totalItem, totalPage } = await calculatePageInfo(limit, {
     is_public: select,
   });
