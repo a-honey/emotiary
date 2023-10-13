@@ -1,9 +1,12 @@
 import { PrismaClient, Prisma } from '@prisma/client';
-import { getMyWholeFriends, weAreFriends } from './friendService';
+import { checkFriend, getMyWholeFriends, weAreFriends } from './friendService';
 import axios from 'axios';
 import { Emoji, emojiMapping, Emotion } from '../types/emoji';
 import { calculatePageInfo } from '../utils/pageInfo';
-import { countFavoriteByDiaryId } from './favoriteService';
+import { DiaryResponseDTO, PaginationResponseDTO } from '../dtos/diaryDTO';
+import { plainToClass } from 'class-transformer';
+import { successApiResponseDTO } from '../utils/successResult';
+import { emptyApiResponseDTO } from '../utils/emptyResult';
 
 const prisma = new PrismaClient();
 
@@ -19,31 +22,31 @@ export const createDiaryService = async (
   inputData: Prisma.DiaryCreateInput,
 ) => {
   // flask 테스트용
-  const content = inputData.content;
+  // const content = inputData.content;
 
-  const response = await axios.post('http://127.0.0.1:5000/predict', {
-    text: content,
-  });
+  // const response = await axios.post('http://127.0.0.1:5000/predict', {
+  //   text: content,
+  // });
 
-  // const emotion = response.data.emoji;
-  const emotion = response.data;
+  // // const emotion = response.data.emoji;
+  // const emotion = response.data;
 
-  const emotionType = emotion.emoji;
-  let emojiProperty: keyof Emoji = emojiMapping[emotion];
+  // const emotionType = emotion.emoji;
+  // let emojiProperty: keyof Emoji = emojiMapping[emotion];
 
-  const emojis = await prisma.emoji.findMany({
-    where: {
-      type: emotionType, // 이모지 테이블의 감정 유형 필드에 따라 변경
-    },
-  });
+  // const emojis = await prisma.emoji.findMany({
+  //   where: {
+  //     type: emotionType, // 이모지 테이블의 감정 유형 필드에 따라 변경
+  //   },
+  // });
 
-  const randomEmoji: Emoji = emojis[Math.floor(Math.random() * emojis.length)];
+  // const randomEmoji: Emoji = emojis[Math.floor(Math.random() * emojis.length)];
 
-  emojiProperty = emojiMapping[emotionType] as keyof Emoji;
+  // emojiProperty = emojiMapping[emotionType] as keyof Emoji;
 
-  // inputData에 emoji 추가
-  inputData.emoji = String(randomEmoji[emojiProperty]);
-  // 여기까지 flask 테스트용용용
+  // // inputData에 emoji 추가
+  // inputData.emoji = String(randomEmoji[emojiProperty]);
+  // // 여기까지 flask 테스트용용용
 
   const diary = await prisma.diary.create({
     data: {
@@ -59,7 +62,12 @@ export const createDiaryService = async (
     },
   });
 
-  return diary;
+  const diaryResponseData = plainToClass(DiaryResponseDTO, diary, {
+    excludeExtraneousValues: true,
+  });
+
+  const response = successApiResponseDTO(diaryResponseData);
+  return response;
 };
 
 /**
@@ -81,16 +89,30 @@ export const getAllMyDiariesService = async (
     orderBy: { createdDate: 'desc' },
   });
 
+  // 다이어리 결과 없을 때 빈 배열 값 반환
+  if (diaries.length == 0) {
+    const response = emptyApiResponseDTO();
+    return response;
+  }
+
   const { totalItem, totalPage } = await calculatePageInfo(limit, {
     authorId: userId,
   });
 
   const pageInfo = { totalItem, totalPage, currentPage: page, limit };
 
-  return {
-    data: diaries,
+  const diaryResponseDataList = diaries.map((diary) =>
+    plainToClass(DiaryResponseDTO, diary, { excludeExtraneousValues: true }),
+  );
+
+  const response = new PaginationResponseDTO(
+    200,
+    diaryResponseDataList,
     pageInfo,
-  };
+    '성공',
+  );
+
+  return response;
 };
 
 /**
@@ -119,7 +141,19 @@ export const getDiaryByMonthService = async (
     orderBy: { createdDate: 'asc' },
   });
 
-  return diary;
+  // 검색 결과 없을 때 빈배열
+  if (diary.length == 0) {
+    const response = emptyApiResponseDTO();
+    return response;
+  }
+
+  const diaryResponseData = diary.map((diary) => {
+    return plainToClass(DiaryResponseDTO, diary, {
+      excludeExtraneousValues: true,
+    });
+  });
+  const response = successApiResponseDTO(diaryResponseData);
+  return response;
 };
 
 /**
@@ -136,32 +170,36 @@ export const getDiaryByDiaryIdService = async (
     include: { author: true },
   });
 
-  if (diary == null) return null;
-  //TODO 좋아요 가져오기
-  const favorite = await countFavoriteByDiaryId(diaryId);
-
-  console.log(favorite);
-  //내 글 일 경우 Done
-  if (diary.authorId == userId) {
-    return diary;
+  if (diary == null) {
+    const response = emptyApiResponseDTO();
+    return response;
   }
 
-  // 친구 (friend.status == true)
-  // 친구 X 1. friend.status ==false  2. friend == null
-  //친구 글 일 경우
-  const friend = await weAreFriends(userId, diary.authorId);
+  const friend = await checkFriend(userId, diary.authorId);
+  // //내 글 일 경우
+  // const isMyDiary = diary.authorId == userId;
+  // // 친구 글이면서 공개범위 priavate아닌 것
+  // const isFriendDiaryToLook = friend && diary.is_public != 'private';
+  // // 공개 범위 all인것 (친구 비친구)
+  // const isPublicDiary = diary.is_public == 'all';
 
-  if (friend) {
-    // 친구인 경우
-    if (friend.status && diary.is_public != 'private') return diary;
+  const isAccessible =
+    diary.authorId == userId ||
+    (friend && diary.is_public != 'private') ||
+    diary.is_public == 'all';
 
-    // 친구 신청 O 친구는 아님
-    if (!friend.status && diary.is_public == 'all') return diary;
+  if (isAccessible) {
+    const diaryResponseData = plainToClass(DiaryResponseDTO, diary, {
+      excludeExtraneousValues: true,
+    });
+    const response = successApiResponseDTO(diaryResponseData);
+
+    return response;
   }
+  // private 일 경우
+  const response = emptyApiResponseDTO();
+  return response;
 
-  if (friend == null && diary.is_public == 'all') return diary;
-
-  return null;
   // 모르는 사람 글 일 경우
 };
 
@@ -180,6 +218,7 @@ export const getFriendsDiaryServcie = async (
 ) => {
   // 친구 목록 읽어오기
   const friends = await getMyWholeFriends(userId);
+
   const friendIdList = friends.map((friend) => {
     return friend.receivedUserId;
   });
@@ -198,6 +237,16 @@ export const getFriendsDiaryServcie = async (
     orderBy: { createdDate: 'desc' },
   });
 
+  // 친구가 없거나 친구가 쓴 글이 없을 경우
+  if (friendsDiary.length == 0) {
+    const response = emptyApiResponseDTO();
+    return response;
+  }
+  const diaryResponseDataList = friendsDiary.map((diary) =>
+    plainToClass(DiaryResponseDTO, diary, { excludeExtraneousValues: true }),
+  );
+
+  // 총 글 개수, 페이지 수
   const { totalItem, totalPage } = await calculatePageInfo(limit, {
     NOT: {
       is_public: { contains: 'private' },
@@ -207,30 +256,83 @@ export const getFriendsDiaryServcie = async (
 
   const pageInfo = { totalItem, totalPage, currentPage: page, limit };
 
-  return { data: friendsDiary, pageInfo };
+  const response = new PaginationResponseDTO(
+    200,
+    diaryResponseDataList,
+    pageInfo,
+    '성공',
+  );
+
+  return response;
 };
 
-// 모든 유저의 다이어리 가져오기
+// 모르는 유저의 공개범위 all 다이어리 가져오기
 export const getAllDiaryService = async (
+  userId: string,
   page: number,
   limit: number,
   select: string,
 ) => {
+  const friends = await getMyWholeFriends(userId);
+
+  const friendIdList = friends.map((friend) => {
+    return friend.receivedUserId;
+  });
+
+  // 친구 글 + 모르는 사람의 all 글 포함
   const allDiary = await prisma.diary.findMany({
     skip: (page - 1) * limit,
     take: limit,
     where: {
-      is_public: select,
+      OR: [
+        {
+          is_public: select,
+          NOT: {
+            authorId: userId,
+          },
+        },
+        {
+          NOT: {
+            is_public: { contains: 'private' },
+          },
+          authorId: { in: friendIdList },
+        },
+      ],
     },
     include: { author: true },
     orderBy: { createdDate: 'desc' },
   });
+
+  if (allDiary.length == 0) {
+    const response = emptyApiResponseDTO();
+    return response;
+  }
+
+  const diaryResponseDataList = allDiary.map((diary) =>
+    plainToClass(DiaryResponseDTO, diary, { excludeExtraneousValues: true }),
+  );
+
   const { totalItem, totalPage } = await calculatePageInfo(limit, {
-    is_public: select,
+    OR: [
+      { is_public: select },
+      {
+        NOT: {
+          is_public: { contains: 'private' },
+        },
+        authorId: { in: friendIdList },
+      },
+    ],
   });
 
   const pageInfo = { totalItem, totalPage, currentPage: page, limit };
-  return { data: allDiary, pageInfo };
+  const response = new PaginationResponseDTO(
+    200,
+    diaryResponseDataList,
+    pageInfo,
+    '성공',
+  );
+
+  return response;
 };
 
 export const updateDiaryService = async (
@@ -243,7 +345,16 @@ export const updateDiaryService = async (
     data: inputData,
   });
 
-  return updatedDiary;
+  if (updatedDiary == null) {
+    const response = emptyApiResponseDTO();
+    return response;
+  }
+  const diaryResponseData = plainToClass(DiaryResponseDTO, updatedDiary, {
+    excludeExtraneousValues: true,
+  });
+
+  const response = successApiResponseDTO(diaryResponseData);
+  return response;
 };
 
 export const deleteDiaryService = async (userId: string, diaryId: string) => {
@@ -251,5 +362,12 @@ export const deleteDiaryService = async (userId: string, diaryId: string) => {
     where: { id: diaryId, authorId: userId },
   });
 
-  return deletedDiary;
+  const diaryResponseData = plainToClass(DiaryResponseDTO, deletedDiary, {
+    excludeExtraneousValues: true,
+  });
+
+  const response = successApiResponseDTO(diaryResponseData);
+  return response;
 };
+
+//TODO 같은 감정의 일기 보여주기

@@ -1,0 +1,29 @@
+.image {
+  position: absolute;
+}
+
+.fadeIn {
+  animation: fadeIn 2s ease-in-out;
+}
+
+.fadeOut {
+  animation: fadeOut 2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
