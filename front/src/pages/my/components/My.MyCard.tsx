@@ -74,6 +74,8 @@ const MyCard = () => {
             accept="image/*"
             alt="프로필 사진 업로드"
             onChange={handleImgChange}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={handleImgChange}
           />
           <label>유저 이름</label>
           <input
