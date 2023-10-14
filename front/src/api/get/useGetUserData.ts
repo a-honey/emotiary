@@ -11,10 +11,17 @@ export const useGetUsersData = () => {
 
 //** MYPAGE 모든 유저 조회 */
 export const useGetMyUserData = () => {
-  return useQuery(['myUserData'], async () => {
-    const response = await instance.get('/users/current');
-    return response.data;
-  });
+  return useQuery(
+    ['myUserData'],
+    async () => {
+      const response = await instance.get('/users/current');
+      return response.data;
+    },
+    {
+      staleTime: 1000 * 60 * 5, // 취소 대비 5분 보존
+      cacheTime: 1000 * 60 * 10,
+    },
+  );
 };
 
 //** USERIDPAGE 유저 카드 조회 */
