@@ -9,7 +9,12 @@ import {
 } from 'date-fns';
 import { CalendarDiaryItemType } from '../../types/diaryType';
 import DiaryItemShow from '../modal/DiaryItemShow';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DroppableProvided,
+} from 'react-beautiful-dnd';
 
 // 메인페이지 UI 미확정으로 배치만 해둠 추후 변경 예정
 const Day = ({
@@ -67,57 +72,39 @@ const Day = ({
               className={styles.dayBlock}
             >
               {days.map((day: Date, index) => (
-                <Draggable
-                  key={index}
-                  draggableId={day.getDate().toString()}
-                  index={index}
-                >
-                  {(provided, snapshot) => (
+                <div ref={provided.innerRef} className={styles.dayItem}>
+                  <div
+                    className={
+                      day.getFullYear() === today.getFullYear() &&
+                      day.getMonth() === today.getMonth() &&
+                      day.getDate() === today.getDate()
+                        ? `${styles.dayItem} ${styles.today}`
+                        : styles.dayItem
+                    }
+                  >
                     <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
                       className={
-                        snapshot.isDragging
-                          ? styles.dayItemDragging
-                          : styles.dayItem
+                        day.getFullYear() === currentDate.year &&
+                        day.getMonth() + 1 === currentDate.month
+                          ? styles.day
+                          : `${styles.day} ${styles.otherMonth}`
                       }
                     >
-                      <div
-                        className={
-                          day.getFullYear() === today.getFullYear() &&
-                          day.getMonth() === today.getMonth() &&
-                          day.getDate() === today.getDate()
-                            ? `${styles.dayItem} ${styles.today}`
-                            : styles.dayItem
-                        }
-                      >
-                        <div
-                          className={
-                            day.getFullYear() === currentDate.year &&
-                            day.getMonth() + 1 === currentDate.month
-                              ? styles.day
-                              : `${styles.day} ${styles.otherMonth}`
-                          }
-                        >
-                          {day.getDate()}
-                        </div>
-                        {/* 현재 년월이 같고, 오늘보다 과거이면 내용 추가 */}
-                        {day.getFullYear() === currentDate.year &&
-                          day.getMonth() + 1 === currentDate.month &&
-                          day.getDate() <= today.getDate() && (
-                            <DayItem
-                              day={day.getDate()}
-                              data={data}
-                              handleIsOpenDiaryWriting={
-                                handleIsOpenDiaryWriting
-                              }
-                            />
-                          )}
-                      </div>
+                      {day.getDate()}
                     </div>
-                  )}
-                </Draggable>
+                    {/* 현재 년월이 같고, 오늘보다 과거이면 내용 추가 */}
+                    {day.getFullYear() === currentDate.year &&
+                      day.getMonth() + 1 === currentDate.month &&
+                      day.getDate() <= today.getDate() && (
+                        <DayItem
+                          day={day.getDate()}
+                          data={data}
+                          index={index}
+                          handleIsOpenDiaryWriting={handleIsOpenDiaryWriting}
+                        />
+                      )}
+                  </div>
+                </div>
               ))}
             </div>
           )}
@@ -132,10 +119,12 @@ export default Day;
 const DayItem = ({
   day,
   data,
+  index,
   handleIsOpenDiaryWriting,
 }: {
   day: number;
   data: CalendarDiaryItemType[];
+  index: number;
   handleIsOpenDiaryWriting?: () => void;
 }) => {
   const [isOpenDiary, setIsOpenDiary] = useState(false);
@@ -153,14 +142,28 @@ const DayItem = ({
   if (filteredData.length > 0) {
     const data = filteredData[0];
     return (
-      <>
-        <div className={styles.emoji} onClick={toggleIsOpenModal}>
-          {data.emoji}
-        </div>
-        {isOpenDiary && (
-          <DiaryItemShow toggleIsOpenModal={toggleIsOpenModal} id={data.id} />
+      <Draggable draggableId={day.toString()} index={index}>
+        {(provided, snapshot) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            className={
+              snapshot.isDragging ? styles.dayItemDragging : styles.dayItem
+            }
+          >
+            <div className={styles.emoji} onClick={toggleIsOpenModal}>
+              {data.emoji}
+            </div>
+            {isOpenDiary && (
+              <DiaryItemShow
+                toggleIsOpenModal={toggleIsOpenModal}
+                id={data.id}
+              />
+            )}
+          </div>
         )}
-      </>
+      </Draggable>
     );
   } else {
     // 데이터가 없으면 게시글 작성 버튼
