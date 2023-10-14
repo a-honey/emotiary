@@ -18,7 +18,7 @@ code {
 
 main {
   margin-top: $headerHeight;
-  min-height: 100vh - $headerHeight;
+  min-height: 100vh (-$headerHeight) (-$footerHeight);
   display: flex;
   justify-content: center;
   padding: 40px;
