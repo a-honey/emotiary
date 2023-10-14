@@ -4,33 +4,41 @@ import { instance } from '../../../api/instance';
 import styles from './index.module.scss';
 
 const Signup: React.FC = () => {
-  const [username, setUsername] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [confirmPassword, setConfirmPassword] = useState<string>('');
+
+  const USER_INFOS = {
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  }
+
+  const [userInfo, setUserInfo] = useState<{ username: string, email: string, password: string, confirmPassword: string }>(USER_INFOS);
+
   const navigate = useNavigate();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setUserInfo(prev => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
+    if (userInfo.password !== userInfo.confirmPassword) {
       alert('패스워드가 일치하지 않습니다.');
       return;
     }
 
-    const data = { username, email, password };
-
     try {
-      const response = await instance.post('http://localhost:5001/users/register', data);
+      const response = await instance.post('http://localhost:5001/users/register', userInfo);
       console.log('회원가입 성공', response.data);
 
       // 로그인 경로로 이동
       navigate('/signin');
     } catch (error) {
-      alert(`${error} 에러 발생.`)
+      alert(`${error} 에러 발생.`);
       console.log('회원가입 실패', error);
     }
-
   };
 
   return (
@@ -43,10 +51,11 @@ const Signup: React.FC = () => {
               <i className={styles.box1}></i>
               <input
                 id="username"
+                name="username" // 추가됨
                 type="text"
                 placeholder="이름을 한글/영어로만 입력하세요"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={userInfo.username}
+                onChange={handleChange} // 수정됨
               />
             </div>
           </div>
@@ -56,10 +65,11 @@ const Signup: React.FC = () => {
               <i className={styles.box1}></i>
               <input
                 id="email"
+                name="email" // 추가됨
                 type="email"
                 placeholder="이메일을 입력하세요"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={userInfo.email}
+                onChange={handleChange} // 수정됨
               />
             </div>
           </div>
@@ -69,10 +79,11 @@ const Signup: React.FC = () => {
               <i className={styles.box2}></i>
               <input
                 id="password"
+                name="password" // 추가됨
                 type="password"
                 placeholder="패스워드를 입력하세요"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={userInfo.password}
+                onChange={handleChange} // 수정됨
               />
             </div>
           </div>
@@ -82,10 +93,11 @@ const Signup: React.FC = () => {
               <i className={styles.box2}></i>
               <input
                 id="confirmPassword"
+                name="confirmPassword" // 추가됨
                 type="password"
                 placeholder="패스워드를 다시 입력하세요"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                value={userInfo.confirmPassword}
+                onChange={handleChange} // 수정됨
               />
             </div>
           </div>
@@ -93,7 +105,7 @@ const Signup: React.FC = () => {
         </form>
       </div>
     </>
-  );  
+  );
 }
 
 export default Signup;
