@@ -12,8 +12,7 @@ const useImgChange = () => {
 
     if (
       'dataTransfer' in e &&
-      e.dataTransfer &&
-      e.dataTransfer.files &&
+      e.dataTransfer?.files &&
       e.dataTransfer.files.length > 0
     ) {
       // 드래그 앤 드롭 이벤트에서 파일 가져오기
