@@ -11,7 +11,6 @@ testAuthRouter.post('/predict', async(req : Request, res :Response, next : NextF
 
     const response = await axios.post('http://127.0.0.1:5000/predict', { text });
 
-    const result : any = response.data.result;
     if (response.status === 200) {
       // 성공적으로 처리됐을 때
       console.log(response.data); // 이것이 Python Flask 서버에서 반환한 JSON 데이터
@@ -19,7 +18,7 @@ testAuthRouter.post('/predict', async(req : Request, res :Response, next : NextF
       // 서버에서 오류 응답을 반환했을 때
       console.error('에러:', response.data);
   }
-    res.json({result});
+    res.json(response.data);
   }catch(error){
     console.log('에러 : ',error);
     next(error);

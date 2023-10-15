@@ -39,7 +39,6 @@ export const userLogin = async (req : IRequest, res : Response, next : NextFunct
         // swagger 데이터전용
         // #swagger.tags = ['Users']
         const { email, password } = req.body;
-
         // 사용자 정보와 토큰 데이터를 사용하여 user 객체 생성
         const user = {
             token: req.token,
