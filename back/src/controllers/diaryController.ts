@@ -11,9 +11,10 @@ import {
 } from '../services/diaryService';
 import { IRequest } from 'types/user';
 import { plainToClass } from 'class-transformer';
-import { DiaryResponseDTO, PaginationResponseDTO } from '../dtos/diaryDTO';
-import { emptyApiResponseDTO } from '../utils/emptyResult';
-import { successApiResponseDTO } from '../utils/successResult';
+import { DiaryValidateDTO } from '../dtos/diaryDTO';
+import { validate } from 'class-validator';
+import { generateError } from '../utils/errorGenerator';
+
 /**
  * 다이어리 생성
  * @param req
@@ -28,18 +29,18 @@ export const createDiary = async (
 ) => {
   try {
     const inputData = req.body;
-    //authorId
+    const diaryInput = plainToClass(DiaryValidateDTO, inputData);
+
+    // TODO 밸리데이터 수정 필요
+    const errors = await validate(diaryInput);
+    if (errors.length > 0) return res.status(400).json(errors);
+    console.log('!!!!!!!!!!!!', errors);
+
     const { id: userId } = req.user;
 
     const createdDiary = await createDiaryService(userId, inputData);
 
-    const diaryResponseData = plainToClass(DiaryResponseDTO, createdDiary, {
-      excludeExtraneousValues: true,
-    });
-
-    const response = successApiResponseDTO(diaryResponseData);
-
-    return res.status(response.status).json(response);
+    return res.status(createdDiary.status).json(createdDiary);
   } catch (error) {
     next(error);
   }
@@ -59,33 +60,14 @@ export const getAllMyDiaries = async (
 ) => {
   try {
     //authorId
+    throw generateError(400, '에러 발생');
     const { id: userId } = req.user;
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
 
     const myDiaries = await getAllMyDiariesService(userId, page, limit);
 
-    // 다이어리 결과 없을 때 빈 배열 값 반환
-    if (myDiaries == null) {
-      const response = emptyApiResponseDTO();
-      return res.status(response.status).json(response);
-    }
-
-    console.log(myDiaries);
-    const diaryResponseDataList = myDiaries.data.map((diary) =>
-      plainToClass(DiaryResponseDTO, diary, { excludeExtraneousValues: true }),
-    );
-
-    const PaginationResponseData = new PaginationResponseDTO(
-      200,
-      diaryResponseDataList,
-      myDiaries.pageInfo,
-      '성공',
-    );
-
-    return res
-      .status(PaginationResponseData.status)
-      .json(PaginationResponseData);
+    return res.status(myDiaries.status).json(myDiaries);
   } catch (error) {
     next(error);
   }
@@ -103,19 +85,7 @@ export const getDiaryByDate = async (
     const month = Number(req.query.month);
     const MonthlyDiary = await getDiaryByMonthService(userId, year, month);
 
-    if (MonthlyDiary == null) {
-      const response = emptyApiResponseDTO();
-      return res.status(response.status).json(response);
-    }
-
-    const diaryResponseData = MonthlyDiary.map((diary) => {
-      return plainToClass(DiaryResponseDTO, diary, {
-        excludeExtraneousValues: true,
-      });
-    });
-
-    const response = successApiResponseDTO(diaryResponseData);
-    return res.status(response.status).json(response);
+    return res.status(MonthlyDiary.status).json(MonthlyDiary);
   } catch (error) {
     next(error);
   }
@@ -137,17 +107,7 @@ export const getDiaryByDiaryId = async (
     const { id: userId } = req.user;
     const diary = await getDiaryByDiaryIdService(userId, diaryId);
 
-    if (diary == null) {
-      const response = emptyApiResponseDTO();
-      return res.status(response.status).json(response);
-    }
-
-    const diaryResponseData = plainToClass(DiaryResponseDTO, diary, {
-      excludeExtraneousValues: true,
-    });
-
-    const response = successApiResponseDTO(diaryResponseData);
-    return res.status(response.status).json(response);
+    return res.status(diary.status).json(diary);
   } catch (error) {
     next(error);
   }
@@ -175,28 +135,9 @@ export const getOtherUsersDiary = async (
     const otherUsersDiary =
       select == 'friend'
         ? await getFriendsDiaryServcie(userId, page, limit)
-        : await getAllDiaryService(page, limit, select as string);
+        : await getAllDiaryService(userId, page, limit, select as string);
 
-    // 검색 결과 null인 경우
-    if (otherUsersDiary == null) {
-      const response = emptyApiResponseDTO();
-      return res.status(response.status).json(response);
-    }
-
-    const diaryResponseDataList = otherUsersDiary.data.map((diary) =>
-      plainToClass(DiaryResponseDTO, diary, { excludeExtraneousValues: true }),
-    );
-
-    const PaginationResponseData = new PaginationResponseDTO(
-      200,
-      diaryResponseDataList,
-      otherUsersDiary.pageInfo,
-      '성공',
-    );
-
-    return res
-      .status(PaginationResponseData.status)
-      .json(PaginationResponseData);
+    return res.status(otherUsersDiary.status).json(otherUsersDiary);
   } catch (error) {
     next(error);
   }
@@ -211,20 +152,16 @@ export const updateDiary = async (
     const { id: userId } = req.user;
     const { diaryId } = req.params;
     const inputData = req.body;
+
+    const diaryInput = plainToClass(DiaryValidateDTO, inputData);
+
+    // TODO 밸리데이터 수정 필요
+    const errors = await validate(diaryInput);
+    if (errors.length > 0) return res.status(400).json(errors);
+    console.log('!!!!!!!!!!!!', errors);
     const updatedDiary = await updateDiaryService(userId, diaryId, inputData);
 
-    if (updatedDiary == null) {
-      const response = emptyApiResponseDTO();
-      return res.status(response.status).json(response);
-    }
-
-    const diaryResponseData = plainToClass(DiaryResponseDTO, updatedDiary, {
-      excludeExtraneousValues: true,
-    });
-
-    const response = successApiResponseDTO(diaryResponseData);
-
-    return res.status(response.status).json(response);
+    return res.status(updatedDiary.status).json(updatedDiary);
   } catch (error) {
     next(error);
   }
@@ -240,13 +177,7 @@ export const deleteDiary = async (
     const { id: userId } = req.user;
     const deletedDiary = await deleteDiaryService(userId, diaryId);
 
-    const diaryResponseData = plainToClass(DiaryResponseDTO, deletedDiary, {
-      excludeExtraneousValues: true,
-    });
-
-    const response = successApiResponseDTO(diaryResponseData);
-
-    return res.status(response.status).json(response);
+    return res.status(deletedDiary.status).json(deletedDiary);
   } catch (error) {
     //TODO ErrorGenerator 생성 후 status code랑 error.meta 동적으로 할당해주기
     console.log('!!!!!!!!!!!!!!!!!!!!!', error.meta);

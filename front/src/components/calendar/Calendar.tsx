@@ -5,11 +5,11 @@ import Day from './Day';
 import { CalendarDiaryItemType } from '../../types/diaryType';
 
 const Calendar = ({
-  handleIsOpenDiaryWriting,
+  toggleIsOpenDiaryWriting,
   data,
   isFetching,
 }: {
-  handleIsOpenDiaryWriting?: (arg: boolean) => void;
+  toggleIsOpenDiaryWriting?: () => void;
   data: CalendarDiaryItemType[];
   isFetching: boolean;
 }) => {
@@ -60,7 +60,7 @@ const Calendar = ({
       />
       {/* props에 따른 날짜 매핑 컴포넌트*/}
       <Day
-        handleIsOpenDiaryWriting={handleIsOpenDiaryWriting}
+        handleIsOpenDiaryWriting={toggleIsOpenDiaryWriting}
         currentDate={currentDate}
         data={data}
       />
