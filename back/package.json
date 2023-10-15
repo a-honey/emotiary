@@ -19,12 +19,7 @@
     "eslint": "^8.50.0",
     "eslint-plugin-prettier": "^5.0.0",
     "prettier": "^3.0.3",
-<<<<<<< HEAD
-    "prisma": "^5.4.1",
-    "puppeteer": "^21.3.8",
-=======
     "prisma": "^5.4.2",
->>>>>>> 5a32ec434cfbf302505a9ffe018b972e900b0169
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   },
