@@ -1,13 +1,13 @@
-import winston from "winston";
-import winstonDaily from "winston-daily-rotate-file";
-import path from "path";
-import morgan from "morgan";
-import { Request, Response, NextFunction } from "express";
+import winston from 'winston';
+import winstonDaily from 'winston-daily-rotate-file';
+import path from 'path';
+import morgan from 'morgan';
+import { Request, Response, NextFunction } from 'express';
 
-const logDir = "logs";
-const infoLogDir = path.join(logDir, "info"); // info 로그를 저장할 폴더 경로
-const errorLogDir = path.join(logDir, "error"); // error 로그를 저장할 폴더 경로
-const exceptionLogDir = path.join(logDir, "exception"); // exception 로그 저장할 폴더 경로
+const logDir = 'logs';
+const infoLogDir = path.join(logDir, 'info'); // info 로그를 저장할 폴더 경로
+const errorLogDir = path.join(logDir, 'error'); // error 로그를 저장할 폴더 경로
+const exceptionLogDir = path.join(logDir, 'exception'); // exception 로그 저장할 폴더 경로
 
 const { combine, timestamp, printf } = winston.format;
 
@@ -23,37 +23,37 @@ const logFormat = printf((info) => {
 const logger = winston.createLogger({
   format: combine(
     timestamp({
-      format: "YYYY-MM-DD HH:mm:ss",
+      format: 'YYYY-MM-DD HH:mm:ss',
     }),
-    logFormat
+    logFormat,
   ),
   transports: [
     new winstonDaily({
-      level: "info",
+      level: 'info',
       dirname: infoLogDir,
-      filename: "%DATE%.info.log",
-      datePattern: "YYYY-MM-DD",
+      filename: '%DATE%.info.log',
+      datePattern: 'YYYY-MM-DD',
       zippedArchive: true,
-      maxFiles: "30d",
+      maxFiles: '30d',
     }),
     new winstonDaily({
-      level: "error",
+      level: 'error',
       dirname: errorLogDir,
-      filename: "%DATE%.exception.log",
-      datePattern: "YYYY-MM-DD",
+      filename: '%DATE%.error.log',
+      datePattern: 'YYYY-MM-DD',
       zippedArchive: true,
-      maxFiles: "30d",
+      maxFiles: '30d',
     }),
   ],
   exceptionHandlers: [
     //uncaughtException 발생시
     new winstonDaily({
-      level: "error",
+      level: 'error',
       dirname: exceptionLogDir,
-      filename: "%DATE%.error.log",
-      datePattern: "YYYY-MM-DD",
+      filename: '%DATE%.exception.log',
+      datePattern: 'YYYY-MM-DD',
       zippedArchive: true,
-      maxFiles: "30d",
+      maxFiles: '30d',
     }),
   ],
 });
@@ -65,25 +65,25 @@ const loggerStream = {
 };
 
 const Logger = morgan(
-  ":method :url :status :response-time ms - :res[content-length] :body",
-  { stream: loggerStream }
+  ':method :url :status :response-time ms - :res[content-length] :body',
+  { stream: loggerStream },
 );
 
-morgan.token("body", (req: Request) => {
+morgan.token('body', (req: Request) => {
   return JSON.stringify(req.body);
 });
 
 //TODO errorMiddleware 추가!!!
 
-if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV !== 'production') {
   logger.add(
     new winston.transports.Console({
       format: winston.format.combine(
         winston.format.colorize(),
-        winston.format.simple()
+        winston.format.simple(),
       ),
-    })
+    }),
   );
 }
 
-export { Logger };
+export { Logger, logger };

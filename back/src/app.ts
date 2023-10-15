@@ -16,6 +16,7 @@ import {
 } from './config/passport/strategy/passport';
 import { Logger } from './config/logger';
 import testAuthRouter from './routes/testRouter';
+import { errorMiddleware } from './middlewares/errorMiddleware';
 
 // import axios, { AxiosResponse } from "axios";
 
@@ -110,5 +111,6 @@ app.use('/comments', commentRouter);
 // // 정적 파일 제공을 위한 미들웨어 설정
 // app.use(express.static("public"));
 app.use(express.static('imageUpload'));
+app.use(errorMiddleware);
 
 export { app };
