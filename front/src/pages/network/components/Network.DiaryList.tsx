@@ -22,12 +22,12 @@ const DiaryList = () => {
 
   const userId = localStorage.getItem('userId');
   const navigator = useNavigate();
-  const { data, isFetching } = useGetDiarysData(
-    `${userId}`,
+  const { data, isFetching } = useGetDiarysData({
+    user_id: `${userId}`,
     select,
-    currentPage,
-    8,
-  );
+    page: currentPage,
+    limit: 8,
+  });
 
   /*
   useEffect(() => {

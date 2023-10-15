@@ -15,7 +15,7 @@ const DiaryItemShow = ({
   id: string;
   toggleIsOpenModal: () => void;
 }) => {
-  const { data, isFetching } = useGetDiaryData(id);
+  const { data, isFetching } = useGetDiaryData({ id });
 
   const {
     id: diaryId,

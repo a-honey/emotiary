@@ -7,7 +7,10 @@ import { useGetMyAllDiarysData } from '../../../api/get/useGetDiaryData';
 const DiaryList = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { data, isFetching } = useGetMyAllDiarysData(currentPage, 15);
+  const { data, isFetching } = useGetMyAllDiarysData({
+    page: currentPage,
+    limit: 15,
+  });
 
   return (
     <section className={styles.diaryList}>
