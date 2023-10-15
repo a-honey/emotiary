@@ -26,9 +26,9 @@ const FriendReqList = () => {
       <div>
         {data?.data?.map((item: any) => {
           if (isReqList) {
-            return <ReqItem item={item} key={item.username} />;
+            return <ReqItem item={item} key={item.id} />;
           } else {
-            return <ResItem item={item} key={item.username} />;
+            return <ResItem item={item} key={item.id} />;
           }
         })}
       </div>

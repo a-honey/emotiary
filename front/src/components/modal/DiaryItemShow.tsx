@@ -32,6 +32,7 @@ const DiaryItemShow = ({
   const mutation = useMutation(
     async () => {
       await instance.post(`/favorites/${diaryId}`);
+      return;
     },
     {
       onSuccess: () => {

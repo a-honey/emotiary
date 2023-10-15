@@ -16,6 +16,15 @@ import {
   DroppableProvided,
 } from 'react-beautiful-dnd';
 
+const isTodayDayTile = ({ day }: { day: Date }) => {
+  const today = new Date();
+  return (
+    day.getFullYear() === today.getFullYear() &&
+    day.getMonth() === today.getMonth() &&
+    day.getDate() === today.getDate()
+  );
+};
+
 // 메인페이지 UI 미확정으로 배치만 해둠 추후 변경 예정
 const Day = ({
   currentDate,
@@ -73,15 +82,15 @@ const Day = ({
             >
               {days.map((day: Date, index) => (
                 <div ref={provided.innerRef} className={styles.dayItem}>
+                  {/* 돌리는 날짜가 오늘 년도, 월, 일과 같으면 오늘날의 스타일 */}
                   <div
                     className={
-                      day.getFullYear() === today.getFullYear() &&
-                      day.getMonth() === today.getMonth() &&
-                      day.getDate() === today.getDate()
+                      isTodayDayTile({ day })
                         ? `${styles.dayItem} ${styles.today}`
                         : styles.dayItem
                     }
                   >
+                    {/* 돌리는 날짜가 월이 다르면 회색 스타일 */}
                     <div
                       className={
                         day.getFullYear() === currentDate.year &&
