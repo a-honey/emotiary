@@ -15,7 +15,7 @@ const DiaryItemShow = ({
   id: string;
   toggleIsOpenModal: () => void;
 }) => {
-  const { data, isFetching } = useGetDiaryData(id);
+  const { data, isFetching } = useGetDiaryData({ id });
 
   const {
     id: diaryId,
@@ -32,6 +32,7 @@ const DiaryItemShow = ({
   const mutation = useMutation(
     async () => {
       await instance.post(`/favorites/${diaryId}`);
+      return;
     },
     {
       onSuccess: () => {

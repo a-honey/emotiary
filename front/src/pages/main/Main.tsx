@@ -20,11 +20,11 @@ const MainPage: React.FC = () => {
     month: today.getMonth() + 1,
   });
 
-  const { data, isFetching } = useGetMyDiaryData(
-    `${localStorage.getItem('userId')}`,
-    currentDate.year,
-    currentDate.month,
-  );
+  const { data, isFetching } = useGetMyDiaryData({
+    user_id: `${localStorage.getItem('userId')}`,
+    year: currentDate.year,
+    month: currentDate.month,
+  });
 
   return (
     <main

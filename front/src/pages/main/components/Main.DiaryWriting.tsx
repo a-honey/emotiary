@@ -24,6 +24,7 @@ const DiaryWriting = ({
   const mutation = useMutation(
     async () => {
       await instance.post(`/users/${getUserId}`, formData);
+      return;
     },
     {
       onSuccess: () => {
