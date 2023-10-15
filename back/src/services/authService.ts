@@ -3,6 +3,9 @@ import { sendEmail } from "../utils/email";
 import { generateRandomPassowrd } from "../utils/password";
 import bcrypt from "bcrypt";
 import { IUser } from "../types/user";
+import { plainToClass } from "class-transformer";
+import { userResponseDTO } from "../dtos/userDTO";
+import { successApiResponseDTO } from "../utils/successResult";
 
 const prisma = new PrismaClient();
 
@@ -22,7 +25,13 @@ export const createUser = async (inputData: {
       data: { username, password: hashedPassword, email },
     });
 
-    return user;
+
+    const UserResponseDTO = plainToClass(userResponseDTO, user,{
+      excludeExtraneousValues : true,
+    });
+
+    const response = successApiResponseDTO(UserResponseDTO);
+    return response;
   } catch (error) {
     throw error;
   }
@@ -36,7 +45,12 @@ export const myInfo = async (userId: string) => {
         id: userId,
       },
     });
-    return myInfo;
+    const UserResponseDTO = plainToClass(userResponseDTO, myInfo,{
+      excludeExtraneousValues : true,
+    });
+
+    const response = successApiResponseDTO(UserResponseDTO);
+    return response;
   } catch (error) {
     throw error;
   }
@@ -50,7 +64,8 @@ export const getUserInfo = async (userId: string) => {
         id: userId,
       },
     });
-    return userInfo;
+    const response = successApiResponseDTO(userInfo);
+    return response;
   } catch (error) {
     throw error;
   }
@@ -72,7 +87,8 @@ export const updateUserService = async (
       },
       data: toUpdate,
     });
-    return updatedUser;
+    const response = successApiResponseDTO(updatedUser);
+    return response;
   } catch (error) {
     throw error;
   }

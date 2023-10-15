@@ -3,7 +3,7 @@ import { IUser } from '../types/user';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
-import jwtSecret from '../config/passport/strategy/jwtSecret';
+import jwtSecret from '../config/jwtSecret';
 
 // Access Token 생성 함수
 export const generateAccessToken = (user: IUser): string => {

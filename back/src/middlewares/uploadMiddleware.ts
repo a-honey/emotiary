@@ -2,6 +2,7 @@ import { Response, NextFunction } from "express";
 import { PrismaClient } from ".prisma/client";
 import { uploadMiddleware } from "./fileMiddleware";
 import { IRequest } from "../types/user";
+import { emptyApiResponseDTO } from "../utils/emptyResult";
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
@@ -17,6 +18,7 @@ export const fileUpload = async (
     try {
       // 파일 업로드 처리
       uploadMiddleware(req, res, async (err: any) => {
+        // 파일 업로드 성공 시 파일 정보를 req.body에 저장
         const imageFile = (req as any).file;
         if (err instanceof multer.MulterError) {
           return res
@@ -28,30 +30,25 @@ export const fileUpload = async (
             .json({ message: "Internal server error", error: err.message });
         }
   
-        // 파일 업로드 성공 시 파일 정보를 req.body에 저장
-        // const imageFile = (req as any).file;
-        if (!imageFile) {
-          return res.status(400).json({ message: "No file uploaded" });
-        }
-  
-        // Prisma를 사용하여 파일 정보를 저장
+        if (imageFile) {
+          // Prisma를 사용하여 파일 정보를 저장
         const { userId } = req.params;
         const imagePath = `imageUpload/${imageFile.filename}`;
-        if (!userId) {
-          return res.status(404).json({ message: "User not found" });
-        }
   
         const foundUser = await prisma.user.findUnique({
           where: { id: userId },
         });
   
         if (!foundUser) {
-          return res.status(404).json({ message: "User not found" });
+          const response = emptyApiResponseDTO();
+          return response;
         }
   
         // 이미지 업로드 시 기존 이미지 파일 삭제 및 새 이미지 정보 저장
         const oldImage = foundUser.profileImage;
         if (oldImage) {
+          console.log(3);
+          console.log(oldImage);
           // 기존 이미지 파일 삭제
           const filenameToDelete = oldImage.replace("imageUpload/", "");
           const filePathToDelete = path.join("./imageUpload", filenameToDelete);
@@ -61,20 +58,19 @@ export const fileUpload = async (
               console.error("Error deleting old file:", err);
               next(err);
             } 
-            try {
-                // 이미지 정보를 업데이트합니다.
-                const updatedUser = await prisma.user.update({
-                  where: { id: userId },
-                  data: {
-                    profileImage: imagePath,
-                  },
-                });
-                next();
-            } catch (error) {
-                next(error);
+            else{
+              await prisma.user.update({
+                where: { id: userId },
+                data: {
+                  profileImage: imagePath,
+                },
+              });
             }
         });
         }
+        req.body.profileImage = imagePath; 
+        }
+        next();
       });
     } catch (error) {
       next(error);
