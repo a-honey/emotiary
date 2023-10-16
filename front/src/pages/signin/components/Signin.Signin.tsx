@@ -4,12 +4,21 @@ import { useMutation } from 'react-query';
 import { instance } from '../../../api/instance';
 import styles from './index.module.scss';
 
+interface UserData {
+  email: string;
+  id: string;
+  name: string;
+  token: string;
+  uploadFile: string;
+  refreshToken: string;
+}
+
 const Signin: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const navigate = useNavigate();
 
-  const saveToLocalStorage = (data: any) => {
+  const saveToLocalStorage = (data: UserData) => {
     localStorage.setItem('email', data.email);
     localStorage.setItem('userId', data.id);
     localStorage.setItem('username', data.name);
