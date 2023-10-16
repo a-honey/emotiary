@@ -9,6 +9,7 @@ const Signin: React.FC = () => {
   const navigate = useNavigate();
 
   const saveToLocalStorage = (data: any) => {
+    localStorage.setItem('email', data.email);
     localStorage.setItem('userId', data.id);
     localStorage.setItem('username', data.name);
     localStorage.setItem('token', data.token);
@@ -19,19 +20,22 @@ const Signin: React.FC = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
 
-    const data = { email, password };
+    const userSigninInfos = { email, password };
 
     try {
       const response = await instance.post(
-        'http://localhost:5001/users/login',
-        data,
+        'http://localhost:5001/users/login', userSigninInfos,
       );
 
-      const { userData } = response.data;
+      console.log("응답데이터",response)
 
-      const { userId, username, token, userImg, refreshToken } = userData;
+      const userData = response.data;
 
-      saveToLocalStorage({ userId, username, token, userImg, refreshToken });
+      const { email, id, name, refreshToken, token, uploadFile } = userData;
+
+      saveToLocalStorage({ email, id, name, refreshToken, token, uploadFile });
+
+      console.log(userData)
 
       // 메인 경로로 이동
       navigate('/');
