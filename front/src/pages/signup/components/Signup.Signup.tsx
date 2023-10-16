@@ -8,23 +8,27 @@ const Signup: React.FC = () => {
   const USER_INFOS = {
     username: '',
     email: '',
-    password: '',
-    confirmPassword: ''
-  }
+    password: ''
+  };
 
-  const [userInfo, setUserInfo] = useState<{ username: string, email: string, password: string, confirmPassword: string }>(USER_INFOS);
+  const [userInfo, setUserInfo] = useState<{ username: string, email: string, password: string }>(USER_INFOS);
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
 
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setUserInfo(prev => ({ ...prev, [name]: value }));
+    if (name === 'confirmPassword') {
+      setConfirmPassword(value);
+    } else {
+      setUserInfo(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
 
-    if (userInfo.password !== userInfo.confirmPassword) {
+    if (userInfo.password !== confirmPassword) {
       alert('패스워드가 일치하지 않습니다.');
       return;
     }
@@ -93,11 +97,11 @@ const Signup: React.FC = () => {
               <i className={styles.box2}></i>
               <input
                 id="confirmPassword"
-                name="confirmPassword" // 추가됨
+                name="confirmPassword" 
                 type="password"
                 placeholder="패스워드를 다시 입력하세요"
-                value={userInfo.confirmPassword}
-                onChange={handleChange} // 수정됨
+                value={confirmPassword}
+                onChange={handleChange} 
               />
             </div>
           </div>
