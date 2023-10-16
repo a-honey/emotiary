@@ -50,18 +50,26 @@ export const useGetMyAllDiarysData = ({
   page: number;
   limit: number;
 }) => {
-  return useQuery(['myAllDiarysData'], async () => {
-    const response = await instance.get(
-      `/diary/views?page=${page}&limit${limit}`,
-    );
-    return response.data;
-  });
+  return useQuery(
+    ['myAllDiarysData'],
+    async () => {
+      const response = await instance.get(
+        `/diary/views?page=${page}&limit${limit}`,
+      );
+      return response.data;
+    },
+    { select: (data) => data.data },
+  );
 };
 
 //** 다이어리 모달 id로 조회 ['diaryData', id] */
 export const useGetDiaryData = ({ id }: { id: string }) => {
-  return useQuery(['diaryData', id], async () => {
-    const response = await instance.get(`/diary/${id}`);
-    return response.data;
-  });
+  return useQuery(
+    ['diaryData', id],
+    async () => {
+      const response = await instance.get(`/diary/${id}`);
+      return response.data;
+    },
+    { select: (data) => data.data },
+  );
 };

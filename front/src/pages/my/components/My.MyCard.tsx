@@ -4,7 +4,7 @@ import styles from './index.module.scss';
 import { handleImgError } from '../../../utils/imgHandlers';
 import { useGetMyUserData } from '../../../api/get/useGetUserData';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
-import { instance } from '../../../api/instance';
+import { formDataInstance, instance } from '../../../api/instance';
 import useImgChange from '../../../hooks/useImgChange';
 
 interface UserInfoType {
@@ -31,10 +31,11 @@ const MyCard = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation(
     async () => {
-      await instance.put(`/users/${1}`, {
+      await formDataInstance.put(`/users/${1}`, {
         username: '가짜닉네임',
         email: 'echkaaaa2@naver.com',
         description: 'hi',
+        profileImage: imgContainer,
       });
       return;
     },

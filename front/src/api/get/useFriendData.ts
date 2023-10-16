@@ -7,8 +7,12 @@ export const useGetFriendData = ({
 }: {
   userReqListType: 'sent' | 'received';
 }) => {
-  return useQuery([`${userReqListType}Friends`], async () => {
-    const response = await instance.get(`/friend/${userReqListType}`);
-    return response.data;
-  });
+  return useQuery(
+    [`${userReqListType}Friends`],
+    async () => {
+      const response = await instance.get(`/friend/${userReqListType}`);
+      return response.data;
+    },
+    { select: (data) => data.data },
+  );
 };
