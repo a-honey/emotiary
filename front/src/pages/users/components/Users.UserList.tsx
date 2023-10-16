@@ -11,6 +11,7 @@ interface UserItemType {
   description: string;
   profileImage: string;
   latestEmoji: string;
+  isFriend: boolean;
 }
 
 const UserList = () => {
@@ -43,7 +44,8 @@ export default UserList;
 const UserItem = ({ data }: { data: UserItemType }) => {
   const navigator = useNavigate();
 
-  const { id, profileImage, username, description, latestEmoji } = data;
+  const { id, profileImage, username, description, latestEmoji, isFriend } =
+    data;
 
   return (
     <div
@@ -59,7 +61,9 @@ const UserItem = ({ data }: { data: UserItemType }) => {
       <div className={styles.content}>
         <div className={styles.name}>
           <div>{username}</div>
-          <button className={`doneBtn ${styles.friendReqBtn}`}>+</button>
+          {!isFriend && (
+            <button className={`doneBtn ${styles.friendReqBtn}`}>+</button>
+          )}
         </div>
         <div>{description}</div>
       </div>
