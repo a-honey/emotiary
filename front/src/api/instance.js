@@ -9,7 +9,7 @@ export const instance = axios.create({
 
 instance.interceptors.request.use(
   (config) => {
-    const userToken = localStorage.getItem('userToken');
+    const userToken = localStorage.getItem('token');
 
     config.headers['Content-Type'] = 'application/json';
     config.headers['Authorization'] = `Bearer ${userToken}`;
@@ -30,7 +30,7 @@ export const formDataInstance = axios.create({
 
 formDataInstance.interceptors.request.use(
   (config) => {
-    const userToken = localStorage.getItem('userToken');
+    const userToken = localStorage.getItem('token');
 
     config.headers['Content-Type'] = 'application/json';
     config.headers['Authorization'] = `Bearer ${userToken}`;

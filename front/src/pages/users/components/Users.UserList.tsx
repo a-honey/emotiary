@@ -26,7 +26,7 @@ const UserList = () => {
         {isFetching ? (
           <div>로딩중</div>
         ) : (
-          data?.data?.map((item: UserItemType) => (
+          data?.map((item: UserItemType) => (
             <UserItem data={item} key={item.id} />
           ))
         )}
@@ -59,10 +59,12 @@ const UserItem = ({ data }: { data: UserItemType }) => {
         <div className={styles.emoji}>😆</div>
       </div>
       <div className={styles.content}>
-        <div>{username}</div>
+        <div className={styles.name}>
+          <div>{username}</div>
+          <button className={`doneBtn ${styles.friendReqBtn}`}>+</button>
+        </div>
         <div>{description}</div>
       </div>
-      <button className="doneBtn">친구요청</button>
     </div>
   );
 };

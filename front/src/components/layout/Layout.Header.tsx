@@ -4,6 +4,7 @@ import { Link, Outlet, useNavigate } from 'react-router-dom';
 import styles from './index.module.scss';
 import { handleImgError } from '../../utils/imgHandlers';
 import FriendReqList from './Layout.FriendReqList';
+import { GrLogout, GrNotification } from 'react-icons/gr';
 
 const Header = () => {
   // 로컬 스토리지에서 토큰을 가져와서 로그인 상태 확인
@@ -42,7 +43,7 @@ const Header = () => {
           {/* <Link to="/analysis">ANALYSIS</Link> */}
         </nav>
         {isLogin ? (
-          <div>
+          <div className={styles.right}>
             <div
               className={styles.userInfo}
               onClick={() => {
@@ -56,15 +57,13 @@ const Header = () => {
               />
               <div>{localStorage.getItem('username')}</div>
             </div>
-            <div
+            <GrNotification
               onClick={() => {
                 setIsOpenFriendReqList((prev) => !prev);
               }}
-            >
-              친구요청알림
-            </div>
+            />
             {isOpenFriendReqList && <FriendReqList />}
-            <div onClick={handleLogout}>로그아웃</div>
+            <GrLogout onClick={handleLogout} />
           </div>
         ) : (
           <div>

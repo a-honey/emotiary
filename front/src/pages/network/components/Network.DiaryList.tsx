@@ -47,7 +47,7 @@ const DiaryList = () => {
         {isFetching ? (
           <div>로딩중</div>
         ) : (
-          data?.data?.map((item: DairyItemType) => (
+          data?.map((item: DairyItemType) => (
             <DairyItem data={item} key={item.diary_id} />
           ))
         )}

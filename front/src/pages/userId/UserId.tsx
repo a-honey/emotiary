@@ -13,10 +13,10 @@ const UserIdPage: React.FC = () => {
   });
 
   const { data, isFetching } = useGetMyDiaryData(
-    `${localStorage.getItem('userId')}`,
-    currentDate.year,
-    currentDate.month,
-  );
+    {user_id: `${localStorage.getItem('userId')}`,
+    year: currentDate.year,
+    month: currentDate.month,
+});
 
   return (
     <main style={{ gap: '40px' }}>

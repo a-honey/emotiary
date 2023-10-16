@@ -34,12 +34,19 @@ export const useGetMyDiaryData = ({
   year: number;
   month: number;
 }) => {
-  return useQuery(['myDiaryData'], async () => {
-    const response = await instance.get(
-      `/diary/views/date/${user_id}?year=${year}month=${month}`,
-    );
-    return response.data;
-  });
+  return useQuery(
+    ['myDiaryData'],
+    async () => {
+      const response: any = await instance.get(
+        `/diary/views/date/${user_id}?year=${year}&month=${month}`,
+      );
+      console.log(response);
+      console.log('d');
+      console.log(response.data);
+      return response.data;
+    },
+    { select: (data) => data.data },
+  );
 };
 
 //** 마이페이지 모든  다이어리 조회 */

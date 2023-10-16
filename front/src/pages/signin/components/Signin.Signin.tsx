@@ -15,7 +15,7 @@ const Signin: React.FC = () => {
 
     try {
       const response = await instance.post(
-        'http://localhost:5001/users/login',
+        `${process.env.REACT_APP_BASE_URL as string}/users/login`,
         data,
       );
       console.log('로그인 성공!', response.data.data);

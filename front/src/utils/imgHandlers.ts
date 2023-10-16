@@ -3,6 +3,6 @@ export const handleImgError = (
 ) => {
   const imgElement = e.target as HTMLImageElement;
 
-  imgElement.src = '/user_none.png'; // 이미지 오류시 대체 이미지 설정
+  imgElement.src = ''; // 이미지 오류시 대체 이미지 설정../assets/user_none.png
   imgElement.alt = '이미지 로드 중 오류 발생'; // 이미지 오류시 대체 alt 설정
 };
