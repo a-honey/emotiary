@@ -1,11 +1,12 @@
 import React from 'react';
 
 import { handleImgError } from '../../../utils/imgHandlers';
+import ImageComponent from '../../../components/ImageComponent';
 
 const UserCard = () => {
   return (
     <div>
-      <img src="" alt="의 프로필사진" onError={handleImgError} />
+      <ImageComponent src={null} alt={`유저의 프로필사진`} />
       <div>
         <h2>유저 이름</h2>
         <h3>반가워</h3>

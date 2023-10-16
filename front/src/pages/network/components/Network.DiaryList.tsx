@@ -29,6 +29,7 @@ const DiaryList = () => {
     limit: 8,
   });
 
+  console.log(data);
   /*
   useEffect(() => {
     if (!userId) {
@@ -46,6 +47,8 @@ const DiaryList = () => {
       <div className={styles.diaryListBlock}>
         {isFetching ? (
           <div>로딩중</div>
+        ) : data.length === 0 ? (
+          <div>데이터가 없습니다.</div>
         ) : (
           data?.map((item: DairyItemType) => (
             <DairyItem data={item} key={item.diary_id} />

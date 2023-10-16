@@ -13,15 +13,16 @@ export const useGetDiarysData = ({
   page: number;
   limit: number;
 }) => {
-  return useQuery({
-    queryKey: ['diarysData'],
-    queryFn: async () => {
+  return useQuery(
+    ['diarysData'],
+    async () => {
       const response = await instance.get(
         `/diary/views/users/${user_id}?select=${select}&page=${page}&limit=${limit}`,
       );
       return response.data;
     },
-  });
+    { select: (data) => data.data, onError: () => [] },
+  );
 };
 
 //** MAINPAGE 나의 캘린더별, USERIDPAGE 캘린더 다이어리 조회 */
@@ -40,12 +41,9 @@ export const useGetMyDiaryData = ({
       const response: any = await instance.get(
         `/diary/views/date/${user_id}?year=${year}&month=${month}`,
       );
-      console.log(response);
-      console.log('d');
-      console.log(response.data);
       return response.data;
     },
-    { select: (data) => data.data },
+    { select: (data) => data.data, onError: () => [] },
   );
 };
 

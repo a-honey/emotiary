@@ -12,6 +12,7 @@ interface UserInfoType {
   username: string;
   userId: string;
   description: string;
+  latestEmoji: string;
 }
 
 // formdata img api 요청 따로할지 미정
@@ -21,20 +22,15 @@ const MyCard = () => {
   const { data: userData, isLoading } = useGetMyUserData();
 
   // 받아온 캐시데이터를 담아야함
-  const [userInfoData, setUserInfoData] = useState<UserInfoType>({
-    email: '가짜이름',
-    username: '가짜이름',
-    userId: '가짜이름',
-    description: '가짜이름',
-  });
+  const [userInfoData, setUserInfoData] = useState<UserInfoType>(userData);
+
+  const { email, username, description, latestEmoji } = userInfoData;
 
   const queryClient = useQueryClient();
   const mutation = useMutation(
     async () => {
       await formDataInstance.put(`/users/${1}`, {
-        username: '가짜닉네임',
-        email: 'echkaaaa2@naver.com',
-        description: 'hi',
+        ...userData,
         profileImage: imgContainer,
       });
       return;
@@ -68,7 +64,13 @@ const MyCard = () => {
 
   return (
     <section className={styles.myCard}>
-      <img ref={imgRef} alt="의 프로필사진" onError={handleImgError} />
+      <img
+        ref={imgRef}
+        src={'/user_none.png'}
+        alt="의 프로필사진"
+        onError={handleImgError}
+      />
+      <div>{latestEmoji}</div>
       {isEditing ? (
         <form onSubmit={handleUpdate}>
           <input
@@ -86,14 +88,6 @@ const MyCard = () => {
             onChange={handleInputChange}
             placeholder="이름을 입력해주세요."
           />
-          {/* 변경가능??? */}
-          <label>이메일</label>
-          <input
-            name="email"
-            value={userInfoData.email}
-            onChange={handleInputChange}
-            placeholder="이메일을 입력해주세요."
-          />
           <label>내소개</label>
           <input
             name="description"
@@ -102,26 +96,37 @@ const MyCard = () => {
             placeholder="소개를 입력해주세요."
           />
           <div className={styles.btns}>
-            <button type="submit">수정하기</button>
+            <button type="submit" className="doneBtn">
+              수정완료
+            </button>
             <button
               type="button"
               className="cancelBtn"
               onClick={() => {
-                // 저장해둔 이전 데이터로 상태 변경
-                queryClient.invalidateQueries({ queryKey: ['myUserData'] });
-                setIsEditing(false);
+                const confirmDelete =
+                  window.confirm('변경사항이 저장되지 않았습니다.');
+                if (confirmDelete) {
+                  setUserInfoData(userData);
+                  setIsEditing(false);
+                  return;
+                } else {
+                  return;
+                }
               }}
             >
-              취소하기
+              수정취소
             </button>
           </div>
         </form>
       ) : (
         <>
           <div>
-            <h2>유저 이름</h2>
-            <h3>반가워</h3>
-            <h3>유저 소개</h3>
+            <label>이름</label>
+            <h2>{username}</h2>
+            <label>이메일</label>
+            <h2>{email}</h2>
+            <label>소개</label>
+            <h3>{description ?? '소개를 입력해주세요'}</h3>
           </div>
           <div className={styles.btns}>
             <button

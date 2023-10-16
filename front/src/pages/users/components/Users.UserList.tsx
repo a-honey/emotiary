@@ -3,12 +3,14 @@ import styles from './index.module.scss';
 import { handleImgError } from '../../../utils/imgHandlers';
 import { useNavigate } from 'react-router-dom';
 import { useGetUsersData } from '../../../api/get/useGetUserData';
+import ImageComponent from '../../../components/ImageComponent';
 
 interface UserItemType {
   id: number;
   username: string;
   description: string;
   profileImage: string;
+  latestEmoji: string;
 }
 
 const UserList = () => {
@@ -41,7 +43,7 @@ export default UserList;
 const UserItem = ({ data }: { data: UserItemType }) => {
   const navigator = useNavigate();
 
-  const { id, profileImage, username, description } = data;
+  const { id, profileImage, username, description, latestEmoji } = data;
 
   return (
     <div
@@ -51,12 +53,8 @@ const UserItem = ({ data }: { data: UserItemType }) => {
       }}
     >
       <div>
-        <img
-          src={profileImage}
-          alt={`${username}의 프로필사진`}
-          onError={handleImgError}
-        />
-        <div className={styles.emoji}>😆</div>
+        <ImageComponent src={profileImage} alt={`${username}의 프로필사진`} />
+        <div className={styles.emoji}>{latestEmoji}</div>
       </div>
       <div className={styles.content}>
         <div className={styles.name}>

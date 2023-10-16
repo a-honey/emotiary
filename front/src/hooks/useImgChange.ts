@@ -24,7 +24,7 @@ const useImgChange = () => {
       img = e.target.files[0];
     }
     if (imgRef.current && !img) {
-      imgRef.current.src = '';
+      imgRef.current.src = '/user_none.png';
       return;
     }
 
