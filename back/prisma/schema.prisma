@@ -94,13 +94,7 @@ model Comment {
 model Emoji {
   id         Int     @id @default(autoincrement())
   type       String
-  sadness    String?
-  surprise   String?
-  happiness  String?
-  aversion   String?
-  unrest     String?
-  anger      String?
-  neutrality String?
+  emotion    String?
 
   @@map("emojis")
 }
