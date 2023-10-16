@@ -84,11 +84,7 @@ const Day = ({
                 <div ref={provided.innerRef} className={styles.dayItem}>
                   {/* 돌리는 날짜가 오늘 년도, 월, 일과 같으면 오늘날의 스타일 */}
                   <div
-                    className={
-                      isTodayDayTile({ day })
-                        ? `${styles.dayItem} ${styles.today}`
-                        : styles.dayItem
-                    }
+                    className={isTodayDayTile({ day }) ? `${styles.today}` : ''}
                   >
                     {/* 돌리는 날짜가 월이 다르면 회색 스타일 */}
                     <div
@@ -157,9 +153,7 @@ const DayItem = ({
             ref={provided.innerRef}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
-            className={
-              snapshot.isDragging ? styles.dayItemDragging : styles.dayItem
-            }
+            className={snapshot.isDragging ? styles.dayItemDragging : ''}
           >
             <div className={styles.emoji} onClick={toggleIsOpenModal}>
               {data.emoji}
