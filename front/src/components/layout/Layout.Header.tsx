@@ -5,6 +5,7 @@ import styles from './index.module.scss';
 import { handleImgError } from '../../utils/imgHandlers';
 import FriendReqList from './Layout.FriendReqList';
 import { GrLogout, GrNotification } from 'react-icons/gr';
+import ImageComponent from '../ImageComponent';
 
 const Header = () => {
   // 로컬 스토리지에서 토큰을 가져와서 로그인 상태 확인
@@ -50,10 +51,9 @@ const Header = () => {
                 navigator('/mypage');
               }}
             >
-              <img
-                src={localStorage.getItem('userImg') as string}
+              <ImageComponent
+                src={localStorage.getItem('userImg')}
                 alt={`${localStorage.getItem('username')}의 프로필사진`}
-                onError={handleImgError}
               />
               <div>{localStorage.getItem('username')}</div>
             </div>
