@@ -13,6 +13,7 @@ import { IRequest } from 'types/user';
 import { plainToClass } from 'class-transformer';
 import { DiaryValidateDTO } from '../dtos/diaryDTO';
 import { validate } from 'class-validator';
+import { generateError } from '../utils/errorGenerator';
 
 /**
  * 다이어리 생성
@@ -59,6 +60,7 @@ export const getAllMyDiaries = async (
 ) => {
   try {
     //authorId
+    throw generateError(400, '에러 발생');
     const { id: userId } = req.user;
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
