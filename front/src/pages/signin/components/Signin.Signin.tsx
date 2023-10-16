@@ -1,5 +1,6 @@
 import React, { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useMutation } from 'react-query';
 import { instance } from '../../../api/instance';
 import styles from './index.module.scss';
 
@@ -17,36 +18,31 @@ const Signin: React.FC = () => {
     localStorage.setItem('refreshToken', data.refreshToken);
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
-    e.preventDefault();
-
-    const userSigninInfos = { email, password };
-
-    try {
-      const response = await instance.post(
-        'http://localhost:5001/users/login', userSigninInfos,
-      );
-
-      console.log("응답데이터",response)
-
-      const userData = response.data;
-
-      const { email, id, name, refreshToken, token, uploadFile } = userData;
-
-      saveToLocalStorage({ email, id, name, refreshToken, token, uploadFile });
-
-      console.log(userData)
-
-      // 메인 경로로 이동
-      navigate('/');
-    } catch (error) {
-      if (error instanceof Error) {
-        console.log('로그인 실패!', error.message);
-      } else {
-        console.log('로그인 실패! 알 수 없는 오류:', error);
+  const mutation = useMutation(
+    async (userSigninInfos: { email: string; password: string }) => {
+      const response = await instance.post('http://localhost:5001/users/login', userSigninInfos);
+      return response.data;
+    },
+    {
+      // 로그인 성공
+      onSuccess: (data) => {
+        console.log('로그인 성공', data);
+        saveToLocalStorage(data);
+        navigate('/');
+      },
+      // 로그인 실패
+      onError: (error) => {
+        console.log('로그인 실패', error);
       }
     }
+  );
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+    e.preventDefault();
+    const userSigninInfos = { email, password };
+    mutation.mutate(userSigninInfos);
   };
+
 
   return (
     <>

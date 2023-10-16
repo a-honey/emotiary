@@ -1,5 +1,6 @@
 import React, { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useMutation } from 'react-query';
 import { instance } from '../../../api/instance';
 import styles from './index.module.scss';
 
@@ -15,6 +16,21 @@ const Signup: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState<string>('');
 
   const navigate = useNavigate();
+
+  const mutation = useMutation(
+    (newUserInfo: { username: string; email: string; password: string }) => 
+      instance.post('http://localhost:5001/users/register', newUserInfo),
+    {
+      onSuccess: (data) => {
+        console.log('회원가입 성공', data);
+        navigate('/signin');
+      },
+      onError: (error) => {
+        alert(`${error} 에러 발생.`);
+        console.log('회원가입 실패', error);
+      }
+    }
+  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -33,16 +49,7 @@ const Signup: React.FC = () => {
       return;
     }
 
-    try {
-      const response = await instance.post('http://localhost:5001/users/register', userInfo);
-      console.log('회원가입 성공', response.data);
-
-      // 로그인 경로로 이동
-      navigate('/signin');
-    } catch (error) {
-      alert(`${error} 에러 발생.`);
-      console.log('회원가입 실패', error);
-    }
+    mutation.mutate(userInfo);
   };
 
   return (
