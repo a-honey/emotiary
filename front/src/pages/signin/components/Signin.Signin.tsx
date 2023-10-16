@@ -26,9 +26,12 @@ const Signin: React.FC = () => {
         'http://localhost:5001/users/login',
         data,
       );
-      console.log('로그인 성공!', response.data.data);
 
-      saveToLocalStorage(response.data.data);
+      const { userData } = response.data;
+
+      const { userId, username, token, userImg, refreshToken } = userData;
+
+      saveToLocalStorage({ userId, username, token, userImg, refreshToken });
 
       // 메인 경로로 이동
       navigate('/');
