@@ -6,14 +6,19 @@ import DiaryItemShow from '../../../components/modal/DiaryItemShow';
 import { useGetDiarysData } from '../../../api/get/useGetDiaryData';
 
 interface DairyItemType {
-  diary_id: string;
-  user_id: string;
-  username: string;
-  profileImage: string;
+  id: string;
+  authorId: string;
   title: string;
-  dateCreated: Date;
+  createdDate: Date;
   content: string;
   emoji: string;
+  favoriteCount: number;
+  author: {
+    id: string;
+    username: string;
+    email: string;
+    profileImage: string;
+  };
 }
 
 const DiaryList = () => {
@@ -28,7 +33,6 @@ const DiaryList = () => {
     limit: 8,
   });
 
-  console.log(data);
   /*
   useEffect(() => {
     if (!userId) {
@@ -50,7 +54,7 @@ const DiaryList = () => {
           <div>데이터가 없습니다.</div>
         ) : (
           data?.map((item: DairyItemType) => (
-            <DairyItem data={item} key={item.diary_id} />
+            <DairyItem data={item} key={item.id} />
           ))
         )}
       </div>
@@ -72,10 +76,7 @@ const DairyItem = ({ data }: { data: DairyItemType }) => {
   return (
     <>
       {isOpenDiary && (
-        <DiaryItemShow
-          toggleIsOpenModal={toggleIsOpenModal}
-          id={data.diary_id}
-        />
+        <DiaryItemShow toggleIsOpenModal={toggleIsOpenModal} id={data.id} />
       )}
       <div
         className={styles.dairyItem}
@@ -86,21 +87,23 @@ const DairyItem = ({ data }: { data: DairyItemType }) => {
         <div className={styles.emoji}>{data.emoji}</div>
         <div>
           <h3>{data.title}</h3>
-          <p>{data.content}</p>
+          <div>
+            {data.favoriteCount === 0 ? '♡' : '♥'} {data.favoriteCount}
+          </div>
         </div>
         <div
           className={styles.userInfo}
           onClick={(e) => {
             e.stopPropagation();
-            navigator(`/user/${data.user_id}`);
+            navigator(`/user/${data.authorId}`);
           }}
         >
           <img
-            src={data.profileImage}
-            alt={`${data.username}의 프로필사진`}
+            src={data.author.profileImage ?? '/user_none.png'}
+            alt={`${data.author.username}의 프로필사진`}
             onError={handleImgError}
           />
-          <div>{data.username}</div>
+          <div>{data.author.username}</div>
         </div>
       </div>
     </>
