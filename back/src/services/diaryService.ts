@@ -1,7 +1,7 @@
 import { PrismaClient, Prisma } from '@prisma/client';
 import { checkFriend, getMyWholeFriends, weAreFriends } from './friendService';
 import axios from 'axios';
-import { Emoji, emojiMapping, Emotion } from '../types/emoji';
+import { Emoji } from '../types/emoji';
 import { calculatePageInfo } from '../utils/pageInfo';
 import { DiaryResponseDTO, PaginationResponseDTO } from '../dtos/diaryDTO';
 import { plainToClass } from 'class-transformer';
@@ -22,31 +22,28 @@ export const createDiaryService = async (
   inputData: Prisma.DiaryCreateInput,
 ) => {
   // flask 테스트용
-  // const content = inputData.content;
+  const text = inputData.content;
 
-  // const response = await axios.post('http://127.0.0.1:5000/predict', {
-  //   text: content,
-  // });
+  const responseData = await axios.post('http://127.0.0.1:5000/predict', {
+    text: text,
+  });
 
-  // // const emotion = response.data.emoji;
-  // const emotion = response.data;
+  // const emotion = response.data.emoji;
+  const emotion = responseData.data;
 
-  // const emotionType = emotion.emoji;
-  // let emojiProperty: keyof Emoji = emojiMapping[emotion];
+  const emotionType = emotion.emoji;
 
-  // const emojis = await prisma.emoji.findMany({
-  //   where: {
-  //     type: emotionType, // 이모지 테이블의 감정 유형 필드에 따라 변경
-  //   },
-  // });
+  const emojis = await prisma.emoji.findMany({
+    where: {
+      type: emotionType, // 이모지 테이블의 감정 유형 필드에 따라 변경
+    },
+  });
 
-  // const randomEmoji: Emoji = emojis[Math.floor(Math.random() * emojis.length)];
+  const randomEmoji : Emoji = emojis[Math.floor(Math.random() * emojis.length)];
 
-  // emojiProperty = emojiMapping[emotionType] as keyof Emoji;
-
-  // // inputData에 emoji 추가
-  // inputData.emoji = String(randomEmoji[emojiProperty]);
-  // // 여기까지 flask 테스트용용용
+  console.log(randomEmoji);
+  // // 여기까지 flask 테스트용
+  inputData.emoji = randomEmoji.emotion;
 
   const diary = await prisma.diary.create({
     data: {

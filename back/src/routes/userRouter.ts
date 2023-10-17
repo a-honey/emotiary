@@ -70,7 +70,7 @@ userAuthRouter.post('/add-emoji', async (req, res) => {
     const { type, emotion } = req.body; // 클라이언트에서 전송한 데이터
     const emojiData = {
       type,
-      ...emotion, // 감정에 따른 이모지 데이터
+      emotion, // 감정에 따른 이모지 데이터
     };
     
     await prisma.emoji.create({
