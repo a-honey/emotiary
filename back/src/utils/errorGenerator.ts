@@ -14,3 +14,5 @@ export const generateError = (
   error.statusCode = statusCode;
   return error;
 };
+
+//TODO statuscode 협의

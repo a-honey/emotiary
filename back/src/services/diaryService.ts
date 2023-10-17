@@ -61,7 +61,6 @@ export const createDiaryService = async (
       author: true,
     },
   });
-
   const diaryResponseData = plainToClass(DiaryResponseDTO, diary, {
     excludeExtraneousValues: true,
   });
@@ -176,17 +175,11 @@ export const getDiaryByDiaryIdService = async (
   }
 
   const friend = await checkFriend(userId, diary.authorId);
-  // //내 글 일 경우
-  // const isMyDiary = diary.authorId == userId;
-  // // 친구 글이면서 공개범위 priavate아닌 것
-  // const isFriendDiaryToLook = friend && diary.is_public != 'private';
-  // // 공개 범위 all인것 (친구 비친구)
-  // const isPublicDiary = diary.is_public == 'all';
 
   const isAccessible =
-    diary.authorId == userId ||
-    (friend && diary.is_public != 'private') ||
-    diary.is_public == 'all';
+    diary.authorId == userId || // 내글인 경우
+    (friend && diary.is_public != 'private') || // 친구 글 (비공개 제외)
+    diary.is_public == 'all'; // 모르는 사람 글 (전체공개만)
 
   if (isAccessible) {
     const diaryResponseData = plainToClass(DiaryResponseDTO, diary, {
@@ -196,11 +189,9 @@ export const getDiaryByDiaryIdService = async (
 
     return response;
   }
-  // private 일 경우
+  //내 글이 아닌데 private일 경우
   const response = emptyApiResponseDTO();
   return response;
-
-  // 모르는 사람 글 일 경우
 };
 
 /**
@@ -211,29 +202,43 @@ export const getDiaryByDiaryIdService = async (
  * @param select
  * @returns
  */
-export const getFriendsDiaryServcie = async (
+export const getFriendsDiaryService = async (
   userId: string,
   page: number,
   limit: number,
+  emotion: string | undefined,
 ) => {
   // 친구 목록 읽어오기
   const friends = await getMyWholeFriends(userId);
 
   const friendIdList = friends.map((friend) => {
-    return friend.receivedUserId;
+    return userId == friend.sentUserId
+      ? friend.receivedUserId
+      : friend.sentUserId;
   });
 
-  // 친구들의 다이어리 가져오기 (최신순)
-  const friendsDiary = await prisma.diary.findMany({
+  const friendsDiaryQuery = {
+    where: {
+      // 친구 글 (비공개 제외)
+      authorId: { in: friendIdList },
+      NOT: [
+        {
+          is_public: 'private',
+        },
+      ],
+    },
     skip: (page - 1) * limit,
     take: limit,
-    where: {
-      NOT: {
-        is_public: { contains: 'private' },
-      },
-      authorId: { in: friendIdList },
-    },
     include: { author: true },
+  };
+
+  if (emotion) {
+    (friendsDiaryQuery.where as any).emotion = emotion;
+  }
+  console.log(emotion);
+  // 친구들의 다이어리 가져오기 (최신순)
+  const friendsDiary = await prisma.diary.findMany({
+    ...friendsDiaryQuery,
     orderBy: { createdDate: 'desc' },
   });
 
@@ -247,12 +252,10 @@ export const getFriendsDiaryServcie = async (
   );
 
   // 총 글 개수, 페이지 수
-  const { totalItem, totalPage } = await calculatePageInfo(limit, {
-    NOT: {
-      is_public: { contains: 'private' },
-    },
-    authorId: { in: friendIdList },
-  });
+  const { totalItem, totalPage } = await calculatePageInfo(
+    limit,
+    friendsDiaryQuery.where,
+  );
 
   const pageInfo = { totalItem, totalPage, currentPage: page, limit };
 
@@ -271,35 +274,46 @@ export const getAllDiaryService = async (
   userId: string,
   page: number,
   limit: number,
-  select: string,
+  emotion: string,
 ) => {
+  //TODO controller로 넘기기 refactoring
   const friends = await getMyWholeFriends(userId);
 
   const friendIdList = friends.map((friend) => {
-    return friend.receivedUserId;
+    return userId == friend.sentUserId
+      ? friend.receivedUserId
+      : friend.sentUserId;
   });
 
-  // 친구 글 + 모르는 사람의 all 글 포함
-  const allDiary = await prisma.diary.findMany({
+  const allDiaryQuery = {
     skip: (page - 1) * limit,
     take: limit,
     where: {
       OR: [
         {
-          is_public: select,
+          // 전체공개 다이어리 ( 내 글 제외 )
+          is_public: 'all',
           NOT: {
             authorId: userId,
           },
         },
         {
+          // 친구 글 (비공개 제외)
           NOT: {
-            is_public: { contains: 'private' },
+            is_public: 'private',
           },
           authorId: { in: friendIdList },
         },
       ],
     },
     include: { author: true },
+  };
+
+  if (emotion) (allDiaryQuery.where as any).emotion = emotion;
+
+  // 친구 글 + 모르는 사람의 all 글 포함
+  const allDiary = await prisma.diary.findMany({
+    ...allDiaryQuery,
     orderBy: { createdDate: 'desc' },
   });
 
@@ -312,17 +326,10 @@ export const getAllDiaryService = async (
     plainToClass(DiaryResponseDTO, diary, { excludeExtraneousValues: true }),
   );
 
-  const { totalItem, totalPage } = await calculatePageInfo(limit, {
-    OR: [
-      { is_public: select },
-      {
-        NOT: {
-          is_public: { contains: 'private' },
-        },
-        authorId: { in: friendIdList },
-      },
-    ],
-  });
+  const { totalItem, totalPage } = await calculatePageInfo(
+    limit,
+    allDiaryQuery.where,
+  );
 
   const pageInfo = { totalItem, totalPage, currentPage: page, limit };
   const response = new PaginationResponseDTO(
@@ -369,5 +376,3 @@ export const deleteDiaryService = async (userId: string, diaryId: string) => {
   const response = successApiResponseDTO(diaryResponseData);
   return response;
 };
-
-//TODO 같은 감정의 일기 보여주기
