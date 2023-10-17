@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 
 import styles from './index.module.scss';
 import { handleImgError } from '../../../utils/imgHandlers';
@@ -15,14 +15,22 @@ interface UserInfoType {
   latestEmoji: string;
 }
 
+const USER_INFO_INITIAL_DATA = {
+  email: '',
+  username: '',
+  userId: '',
+  description: '',
+  latestEmoji: '',
+};
+
 // formdata img api 요청 따로할지 미정
 const MyCard = () => {
   const [isEditing, setIsEditing] = useState(false);
 
-  const { data: userData, isLoading } = useGetMyUserData();
+  const { data: userData, isFetching } = useGetMyUserData();
 
   // 받아온 캐시데이터를 담아야함
-  const [userInfoData, setUserInfoData] = useState<UserInfoType>(userData);
+  const [userInfoData, setUserInfoData] = useState(USER_INFO_INITIAL_DATA);
 
   const { email, username, description, latestEmoji } = userInfoData;
 
@@ -61,6 +69,13 @@ const MyCard = () => {
       [name]: value,
     }));
   };
+
+  useEffect(() => {
+    if (userData) {
+      // userData를 받아오면 userInfoData를 업데이트
+      setUserInfoData(userData);
+    }
+  }, [userData]);
 
   return (
     <section className={styles.myCard}>
@@ -120,26 +135,32 @@ const MyCard = () => {
         </form>
       ) : (
         <>
-          <div>
-            <label>이름</label>
-            <h2>{username}</h2>
-            <label>이메일</label>
-            <h2>{email}</h2>
-            <label>소개</label>
-            <h3>{description ?? '소개를 입력해주세요'}</h3>
-          </div>
-          <div className={styles.btns}>
-            <button
-              className="doneBtn"
-              onClick={() => {
-                setIsEditing(true);
-              }}
-            >
-              수정하기
-            </button>
-            <button className="doneBtn">비밀번호 변경</button>
-            <button className="cancelBtn">회원탈퇴</button>
-          </div>
+          {isFetching ? (
+            <div>로딩중</div>
+          ) : (
+            <>
+              <div>
+                <label>이름</label>
+                <h2>{username ?? ''}</h2>
+                <label>이메일</label>
+                <h2>{email ?? ''}</h2>
+                <label>소개</label>
+                <h3>{description ?? '소개를 입력해주세요'}</h3>
+              </div>
+              <div className={styles.btns}>
+                <button
+                  className="doneBtn"
+                  onClick={() => {
+                    setIsEditing(true);
+                  }}
+                >
+                  수정하기
+                </button>
+                <button className="doneBtn">비밀번호 변경</button>
+                <button className="cancelBtn">회원탈퇴</button>
+              </div>
+            </>
+          )}
         </>
       )}
     </section>

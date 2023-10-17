@@ -13,6 +13,9 @@ const queryClient = new QueryClient({
     queries: {
       staleTime: 0, // 데이터가 유효한 최대 시간
       cacheTime: 0, // 캐시된 데이터가 보존되는 최대 시간
+      onError: (error) => {
+        console.error('useQuery 에러 발생:', error);
+      },
     },
   },
 });
