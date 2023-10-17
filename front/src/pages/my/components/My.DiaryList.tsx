@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import styles from './index.module.scss';
 import { MyDairyItemType } from '../../../types/diaryType';
 import { useGetMyAllDiarysData } from '../../../api/get/useGetDiaryData';
+import Pagination from '../../../components/Pagination';
 
 const DiaryList = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -19,12 +20,18 @@ const DiaryList = () => {
         {isFetching ? (
           <div>로딩중</div>
         ) : (
-          data.map((item: MyDairyItemType, index: number) => (
+          data.data.map((item: MyDairyItemType, index: number) => (
             <DiaryItem data={item} key={item.id} index={index} />
           ))
         )}
       </div>
-      <div>페이지네이션 자리</div>
+      {!isFetching && (
+        <Pagination
+          totalPage={data.pageInfo.totalPage}
+          currentPage={currentPage}
+          handlePage={setCurrentPage}
+        />
+      )}
     </section>
   );
 };

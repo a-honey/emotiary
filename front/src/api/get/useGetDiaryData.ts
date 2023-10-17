@@ -19,7 +19,7 @@ export const useGetDiarysData = ({
       );
       return response.data;
     },
-    { select: (data) => data.data, onError: () => [] },
+    { onError: () => [] },
   );
 };
 
@@ -53,16 +53,12 @@ export const useGetMyAllDiarysData = ({
   page: number;
   limit: number;
 }) => {
-  return useQuery(
-    ['myAllDiarysData'],
-    async () => {
-      const response = await instance.get(
-        `/diary/views?page=${page}&limit=${limit}`,
-      );
-      return response.data;
-    },
-    { select: (data) => data.data },
-  );
+  return useQuery(['myAllDiarysData'], async () => {
+    const response = await instance.get(
+      `/diary/views?page=${page}&limit=${limit}`,
+    );
+    return response.data;
+  });
 };
 
 //** 다이어리 모달 id로 조회 ['diaryData', id] */

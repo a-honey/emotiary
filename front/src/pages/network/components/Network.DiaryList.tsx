@@ -6,6 +6,7 @@ import DiaryItemShow from '../../../components/modal/DiaryItemShow';
 import { useGetDiarysData } from '../../../api/get/useGetDiaryData';
 import { instance } from '../../../api/instance';
 import { GoHeartFill, GoHeart } from 'react-icons/go';
+import Pagination from '../../../components/Pagination';
 
 interface DairyItemType {
   id: string;
@@ -67,12 +68,18 @@ const DiaryList = () => {
         ) : data.length === 0 ? (
           <div>데이터가 없습니다.</div>
         ) : (
-          data?.map((item: DairyItemType) => (
+          data?.data?.map((item: DairyItemType) => (
             <DairyItem data={item} key={item.id} />
           ))
         )}
       </div>
-      <div>페이지네이션자리</div>
+      {!isFetching && (
+        <Pagination
+          totalPage={data.pageInfo.totalPage}
+          currentPage={currentPage}
+          handlePage={setCurrentPage}
+        />
+      )}
     </div>
   );
 };
