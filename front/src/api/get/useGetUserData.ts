@@ -22,7 +22,7 @@ export const useGetMyUserData = () => {
 };
 
 //** USERIDPAGE 유저 카드 조회 */
-export const useGetUserData = ({ user_id }: { user_id: number }) => {
+export const useGetUserData = ({ user_id }: { user_id: string }) => {
   return useQuery(
     ['userData'],
     async () => {
