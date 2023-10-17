@@ -57,7 +57,7 @@ export const useGetMyAllDiarysData = ({
     ['myAllDiarysData'],
     async () => {
       const response = await instance.get(
-        `/diary/views?page=${page}&limit${limit}`,
+        `/diary/views?page=${page}&limit=${limit}`,
       );
       return response.data;
     },
