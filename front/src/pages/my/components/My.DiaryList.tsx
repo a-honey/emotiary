@@ -19,8 +19,8 @@ const DiaryList = () => {
         {isFetching ? (
           <div>로딩중</div>
         ) : (
-          data?.data?.map((item: MyDairyItemType) => (
-            <DiaryItem data={item} key={item.diary_id} />
+          data.map((item: MyDairyItemType, index: number) => (
+            <DiaryItem data={item} key={item.id} index={index} />
           ))
         )}
       </div>
@@ -31,11 +31,18 @@ const DiaryList = () => {
 
 export default DiaryList;
 
-const DiaryItem = ({ data }: { data: MyDairyItemType }) => {
+const DiaryItem = ({
+  data,
+  index,
+}: {
+  data: MyDairyItemType;
+  index: number;
+}) => {
   return (
     <div className={styles.diaryItem}>
-      <div>{data.title}</div>
-      <div>2023-8-25</div>
+      <div className={styles.index}>{index + 1} |</div>
+      <div className={styles.title}>{data.title}</div>
+      <div className={styles.date}>{data.createdDate.split('T')[0]}</div>
     </div>
   );
 };

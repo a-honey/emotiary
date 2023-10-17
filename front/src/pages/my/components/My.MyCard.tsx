@@ -141,13 +141,19 @@ const MyCard = () => {
         </form>
       ) : (
         <>
-          <div>
-            <label>이름</label>
-            <h2>{username ?? ''}</h2>
-            <label>이메일</label>
-            <h2>{email ?? ''}</h2>
-            <label>소개</label>
-            <h3>{description ?? '소개를 입력해주세요'}</h3>
+          <div className={styles.show}>
+            <div>
+              <label>이름</label>
+              <h2>{username ?? ''}</h2>
+            </div>
+            <div>
+              <label>이메일</label>
+              <h2>{email ?? ''}</h2>
+            </div>
+            <div>
+              <label>소개</label>
+              <p>{description ?? '소개를 입력해주세요'}</p>
+            </div>
           </div>
           <div className={styles.btns}>
             <button
