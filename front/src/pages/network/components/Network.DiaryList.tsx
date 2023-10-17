@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import DiaryItemShow from '../../../components/modal/DiaryItemShow';
 import { useGetDiarysData } from '../../../api/get/useGetDiaryData';
 import { instance } from '../../../api/instance';
+import { GoHeartFill, GoHeart } from 'react-icons/go';
 
 interface DairyItemType {
   id: string;
@@ -90,7 +91,9 @@ const DairyItem = ({ data }: { data: DairyItemType }) => {
     setIsOpenDiary((prev) => !prev);
   };
 
-  const handleDiaryLikeClick = async () => {
+  const handleDiaryLikeClick = async (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+
     try {
       await instance.post(`/favorites/${data.id}`);
       data.favoriteCount += 1;
@@ -111,10 +114,11 @@ const DairyItem = ({ data }: { data: DairyItemType }) => {
         }}
       >
         <div className={styles.emoji}>{data.emoji}</div>
-        <div>
+        <div className={styles.content}>
           <h3>{data.title}</h3>
-          <div onClick={handleDiaryLikeClick}>
-            {data.favoriteCount === 0 ? '♡' : '♥'} {data.favoriteCount}
+          <div onClick={handleDiaryLikeClick} className={styles.like}>
+            {data.favoriteCount === 0 ? <GoHeart /> : <GoHeartFill />}
+            <div>{data.favoriteCount}</div>
           </div>
         </div>
         <div

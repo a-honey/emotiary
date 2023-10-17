@@ -38,12 +38,12 @@ const MyCard = () => {
   // 받아온 캐시데이터를 담아야함
   const [userInfoData, setUserInfoData] = useState(USER_INFO_INITIAL_DATA);
 
-  const { email, username, description, latestEmoji } = userInfoData;
+  const { userId, email, username, description, latestEmoji } = userInfoData;
 
   const queryClient = useQueryClient();
   const mutation = useMutation(
     async () => {
-      await formDataInstance.put(`/users/${1}`, {
+      await formDataInstance.put(`/users/${userId}`, {
         ...userData,
         profileImage: imgContainer,
       });
