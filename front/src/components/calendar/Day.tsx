@@ -15,6 +15,7 @@ import {
   Draggable,
   DroppableProvided,
 } from 'react-beautiful-dnd';
+import DiaryWriting from '../../pages/main/components/Main.DiaryWriting';
 
 const isTodayDayTile = ({ day }: { day: Date }) => {
   const today = new Date();
@@ -29,11 +30,9 @@ const isTodayDayTile = ({ day }: { day: Date }) => {
 const Day = ({
   currentDate,
   data,
-  handleIsOpenDiaryWriting,
 }: {
   currentDate: { year: number; month: number };
   data: CalendarDiaryItemType[];
-  handleIsOpenDiaryWriting?: () => void;
 }) => {
   const week = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -101,12 +100,7 @@ const Day = ({
                     {day.getFullYear() === currentDate.year &&
                       day.getMonth() + 1 === currentDate.month &&
                       day.getDate() <= today.getDate() && (
-                        <DayItem
-                          day={day.getDate()}
-                          data={data}
-                          index={index}
-                          handleIsOpenDiaryWriting={handleIsOpenDiaryWriting}
-                        />
+                        <DayItem day={day} data={data} index={index} />
                       )}
                   </div>
                 </div>
@@ -125,12 +119,10 @@ const DayItem = ({
   day,
   data,
   index,
-  handleIsOpenDiaryWriting,
 }: {
-  day: number;
+  day: Date;
   data: CalendarDiaryItemType[];
   index: number;
-  handleIsOpenDiaryWriting?: () => void;
 }) => {
   const [isOpenDiary, setIsOpenDiary] = useState(false);
 
@@ -138,10 +130,8 @@ const DayItem = ({
     setIsOpenDiary((prev) => !prev);
   };
 
-  // day.getDate()와 일치하는 데이터를 찾아서 반환
-  // 매번 데이터를 돌아야 하는가? 생각
   const filteredData = data.filter(
-    (item) => day === item.dateCreated.getDate(),
+    (item) => day.getDate() === item.dateCreated.getDate(),
   );
 
   if (filteredData.length > 0) {
@@ -172,10 +162,16 @@ const DayItem = ({
     // 데이터가 없으면 게시글 작성 버튼
     return (
       <>
-        {handleIsOpenDiaryWriting && (
-          <button className={styles.addBtn} onClick={handleIsOpenDiaryWriting}>
+        {
+          <button className={styles.addBtn} onClick={toggleIsOpenModal}>
             +
           </button>
+        }
+        {isOpenDiary && (
+          <DiaryWriting
+            handleIsOpenDiaryWriting={toggleIsOpenModal}
+            day={day}
+          />
         )}
       </>
     );

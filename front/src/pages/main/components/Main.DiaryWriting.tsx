@@ -12,11 +12,14 @@ const DIARY_WRITING_INITIAL_DATA = {
   title: '',
   content: '',
   is_public: 'all',
+  emoji: '🥰',
 };
 
 const DiaryWriting = ({
+  day,
   handleIsOpenDiaryWriting,
 }: {
+  day: Date;
   handleIsOpenDiaryWriting: (args: boolean) => void;
 }) => {
   const [formData, setFormData] = useState(DIARY_WRITING_INITIAL_DATA);
@@ -30,7 +33,10 @@ const DiaryWriting = ({
 
   const mutation = useMutation(
     async () => {
-      await instance.post(`/diary/${getUserId}`, formData);
+      await instance.post(`/diary/${getUserId}`, {
+        ...formData,
+        createdDate: day,
+      });
       return;
     },
     {
@@ -66,7 +72,10 @@ const DiaryWriting = ({
   return (
     <div className="modal">
       <form className={styles.container} onSubmit={handleSubmit}>
-        <div className={styles.name}>일기 작성</div>
+        <div className={styles.name}>
+          {`${day.getFullYear()}년 ${day.getMonth() + 1}월 ${day.getDate()}일 `}
+          일기 작성
+        </div>
         <div className={styles.contentContainer}>
           <div className={styles.imgContainer}>
             <img ref={imgRef} src="/post_none.png" alt="사진 업로드" />
