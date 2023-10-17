@@ -3,12 +3,10 @@ import { useQuery } from '@tanstack/react-query';
 
 //** NETWORKPAGE 모든 다이어리 조회 */
 export const useGetDiarysData = ({
-  user_id,
   select,
   page,
   limit,
 }: {
-  user_id: string;
   select: string;
   page: number;
   limit: number;

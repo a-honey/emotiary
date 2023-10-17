@@ -23,7 +23,6 @@ const DiaryList = () => {
   const userId = localStorage.getItem('userId');
   const navigator = useNavigate();
   const { data, isFetching } = useGetDiarysData({
-    user_id: `${userId}`,
     select,
     page: currentPage,
     limit: 8,
