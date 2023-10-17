@@ -232,10 +232,10 @@ export const getFriendsDiaryService = async (
     include: { author: true },
   };
 
-  if (emotion) {
+  if (emotion != 'all') {
     (friendsDiaryQuery.where as any).emotion = emotion;
   }
-  console.log(emotion);
+
   // 친구들의 다이어리 가져오기 (최신순)
   const friendsDiary = await prisma.diary.findMany({
     ...friendsDiaryQuery,
@@ -309,7 +309,7 @@ export const getAllDiaryService = async (
     include: { author: true },
   };
 
-  if (emotion) (allDiaryQuery.where as any).emotion = emotion;
+  if (emotion != 'all') (allDiaryQuery.where as any).emotion = emotion;
 
   // 친구 글 + 모르는 사람의 all 글 포함
   const allDiary = await prisma.diary.findMany({
