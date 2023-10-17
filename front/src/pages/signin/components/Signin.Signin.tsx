@@ -13,6 +13,16 @@ interface UserData {
   refreshToken: string;
 }
 
+interface InputFieldProps {
+  id: string;
+  name: string;
+  type: string;
+  placeholder: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  boxStyle: string;
+}
+
 const Signin: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -52,37 +62,37 @@ const Signin: React.FC = () => {
     mutation.mutate(userSigninInfos);
   };
 
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  };
+
+  const InputField: React.FC<InputFieldProps> = ({ id, name, type, placeholder, value, onChange, boxStyle }) => (
+    <div className={styles.formGroup}>
+      <label htmlFor={id}></label>
+      <div className={styles.inputGroup}>
+        <i className={boxStyle}></i>
+        <input
+          id={id}
+          name={name}
+          type={type}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+        />
+      </div>
+    </div>
+  );
 
   return (
     <>
       <div className={styles.centerContainer}>
         <form onSubmit={handleSubmit} className={styles.loginForm}>
-          <div className={styles.formGroup}>
-            <label htmlFor="email"></label>
-            <div className={styles.inputGroup}>
-              <i className={styles.box1}></i>
-              <input
-                type="email"
-                id="email"
-                placeholder="이메일을 입력하세요"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-          </div>
-          <div className={styles.formGroup}>
-            <label htmlFor="password"></label>
-            <div className={styles.inputGroup}>
-              <i className={styles.box2}></i>
-              <input
-                type="password"
-                id="password"
-                placeholder="패스워드를 입력하세요"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-          </div>
+          <InputField id="email" name="email" type="email" placeholder="이메일을 입력하세요" value={email} onChange={handleEmailChange} boxStyle={styles.box1} />
+          <InputField id="password" name="password" type="password" placeholder="패스워드를 입력하세요" value={password} onChange={handlePasswordChange} boxStyle={styles.box2} />
           <button type="submit" className={styles.submitButton}>
             SIGN IN
           </button>
