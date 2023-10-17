@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import styles from './index.module.scss';
-import { handleImgError } from '../../utils/imgHandlers';
 import FriendReqList from './Layout.FriendReqList';
 import { GrLogout, GrNotification } from 'react-icons/gr';
 import ImageComponent from '../ImageComponent';
@@ -11,13 +10,11 @@ const Header = () => {
   // 로컬 스토리지에서 토큰을 가져와서 로그인 상태 확인
   const token = localStorage.getItem('token');
   const isLogin = token !== null;
+
   const navigator = useNavigate();
+  const location = useLocation();
 
   const [isOpenFriendReqList, setIsOpenFriendReqList] = useState(false);
-
-  const handlesetIsOpenFriendReqList = (arg: boolean) => {
-    handlesetIsOpenFriendReqList(arg);
-  };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -28,6 +25,10 @@ const Header = () => {
     // 로그아웃 후 /intro 경로로 이동
     navigator('/intro');
   };
+
+  useEffect(() => {
+    setIsOpenFriendReqList(false);
+  }, [location.pathname]);
 
   return (
     <>
