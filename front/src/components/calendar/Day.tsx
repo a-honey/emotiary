@@ -131,7 +131,8 @@ const DayItem = ({
   };
 
   const filteredData = data.filter(
-    (item) => day.getDate() === item.dateCreated.getDate(),
+    (item) =>
+      day.getDate().toString() === item?.createdDate.split('T')[0].slice(-2),
   );
 
   if (filteredData.length > 0) {

@@ -51,12 +51,8 @@ const DiaryList = () => {
 
   // checkbox로 select가 변경되면 변경된 select로 데이터를 새로 받아옴
   useEffect(() => {
-    refetch({
-      select,
-      page: currentPage,
-      limit: 8,
-    });
-  }, [select, currentPage, refetch]);
+    refetch();
+  }, [refetch]);
 
   return (
     <div className={styles.diaryBlock}>

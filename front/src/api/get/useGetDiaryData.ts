@@ -12,7 +12,7 @@ export const useGetDiarysData = ({
   limit: number;
 }) => {
   return useQuery(
-    ['diarysData'],
+    ['diarysData', select, page],
     async () => {
       const response = await instance.get(
         `/diary/views/users?select=${select}&page=${page}&limit=${limit}`,
@@ -41,7 +41,7 @@ export const useGetMyDiaryData = ({
       );
       return response.data;
     },
-    { select: (data) => data.data, onError: () => [] },
+    { select: (data) => data.data },
   );
 };
 

@@ -24,6 +24,8 @@ export interface MyDairyItemType {
 
 export interface CalendarDiaryItemType {
   id: string;
-  dateCreated: Date;
+  authorId: string;
+  createdDate: string;
+  title: string;
   emoji: string;
 }

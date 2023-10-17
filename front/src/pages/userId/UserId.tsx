@@ -12,17 +12,16 @@ const UserIdPage: React.FC = () => {
     month: today.getMonth() + 1,
   });
 
-  const { data, isFetching } = useGetMyDiaryData(
-    {user_id: `${localStorage.getItem('userId')}`,
+  const { data, isFetching } = useGetMyDiaryData({
+    user_id: `${localStorage.getItem('userId')}`,
     year: currentDate.year,
     month: currentDate.month,
-});
+  });
 
   return (
     <main style={{ gap: '40px' }}>
       <UserCard />
       {/* api 어떻게 갈지 몰라서 일단 메인페이지 캘린더가져옴 */}
-      <Calendar data={fakeDiaryData} isFetching={isFetching} />
     </main>
   );
 };
