@@ -7,6 +7,7 @@ import { useGetDiarysData } from '../../../api/get/useGetDiaryData';
 import { instance } from '../../../api/instance';
 import { GoHeartFill, GoHeart } from 'react-icons/go';
 import Pagination from '../../../components/Pagination';
+import Tab from './Network.Tab';
 
 interface DairyItemType {
   id: string;
@@ -26,6 +27,8 @@ interface DairyItemType {
 
 const DiaryList = () => {
   const [select, setSelect] = useState('all');
+  const [tapEmotion, setTapEmotion] = useState('all');
+
   const [currentPage, setCurrentPage] = useState(1);
 
   const userId = localStorage.getItem('userId');
@@ -35,6 +38,10 @@ const DiaryList = () => {
     page: currentPage,
     limit: 8,
   });
+
+  const handleTapEmotion = (tapName: string) => {
+    setTapEmotion(tapName);
+  };
 
   const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
     // Update the 'select' state based on the checkbox value.
@@ -57,11 +64,14 @@ const DiaryList = () => {
 
   return (
     <div className={styles.diaryBlock}>
-      <h2>다른 유저의 일기 모아보기</h2>
       <div className={styles.nav}>
-        <input type="checkbox" onChange={handleCheckboxChange} />
-        <div>친구 일기만 보기</div>
+        <h2>다른 유저의 일기 모아보기</h2>
+        <div>
+          <input type="checkbox" onChange={handleCheckboxChange} />
+          <div>친구 일기만 보기</div>
+        </div>
       </div>
+      <Tab tapEmotion={tapEmotion} handleTapEmotion={handleTapEmotion} />
       <div className={styles.diaryListBlock}>
         {isFetching ? (
           <div>로딩중</div>
