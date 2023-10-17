@@ -4,6 +4,7 @@ import { handleImgError } from '../../../utils/imgHandlers';
 import { useNavigate } from 'react-router-dom';
 import { useGetUsersData } from '../../../api/get/useGetUserData';
 import ImageComponent from '../../../components/ImageComponent';
+import { instance } from '../../../api/instance';
 
 interface UserItemType {
   id: number;
@@ -47,6 +48,15 @@ const UserItem = ({ data }: { data: UserItemType }) => {
   const { id, profileImage, username, description, latestEmoji, isFriend } =
     data;
 
+  const handleFriendReqBtnClick = async () => {
+    try {
+      await instance.post(`/friend/req/${id}`);
+      alert('친구요청완료');
+    } catch {
+      console.error('친구요청실패');
+    }
+  };
+
   return (
     <div
       className={styles.item}
@@ -62,7 +72,12 @@ const UserItem = ({ data }: { data: UserItemType }) => {
         <div className={styles.name}>
           <div>{username}</div>
           {!isFriend && (
-            <button className={`doneBtn ${styles.friendReqBtn}`}>+</button>
+            <button
+              className={`doneBtn ${styles.friendReqBtn}`}
+              onClick={handleFriendReqBtnClick}
+            >
+              +
+            </button>
           )}
         </div>
         <div>{description}</div>

@@ -4,6 +4,7 @@ import { handleImgError } from '../../../utils/imgHandlers';
 import { useNavigate } from 'react-router-dom';
 import DiaryItemShow from '../../../components/modal/DiaryItemShow';
 import { useGetDiarysData } from '../../../api/get/useGetDiaryData';
+import { instance } from '../../../api/instance';
 
 interface DairyItemType {
   id: string;
@@ -89,6 +90,15 @@ const DairyItem = ({ data }: { data: DairyItemType }) => {
     setIsOpenDiary((prev) => !prev);
   };
 
+  const handleDiaryLikeClick = async () => {
+    try {
+      await instance.post(`/favorites/${data.id}`);
+      data.favoriteCount += 1;
+    } catch {
+      console.error('좋아요 누르기 실패');
+    }
+  };
+
   return (
     <>
       {isOpenDiary && (
@@ -103,7 +113,7 @@ const DairyItem = ({ data }: { data: DairyItemType }) => {
         <div className={styles.emoji}>{data.emoji}</div>
         <div>
           <h3>{data.title}</h3>
-          <div>
+          <div onClick={handleDiaryLikeClick}>
             {data.favoriteCount === 0 ? '♡' : '♥'} {data.favoriteCount}
           </div>
         </div>
