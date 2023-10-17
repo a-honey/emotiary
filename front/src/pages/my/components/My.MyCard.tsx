@@ -6,6 +6,7 @@ import { useGetMyUserData } from '../../../api/get/useGetUserData';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { formDataInstance, instance } from '../../../api/instance';
 import useImgChange from '../../../hooks/useImgChange';
+import ChangePW from './My.ChangePW';
 
 interface UserInfoType {
   email: string;
@@ -26,6 +27,11 @@ const USER_INFO_INITIAL_DATA = {
 // formdata img api 요청 따로할지 미정
 const MyCard = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const [isOpenChangePW, setIsOpenChangePW] = useState(false);
+
+  const toggleIsOpenChangePW = () => {
+    setIsOpenChangePW((prev) => !prev);
+  };
 
   const { data: userData, isFetching } = useGetMyUserData();
 
@@ -135,31 +141,30 @@ const MyCard = () => {
         </form>
       ) : (
         <>
-          {isFetching ? (
-            <div>로딩중</div>
-          ) : (
-            <>
-              <div>
-                <label>이름</label>
-                <h2>{username ?? ''}</h2>
-                <label>이메일</label>
-                <h2>{email ?? ''}</h2>
-                <label>소개</label>
-                <h3>{description ?? '소개를 입력해주세요'}</h3>
-              </div>
-              <div className={styles.btns}>
-                <button
-                  className="doneBtn"
-                  onClick={() => {
-                    setIsEditing(true);
-                  }}
-                >
-                  수정하기
-                </button>
-                <button className="doneBtn">비밀번호 변경</button>
-                <button className="cancelBtn">회원탈퇴</button>
-              </div>
-            </>
+          <div>
+            <label>이름</label>
+            <h2>{username ?? ''}</h2>
+            <label>이메일</label>
+            <h2>{email ?? ''}</h2>
+            <label>소개</label>
+            <h3>{description ?? '소개를 입력해주세요'}</h3>
+          </div>
+          <div className={styles.btns}>
+            <button
+              className="doneBtn"
+              onClick={() => {
+                setIsEditing(true);
+              }}
+            >
+              수정하기
+            </button>
+            <button className="doneBtn" onClick={toggleIsOpenChangePW}>
+              비밀번호 변경
+            </button>
+            <button className="cancelBtn">회원탈퇴</button>
+          </div>
+          {isOpenChangePW && (
+            <ChangePW toggleIsOpenChangePW={toggleIsOpenChangePW} />
           )}
         </>
       )}
