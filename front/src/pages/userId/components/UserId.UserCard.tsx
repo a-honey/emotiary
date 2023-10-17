@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import ImageComponent from '../../../components/ImageComponent';
 import { useGetUserData } from '../../../api/get/useGetUserData';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styles from './UserId.UserCard.module.scss';
+import getUserId from '../../../utils/localStorageHandlers';
 interface UserInfoType {
   id: string;
   username: string;
@@ -16,10 +17,17 @@ interface UserInfoType {
 
 const UserCard = () => {
   const location = useLocation();
+  const navigator = useNavigate();
 
   const { data: userData, isFetching } = useGetUserData({
     user_id: location.pathname.split('/')[2],
   });
+
+  useEffect(() => {
+    if (location.pathname.split('/')[2] === getUserId) {
+      navigator('/mypage');
+    }
+  }, [navigator, location]);
 
   return (
     <div className={styles.userCardContainer}>
