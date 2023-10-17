@@ -4,21 +4,27 @@ import { useMutation } from 'react-query';
 import { instance } from '../../../api/instance';
 import styles from './index.module.scss';
 
-const Signup: React.FC = () => {
+const USER_INFOS = {
+  username: '',
+  email: '',
+  password: ''
+};
 
-  const USER_INFOS = {
-    username: '',
-    email: '',
-    password: ''
-  };
+interface UserData {
+  username: string;
+  email: string;
+  password: string;
+}
 
-  const [userInfo, setUserInfo] = useState<{ username: string, email: string, password: string }>(USER_INFOS);
+interface SignupProps {}
+
+const Signup: React.FC<SignupProps> = () => {
+  const [userInfo, setUserInfo] = useState<UserData>({ username: '', email: '', password: '' });
   const [confirmPassword, setConfirmPassword] = useState<string>('');
-
   const navigate = useNavigate();
 
   const mutation = useMutation(
-    (newUserInfo: { username: string; email: string; password: string }) => 
+    (newUserInfo: UserData) => 
       instance.post('http://localhost:5001/users/register', newUserInfo),
     {
       onSuccess: (data) => {
