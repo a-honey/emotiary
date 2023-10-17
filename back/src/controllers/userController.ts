@@ -89,11 +89,22 @@ export const getAllUser = async(
     try{
         // #swagger.tags = ['Users']
 
-        
+        // 요청에서 page와 limit 값을 읽어옴
+        const page: number = parseInt(req.query.page as string) || 1;
+        const limit: number = parseInt(req.query.limit as string) || 10;
         const userId = req.user.id;
 
         // 모든 사용자 정보를 데이터베이스에서 가져오기
         const allUsers = await prisma.user.findMany();
+
+        // 페이징된 데이터 계산
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+        const paginatedUsers = allUsers.slice(startIndex, endIndex);
+
+        // 페이징 관련 정보 계산
+        const totalUsers = allUsers.length;
+        const totalPage = Math.ceil(totalUsers / limit);
 
         for (const user of allUsers) {
 
@@ -114,9 +125,14 @@ export const getAllUser = async(
             }
         }
 
-        const totalUsers = allUsers.length;
-
-        res.status(200).json({ data: allUsers, message: '성공', totalUsers });
+        res.status(200).json({ 
+            data: allUsers, 
+            message: '성공', 
+            totalPage : totalPage,
+            totalItem : totalUsers,
+            currentPage : page,
+            limit : limit
+        });
     }catch(error){
         next(error);
     }
