@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import styles from './index.module.scss';
 import { handleImgError } from '../../../utils/imgHandlers';
 import { useNavigate } from 'react-router-dom';
@@ -27,11 +27,17 @@ const DiaryList = () => {
 
   const userId = localStorage.getItem('userId');
   const navigator = useNavigate();
-  const { data, isFetching } = useGetDiarysData({
+  const { data, isFetching, refetch } = useGetDiarysData({
     select,
     page: currentPage,
     limit: 8,
   });
+
+  const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
+    // Update the 'select' state based on the checkbox value.
+    const newSelect = e.target.checked ? 'friends' : 'all';
+    setSelect(newSelect);
+  };
 
   /*
   useEffect(() => {
@@ -40,11 +46,21 @@ const DiaryList = () => {
     }
   }, [userId, navigator]);
   */
+
+  // checkbox로 select가 변경되면 변경된 select로 데이터를 새로 받아옴
+  useEffect(() => {
+    refetch({
+      select,
+      page: currentPage,
+      limit: 8,
+    });
+  }, [select, currentPage, refetch]);
+
   return (
     <div className={styles.diaryBlock}>
       <h2>다른 유저의 일기 모아보기</h2>
       <div className={styles.nav}>
-        <input type="checkbox" />
+        <input type="checkbox" onChange={handleCheckboxChange} />
         <div>친구 일기만 보기</div>
       </div>
       <div className={styles.diaryListBlock}>
