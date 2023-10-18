@@ -2,11 +2,12 @@ import React, { ChangeEvent } from 'react';
 
 import { useState } from 'react';
 import styles from './index.module.scss';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { instance } from '../../../api/instance';
+import { useQueryClient } from '@tanstack/react-query';
 import getUserId from '../../../utils/localStorageHandlers';
 import useImgChange from '../../../hooks/useImgChange';
 import EmojiSelect from './Main.EmojiSelect';
+import { usePostDiaryData } from '../../../api/mutation/usePostDiaryData';
+import { formatDate } from '../../../utils/formatHandlers';
 
 const DIARY_WRITING_INITIAL_DATA = {
   title: '',
@@ -20,7 +21,7 @@ const DiaryWriting = ({
   handleIsOpenDiaryWriting,
 }: {
   day: Date;
-  handleIsOpenDiaryWriting: (args: boolean) => void;
+  handleIsOpenDiaryWriting: () => void;
 }) => {
   const [formData, setFormData] = useState(DIARY_WRITING_INITIAL_DATA);
   const [isEmojiSelectOpen, setIsEmojiSelectOpen] = useState(false);
@@ -31,23 +32,10 @@ const DiaryWriting = ({
 
   const queryClient = useQueryClient();
 
-  const mutation = useMutation(
-    async () => {
-      await instance.post(`/diary/${getUserId}`, {
-        ...formData,
-        createdDate: day,
-      });
-      return;
-    },
-    {
-      onSuccess: () => {
-        // 다이어리가 새로 생겼으므로, myAllDiarysData, myDiaryData 변경 필요
-        queryClient.invalidateQueries(['myDiaryData', 'myAllDiarysData']);
-      },
-      onError: (error) => {
-        console.error('useMutation api 요청 에러', error);
-      },
-    },
+  const postMutation = usePostDiaryData(
+    queryClient,
+    getUserId as string,
+    handleIsOpenDiaryWriting,
   );
 
   const { handleImgChange, imgContainer, imgRef } = useImgChange();
@@ -66,7 +54,9 @@ const DiaryWriting = ({
     e.preventDefault();
 
     setIsEmojiSelectOpen(true);
-    mutation.mutate();
+    postMutation.mutate({
+      body: { ...formData, createdDate: formatDate(day) },
+    });
   };
 
   return (
@@ -128,9 +118,7 @@ const DiaryWriting = ({
           <button
             className="cancelBtn"
             type="button"
-            onClick={() => {
-              handleIsOpenDiaryWriting(false);
-            }}
+            onClick={handleIsOpenDiaryWriting}
           >
             작성취소
           </button>
