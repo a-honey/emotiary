@@ -4,7 +4,7 @@ import styles from './index.module.scss';
 import { MyDairyItemType } from '../../../types/diaryType';
 import { useGetMyAllDiarysData } from '../../../api/get/useGetDiaryData';
 import Pagination from '../../../components/Pagination';
-import DiaryItemShow from '../../../components/modal/DiaryItemShow';
+import DiaryItemShow from '../../../components/diary/DiaryItemShow';
 
 const DiaryList = () => {
   const [currentPage, setCurrentPage] = useState(1);

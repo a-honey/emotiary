@@ -8,7 +8,7 @@ import {
   startOfWeek,
 } from 'date-fns';
 import { CalendarDiaryItemType } from '../../types/diaryType';
-import DiaryItemShow from '../modal/DiaryItemShow';
+import DiaryItemShow from '../diary/DiaryItemShow';
 import {
   DragDropContext,
   Droppable,

@@ -2,7 +2,7 @@ import React, { ChangeEvent, useEffect, useState } from 'react';
 import styles from './index.module.scss';
 import { handleImgError } from '../../../utils/imgHandlers';
 import { useNavigate } from 'react-router-dom';
-import DiaryItemShow from '../../../components/modal/DiaryItemShow';
+import DiaryItemShow from '../../../components/diary/DiaryItemShow';
 import { useGetDiarysData } from '../../../api/get/useGetDiaryData';
 import { instance } from '../../../api/instance';
 import { GoHeartFill, GoHeart } from 'react-icons/go';
