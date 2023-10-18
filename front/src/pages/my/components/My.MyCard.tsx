@@ -7,6 +7,7 @@ import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { formDataInstance, instance } from '../../../api/instance';
 import useImgChange from '../../../hooks/useImgChange';
 import ChangePW from './My.ChangePW';
+import { usePutUserData } from '../../../api/mutation/usePutUserData';
 
 interface UserInfoType {
   email: string;
@@ -44,29 +45,15 @@ const MyCard = () => {
     userInfoData;
 
   const queryClient = useQueryClient();
-  const mutation = useMutation(
-    async () => {
-      await formDataInstance.put(`/users/${userId}`, {
-        ...userData,
-        profileImage: imgContainer,
-      });
-      return;
-    },
-    {
-      onSuccess: () => {
-        // 업데이트가 성공하면 쿼리를 다시 실행하여 최신 데이터를 가져옵니다.
-        queryClient.invalidateQueries({ queryKey: ['myUserData'] });
-      },
-      onError: (error) => {
-        console.error('useMutation api 요청 에러', error);
-      },
-    },
-  );
+
+  const putMutation = usePutUserData(queryClient, userId, toggleIsOpenChangePW);
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    mutation.mutate();
+    putMutation.mutate({
+      body: { ...userInfoData, filesUpload: imgContainer },
+    });
   };
 
   const { handleImgChange, imgContainer, imgRef } = useImgChange();
