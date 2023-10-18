@@ -6,7 +6,11 @@ import './styles/global.scss';
 import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,6 +22,15 @@ const queryClient = new QueryClient({
       },
     },
   },
+  queryCache: new QueryCache({
+    onSuccess: () => {},
+    onSettled: () => {},
+    onError: (err, query) => {
+      if (err.meta.eMessage) {
+        console.log(`${query.queryKey} 에러`, err.meta.errorMessage);
+      }
+    },
+  }),
 });
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
