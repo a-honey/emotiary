@@ -1,10 +1,13 @@
 .modalContainer {
+  width: 50vw;
   background-color: white;
   padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .diaryContent {
-  width: 70vh;
   display: flex;
   flex-direction: column;
   gap: 10px;

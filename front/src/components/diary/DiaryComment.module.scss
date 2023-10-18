@@ -1,0 +1,26 @@
+.comments {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  .commentItemContainer {
+    display: flex;
+    gap: 20px;
+    .userInfo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      img {
+        width: 40px;
+      }
+    }
+  }
+}
+
+.commentAddcontainer {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  input {
+    width: 100%;
+  }
+}

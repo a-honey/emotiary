@@ -25,6 +25,9 @@ const DiaryItemShow = ({
     id,
   });
 
+  const { data: diaryCommentData, isFetching: isDiaryCommentDataFetching } =
+    useGetCommentData({ id });
+
   const queryClient = useQueryClient();
 
   const mutation = useMutation(
@@ -84,7 +87,9 @@ const DiaryItemShow = ({
             <p>{diaryData.content}</p>
           </div>
         )}
-        <DiaryComment />
+        {!isDiaryDataFetching && (
+          <DiaryComment data={diaryCommentData} id={diaryData.id} />
+        )}
         <button className="cancelBtn" onClick={toggleIsOpenModal}>
           닫기
         </button>
@@ -94,23 +99,3 @@ const DiaryItemShow = ({
 };
 
 export default DiaryItemShow;
-
-const CommentItem = ({ isReply }: { isReply: boolean }) => {
-  const [isAdding, setIsAdding] = useState(false);
-
-  const handleIsAdding = () => {
-    setIsAdding((prev) => !prev);
-  };
-  return (
-    <>
-      <div>
-        {isReply && <div>L</div>}
-        <div>댓글내용</div>
-        <div>작성자이름</div>
-        <button onClick={handleIsAdding}>+</button>
-        {isAdding && <DiaryReplyAdd handleIsAdding={handleIsAdding} />}
-      </div>
-      <CommentItem isReply />
-    </>
-  );
-};
