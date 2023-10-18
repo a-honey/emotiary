@@ -26,7 +26,8 @@ model User {
   favorites   Favorite[]
   comments    Comment[]
   latestEmoji String?
-  isFriend    Boolean    @default(false)
+  isFriend    Boolean   @default(false)
+  alarmSetting Int      @default(1)
 }
 
 model RefreshToken {
