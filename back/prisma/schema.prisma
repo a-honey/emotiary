@@ -105,6 +105,4 @@ model Emoji {
   id         Int     @id @default(autoincrement())
   type       String
   emotion    String?
-
-  @@map("emojis")
 }
