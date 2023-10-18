@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, RequestHandler } from "express";
 import { 
     createUser,
     myInfo,
@@ -14,8 +14,11 @@ import {
     generateAccessToken,
     verifyRefreshToken,
 } from '../utils/tokenUtils'
-import { IRequest } from "types/user";
+import { IRequest, IUser } from "types/user";
 import { PrismaClient } from '@prisma/client';
+import { userValidateDTO } from "../dtos/userDTO";
+import { plainToClass } from "class-transformer";
+import { emptyApiResponseDTO } from "../utils/emptyResult";
 
 const prisma = new PrismaClient();
 
@@ -24,11 +27,12 @@ export const userRegister = async (req : Request, res : Response, next : NextFun
         // swagger 데이터전용
         // #swagger.tags = ['Users']
         const {username, email, password} = req.body;
+        const inputData = plainToClass(userValidateDTO, req.body);
 
         // createUser 함수를 사용하여 새 사용자 생성
-        const user = await createUser(req.body);
+        const user = await createUser(inputData);
 
-        res.status(200).json({ data: user, message: '성공' });
+        return res.status(user.status).json(user);
     }catch(error){
         next(error);
     }
@@ -39,7 +43,6 @@ export const userLogin = async (req : IRequest, res : Response, next : NextFunct
         // swagger 데이터전용
         // #swagger.tags = ['Users']
         const { email, password } = req.body;
-
         // 사용자 정보와 토큰 데이터를 사용하여 user 객체 생성
         const user = {
             token: req.token,
@@ -47,7 +50,6 @@ export const userLogin = async (req : IRequest, res : Response, next : NextFunct
             id: req.user.id,
             name: req.user.username,
             email: req.user.email,
-            uploadFile: req.user.profileImage,
         };
 
         return res.status(200).json({ data: user, message: '성공' });
@@ -72,7 +74,7 @@ export const getMyInfo = async(
         // myInfo 함수를 사용하여 현재 사용자의 정보 가져오기
         const currentUserInfo = await myInfo(userId);
         
-        res.status(200).json({ data: currentUserInfo, message: '성공' });
+        res.status(currentUserInfo.status).json(currentUserInfo);
     }catch(error){
         next(error);
     }
@@ -86,15 +88,23 @@ export const getAllUser = async(
     try{
         // #swagger.tags = ['Users']
 
-        
+        // 요청에서 page와 limit 값을 읽어옴
+        const page: number = parseInt(req.query.page as string) || 1;
+        const limit: number = parseInt(req.query.limit as string) || 10;
         const userId = req.user.id;
 
         // 모든 사용자 정보를 데이터베이스에서 가져오기
         const allUsers = await prisma.user.findMany();
 
+        // 페이징된 데이터 계산
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+        const paginatedUsers = allUsers.slice(startIndex, endIndex);
 
+        // 페이징 관련 정보 계산
+        const totalUsers = allUsers.length;
+        const totalPage = Math.ceil(totalUsers / limit);
 
-        console.log(userId);
         for (const user of allUsers) {
 
             const areFriends = await areUsersFriends(userId, user.id);
@@ -114,9 +124,14 @@ export const getAllUser = async(
             }
         }
 
-        const totalUsers = allUsers.length;
-
-        res.status(200).json({ data: allUsers, message: '성공', totalUsers });
+        res.status(200).json({ 
+            data: allUsers, 
+            message: '성공', 
+            totalPage : totalPage,
+            totalItem : totalUsers,
+            currentPage : page,
+            limit : limit
+        });
     }catch(error){
         next(error);
     }
@@ -138,7 +153,7 @@ export const getUserId = async(
         // getUserInfo 함수를 사용하여 특정 사용자의 정보 가져오기
         const userInfo = await getUserInfo(userId);
 
-        res.status(200).json({ data: userInfo, message: '성공' });
+        res.status(userInfo.status).json(userInfo);
     }catch(error){
         next(error);
     }
@@ -173,21 +188,18 @@ export const updateUser = async(
 ) => {
     try{
         const userId = req.params.userId;
-        console.log(req.body);
 
         // swagger 데이터전용
         /* #swagger.tags = ['Users']
          #swagger.security = [{
                "bearerAuth": []
         }] */
-        const { email, username, description, profileImage } = req.body;
-
+        const { email, username, description } = req.body;
+        const inputData = plainToClass(userValidateDTO, req.body);
         // updateUserService 함수를 사용하여 사용자 정보 업데이트
-        const updatedUser = await updateUserService(userId,{
-            toUpdate : { ...req.body },
-        });
+        const updatedUser = await updateUserService(userId, req.body);
         
-        res.status(200).json({ data: updatedUser, message: '성공' });
+        res.status(updatedUser.status).json(updatedUser);
     }catch(error){
         next(error);
     }
@@ -225,7 +237,8 @@ export const forgotPassword = async (req : IRequest, res : Response, next : Next
         const user = await prisma.user.findUnique({where : { email }});
 
         if(!user){
-            return res.status(404).json({ data : [], message : '사용자를 찾을 수 없습니다.' });
+            const response = emptyApiResponseDTO();
+            return response;
         }
 
         // forgotUserPassword 함수를 사용하여 임시 비밀번호 생성 및 이메일로 전송
@@ -250,7 +263,8 @@ export const resetPassword = async(req : IRequest, res : Response, next : NextFu
         const user = await prisma.user.findUnique({where : { email }});
 
         if(!user){
-            return res.status(404).json({data : [], message : '사용자를 찾을 수 없습니다.'});
+            const response = emptyApiResponseDTO();
+            return response;
         }
         
         // resetUserPassword 함수를 사용하여 비밀번호 재설정
@@ -268,7 +282,8 @@ export const refresh = async (req : IRequest, res : Response, next : NextFunctio
     const refreshToken = req.body.token;
 
     if (!refreshToken) {
-        return res.status(401).json({ data : [], message: 'Refresh Token 없음' });
+        const response = emptyApiResponseDTO();
+        return response;
     }
 
     // Refresh Token을 사용하여 사용자 ID 확인
@@ -299,7 +314,8 @@ export const profile = async (req : IRequest, res : Response, next : NextFunctio
         });
 
         if(!user){
-            return res.status(404).json({data : [], message : '사용자를 찾을 수 없습니다.'});
+            const response = emptyApiResponseDTO();
+            return response;
         }
         // 현재 사용자의 프로필 정보를 응답으로 반환
         return res.json({data : user, message : "성공"});

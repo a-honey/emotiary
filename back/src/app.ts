@@ -13,7 +13,7 @@ import {
   jwtStrategy,
   localStrategy,
   googleStrategy,
-} from './config/passport/strategy/passport';
+} from './config/passport';
 import { Logger } from './config/logger';
 import testAuthRouter from './routes/testRouter';
 import { errorMiddleware } from './middlewares/errorMiddleware';

@@ -4,6 +4,8 @@ import { commentResponseDTO } from '../dtos/commentDTO';
 import { emptyApiResponseDTO } from '../utils/emptyResult';
 import { successApiResponseDTO } from '../utils/successResult';
 import { nonAuthorizedApiResponseDTO } from '../utils/nonAuthorizeResult';
+import axios from 'axios';
+import { Emoji } from '../types/emoji';
 
 const prisma = new PrismaClient();
 
@@ -18,8 +20,26 @@ export async function createdComment(
 ) {
   try {
     const { content, nestedComment } = inputData;
+
+    // 댓글 이모지 넣는 코드
+  const responseData = await axios.post('http://127.0.0.1:5000/predict', {
+    text: content,
+  });
+  const emotion = responseData.data;
+
+  const emotionType = emotion.emoji;
+
+  const emojis = await prisma.emoji.findMany({
+    where: {
+      type: emotionType,
+    },
+  });
+
+  const randomEmoji : Emoji = emojis[Math.floor(Math.random() * emojis.length)];
+  const emoji = randomEmoji.emotion;
+
     const comment = await prisma.comment.create({
-      data: { diaryId: diary_id, authorId, content, nestedComment },
+      data: { diaryId: diary_id, authorId, content, nestedComment, emoji },
     });
 
     const commentResponseData = plainToClass(commentResponseDTO, comment, {
@@ -46,7 +66,7 @@ export async function getCommentByDiaryId(diary_id: string) {
           select: {
             id: true,
             username: true,
-            profileImage: true,
+            filesUpload: true,
           },
         },
         diaryId: true,
@@ -60,7 +80,7 @@ export async function getCommentByDiaryId(diary_id: string) {
               select: {
                 id: true,
                 username: true,
-                profileImage: true,
+                filesUpload: true,
               },
             },
             diaryId: true,
@@ -96,11 +116,28 @@ export async function getCommentByDiaryId(diary_id: string) {
 export async function updatedComment(
   inputData: {
     content: string;
+    emoji : string;
   },
   comment_id: string,
   authorId: string,
 ) {
   try {
+    // 댓글 이모지 넣는 코드
+    const responseData = await axios.post('http://127.0.0.1:5000/predict', {
+      text: inputData.content,
+    });
+    const emotion = responseData.data;
+
+    const emotionType = emotion.emoji;
+
+    const emojis = await prisma.emoji.findMany({
+      where: {
+        type: emotionType,
+      },
+    });
+
+    const randomEmoji : Emoji = emojis[Math.floor(Math.random() * emojis.length)];
+    const emoji = randomEmoji.emotion;
     // 댓글 작성자인지 확인하기 위한 조회
     const userCheck = await prisma.comment.findUnique({
       where: { id: comment_id },
@@ -109,7 +146,10 @@ export async function updatedComment(
     if (userCheck.authorId == authorId) {
       const comment = await prisma.comment.update({
         where: { id: comment_id },
-        data: inputData,
+        data: {
+          content : inputData.content,
+          emoji : emoji,
+        },
       });
 
       const commentResponseData = plainToClass(commentResponseDTO, comment, {

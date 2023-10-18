@@ -13,7 +13,7 @@ model User {
   email        String   @unique
   password     String
   description  String?
-  profileImage String?
+  filesUpload fileUpload[]
   updatedAt    DateTime @default(now()) // 기본값 추가
   createdAt    DateTime @default(now())
   friendS      Friend[] @relation("UserFriendS")
@@ -26,8 +26,19 @@ model User {
   favorites   Favorite[]
   comments    Comment[]
   latestEmoji String?
+<<<<<<< HEAD
   isFriend    Boolean   @default(false)
   alarmSetting Int      @default(1)
+=======
+  isFriend    Boolean?    @default(false)
+}
+
+model fileUpload{
+  url       String @id
+  user      User   @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+>>>>>>> feature/back_sub
 }
 
 model RefreshToken {
@@ -85,6 +96,7 @@ model Comment {
   authorId      String
   diary         Diary     @relation(fields: [diaryId], references: [id], onDelete: Cascade)
   diaryId       String
+  emoji         String?
   content       String
   nestedComment String?
   createdAt     DateTime  @default(now())
@@ -96,13 +108,7 @@ model Comment {
 model Emoji {
   id         Int     @id @default(autoincrement())
   type       String
-  sadness    String?
-  surprise   String?
-  happiness  String?
-  aversion   String?
-  unrest     String?
-  anger      String?
-  neutrality String?
+  emotion    String?
 
   @@map("emojis")
 }

@@ -53,6 +53,9 @@ export class commentResponseDTO {
   reComment: string;
 
   @Expose()
+  emoji : string;
+
+  @Expose()
   @Type(() => AuthorInCommentDTO)
   author: AuthorInCommentDTO;
 }
