@@ -26,11 +26,8 @@ model User {
   favorites   Favorite[]
   comments    Comment[]
   latestEmoji String?
-<<<<<<< HEAD
   isFriend    Boolean   @default(false)
   alarmSetting Int      @default(1)
-=======
-  isFriend    Boolean?    @default(false)
 }
 
 model fileUpload{
@@ -38,7 +35,6 @@ model fileUpload{
   user      User   @relation(fields: [userId], references: [id])
   userId    String
   createdAt DateTime @default(now())
->>>>>>> feature/back_sub
 }
 
 model RefreshToken {
