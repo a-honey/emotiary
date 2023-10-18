@@ -1,8 +1,8 @@
-import { PrismaClient } from "@prisma/client";
-import { sendEmail } from "../utils/email";
-import { generateRandomPassowrd } from "../utils/password";
-import bcrypt from "bcrypt";
-import { IUser } from "../types/user";
+import { PrismaClient } from '@prisma/client';
+import { sendEmail } from '../utils/email';
+import { generateRandomPassowrd } from '../utils/password';
+import bcrypt from 'bcrypt';
+import { IUser } from '../types/user';
 
 const prisma = new PrismaClient();
 
@@ -58,7 +58,7 @@ export const getUserInfo = async (userId: string) => {
 
 export const updateUserService = async (
   userId: string,
-  { toUpdate }: { toUpdate: Partial<IUser> }
+  { toUpdate }: { toUpdate: Partial<IUser> },
 ) => {
   try {
     if (toUpdate.password) {
@@ -94,7 +94,7 @@ export const deleteUserService = async (userId: string) => {
       },
     });
 
-    return "사용자가 삭제되었습니다.";
+    return '사용자가 삭제되었습니다.';
   } catch (error) {
     throw error;
   }
@@ -118,8 +118,9 @@ export const forgotUserPassword = async (email: string) => {
     // 사용자에게 임시 비밀번호를 이메일로 전송
     await sendEmail(
       email,
-      "비밀번호 재설정",
-      `임시 비밀번호 : ${tempPassword}`
+      '비밀번호 재설정',
+      `임시 비밀번호 : ${tempPassword}`,
+      ``,
     );
   } catch (error) {
     throw error;
@@ -158,28 +159,28 @@ export const getUserFromDatabase = async (userId: string) => {
 };
 
 // 내 아이디 for문돌리는 id
-export const areUsersFriends = async (userId1 : string, userId2 : string) => {
-  try{
+export const areUsersFriends = async (userId1: string, userId2: string) => {
+  try {
     const friendShip = await prisma.friend.findFirst({
-      where : {
-        OR : [
+      where: {
+        OR: [
           {
-            sentUserId : userId1,
-            receivedUserId : userId2,
+            sentUserId: userId1,
+            receivedUserId: userId2,
           },
           {
-            sentUserId : userId2,
-            receivedUserId : userId1,
+            sentUserId: userId2,
+            receivedUserId: userId1,
           },
-        ]
-      }
+        ],
+      },
     });
-    if(userId1 === userId2){
+    if (userId1 === userId2) {
       return true;
-    }else{
+    } else {
       return !!friendShip;
     }
-  }catch(error){
+  } catch (error) {
     throw error;
   }
-}
+};

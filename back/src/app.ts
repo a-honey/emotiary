@@ -17,6 +17,7 @@ import {
 import { Logger } from './config/logger';
 import testAuthRouter from './routes/testRouter';
 import { errorMiddleware } from './middlewares/errorMiddleware';
+import { sendAlarm } from './utils/alarm';
 
 // import axios, { AxiosResponse } from "axios";
 
@@ -24,6 +25,7 @@ const app: Express = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(Logger);
+sendAlarm();
 
 app.use(passport.initialize());
 
