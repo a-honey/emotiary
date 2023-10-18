@@ -1,4 +1,4 @@
-import express, { Express, Request, Response } from 'express';
+import express, { Express, NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import swaggerFile from './swagger/swagger-output.json';
@@ -103,13 +103,24 @@ app.get('/', (req: Request, res: Response) => {
   res.send('기본 페이지');
 });
 
-app.use('/users', userAuthRouter);
-app.use('/test', testAuthRouter);
-app.use('/friend', friendRouter);
-app.use('/diary', diaryRouter);
-app.use('/favorites', favoriteRouter);
-app.use('/comments', commentRouter);
+//TODO api 붙여주기
+//TODO node 부하테스트
 
+// app.all('/api/*', (req: Request, res: Response, next: NextFunction) => {
+//   console.log('api통신 테스트');
+//   next();
+// });
+
+const apiRouter = express.Router();
+
+apiRouter.use('/users', userAuthRouter);
+apiRouter.use('/test', testAuthRouter);
+apiRouter.use('/friend', friendRouter);
+apiRouter.use('/diary', diaryRouter);
+apiRouter.use('/favorites', favoriteRouter);
+apiRouter.use('/comments', commentRouter);
+
+app.use('/api', apiRouter);
 // // 정적 파일 제공을 위한 미들웨어 설정
 // app.use(express.static("public"));
 app.use(express.static('imageUpload'));
