@@ -5,6 +5,9 @@ import styles from './index.module.scss';
 import FriendReqList from './Layout.FriendReqList';
 import { GrLogout, GrNotification } from 'react-icons/gr';
 import ImageComponent from '../ImageComponent';
+import Toast from './Layout.Toast';
+import { useRecoilValue } from 'recoil';
+import { toastState } from '../../atoms/toastState';
 
 const locations = [
   { name: 'MY CALENDAR', to: '/' },
@@ -16,6 +19,8 @@ const Header = () => {
   // 로컬 스토리지에서 토큰을 가져와서 로그인 상태 확인
   const token = localStorage.getItem('token');
   const isLogin = token !== null;
+
+  const messages = useRecoilValue(toastState);
 
   const navigator = useNavigate();
   const location = useLocation();
@@ -83,6 +88,7 @@ const Header = () => {
           </div>
         )}
       </header>
+      {messages.length !== 0 && <Toast />}
       <Outlet />
     </>
   );

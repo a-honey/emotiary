@@ -5,6 +5,8 @@ import { useGetUserData } from '../../../api/get/useGetUserData';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styles from './UserId.UserCard.module.scss';
 import getUserId from '../../../utils/localStorageHandlers';
+import { useRecoilState } from 'recoil';
+import { toastState } from '../../../atoms/toastState';
 interface UserInfoType {
   id: string;
   username: string;
@@ -19,6 +21,8 @@ const UserCard = () => {
   const location = useLocation();
   const navigator = useNavigate();
 
+  const [state, setState] = useRecoilState(toastState);
+
   const { data: userData, isFetching } = useGetUserData({
     user_id: location.pathname.split('/')[2],
   });
@@ -28,6 +32,20 @@ const UserCard = () => {
       navigator('/mypage');
     }
   }, [navigator, location]);
+
+  // useMutation에 해줘야할듯함
+  const handleFriendBtnClick = () => {
+    // 친구요청을 성공했을때
+    setState((oldState: any) => [
+      ...oldState,
+      { message: `${userData.username}에게 친구요청 성공하였습니다.` },
+    ]);
+    // 이미 했을 때
+    setState((oldState: any) => [
+      ...oldState,
+      { message: `${userData.username}에게 이미 친구요청을 하였습니다.` },
+    ]);
+  };
 
   return (
     <div className={styles.userCardContainer}>
@@ -52,7 +70,9 @@ const UserCard = () => {
           {userData.isFriend ? (
             <button className="doneBtn">채팅보내기</button>
           ) : (
-            <button className="doneBtn">친구추가</button>
+            <button className="doneBtn" onClick={handleFriendBtnClick}>
+              친구추가
+            </button>
           )}
         </div>
       )}
