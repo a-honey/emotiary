@@ -6,6 +6,12 @@ import FriendReqList from './Layout.FriendReqList';
 import { GrLogout, GrNotification } from 'react-icons/gr';
 import ImageComponent from '../ImageComponent';
 
+const locations = [
+  { name: 'MY CALENDAR', to: '/' },
+  { name: 'LATEST DIARY', to: '/network' },
+  { name: 'ALL USERS', to: '/users' },
+];
+
 const Header = () => {
   // 로컬 스토리지에서 토큰을 가져와서 로그인 상태 확인
   const token = localStorage.getItem('token');
@@ -39,10 +45,14 @@ const Header = () => {
           </Link>
         </div>
         <nav className={styles.navContainer}>
-          <Link to="/">MY CALENDAR</Link>
-          <Link to="/network">LATEST DIARY</Link>
-          <Link to="/users">ALL USERS</Link>
-          {/* <Link to="/analysis">ANALYSIS</Link> */}
+          {locations.map((item) => (
+            <Link
+              className={location.pathname === item.to && styles.active}
+              to={item.to}
+            >
+              {item.name}
+            </Link>
+          ))}
         </nav>
         {isLogin ? (
           <div className={styles.right}>

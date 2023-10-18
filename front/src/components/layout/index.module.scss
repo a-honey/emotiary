@@ -33,9 +33,14 @@
     width: 25%;
     display: flex;
     justify-content: space-between;
-    button {
-      font-size: 20px;
-      font-weight: 700;
+    .active {
+      background-color: #ededed;
+    }
+    a {
+      width: 140px;
+      text-align: center;
+      padding: 10px;
+      border-radius: 30px;
     }
   }
   .userInfo {
