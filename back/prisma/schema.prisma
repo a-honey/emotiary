@@ -23,14 +23,11 @@ model User {
   // 사용자와 Refresh Token 간의 일대다 관계 설정
   refreshTokens RefreshToken[]
 
-  favorites   Favorite[]
-  comments    Comment[]
-  latestEmoji String?
-<<<<<<< HEAD
-  isFriend    Boolean   @default(false)
+  favorites    Favorite[]
+  comments     Comment[]
+  latestEmoji  String?
+  isFriend     Boolean   @default(false)
   alarmSetting Int      @default(1)
-=======
-  isFriend    Boolean?    @default(false)
 }
 
 model fileUpload{
@@ -38,7 +35,6 @@ model fileUpload{
   user      User   @relation(fields: [userId], references: [id])
   userId    String
   createdAt DateTime @default(now())
->>>>>>> feature/back_sub
 }
 
 model RefreshToken {
