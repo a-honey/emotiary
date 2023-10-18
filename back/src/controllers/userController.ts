@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, RequestHandler } from "express";
 import { 
     createUser,
     myInfo,
@@ -14,7 +14,7 @@ import {
     generateAccessToken,
     verifyRefreshToken,
 } from '../utils/tokenUtils'
-import { IRequest } from "types/user";
+import { IRequest, IUser } from "types/user";
 import { PrismaClient } from '@prisma/client';
 import { userValidateDTO } from "../dtos/userDTO";
 import { plainToClass } from "class-transformer";
@@ -50,7 +50,6 @@ export const userLogin = async (req : IRequest, res : Response, next : NextFunct
             id: req.user.id,
             name: req.user.username,
             email: req.user.email,
-            uploadFile: req.user.profileImage,
         };
 
         return res.status(200).json({ data: user, message: '성공' });
@@ -195,14 +194,10 @@ export const updateUser = async(
          #swagger.security = [{
                "bearerAuth": []
         }] */
-        const { email, username, description, profileImage } = req.body;
-        console.log(req.body);
+        const { email, username, description } = req.body;
         const inputData = plainToClass(userValidateDTO, req.body);
-
         // updateUserService 함수를 사용하여 사용자 정보 업데이트
-        const updatedUser = await updateUserService(userId,{
-            toUpdate : { ...inputData },
-        });
+        const updatedUser = await updateUserService(userId, req.body);
         
         res.status(updatedUser.status).json(updatedUser);
     }catch(error){

@@ -1,8 +1,7 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 import { sendEmail } from "../utils/email";
 import { generateRandomPassowrd } from "../utils/password";
 import bcrypt from "bcrypt";
-import { IUser } from "../types/user";
 import { plainToClass } from "class-transformer";
 import { userResponseDTO } from "../dtos/userDTO";
 import { successApiResponseDTO } from "../utils/successResult";
@@ -73,19 +72,36 @@ export const getUserInfo = async (userId: string) => {
 
 export const updateUserService = async (
   userId: string,
-  { toUpdate }: { toUpdate: Partial<IUser> }
+  inputData : Prisma.UserUpdateInput,
 ) => {
   try {
-    if (toUpdate.password) {
-      delete toUpdate.password; // 비밀번호는 여기서 업데이트하지 않음
+    if (inputData.password) {
+      delete inputData.password; // 비밀번호는 여기서 업데이트하지 않음
+    }
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        filesUpload: true, // filesUpload 필드 포함
+      },
+    });
+
+    if (user) {
+      const filesUpload = user.filesUpload;
+      console.log('프로필 이미지 목록:', filesUpload);
+    
+      // 각 이미지에 접근하려면 URL을 사용할 수 있습니다.
+      filesUpload.forEach((file) => {
+        console.log('이미지 URL:', file.url);
+      });
+    } else {
+      console.log('사용자를 찾을 수 없습니다.');
     }
 
-    // 사용자 정보 업데이트
     const updatedUser = await prisma.user.update({
       where: {
         id: userId,
       },
-      data: toUpdate,
+      data: inputData,
     });
     const response = successApiResponseDTO(updatedUser);
     return response;
@@ -165,6 +181,11 @@ export const getUserFromDatabase = async (userId: string) => {
     const user = await prisma.user.findUnique({
       where: {
         id: userId,
+      },
+      select: {
+        id : true,
+        username: true,
+        email: true,
       },
     });
     return user;

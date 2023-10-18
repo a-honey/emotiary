@@ -1,12 +1,11 @@
 import {
     IsString,
-    IsDate,
     IsOptional,
-    isString,
+    IsBoolean,
 } from 'class-validator';
-import { Exclude, Expose, Type } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 import 'reflect-metadata';
-import { IUser } from '../types/user';
+import { IUser, fileUpload } from '../types/user';
 
 export class ApiResponseDTO<T>{
     data : T;
@@ -34,16 +33,19 @@ export class userResponseDTO implements IUser{
     password : string;
 
     @Expose()
-    description : string;
+    description : string | null;
 
     @Expose()
-    profileImage : string;
+    filesUpload : fileUpload[];
 
     @Expose()
     createdAt : Date;
 
     @Expose()
     updatedAt : Date;
+
+    // @Expose()
+    // isFriend: boolean;
 }
 
 export class userValidateDTO{
@@ -64,6 +66,10 @@ export class userValidateDTO{
     description? : string;
 
     @IsOptional()
-    @IsString()
-    profileImage? : string;
+    @IsString({ each: true })
+    filesUpload: fileUpload[];
+
+    // @IsOptional()
+    // @IsBoolean()
+    // isFriend : boolean;
 }

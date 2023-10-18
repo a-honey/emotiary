@@ -66,7 +66,7 @@ export async function getCommentByDiaryId(diary_id: string) {
           select: {
             id: true,
             username: true,
-            profileImage: true,
+            filesUpload: true,
           },
         },
         diaryId: true,
@@ -80,7 +80,7 @@ export async function getCommentByDiaryId(diary_id: string) {
               select: {
                 id: true,
                 username: true,
-                profileImage: true,
+                filesUpload: true,
               },
             },
             diaryId: true,
