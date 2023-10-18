@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './DiaryItemShow.module.scss';
 import DiaryComment from './DiaryComment';
-import DiaryReplyAdd from './DiaryCommentReplyAdd';
 import { useGetDiaryData } from '../../api/get/useGetDiaryData';
 import { instance } from '../../api/instance';
 import { useMutation, useQueryClient } from '@tanstack/react-query';

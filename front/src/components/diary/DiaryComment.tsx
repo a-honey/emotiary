@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import styles from './DiaryComment.module.scss';
-import DiaryReplyAdd from './DiaryCommentReplyAdd';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePostCommentData } from '../../api/mutation/usePostDiaryData';
 import { useNavigate } from 'react-router-dom';
@@ -26,7 +25,6 @@ const DiaryComment = ({
   data: CommentDataType[];
   id: string;
 }) => {
-  console.log(data);
   const [comment, setComment] = useState('');
 
   const queryClient = useQueryClient();
@@ -80,26 +78,88 @@ const CommentItem = ({
     setIsAdding((prev) => !prev);
   };
   return (
-    <div className={styles.commentItemContainer}>
-      <div>{index + 1} |</div>
-      {isReply && <div>L</div>}
-      <div>{data.content}</div>
-      <div
-        className={styles.userInfo}
-        onClick={() => {
-          navigator(`/user/${data.author.id}`);
-        }}
-      >
-        <ImageComponent
-          src={data.author.profileImage}
-          alt={`${data.author.username}의 프로필사진`}
-        />
-        <div>{data.author.username}</div>
+    <>
+      <div className={styles.commentItemContainer}>
+        <div>{index + 1} |</div>
+        {isReply && <div>L</div>}
+        <div>{data.content}</div>
+        <div
+          className={styles.userInfo}
+          onClick={() => {
+            navigator(`/user/${data.author.id}`);
+          }}
+        >
+          <ImageComponent
+            src={data.author.profileImage}
+            alt={`${data.author.username}의 프로필사진`}
+          />
+          <div>{data.author.username}</div>
+        </div>
+        {!isAdding && (
+          <button onClick={handleIsAdding} className="doneBtn">
+            +
+          </button>
+        )}
       </div>
-      <button onClick={handleIsAdding} className="doneBtn">
-        +
-      </button>
-      {isAdding && <DiaryReplyAdd handleIsAdding={handleIsAdding} />}
-    </div>
+      {isAdding && (
+        <DiaryReplyAdd
+          handleIsAdding={handleIsAdding}
+          id={data.id}
+          username={data.author.username}
+        />
+      )}
+    </>
+  );
+};
+
+/** 댓글의 답글 추가 컴포넌트 */
+const DiaryReplyAdd = ({
+  handleIsAdding,
+  id,
+  username,
+}: {
+  username: string;
+  id: string;
+  handleIsAdding: () => void;
+}) => {
+  const [comment, setComment] = useState('');
+
+  const queryClient = useQueryClient();
+
+  const postMutation = usePostCommentData(
+    queryClient,
+    id as string,
+    handleIsAdding,
+  );
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    postMutation.mutate({
+      body: { content: comment, nestedComment: id },
+    });
+  };
+  const handleButtonClick = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    handleIsAdding();
+  };
+
+  return (
+    <form className={styles.replayAddcontainer} onSubmit={handleSubmit}>
+      <div>L</div>
+      <input
+        placeholder={`@${username} 님에게 답글을 입력해주세요.`}
+        onChange={(e) => {
+          setComment(e.target.value);
+        }}
+      />
+      <div className={styles.btns}>
+        <button className="doneBtn">완료</button>
+        <button onClick={handleButtonClick} type="button" className="cancelBtn">
+          취소
+        </button>
+      </div>
+    </form>
   );
 };

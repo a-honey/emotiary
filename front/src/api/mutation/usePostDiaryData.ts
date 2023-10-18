@@ -4,7 +4,7 @@ import { instance } from '../instance';
 export const usePostDiaryData = (
   queryClient: QueryClient,
   id: string,
-  handleIsOpenDiaryWriting: () => void,
+  handleIsAdding?: () => void,
 ) => {
   const postMutation = useMutation(
     async ({ body }: { body: any }) => {
@@ -12,7 +12,7 @@ export const usePostDiaryData = (
     },
     {
       onSuccess: () => {
-        handleIsOpenDiaryWriting();
+        handleIsAdding?.();
         queryClient.invalidateQueries(['myDiaryData', 'myAllDiarysData']);
       },
       onError: (error) => {
@@ -24,7 +24,11 @@ export const usePostDiaryData = (
   return postMutation;
 };
 
-export const usePostCommentData = (queryClient: QueryClient, id: string) => {
+export const usePostCommentData = (
+  queryClient: QueryClient,
+  id: string,
+  done?: () => void,
+) => {
   const postMutation = useMutation(
     async ({ body }: { body: any }) => {
       return await instance.post(`/comments/${id}`, body);
@@ -32,6 +36,7 @@ export const usePostCommentData = (queryClient: QueryClient, id: string) => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['diaryData', id]);
+        done?.();
       },
       onError: (error) => {
         console.error('useMutation api 요청 에러', error);
