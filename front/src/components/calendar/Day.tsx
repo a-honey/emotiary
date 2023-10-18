@@ -30,9 +30,11 @@ const isTodayDayTile = ({ day }: { day: Date }) => {
 const Day = ({
   currentDate,
   data,
+  isLogin,
 }: {
   currentDate: { year: number; month: number };
   data: CalendarDiaryItemType[];
+  isLogin: boolean;
 }) => {
   const week = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -100,7 +102,12 @@ const Day = ({
                     {day.getFullYear() === currentDate.year &&
                       day.getMonth() + 1 === currentDate.month &&
                       day.getDate() <= today.getDate() && (
-                        <DayItem day={day} data={data} index={index} />
+                        <DayItem
+                          day={day}
+                          data={data}
+                          index={index}
+                          isLogin={isLogin}
+                        />
                       )}
                   </div>
                 </div>
@@ -119,10 +126,12 @@ const DayItem = ({
   day,
   data,
   index,
+  isLogin,
 }: {
   day: Date;
   data: CalendarDiaryItemType[];
   index: number;
+  isLogin: boolean;
 }) => {
   const [isOpenDiary, setIsOpenDiary] = useState(false);
 
@@ -159,7 +168,7 @@ const DayItem = ({
         )}
       </Draggable>
     );
-  } else {
+  } else if (isLogin) {
     // 데이터가 없으면 게시글 작성 버튼
     return (
       <>

@@ -7,9 +7,11 @@ import { CalendarDiaryItemType } from '../../types/diaryType';
 const Calendar = ({
   data,
   isFetching,
+  isLogin,
 }: {
   data: CalendarDiaryItemType[];
   isFetching: boolean;
+  isLogin: boolean;
 }) => {
   const today = new Date();
   // 초반 currentDate에 현재 날짜를 보관
@@ -57,7 +59,7 @@ const Calendar = ({
         handleNextMonth={handleNextMonth}
       />
       {/* props에 따른 날짜 매핑 컴포넌트*/}
-      <Day currentDate={currentDate} data={data} />
+      <Day currentDate={currentDate} data={data} isLogin={isLogin} />
     </div>
   );
 };

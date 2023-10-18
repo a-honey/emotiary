@@ -20,8 +20,6 @@ const MainPage: React.FC = () => {
     month: currentDate.month,
   });
 
-  console.log('데이터', myDiaryData);
-
   return (
     <main
       style={{
@@ -43,7 +41,11 @@ const MainPage: React.FC = () => {
         <div style={{ backgroundColor: 'white' }}>통계이미지</div>
         <div style={{ backgroundColor: 'white' }}>명언및노래</div>
       </div>
-      <Calendar data={isFetching ? [] : myDiaryData} isFetching={isFetching} />
+      <Calendar
+        data={isFetching ? [] : myDiaryData}
+        isFetching={isFetching}
+        isLogin={true}
+      />
     </main>
   );
 };
