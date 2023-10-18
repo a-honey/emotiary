@@ -14,6 +14,7 @@ interface UserInfoType {
   userId: string;
   description: string;
   latestEmoji: string;
+  alarmSetting: number;
 }
 
 const USER_INFO_INITIAL_DATA = {
@@ -22,6 +23,7 @@ const USER_INFO_INITIAL_DATA = {
   userId: '',
   description: '',
   latestEmoji: '',
+  alarmSetting: 1,
 };
 
 // formdata img api 요청 따로할지 미정
@@ -38,7 +40,8 @@ const MyCard = () => {
   // 받아온 캐시데이터를 담아야함
   const [userInfoData, setUserInfoData] = useState(USER_INFO_INITIAL_DATA);
 
-  const { userId, email, username, description, latestEmoji } = userInfoData;
+  const { userId, email, username, description, latestEmoji, alarmSetting } =
+    userInfoData;
 
   const queryClient = useQueryClient();
   const mutation = useMutation(
@@ -68,7 +71,9 @@ const MyCard = () => {
 
   const { handleImgChange, imgContainer, imgRef } = useImgChange();
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     const { name, value } = e.target;
     setUserInfoData((prevData: UserInfoType) => ({
       ...prevData,
@@ -102,20 +107,39 @@ const MyCard = () => {
             onDragOver={(e) => e.preventDefault()}
             onDrop={handleImgChange}
           />
-          <label>유저 이름</label>
-          <input
-            name="username"
-            value={userInfoData.username}
-            onChange={handleInputChange}
-            placeholder="이름을 입력해주세요."
-          />
-          <label>내소개</label>
-          <input
-            name="description"
-            value={userInfoData.description}
-            onChange={handleInputChange}
-            placeholder="소개를 입력해주세요."
-          />
+          <div>
+            <label>유저 이름</label>
+            <input
+              name="username"
+              value={userInfoData.username}
+              onChange={handleInputChange}
+              placeholder="이름을 입력해주세요."
+            />
+          </div>
+          <div>
+            <label>내소개</label>
+            <input
+              name="description"
+              value={userInfoData.description}
+              onChange={handleInputChange}
+              placeholder="소개를 입력해주세요."
+            />
+          </div>
+          <div>
+            <label>알람일수</label>
+            <select
+              name="alarmSetting"
+              value={userInfoData.alarmSetting}
+              onChange={handleInputChange}
+            >
+              <option key="1" value={1}>
+                1 일
+              </option>
+              <option key="2" value={3}>
+                3 일
+              </option>
+            </select>
+          </div>
           <div className={styles.btns}>
             <button type="submit" className="doneBtn">
               수정완료
@@ -149,6 +173,10 @@ const MyCard = () => {
             <div>
               <label>이메일</label>
               <h2>{email ?? ''}</h2>
+            </div>
+            <div>
+              <label>알림일수</label>
+              <h2>{alarmSetting ?? '1일'}</h2>
             </div>
             <div>
               <label>소개</label>

@@ -4,6 +4,7 @@ import styles from './index.module.scss';
 import { MyDairyItemType } from '../../../types/diaryType';
 import { useGetMyAllDiarysData } from '../../../api/get/useGetDiaryData';
 import Pagination from '../../../components/Pagination';
+import DiaryItemShow from '../../../components/modal/DiaryItemShow';
 
 const DiaryList = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -45,11 +46,22 @@ const DiaryItem = ({
   data: MyDairyItemType;
   index: number;
 }) => {
+  const [isOpenModal, setIsOpenModal] = useState(false);
+
+  const toggleIsOpenModal = () => {
+    setIsOpenModal((prev) => !prev);
+  };
+
   return (
-    <div className={styles.diaryItem}>
-      <div className={styles.index}>{index + 1} |</div>
-      <div className={styles.title}>{data.title}</div>
-      <div className={styles.date}>{data.createdDate.split('T')[0]}</div>
-    </div>
+    <>
+      {isOpenModal && (
+        <DiaryItemShow id={data.id} toggleIsOpenModal={toggleIsOpenModal} />
+      )}
+      <div className={styles.diaryItem} onClick={toggleIsOpenModal}>
+        <div className={styles.index}>{index + 1} |</div>
+        <div className={styles.title}>{data.title}</div>
+        <div className={styles.date}>{data.createdDate.split('T')[0]}</div>
+      </div>
+    </>
   );
 };

@@ -14,7 +14,7 @@ export interface DairyItemType {
 
 // 마이 페이지에서 내 다이어리를 불러옴
 export interface MyDairyItemType {
-  id: number;
+  id: string;
   title: string;
   is_public: boolean;
   createdDate: string;

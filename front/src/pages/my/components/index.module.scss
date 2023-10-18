@@ -24,8 +24,20 @@
       height: 100px;
     }
   }
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  div {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    align-items: center;
+  }
   .btns {
     display: flex;
+    align-items: normal;
     flex-direction: column;
     gap: 20px;
   }
