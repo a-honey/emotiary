@@ -73,8 +73,6 @@ morgan.token('body', (req: Request) => {
   return JSON.stringify(req.body);
 });
 
-//TODO errorMiddleware 추가!!!
-
 if (process.env.NODE_ENV !== 'production') {
   logger.add(
     new winston.transports.Console({

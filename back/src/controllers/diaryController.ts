@@ -6,14 +6,13 @@ import {
   getDiaryByDiaryIdService,
   getDiaryByMonthService,
   getAllMyDiariesService,
-  getFriendsDiaryServcie,
   updateDiaryService,
+  getFriendsDiaryService,
 } from '../services/diaryService';
 import { IRequest } from 'types/user';
 import { plainToClass } from 'class-transformer';
 import { DiaryValidateDTO } from '../dtos/diaryDTO';
 import { validate } from 'class-validator';
-import { generateError } from '../utils/errorGenerator';
 
 /**
  * 다이어리 생성
@@ -28,18 +27,23 @@ export const createDiary = async (
   next: NextFunction,
 ) => {
   try {
+    // const { emoji,...inputData } = req.body;
+
     const inputData = req.body;
     const diaryInput = plainToClass(DiaryValidateDTO, inputData);
 
     // TODO 밸리데이터 수정 필요
     const errors = await validate(diaryInput);
-    if (errors.length > 0) return res.status(400).json(errors);
-    console.log('!!!!!!!!!!!!', errors);
+
+    //TODO 추루 수정
+    if (errors.length > 0)
+      //throw generateError(400, errors[0].constraints);
+      console.log('!!!!!!!!!!!!', errors[0].constraints);
 
     const { id: userId } = req.user;
 
     const createdDiary = await createDiaryService(userId, inputData);
-
+    console.log(createDiary);
     return res.status(createdDiary.status).json(createdDiary);
   } catch (error) {
     next(error);
@@ -60,10 +64,9 @@ export const getAllMyDiaries = async (
 ) => {
   try {
     //authorId
-    throw generateError(400, '에러 발생');
     const { id: userId } = req.user;
     const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
+    const limit = Number(req.query.limit) || 8;
 
     const myDiaries = await getAllMyDiariesService(userId, page, limit);
 
@@ -129,13 +132,14 @@ export const getOtherUsersDiary = async (
     const { id: userId } = req.user;
     const { select } = req.query; // friend or all
     const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
+    const limit = Number(req.query.limit) || 8;
+    const { emotion } = req.query;
 
     // diary 데이터 가져오기
     const otherUsersDiary =
       select == 'friend'
-        ? await getFriendsDiaryServcie(userId, page, limit)
-        : await getAllDiaryService(userId, page, limit, select as string);
+        ? await getFriendsDiaryService(userId, page, limit, emotion as string)
+        : await getAllDiaryService(userId, page, limit, emotion as string);
 
     return res.status(otherUsersDiary.status).json(otherUsersDiary);
   } catch (error) {

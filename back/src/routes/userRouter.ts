@@ -16,15 +16,11 @@ import {
 import { localAuthentication } from "../middlewares/authenticateLocal";
 import { jwtAuthentication } from "../middlewares/authenticateJwt";
 import { fileUpload } from "../middlewares/uploadMiddleware";
-import {
-  RegisterValidator,
-  updateValidator,
-} from "../utils/validators/userValidator";
 import passport from "passport";
 const userAuthRouter = Router();
 
 // 회원가입
-userAuthRouter.post("/register", RegisterValidator, userRegister);
+userAuthRouter.post("/register", userRegister);
 
 userAuthRouter.post('/login', localAuthentication, userLogin);
 
@@ -37,7 +33,7 @@ userAuthRouter.get("/logout", jwtAuthentication, userLogout);
 userAuthRouter
   .route("/:userId")
   .get(getUserId)
-  .put(jwtAuthentication, fileUpload, updateValidator, updateUser)
+  .put(jwtAuthentication, fileUpload, updateUser)
   .delete(jwtAuthentication, deleteUser);
 
 // 비밀번호 재설정 이메일 보내기
@@ -74,7 +70,7 @@ userAuthRouter.post('/add-emoji', async (req, res) => {
     const { type, emotion } = req.body; // 클라이언트에서 전송한 데이터
     const emojiData = {
       type,
-      ...emotion, // 감정에 따른 이모지 데이터
+      emotion, // 감정에 따른 이모지 데이터
     };
     
     await prisma.emoji.create({

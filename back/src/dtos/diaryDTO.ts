@@ -68,6 +68,9 @@ export class DiaryResponseDTO {
   emoji: string;
 
   @Expose()
+  emotion: string;
+
+  @Expose()
   favoriteCount: number;
 
   @Expose()
@@ -76,20 +79,16 @@ export class DiaryResponseDTO {
 }
 
 export class DiaryValidateDTO {
-  @IsOptional()
   @Type(() => Date)
   @IsDate()
   createdDate?: Date;
 
-  @IsOptional()
   @IsString()
   title: string;
 
-  @IsOptional()
   @IsString()
   content: string;
 
-  @IsOptional()
-  @IsString()
-  is_public?: string;
+  @IsString({ message: '문자 입력 해주세요' })
+  is_public: string;
 }
