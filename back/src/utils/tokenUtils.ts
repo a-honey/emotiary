@@ -9,7 +9,7 @@ import jwtSecret from '../config/jwtSecret';
 export const generateAccessToken = (user: { id : string, username : string, email : string }): string => {
   // 사용자 ID를 기반으로 새로운 Access Token 생성
   const accessToken = jwt.sign({ id: user.id }, jwtSecret, {
-    expiresIn: '10s',
+    expiresIn: '1d',
   });
   return accessToken;
 };
