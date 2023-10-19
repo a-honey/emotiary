@@ -123,7 +123,7 @@ apiRouter.use('/comments', commentRouter);
 app.use('/api', apiRouter);
 // // 정적 파일 제공을 위한 미들웨어 설정
 // app.use(express.static("public"));
-app.use(express.static('imageUpload'));
+app.use(express.static('fileUpload'));
 app.use(errorMiddleware);
 
 export { app };

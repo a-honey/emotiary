@@ -1,7 +1,6 @@
 import {
     IsString,
     IsOptional,
-    IsBoolean,
 } from 'class-validator';
 import { Exclude, Expose } from 'class-transformer';
 import 'reflect-metadata';
