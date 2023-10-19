@@ -21,6 +21,6 @@ const fileStorage = multer.diskStorage({
 const fileUploadMiddleware = multer({
   storage : fileStorage,
   fileFilter : FileFilter,
-}).array('profileImages',5);
+}).array('filesUpload',5);
 
 export { fileUploadMiddleware };

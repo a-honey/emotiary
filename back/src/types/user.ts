@@ -13,7 +13,7 @@ export interface IUser {
 }
 
 export interface fileUpload {
-  url: string;
+  url?: string;
   user?: string;
   userId?: string;
   createdAt?: Date;

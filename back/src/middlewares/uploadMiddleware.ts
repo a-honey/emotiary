@@ -25,8 +25,20 @@ export const fileUpload = async (req : IRequest, res : Response, next : NextFunc
                 }
                 const files: FileObjects[] = req.files ? ([] as FileObjects[]).concat(...Object.values(req.files)) : [];
 
-                const { userId } = req.params;
+                if(files.length >= 2){
+                    const firstFileType = files[0].mimetype;
+                    const areAllFilesSameType = files.every((file) => file.mimetype === firstFileType);
+
+                    if (!areAllFilesSameType) {
+
+                        return res.status(400).json({ message: 'Files have different types' });
+                    }
+
+                }
+
                 const filePaths = files.map((file) => `fileUpload/${file.filename}`);
+
+                const { userId } = req.params;
                 const foundUser = await prisma.user.findUnique({
                     where: { id: userId },
                     include : {
@@ -40,6 +52,7 @@ export const fileUpload = async (req : IRequest, res : Response, next : NextFunc
                 }
 
                 const oldFiles = foundUser.filesUpload;
+                console.log(oldFiles);
                 if(oldFiles){
                     oldFiles.forEach(async(file) => {
                         const filenameToDelete = file.url.replace('fileUpload/', '');
@@ -54,7 +67,26 @@ export const fileUpload = async (req : IRequest, res : Response, next : NextFunc
                     });
                 }
                 const FilesUpload = filePaths.map((filename) => ({ url: filename, userId : userId }));
-                console.log(FilesUpload);
+
+                for (const file of FilesUpload) {
+                    // 중복 검사: 파일 URL로 이미 존재하는 파일 찾기
+                    const existingFile = await prisma.fileUpload.findFirst({
+                        where: { url: file.url },
+                    });
+                
+                    if (existingFile) {
+                        // 파일 URL이 이미 존재하면 업데이트
+                        await prisma.fileUpload.update({
+                            where: { url: existingFile.url },
+                            data: { userId: userId },
+                        });
+                    } else {
+                        // 파일 URL이 존재하지 않으면 새로운 파일 엔트리 생성
+                        await prisma.fileUpload.create({
+                            data: file,
+                        });
+                    }
+                }
 
                 // 기존 파일 업로드를 모두 삭제
                 await prisma.fileUpload.deleteMany({
@@ -67,27 +99,6 @@ export const fileUpload = async (req : IRequest, res : Response, next : NextFunc
                 await prisma.fileUpload.createMany({
                     data: FilesUpload,
                 });
-
-
-                const user = await prisma.user.findUnique({
-                    where: { id: userId },
-                    include: {
-                      filesUpload: true, // filesUpload 필드 포함
-                    },
-                });
-              
-                if (user) {
-                    const filesUpload = user.filesUpload;
-                    console.log('프로필 이미지 목록:', filesUpload);
-                  
-                    // 각 이미지에 접근하려면 URL을 사용할 수 있습니다.
-                    filesUpload.forEach((file) => {
-                      console.log('이미지 URL:', file.url);
-                    });
-                } else {
-                    console.log('사용자를 찾을 수 없습니다.');
-                }
-          
                 next();
             }catch(err){
                 next(err);
