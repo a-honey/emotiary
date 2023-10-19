@@ -139,12 +139,14 @@ const DayItem = ({
     setIsOpenDiary((prev) => !prev);
   };
 
-  const filteredData = data.filter(
+  console.log(data);
+
+  const filteredData = data?.filter(
     (item) =>
       day.getDate().toString() === item?.createdDate.split('T')[0].slice(-2),
   );
 
-  if (filteredData.length > 0) {
+  if (filteredData?.length > 0) {
     const data = filteredData[0];
     return (
       <Draggable draggableId={day.toString()} index={index}>

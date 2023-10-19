@@ -75,7 +75,7 @@ const DiaryList = () => {
       <div className={styles.diaryListBlock}>
         {isFetching ? (
           <div>로딩중</div>
-        ) : data.length === 0 ? (
+        ) : data?.length === 0 ? (
           <div>데이터가 없습니다.</div>
         ) : (
           data?.data?.map((item: DairyItemType) => (
@@ -85,7 +85,7 @@ const DiaryList = () => {
       </div>
       {!isFetching && (
         <Pagination
-          totalPage={data.pageInfo.totalPage}
+          totalPage={data?.pageInfo?.totalPage}
           currentPage={currentPage}
           handlePage={setCurrentPage}
         />

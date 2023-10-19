@@ -28,7 +28,7 @@ const DiaryList = () => {
       </div>
       {!isFetching && (
         <Pagination
-          totalPage={data.pageInfo.totalPage}
+          totalPage={data?.pageInfo?.totalPage}
           currentPage={currentPage}
           handlePage={setCurrentPage}
         />

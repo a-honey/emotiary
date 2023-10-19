@@ -26,8 +26,8 @@ const queryClient = new QueryClient({
     onSuccess: () => {},
     onSettled: () => {},
     onError: (err, query) => {
-      if (err.meta.eMessage) {
-        console.log(`${query.queryKey} 에러`, err.meta.errorMessage);
+      if (err?.meta?.eMessage) {
+        console.log(`${query.queryKey} 에러`);
       }
     },
   }),

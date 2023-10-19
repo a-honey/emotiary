@@ -43,7 +43,7 @@ formDataInstance.interceptors.request.use(
 );
 
 // 응답을 인터셉트하여 만료되었을 경우 refresh token으로 새로운 토큰을 요청
-instance.axios.interceptors.response.use(
+instance.interceptors.response.use(
   (response) => {
     return response;
   },
