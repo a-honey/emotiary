@@ -1,5 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import passport from 'passport';
+import ytdl from 'ytdl-core';
 
 const testAuthRouter = Router();
 
@@ -20,11 +21,17 @@ testAuthRouter.post('/predict', async(req : Request, res :Response, next : NextF
       const emotionType = emotion.emotion;
 
       const musicData = await searchMusic(emotionType);
+      const videoId = musicData.videoId;
+      console.log(1);
+      const info = await ytdl.getInfo(videoId);
+      // 오디오 스트림 URL 가져오기
+      const audioUrl = ytdl.chooseFormat(info.formats, { filter: 'audioonly' }).url;
+
 
       if (!musicData) {
         res.status(404).json({ message: "No songs found." });
     } else {
-        res.status(200).json(musicData);
+        res.status(200).json(audioUrl);
     }
   } else {
       // 서버에서 오류 응답을 반환했을 때
