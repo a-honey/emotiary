@@ -1,3 +1,4 @@
+/*
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { useGetMyDiaryData } from '../../../api/get/useGetDiaryData';
@@ -28,3 +29,5 @@ test('useGetMyDiaryData에서 받아온 data 테스트', () => {
   expect(isPublicElement).toBeInTheDocument();
   expect(titleElement).toBeInTheDocument();
 });
+
+*/

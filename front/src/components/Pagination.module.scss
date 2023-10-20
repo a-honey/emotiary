@@ -1,0 +1,20 @@
+@import '../styles/variables.scss';
+
+.pagenation {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  li {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    &.active {
+      background-color: map-get($colors, point);
+    }
+    &.disabled {
+      background-color: #ededed;
+    }
+  }
+}
