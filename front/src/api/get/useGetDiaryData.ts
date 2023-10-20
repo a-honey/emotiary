@@ -11,16 +11,12 @@ export const useGetDiarysData = ({
   page: number;
   limit: number;
 }) => {
-  return useQuery(
-    ['diarysData', select, page],
-    async () => {
-      const response = await instance.get(
-        `/diary/views/users?select=${select}&page=${page}&limit=${limit}`,
-      );
-      return response.data;
-    },
-    { onError: () => [] },
-  );
+  return useQuery(['diarysData', select, page], async () => {
+    const response = await instance.get(
+      `/diary/views/users?select=${select}&page=${page}&limit=${limit}`,
+    );
+    return response.data;
+  });
 };
 
 //** MAINPAGE 나의 캘린더별, USERIDPAGE 캘린더 다이어리 조회 */
