@@ -90,3 +90,5 @@ const Anaysis: React.FC = () => {
   );
 
 };
+
+export default Anaysis;
