@@ -6,9 +6,17 @@ export interface IUser {
   email: string;
   password: string;
   description: string | null;
-  profileImage: string | null;
+  filesUpload: fileUpload[];
   updatedAt: Date;
   createdAt: Date;
+  // isFriend : Boolean;
+}
+
+export interface fileUpload {
+  url?: string;
+  user?: string;
+  userId?: string;
+  createdAt?: Date;
 }
 
 export interface IRequest extends Request {

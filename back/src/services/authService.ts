@@ -1,8 +1,10 @@
-import { PrismaClient } from '@prisma/client';
-import { sendEmail } from '../utils/email';
-import { generateRandomPassowrd } from '../utils/password';
-import bcrypt from 'bcrypt';
-import { IUser } from '../types/user';
+import { PrismaClient, Prisma } from "@prisma/client";
+import { sendEmail } from "../utils/email";
+import { generateRandomPassowrd } from "../utils/password";
+import bcrypt from "bcrypt";
+import { plainToClass } from "class-transformer";
+import { userResponseDTO } from "../dtos/userDTO";
+import { successApiResponseDTO } from "../utils/successResult";
 
 const prisma = new PrismaClient();
 
@@ -22,7 +24,13 @@ export const createUser = async (inputData: {
       data: { username, password: hashedPassword, email },
     });
 
-    return user;
+
+    const UserResponseDTO = plainToClass(userResponseDTO, user,{
+      excludeExtraneousValues : true,
+    });
+
+    const response = successApiResponseDTO(UserResponseDTO);
+    return response;
   } catch (error) {
     throw error;
   }
@@ -36,7 +44,12 @@ export const myInfo = async (userId: string) => {
         id: userId,
       },
     });
-    return myInfo;
+    const UserResponseDTO = plainToClass(userResponseDTO, myInfo,{
+      excludeExtraneousValues : true,
+    });
+
+    const response = successApiResponseDTO(UserResponseDTO);
+    return response;
   } catch (error) {
     throw error;
   }
@@ -50,7 +63,8 @@ export const getUserInfo = async (userId: string) => {
         id: userId,
       },
     });
-    return userInfo;
+    const response = successApiResponseDTO(userInfo);
+    return response;
   } catch (error) {
     throw error;
   }
@@ -58,21 +72,28 @@ export const getUserInfo = async (userId: string) => {
 
 export const updateUserService = async (
   userId: string,
-  { toUpdate }: { toUpdate: Partial<IUser> },
+  inputData : Prisma.UserUpdateInput,
 ) => {
   try {
-    if (toUpdate.password) {
-      delete toUpdate.password; // 비밀번호는 여기서 업데이트하지 않음
+    if (inputData.password) {
+      delete inputData.password; // 비밀번호는 여기서 업데이트하지 않음
     }
 
-    // 사용자 정보 업데이트
     const updatedUser = await prisma.user.update({
       where: {
         id: userId,
       },
-      data: toUpdate,
+      data: inputData,
+      include: {
+        filesUpload: {
+          select: {
+            url: true // url 필드만 선택
+          }
+        }
+      },
     });
-    return updatedUser;
+    const response = successApiResponseDTO(updatedUser);
+    return response;
   } catch (error) {
     throw error;
   }
@@ -151,6 +172,11 @@ export const getUserFromDatabase = async (userId: string) => {
       where: {
         id: userId,
       },
+      select: {
+        id : true,
+        username: true,
+        email: true,
+      },
     });
     return user;
   } catch (error) {
@@ -158,7 +184,6 @@ export const getUserFromDatabase = async (userId: string) => {
   }
 };
 
-// 내 아이디 for문돌리는 id
 export const areUsersFriends = async (userId1: string, userId2: string) => {
   try {
     const friendShip = await prisma.friend.findFirst({
