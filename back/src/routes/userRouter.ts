@@ -4,6 +4,7 @@ import {
   userRegister,
   getMyInfo,
   getAllUser,
+  getMyFriend,
   getUserId,
   updateUser,
   deleteUser,
@@ -27,6 +28,8 @@ userAuthRouter.post('/login', localAuthentication, userLogin);
 userAuthRouter.get('/current', jwtAuthentication, getMyInfo);
 
 userAuthRouter.get('/allUser', jwtAuthentication, getAllUser);
+
+userAuthRouter.get('/myfriend', jwtAuthentication, getMyFriend);
 
 userAuthRouter.get("/logout", jwtAuthentication, userLogout);
 
