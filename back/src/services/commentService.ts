@@ -22,12 +22,13 @@ export async function createdComment(
     const { content, nestedComment } = inputData;
 
     // 댓글 이모지 넣는 코드
-  const responseData = await axios.post('http://127.0.0.1:5000/predict', {
+  const responseData = await axios.post('http://kdt-ai-8-team02.elicecoding.com:5000/predict', {
     text: content,
   });
+
   const emotion = responseData.data;
 
-  const emotionType = emotion.emoji;
+  const emotionType = emotion.emotion;
 
   const emojis = await prisma.emoji.findMany({
     where: {
@@ -123,7 +124,7 @@ export async function updatedComment(
 ) {
   try {
     // 댓글 이모지 넣는 코드
-    const responseData = await axios.post('http://127.0.0.1:5000/predict', {
+    const responseData = await axios.post('http://kdt-ai-8-team02.elicecoding.com:5000/predict', {
       text: inputData.content,
     });
     const emotion = responseData.data;

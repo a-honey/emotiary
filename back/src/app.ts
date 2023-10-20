@@ -82,15 +82,15 @@ app.use(express.urlencoded({ extended: true }));
 
 //         const musicData = await searchMusic(emotion);
 
-//         if (!musicData) {
-//             res.status(404).json({ message: "No songs found." });
-//         } else {
-//             res.status(200).json(musicData);
-//         }
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ message: "Internal Server Error" });
-//     }
+        // if (!musicData) {
+        //     res.status(404).json({ message: "No songs found." });
+        // } else {
+        //     res.status(200).json(musicData);
+        // }
+    // } catch (error) {
+    //     console.error(error);
+    //     res.status(500).json({ message: "Internal Server Error" });
+    // }
 // });
 
 app.use(
@@ -112,6 +112,7 @@ app.get('/', (req: Request, res: Response) => {
 // });
 
 const apiRouter = express.Router();
+const router = express.Router();
 
 apiRouter.use('/users', userAuthRouter);
 apiRouter.use('/test', testAuthRouter);
