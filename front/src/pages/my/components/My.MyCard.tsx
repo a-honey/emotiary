@@ -12,7 +12,7 @@ import { usePutUserData } from '../../../api/mutation/usePutUserData';
 interface UserInfoType {
   email: string;
   username: string;
-  userId: string;
+  id: string;
   description: string;
   latestEmoji: string;
   alarmSetting: number;
@@ -21,7 +21,7 @@ interface UserInfoType {
 const USER_INFO_INITIAL_DATA = {
   email: '',
   username: '',
-  userId: '',
+  id: '',
   description: '',
   latestEmoji: '',
   alarmSetting: 1,
@@ -41,18 +41,28 @@ const MyCard = () => {
   // 받아온 캐시데이터를 담아야함
   const [userInfoData, setUserInfoData] = useState(USER_INFO_INITIAL_DATA);
 
-  const { userId, email, username, description, latestEmoji, alarmSetting } =
+  const body = new FormData();
+
+  const { id, email, username, description, latestEmoji, alarmSetting } =
     userInfoData;
 
   const queryClient = useQueryClient();
 
-  const putMutation = usePutUserData(queryClient, userId, toggleIsOpenChangePW);
+  const putMutation = usePutUserData(queryClient, id, toggleIsOpenChangePW);
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (imgContainer) {
+      body.append('filesUpload', imgContainer);
+    }
+
+    body.append('username', userInfoData.username);
+    body.append('description', userInfoData.description);
+    body.append('alarmSetting', userInfoData?.alarmSetting?.toString() ?? 1);
+
     putMutation.mutate({
-      body: { ...userInfoData, filesUpload: imgContainer },
+      body,
     });
   };
 
@@ -107,7 +117,7 @@ const MyCard = () => {
             <label>내소개</label>
             <input
               name="description"
-              value={userInfoData.description}
+              value={userInfoData.description ?? ''}
               onChange={handleInputChange}
               placeholder="소개를 입력해주세요."
             />

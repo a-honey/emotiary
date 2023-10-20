@@ -139,8 +139,6 @@ const DayItem = ({
     setIsOpenDiary((prev) => !prev);
   };
 
-  console.log(data);
-
   const filteredData = data?.filter(
     (item) =>
       day.getDate().toString() === item?.createdDate.split('T')[0].slice(-2),

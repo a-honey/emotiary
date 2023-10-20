@@ -45,14 +45,15 @@ const Header = () => {
     <>
       <header className={styles.header}>
         <div className={styles.logoContainer}>
-          <Link className={styles.logoContainer} to="/intro">
+          <Link className={styles.logoContainer} key="logo" to="/intro">
             EMOTIARY
           </Link>
         </div>
         <nav className={styles.navContainer}>
           {locations.map((item) => (
             <Link
-              className={location.pathname === item.to && styles.active}
+              key={item.to}
+              className={location.pathname === item.to ? styles.active : ''}
               to={item.to}
             >
               {item.name}
