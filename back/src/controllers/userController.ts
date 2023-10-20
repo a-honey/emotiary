@@ -96,11 +96,6 @@ export const getAllUser = async(
         // 모든 사용자 정보를 데이터베이스에서 가져오기
         const allUsers = await prisma.user.findMany();
 
-        // 페이징된 데이터 계산
-        const startIndex = (page - 1) * limit;
-        const endIndex = page * limit;
-        const paginatedUsers = allUsers.slice(startIndex, endIndex);
-
         // 페이징 관련 정보 계산
         const totalUsers = allUsers.length;
         const totalPage = Math.ceil(totalUsers / limit);
@@ -131,6 +126,56 @@ export const getAllUser = async(
             totalItem : totalUsers,
             currentPage : page,
             limit : limit
+        });
+    }catch(error){
+        next(error);
+    }
+}
+
+export const getMyFriend = async(
+    req : IRequest,
+    res : Response,
+    next : NextFunction
+) => {
+    try{
+        const page: number = parseInt(req.query.page as string) || 1;
+        const limit: number = parseInt(req.query.limit as string) || 10;
+        const userId = req.user.id;
+        const allUsers = await prisma.user.findMany();
+        const filteredUsers = [];
+        for (const user of allUsers) {
+            if (user.id !== userId) { // 현재 사용자의 ID 제외
+                const areFriends = await areUsersFriends(userId, user.id);
+                user.isFriend = areFriends;
+
+                const latestDiary = await prisma.diary.findFirst({
+                    where: {
+                        authorId: user.id,
+                    },
+                    orderBy: {
+                        createdAt: 'desc',
+                    },
+                });
+
+                if (latestDiary) {
+                    user.latestEmoji = latestDiary.emoji;
+                }
+
+                if (areFriends) {
+                    // 친구인 경우만 결과에 포함
+                    filteredUsers.push(user);
+                }
+            }
+        }
+        const totalUsers = filteredUsers.length;
+        const totalPage = Math.ceil(totalUsers / limit);
+        res.status(200).json({
+            data: filteredUsers,
+            message: '성공',
+            totalPage: totalPage,
+            totalItem: filteredUsers.length,
+            currentPage: page,
+            limit: limit,
         });
     }catch(error){
         next(error);

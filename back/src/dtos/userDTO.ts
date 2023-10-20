@@ -43,8 +43,8 @@ export class userResponseDTO implements IUser{
     @Expose()
     updatedAt : Date;
 
-    // @Expose()
-    // isFriend: boolean;
+    @Expose()
+    isFriend: boolean;
 }
 
 export class userValidateDTO{
@@ -68,7 +68,6 @@ export class userValidateDTO{
     @IsString({ each: true })
     filesUpload: fileUpload[];
 
-    // @IsOptional()
-    // @IsBoolean()
-    // isFriend : boolean;
+    @IsOptional()
+    isFriend : boolean;
 }

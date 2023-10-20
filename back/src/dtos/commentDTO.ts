@@ -15,6 +15,15 @@ export class ApiResponseDTO {
   }
 }
 
+export class PaginationResponseDTO extends ApiResponseDTO {
+  pageInfo: any;
+
+  constructor(status: number, data: any, pageInfo: any, message: string) {
+    super(status, data, message);
+    this.pageInfo = pageInfo;
+  }
+}
+
 export class AuthorInCommentDTO {
   @Expose()
   id: string;

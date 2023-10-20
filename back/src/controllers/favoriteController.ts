@@ -12,6 +12,10 @@ export const favoriteSwitch = async (
   next: NextFunction,
 ) => {
   try {
+    /* #swagger.tags = ['Favorite']
+        #swagger.security = [{
+            "bearerAuth": []
+    }] */
     // req를 통해 넘어온 diaryId
     const diary_id: string = req.params.diaryId;
     // 토큰에서 로그인 유저 id 추출

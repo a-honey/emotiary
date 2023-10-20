@@ -27,7 +27,6 @@ export const createDiaryService = async (
   const responseData = await axios.post('http://127.0.0.1:5000/predict', {
     text: text,
   });
-
   // const emotion = response.data.emoji;
   const emotion = responseData.data;
 

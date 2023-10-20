@@ -11,3 +11,16 @@ export const calculatePageInfo = async (limit: number, where: any) => {
 
   return { totalItem, totalPage };
 };
+
+export const calculatePageInfoForComment = async (
+  limit: number,
+  diary_id: string,
+) => {
+  const totalComment = await prisma.comment.count({
+    where: { diaryId: diary_id, nestedComment: null },
+  });
+
+  const totalPage = Math.ceil(totalComment / limit);
+
+  return { totalComment, totalPage };
+};
