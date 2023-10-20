@@ -21,9 +21,10 @@ const Header = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     localStorage.removeItem('username');
-  
-    // 로그아웃 후 /users/logout 경로로 이동
-    navigator('/users/logout');
+    localStorage.removeItem('refreshToken');
+
+    // 로그아웃 후 /intro 경로로 이동
+    navigator('/intro');
   };
 
   return (
@@ -41,30 +42,30 @@ const Header = () => {
           {/* <Link to="/analysis">ANALYSIS</Link> */}
         </nav>
         {isLogin ? (
-          <>
+          <div>
             <div
               className={styles.userInfo}
               onClick={() => {
                 navigator('/mypage');
               }}
             >
-              <img src="" alt="의 프로필사진" onError={handleImgError} />
-              <div>유저이름</div>
-              <div
-                onClick={() => {
-                  setIsOpenFriendReqList((prev) => !prev);
-                }}
-              >
-                친구요청알림
-              </div>
+              <img
+                src={localStorage.getItem('userImg') as string}
+                alt={`${localStorage.getItem('username')}의 프로필사진`}
+                onError={handleImgError}
+              />
+              <div>{localStorage.getItem('username')}</div>
+            </div>
+            <div
+              onClick={() => {
+                setIsOpenFriendReqList((prev) => !prev);
+              }}
+            >
+              친구요청알림
             </div>
             {isOpenFriendReqList && <FriendReqList />}
-
-            <div onClick={handleLogout}>
-              로그아웃
-            </div>
-            
-          </>
+            <div onClick={handleLogout}>로그아웃</div>
+          </div>
         ) : (
           <div>
             <Link to="/signin">LOGIN</Link>

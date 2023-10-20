@@ -81,3 +81,10 @@
 .reqItemContainer {
   display: flex;
 }
+
+.selects {
+  .ban {
+    background-color: pink;
+    cursor: not-allowed;
+  }
+}

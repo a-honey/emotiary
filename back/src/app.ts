@@ -1,21 +1,21 @@
-import express, { Express, Request, Response } from "express";
-import cors from "cors";
-import swaggerUi from "swagger-ui-express";
-import swaggerFile from "./swagger/swagger-output.json";
-import bodyParser from "body-parser";
-import userAuthRouter from "./routes/userRouter";
-import passport from "passport";
-import diaryRouter from "./routes/diaryRouter";
-import favoriteRouter from "./routes/favoriteRouter";
-import friendRouter from "./routes/friendRouter";
-// import { jwtStrategy, localStrategy } from "./passport-config/passport";
+import express, { Express, Request, Response } from 'express';
+import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
+import swaggerFile from './swagger/swagger-output.json';
+import bodyParser from 'body-parser';
+import userAuthRouter from './routes/userRouter';
+import passport from 'passport';
+import diaryRouter from './routes/diaryRouter';
+import favoriteRouter from './routes/favoriteRouter';
+import friendRouter from './routes/friendRouter';
+import commentRouter from './routes/commentRouter';
 import {
   jwtStrategy,
   localStrategy,
   googleStrategy,
-} from "./passport-config/passport";
-import { Logger } from "./config/logger";
-import testAuthRouter from "./routes/testRouter";
+} from './config/passport/strategy/passport';
+import { Logger } from './config/logger';
+import testAuthRouter from './routes/testRouter';
 
 // import axios, { AxiosResponse } from "axios";
 
@@ -30,13 +30,12 @@ const localStrategyInstance = localStrategy;
 const jwtStrategyInstance = jwtStrategy;
 const googleStrategyInstance = googleStrategy;
 
-passport.use("local", localStrategyInstance);
-passport.use("jwt", jwtStrategyInstance);
-passport.use("google", googleStrategyInstance);
+passport.use('local', localStrategyInstance);
+passport.use('jwt', jwtStrategyInstance);
+passport.use('google', googleStrategyInstance);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 
 // 유튜브
 // function analyzeEmotion(): string {
@@ -92,23 +91,24 @@ app.use(express.urlencoded({ extended: true }));
 // });
 
 app.use(
-  "/api-docs",
+  '/api-docs',
   swaggerUi.serve,
-  swaggerUi.setup(swaggerFile, { explorer: true })
+  swaggerUi.setup(swaggerFile, { explorer: true }),
 );
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("기본 페이지");
+app.get('/', (req: Request, res: Response) => {
+  res.send('기본 페이지');
 });
 
-app.use("/users", userAuthRouter);
-app.use("/test", testAuthRouter);
-app.use("/friend", friendRouter);
-app.use("/diary", diaryRouter);
-app.use("/favorites", favoriteRouter);
+app.use('/users', userAuthRouter);
+app.use('/test', testAuthRouter);
+app.use('/friend', friendRouter);
+app.use('/diary', diaryRouter);
+app.use('/favorites', favoriteRouter);
+app.use('/comments', commentRouter);
 
 // // 정적 파일 제공을 위한 미들웨어 설정
 // app.use(express.static("public"));
-app.use(express.static("imageUpload"));
+app.use(express.static('imageUpload'));
 
 export { app };
