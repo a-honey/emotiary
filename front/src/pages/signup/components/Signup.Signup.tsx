@@ -38,8 +38,7 @@ const Signup: React.FC<SignupProps> = () => {
   const navigate = useNavigate();
 
   const mutation = useMutation(
-    (newUserInfo: UserData) =>
-      instance.post('http://localhost:5001/users/register', newUserInfo),
+    (newUserInfo: UserData) => instance.post('/users/register', newUserInfo),
     {
       onSuccess: (data: any) => {
         console.log('회원가입 성공', data);
