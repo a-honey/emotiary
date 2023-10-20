@@ -2,8 +2,8 @@ import React from 'react';
 import styles from './Pagination.module.scss';
 
 const Pagination = ({
-  totalPage,
-  currentPage,
+  totalPage = 1,
+  currentPage = 1,
   handlePage,
 }: {
   totalPage: number;

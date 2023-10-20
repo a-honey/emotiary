@@ -3,14 +3,10 @@ import { useQuery } from '@tanstack/react-query';
 
 //** USERSPAGE 모든 유저 조회 */
 export const useGetUsersData = () => {
-  return useQuery(
-    ['usersData'],
-    async () => {
-      const response = await instance.get('/users/allUser');
-      return response.data;
-    },
-    { select: (data) => data.data },
-  );
+  return useQuery(['usersData'], async () => {
+    const response = await instance.get('/users/allUser');
+    return response.data;
+  });
 };
 
 //** MYPAGE 모든 유저 조회 */

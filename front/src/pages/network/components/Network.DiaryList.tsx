@@ -83,13 +83,12 @@ const DiaryList = () => {
           ))
         )}
       </div>
-      {!isFetching && (
-        <Pagination
-          totalPage={data?.pageInfo?.totalPage}
-          currentPage={currentPage}
-          handlePage={setCurrentPage}
-        />
-      )}
+
+      <Pagination
+        totalPage={data?.pageInfo?.totalPage}
+        currentPage={currentPage}
+        handlePage={setCurrentPage}
+      />
     </div>
   );
 };

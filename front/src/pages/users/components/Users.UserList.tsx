@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './index.module.scss';
 import { handleImgError } from '../../../utils/imgHandlers';
 import { useNavigate } from 'react-router-dom';
 import { useGetUsersData } from '../../../api/get/useGetUserData';
 import ImageComponent from '../../../components/ImageComponent';
 import { instance } from '../../../api/instance';
+import Pagination from '../../../components/Pagination';
 
 interface UserItemType {
   id: number;
@@ -16,9 +17,15 @@ interface UserItemType {
 }
 
 const UserList = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+
   const { data, isFetching } = useGetUsersData();
 
-  console.log(data);
+  /** 페이지네이션의 현재 페이지 업데이트 함수 */
+  const handleCurrentPage = (page: number) => {
+    setCurrentPage(page);
+  };
+
   return (
     <div className={styles.block}>
       <h2>유저 모아보기</h2>
@@ -30,12 +37,16 @@ const UserList = () => {
         {isFetching ? (
           <div>로딩중</div>
         ) : (
-          data?.map((item: UserItemType) => (
+          data?.data?.map((item: UserItemType) => (
             <UserItem data={item} key={item.id} />
           ))
         )}
       </div>
-      <div>페이지네이션자리</div>
+      <Pagination
+        totalPage={data?.totalPage}
+        currentPage={data?.currentPage}
+        handlePage={handleCurrentPage}
+      />
     </div>
   );
 };
