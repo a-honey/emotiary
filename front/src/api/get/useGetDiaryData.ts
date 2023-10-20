@@ -34,7 +34,7 @@ export const useGetMyDiaryData = ({
   month: number;
 }) => {
   return useQuery(
-    ['myDiaryData'],
+    ['myDiaryData', year, month],
     async () => {
       const response: any = await instance.get(
         `/diary/views/date/${user_id}?year=${year}&month=${month}`,

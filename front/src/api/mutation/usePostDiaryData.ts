@@ -10,9 +10,14 @@ export const usePostDiaryData = (
       return await instance.post(`/diary`, body);
     },
     {
-      onSuccess: () => {
+      onSuccess: (res) => {
         handleIsAdding?.();
-        queryClient.invalidateQueries(['myDiaryData', 'myAllDiarysData']);
+        queryClient.invalidateQueries([
+          'myDiaryData',
+          res.data.data.createdDate.split('T')[0].split('-')[0],
+          res.data.data.createdDate.split('T')[0].split('-')[1],
+        ]);
+        queryClient.invalidateQueries(['myAllDiarysData']);
       },
       onError: (error) => {
         console.error('useMutation api 요청 에러', error);
