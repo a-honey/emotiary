@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 // 유저 설정에 따른 일기 작성 알림 메일 발송
 export const sendAlarm = async () => {
   // 매일 21:00:00 스케쥴링 실행
-  cron.schedule('15,30,45,0 * * * * *', async () => {
+  cron.schedule('0 0 21 * * *', async () => {
     console.log('!!일기 알람 스케쥴링!!');
 
     // 알림을 위한 각 유저 정보/개인 Diary 조회
