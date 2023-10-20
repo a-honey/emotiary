@@ -11,6 +11,11 @@ import {
   deleteFriend
 } from '../services/friendService';
 import { IRequest } from "types/user";
+// import { plainToClass } from 'class-transformer';
+// import { FriendValidateDTO } from '../dtos/friendDTO';
+// import { validate } from 'class-validator';
+
+
 
 /** @description 친구 요청 */
 /** @Tag(name = "book service", description = "the book API with description tag annotation") */
@@ -33,7 +38,7 @@ export const friendRequest = async (req : IRequest, res : Response, next : NextF
       return res.status(400).json({ message: "이미 요청 했거나 우린 친구!" });
     }
     const request = await createFriends(userId, requestId);
-    res.status(200).json({ data: request, message: "친구 요청 완료" });
+    res.status(200).json(request);
 } catch (error) {
     console.error(error);
     error.status = 500;
@@ -46,7 +51,7 @@ export const sentList = async (req : IRequest, res : Response, next : NextFuncti
   try {
     const userId = req.user.id;
     const friendRequest = await listRequestsSent(userId);
-    res.status(200).json({ data: friendRequest, message: '보낸 친구 요청 리스트' });
+    res.status(200).json(friendRequest);
   } catch (error) {
     console.error(error);
     error.status = 500;
@@ -60,7 +65,7 @@ export const requestCancel = async (req : IRequest, res : Response, next : NextF
     const userId = req.user.id;
     const requestId = req.params.userId;
     const cancel = await cancelRequest(userId, requestId);
-    res.status(200).json({ data: cancel, message: '요청 취소' });
+    res.status(200).json(cancel);
 } catch (error) {
     console.error(error);
     error.status = 500;
@@ -75,7 +80,7 @@ export const receivedList = async (req : IRequest, res : Response, next : NextFu
   try {
     const userId = req.user.id;
     const friendRequest = await listRequestsReceived(userId);
-    res.status(200).json({ data: friendRequest, message: '받은 친구 요청 리스트' });
+    res.status(200).json(friendRequest);
   } catch (error) {
     console.error(error);
     error.status = 500;
@@ -89,7 +94,7 @@ export const friendAccept = async (req : IRequest, res : Response, next : NextFu
     const userId = req.user.id;
     const requestId = req.params.userId;
     const accept = await acceptFriend(userId, requestId);
-    res.status(200).json({ data: accept, message: '친구 수락' });
+    res.status(200).json(accept);
   } catch (error) {
     console.error(error);
     error.status = 500;
@@ -103,7 +108,7 @@ export const friendReject = async (req : IRequest, res : Response, next : NextFu
     const userId = req.user.id;
     const requestId = req.params.userId;
     const reject = await rejectFriend(userId, requestId);
-    res.status(200).json({ data: reject, message: '친구 거절' });
+    res.status(200).json(reject);
 } catch (error) {
     console.error(error);
     error.status = 500;
@@ -119,7 +124,7 @@ export const getFriends = async (req : IRequest, res : Response, next : NextFunc
 
     const userId = req.user.id;
     const friendsList = await getMyFriends(userId, page, limit);
-    res.status(200).json({ data: friendsList, message: '친구 목록' });
+    res.status(200).json(friendsList);
 } catch (error) {
     console.error(error);
     error.status = 500;
@@ -133,7 +138,7 @@ export const friendDelete = async (req : IRequest, res : Response, next : NextFu
     const userId = req.user.id;
     const friendId = req.params.userId;
     const dropFriend = await deleteFriend(userId, friendId);
-    res.status(200).json({ data: dropFriend, message: '친구 삭제' });
+    res.status(200).json(dropFriend);
 } catch (error) {
     console.error(error);
     error.status = 500;
