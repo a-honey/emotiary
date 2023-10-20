@@ -1,9 +1,10 @@
 import { PrismaClient } from '@prisma/client';
 import { plainToClass } from 'class-transformer';
-import { commentResponseDTO } from '../dtos/commentDTO';
+import { commentResponseDTO, PaginationResponseDTO } from '../dtos/commentDTO';
 import { emptyApiResponseDTO } from '../utils/emptyResult';
 import { successApiResponseDTO } from '../utils/successResult';
 import { nonAuthorizedApiResponseDTO } from '../utils/nonAuthorizeResult';
+import { calculatePageInfoForComment } from '../utils/pageInfo';
 
 const prisma = new PrismaClient();
 
@@ -34,11 +35,17 @@ export async function createdComment(
 }
 
 // 댓글 조회
-export async function getCommentByDiaryId(diary_id: string) {
+export async function getCommentByDiaryId(
+  diary_id: string,
+  page: number,
+  limit: number,
+) {
   try {
     // 댓글 작성자의 id, username, porfileImage를 함께 응답
     // 대댓글은 reComment에 배열로 포함하여 응답
     const comment = await prisma.comment.findMany({
+      skip: (page - 1) * limit,
+      take: limit,
       where: { diaryId: diary_id, nestedComment: null },
       select: {
         id: true,
@@ -78,13 +85,25 @@ export async function getCommentByDiaryId(diary_id: string) {
       return response;
     }
 
+    const { totalComment, totalPage } = await calculatePageInfoForComment(
+      limit,
+      diary_id,
+    );
+
+    const pageInfo = { totalComment, totalPage, currentPage: page, limit };
+
     const commentResponseDataList = comment.map((comment) =>
       plainToClass(commentResponseDTO, comment, {
         excludeExtraneousValues: true,
       }),
     );
 
-    const response = successApiResponseDTO(commentResponseDataList);
+    const response = new PaginationResponseDTO(
+      200,
+      commentResponseDataList,
+      pageInfo,
+      '성공',
+    );
 
     return response;
   } catch (error) {
