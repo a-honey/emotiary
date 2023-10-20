@@ -37,10 +37,11 @@ export const getComment = async (
   try {
     // #swagger.tags = ['Comment']
     const diary_id: string = req.params.diaryId;
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 8;
 
-    const comment = await getCommentByDiaryId(diary_id);
-
-    res.status(comment.status).json(comment);
+    const comment = await getCommentByDiaryId(diary_id, page, limit);
+    res.json(comment);
   } catch (error) {
     next(error);
   }
@@ -62,7 +63,7 @@ export const updateComment = async (
 
     const comment = await updatedComment(inputData, comment_id, authorId);
 
-    return res.status(comment.status).json(comment);
+    return res.json(comment);
   } catch (error) {
     next(error);
   }
@@ -83,7 +84,7 @@ export const deleteComment = async (
 
     const comment = await deletedComment(comment_id, authorId);
 
-    return res.status(comment.status).json(comment);
+    return res.json(comment);
   } catch (error) {
     next(error);
   }

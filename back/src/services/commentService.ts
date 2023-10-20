@@ -1,11 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 import { plainToClass } from 'class-transformer';
-import { commentResponseDTO } from '../dtos/commentDTO';
+import { commentResponseDTO, PaginationResponseDTO } from '../dtos/commentDTO';
 import { emptyApiResponseDTO } from '../utils/emptyResult';
 import { successApiResponseDTO } from '../utils/successResult';
 import { nonAuthorizedApiResponseDTO } from '../utils/nonAuthorizeResult';
 import axios from 'axios';
 import { Emoji } from '../types/emoji';
+import { calculatePageInfoForComment } from '../utils/pageInfo';
 
 const prisma = new PrismaClient();
 
@@ -22,22 +23,26 @@ export async function createdComment(
     const { content, nestedComment } = inputData;
 
     // 댓글 이모지 넣는 코드
-  const responseData = await axios.post('http://kdt-ai-8-team02.elicecoding.com:5000/predict', {
-    text: content,
-  });
+    const responseData = await axios.post(
+      'http://kdt-ai-8-team02.elicecoding.com:5000/predict',
+      {
+        text: content,
+      },
+    );
 
-  const emotion = responseData.data;
+    const emotion = responseData.data;
 
-  const emotionType = emotion.emotion;
+    const emotionType = emotion.emotion;
 
-  const emojis = await prisma.emoji.findMany({
-    where: {
-      type: emotionType,
-    },
-  });
+    const emojis = await prisma.emoji.findMany({
+      where: {
+        type: emotionType,
+      },
+    });
 
-  const randomEmoji : Emoji = emojis[Math.floor(Math.random() * emojis.length)];
-  const emoji = randomEmoji.emotion;
+    const randomEmoji: Emoji =
+      emojis[Math.floor(Math.random() * emojis.length)];
+    const emoji = randomEmoji.emotion;
 
     const comment = await prisma.comment.create({
       data: { diaryId: diary_id, authorId, content, nestedComment, emoji },
@@ -55,11 +60,17 @@ export async function createdComment(
 }
 
 // 댓글 조회
-export async function getCommentByDiaryId(diary_id: string) {
+export async function getCommentByDiaryId(
+  diary_id: string,
+  page: number,
+  limit: number,
+) {
   try {
     // 댓글 작성자의 id, username, porfileImage를 함께 응답
     // 대댓글은 reComment에 배열로 포함하여 응답
     const comment = await prisma.comment.findMany({
+      skip: (page - 1) * limit,
+      take: limit,
       where: { diaryId: diary_id, nestedComment: null },
       select: {
         id: true,
@@ -99,13 +110,25 @@ export async function getCommentByDiaryId(diary_id: string) {
       return response;
     }
 
+    const { totalComment, totalPage } = await calculatePageInfoForComment(
+      limit,
+      diary_id,
+    );
+
+    const pageInfo = { totalComment, totalPage, currentPage: page, limit };
+
     const commentResponseDataList = comment.map((comment) =>
       plainToClass(commentResponseDTO, comment, {
         excludeExtraneousValues: true,
       }),
     );
 
-    const response = successApiResponseDTO(commentResponseDataList);
+    const response = new PaginationResponseDTO(
+      200,
+      commentResponseDataList,
+      pageInfo,
+      '성공',
+    );
 
     return response;
   } catch (error) {
@@ -117,16 +140,19 @@ export async function getCommentByDiaryId(diary_id: string) {
 export async function updatedComment(
   inputData: {
     content: string;
-    emoji : string;
+    emoji: string;
   },
   comment_id: string,
   authorId: string,
 ) {
   try {
     // 댓글 이모지 넣는 코드
-    const responseData = await axios.post('http://kdt-ai-8-team02.elicecoding.com:5000/predict', {
-      text: inputData.content,
-    });
+    const responseData = await axios.post(
+      'http://kdt-ai-8-team02.elicecoding.com:5000/predict',
+      {
+        text: inputData.content,
+      },
+    );
     const emotion = responseData.data;
 
     const emotionType = emotion.emoji;
@@ -137,7 +163,8 @@ export async function updatedComment(
       },
     });
 
-    const randomEmoji : Emoji = emojis[Math.floor(Math.random() * emojis.length)];
+    const randomEmoji: Emoji =
+      emojis[Math.floor(Math.random() * emojis.length)];
     const emoji = randomEmoji.emotion;
     // 댓글 작성자인지 확인하기 위한 조회
     const userCheck = await prisma.comment.findUnique({
@@ -148,8 +175,8 @@ export async function updatedComment(
       const comment = await prisma.comment.update({
         where: { id: comment_id },
         data: {
-          content : inputData.content,
-          emoji : emoji,
+          content: inputData.content,
+          emoji: emoji,
         },
       });
 
