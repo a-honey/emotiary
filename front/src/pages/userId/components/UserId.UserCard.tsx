@@ -33,8 +33,11 @@ const UserCard = () => {
     }
   }, [navigator, location]);
 
-  // useMutation에 해줘야할듯함
   const handleFriendBtnClick = () => {
+    handleFriendToast();
+  };
+
+  const handleFriendToast = () => {
     // 친구요청을 성공했을때
     setState((oldState: any) => [
       ...oldState,
