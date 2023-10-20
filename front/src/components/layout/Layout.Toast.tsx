@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 
+import styles from './Layout.Toast.module.scss';
+
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { toastState } from '../../states/atoms/toastState';
+import { toastState } from '../../atoms/toastState';
 
 interface MessageType {
   message: string;
@@ -14,7 +16,7 @@ const Toast = () => {
   const messages = useRecoilValue(toastState);
 
   return (
-    <div>
+    <div className={styles.container}>
       {messages.map((item: MessageType) => (
         <ToastItem key={item.message} message={item.message} />
       ))}
@@ -28,6 +30,17 @@ const ToastItem = ({ message }: { message: string }) => {
   const messages = useRecoilValue(toastState);
   const setToastState = useSetRecoilState(toastState);
 
+  const handleDeleteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const messageId = e.currentTarget.value;
+
+    setToastState((oldMessages) => {
+      const updatedMessages = oldMessages.filter(
+        (data) => data.message !== messageId,
+      );
+      return updatedMessages;
+    });
+  };
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setToastState((datas) => {
@@ -35,7 +48,7 @@ const ToastItem = ({ message }: { message: string }) => {
         const updatedMessages = datas.filter((data) => data !== datas[0]);
         return updatedMessages;
       });
-    }, 5000);
+    }, 2000);
 
     return () => {
       clearTimeout(timer);
@@ -43,8 +56,11 @@ const ToastItem = ({ message }: { message: string }) => {
   }, [setToastState, messages]);
 
   return (
-    <div>
+    <div className={styles.itemContainer}>
       <div>{message}</div>
+      <button value={message} onClick={handleDeleteClick}>
+        X
+      </button>
     </div>
   );
 };

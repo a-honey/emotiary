@@ -1,21 +1,31 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import styles from './index.module.scss';
-import { handleImgError } from '../../utils/imgHandlers';
 import FriendReqList from './Layout.FriendReqList';
+import { GrLogout, GrNotification } from 'react-icons/gr';
+import ImageComponent from '../ImageComponent';
+import Toast from './Layout.Toast';
+import { useRecoilValue } from 'recoil';
+import { toastState } from '../../atoms/toastState';
+
+const locations = [
+  { name: 'MY CALENDAR', to: '/' },
+  { name: 'LATEST DIARY', to: '/network' },
+  { name: 'ALL USERS', to: '/users' },
+];
 
 const Header = () => {
   // 로컬 스토리지에서 토큰을 가져와서 로그인 상태 확인
   const token = localStorage.getItem('token');
   const isLogin = token !== null;
+
+  const messages = useRecoilValue(toastState);
+
   const navigator = useNavigate();
+  const location = useLocation();
 
   const [isOpenFriendReqList, setIsOpenFriendReqList] = useState(false);
-
-  const handlesetIsOpenFriendReqList = (arg: boolean) => {
-    handlesetIsOpenFriendReqList(arg);
-  };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -27,44 +37,50 @@ const Header = () => {
     navigator('/intro');
   };
 
+  useEffect(() => {
+    setIsOpenFriendReqList(false);
+  }, [location.pathname]);
+
   return (
     <>
       <header className={styles.header}>
         <div className={styles.logoContainer}>
-          <Link className={styles.logoContainer} to="/intro">
+          <Link className={styles.logoContainer} key="logo" to="/intro">
             EMOTIARY
           </Link>
         </div>
         <nav className={styles.navContainer}>
-          <Link to="/">MY CALENDAR</Link>
-          <Link to="/network">LATEST DIARY</Link>
-          <Link to="/users">ALL USERS</Link>
-          {/* <Link to="/analysis">ANALYSIS</Link> */}
+          {locations.map((item) => (
+            <Link
+              key={item.to}
+              className={location.pathname === item.to ? styles.active : ''}
+              to={item.to}
+            >
+              {item.name}
+            </Link>
+          ))}
         </nav>
         {isLogin ? (
-          <div>
+          <div className={styles.right}>
             <div
               className={styles.userInfo}
               onClick={() => {
                 navigator('/mypage');
               }}
             >
-              <img
-                src={localStorage.getItem('userImg') as string}
+              <ImageComponent
+                src={localStorage.getItem('userImg')}
                 alt={`${localStorage.getItem('username')}의 프로필사진`}
-                onError={handleImgError}
               />
               <div>{localStorage.getItem('username')}</div>
             </div>
-            <div
+            <GrNotification
               onClick={() => {
                 setIsOpenFriendReqList((prev) => !prev);
               }}
-            >
-              친구요청알림
-            </div>
+            />
             {isOpenFriendReqList && <FriendReqList />}
-            <div onClick={handleLogout}>로그아웃</div>
+            <GrLogout onClick={handleLogout} />
           </div>
         ) : (
           <div>
@@ -73,6 +89,7 @@ const Header = () => {
           </div>
         )}
       </header>
+      {messages.length !== 0 && <Toast />}
       <Outlet />
     </>
   );

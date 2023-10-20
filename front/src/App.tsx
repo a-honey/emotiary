@@ -1,5 +1,5 @@
 import React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Routes, Route } from 'react-router-dom';
 import SigninPage from './pages/signin/Signin';
 import SignupPage from './pages/signup/Signup';
@@ -11,9 +11,9 @@ import MyPage from './pages/my/My';
 import UsersPage from './pages/users/Users';
 import Header from './components/layout/Layout.Header';
 import Footer from './components/layout/Layout.Footer';
+import ErrorPage from './pages/ErrorPage';
 
 const queryClient = new QueryClient();
-import ErrorPage from './pages/ErrorPage';
 
 const App = () => {
   return (

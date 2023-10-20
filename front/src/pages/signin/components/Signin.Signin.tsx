@@ -1,6 +1,6 @@
 import React, { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import { instance } from '../../../api/instance';
 import styles from './index.module.scss';
 
@@ -39,21 +39,24 @@ const Signin: React.FC = () => {
 
   const mutation = useMutation(
     async (userSigninInfos: { email: string; password: string }) => {
-      const response = await instance.post('http://localhost:5001/users/login', userSigninInfos);
+      const response = await instance.post(
+        'http://localhost:5001/users/login',
+        userSigninInfos,
+      );
       return response.data;
     },
     {
       // 로그인 성공
-      onSuccess: (data) => {
+      onSuccess: (data: any) => {
         console.log('로그인 성공', data);
         saveToLocalStorage(data);
         navigate('/');
       },
       // 로그인 실패
-      onError: (error) => {
+      onError: (error: any) => {
         console.log('로그인 실패', error);
-      }
-    }
+      },
+    },
   );
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
@@ -70,7 +73,15 @@ const Signin: React.FC = () => {
     setPassword(e.target.value);
   };
 
-  const InputField: React.FC<InputFieldProps> = ({ id, name, type, placeholder, value, onChange, boxStyle }) => (
+  const InputField: React.FC<InputFieldProps> = ({
+    id,
+    name,
+    type,
+    placeholder,
+    value,
+    onChange,
+    boxStyle,
+  }) => (
     <div className={styles.formGroup}>
       <label htmlFor={id}></label>
       <div className={styles.inputGroup}>
@@ -91,8 +102,24 @@ const Signin: React.FC = () => {
     <>
       <div className={styles.centerContainer}>
         <form onSubmit={handleSubmit} className={styles.loginForm}>
-          <InputField id="email" name="email" type="email" placeholder="이메일을 입력하세요" value={email} onChange={handleEmailChange} boxStyle={styles.box1} />
-          <InputField id="password" name="password" type="password" placeholder="패스워드를 입력하세요" value={password} onChange={handlePasswordChange} boxStyle={styles.box2} />
+          <InputField
+            id="email"
+            name="email"
+            type="email"
+            placeholder="이메일을 입력하세요"
+            value={email}
+            onChange={handleEmailChange}
+            boxStyle={styles.box1}
+          />
+          <InputField
+            id="password"
+            name="password"
+            type="password"
+            placeholder="패스워드를 입력하세요"
+            value={password}
+            onChange={handlePasswordChange}
+            boxStyle={styles.box2}
+          />
           <button type="submit" className={styles.submitButton}>
             SIGN IN
           </button>
