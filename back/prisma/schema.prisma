@@ -23,11 +23,11 @@ model User {
   // 사용자와 Refresh Token 간의 일대다 관계 설정
   refreshTokens RefreshToken[]
 
-  favorites   Favorite[]
-  comments    Comment[]
-  latestEmoji String?
-  isFriend    Boolean   @default(false)
-  alarmSetting Int      @default(1)
+  favorites    Favorite[]
+  comments     Comment[]
+  latestEmoji  String?
+  isFriend     Boolean   @default(false)
+  alarmSetting String    @default("1")
 }
 
 model RefreshToken {
@@ -73,8 +73,8 @@ model Diary {
 model Favorite {
   user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   diary   Diary  @relation(fields: [diaryId], references: [id], onDelete: Cascade)
-  diaryId String @map("diary_id")
-  userId  String @map("user_id")
+  diaryId String
+  userId  String
 
   @@id([diaryId, userId])
 }

@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 // 유저 설정에 따른 일기 작성 알림 메일 발송
 export const sendAlarm = async () => {
   // 매일 21:00:00 스케쥴링 실행
-  cron.schedule('0 0 21 * * *', async () => {
+  cron.schedule('15,30,45,0 * * * * *', async () => {
     console.log('!!일기 알람 스케쥴링!!');
 
     // 알림을 위한 각 유저 정보/개인 Diary 조회
@@ -44,8 +44,11 @@ export const sendAlarm = async () => {
         );
         // 해당 최신일기와 오늘 일자 비교
         const daysSinceLastWrite = today - diaryLastWrite;
+
+        console.log(daysSinceLastWrite);
+        console.log(parseInt(user.alarmSetting));
         // daysSinceLastWrite가 유저별로 설정한 알림일수 이상일 경우 메일 발송
-        if (daysSinceLastWrite >= user.alarmSetting) {
+        if (daysSinceLastWrite >= parseInt(user.alarmSetting)) {
           await sendEmail(
             user.email,
             '[Emotiary] 오늘 하루는 어땟나요? ',
