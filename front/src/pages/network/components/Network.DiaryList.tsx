@@ -1,95 +1,41 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './index.module.scss';
 import { handleImgError } from '../../../utils/imgHandlers';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { DairyItemType } from '../../../types/diaryType';
+import { useNavigate } from 'react-router-dom';
 import DiaryItemShow from '../../../components/modal/DiaryItemShow';
+import { useGetDiarysData } from '../../../api/get/useGetDiaryData';
+
+interface DairyItemType {
+  diary_id: string;
+  user_id: string;
+  username: string;
+  profileImage: string;
+  title: string;
+  dateCreated: Date;
+  content: string;
+  emoji: string;
+}
 
 const DiaryList = () => {
-  const mockDatas = [
-    {
-      diary_id: 2,
-      user_id: 2,
-      username: '가짜데이터',
-      profileImage: '',
-      title: '일기제목',
-      dateCreated: new Date(),
-      content:
-        '고양이가 밥을 안준다고 나를 깨웠다. 고양이가 밥을 안준다고 나를 깨웠다. 고양이가 밥을 안준다고 나를 깨웠다. 고양이가 밥을 안준다고 나를 깨웠다. 고양이가 밥을 안준다고 나를 깨웠다. 고양이가 밥을 안준다고 나를 깨웠다. 고양이가 밥을 안준다고 나를 깨웠다. 고양이가 밥을 안준다고 나를 깨웠다. 고양이가 밥을 안준다고 나를 깨웠다.',
-      emoji: '😆',
-    },
-    {
-      diary_id: 2,
-      user_id: 2,
-      username: '가짜데이터',
-      profileImage: '',
-      title: '일기제목',
-      dateCreated: new Date(),
-      content: '고양이가 밥을 안준다고 나를 깨웠다.',
-      emoji: '😆',
-    },
-    {
-      diary_id: 2,
-      user_id: 2,
-      username: '가짜데이터',
-      profileImage: '',
-      title: '일기제목',
-      dateCreated: new Date(),
-      content: '고양이가 밥을 안준다고 나를 깨웠다.',
-      emoji: '😆',
-    },
-    {
-      diary_id: 2,
-      user_id: 2,
-      username: '가짜데이터',
-      profileImage: '',
-      title: '일기제목',
-      dateCreated: new Date(),
-      content: '고양이가 밥을 안준다고 나를 깨웠다.',
-      emoji: '😆',
-    },
-    {
-      diary_id: 2,
-      user_id: 2,
-      username: '가짜데이터',
-      profileImage: '',
-      title: '일기제목',
-      dateCreated: new Date(),
-      content: '고양이가 밥을 안준다고 나를 깨웠다.',
-      emoji: '😆',
-    },
-    {
-      diary_id: 2,
-      user_id: 2,
-      username: '가짜데이터',
-      profileImage: '',
-      title: '일기제목',
-      dateCreated: new Date(),
-      content: '고양이가 밥을 안준다고 나를 깨웠다.',
-      emoji: '😆',
-    },
-    {
-      diary_id: 2,
-      user_id: 2,
-      username: '가짜데이터',
-      profileImage: '',
-      title: '일기제목',
-      dateCreated: new Date(),
-      content: '고양이가 밥을 안준다고 나를 깨웠다.',
-      emoji: '😆',
-    },
-    {
-      diary_id: 2,
-      user_id: 2,
-      username: '가짜데이터',
-      profileImage: '',
-      title: '일기제목',
-      dateCreated: new Date(),
-      content: '고양이가 밥을 안준다고 나를 깨웠다.',
-      emoji: '😆',
-    },
-  ];
+  const [select, setSelect] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
 
+  const userId = localStorage.getItem('userId');
+  const navigator = useNavigate();
+  const { data, isFetching } = useGetDiarysData(
+    `${userId}`,
+    select,
+    currentPage,
+    8,
+  );
+
+  /*
+  useEffect(() => {
+    if (!userId) {
+      navigator('/intro');
+    }
+  }, [userId, navigator]);
+  */
   return (
     <div className={styles.diaryBlock}>
       <h2>다른 유저의 일기 모아보기</h2>
@@ -98,9 +44,13 @@ const DiaryList = () => {
         <div>친구 일기만 보기</div>
       </div>
       <div className={styles.diaryListBlock}>
-        {mockDatas?.map((item) => (
-          <DairyItem data={item} key={item.diary_id} />
-        ))}
+        {isFetching ? (
+          <div>로딩중</div>
+        ) : (
+          data?.data?.map((item: DairyItemType) => (
+            <DairyItem data={item} key={item.diary_id} />
+          ))
+        )}
       </div>
       <div>페이지네이션자리</div>
     </div>
@@ -119,7 +69,12 @@ const DairyItem = ({ data }: { data: DairyItemType }) => {
 
   return (
     <>
-      {isOpenDiary && <DiaryItemShow toggleIsOpenModal={toggleIsOpenModal} />}
+      {isOpenDiary && (
+        <DiaryItemShow
+          toggleIsOpenModal={toggleIsOpenModal}
+          id={data.diary_id}
+        />
+      )}
       <div
         className={styles.dairyItem}
         onClick={() => {

@@ -13,6 +13,7 @@ import Header from './components/layout/Layout.Header';
 import Footer from './components/layout/Layout.Footer';
 
 const queryClient = new QueryClient();
+import ErrorPage from './pages/ErrorPage';
 
 const App = () => {
   return (
@@ -28,7 +29,7 @@ const App = () => {
             <Route path="intro" element={<IntroPage />} />
             <Route path="signin" element={<SigninPage />} />
             <Route path="signup" element={<SignupPage />} />
-            <Route path="*" element={<MainPage />} />
+            <Route path="*" element={<ErrorPage />} />
           </Route>
         </Route>
       </Routes>

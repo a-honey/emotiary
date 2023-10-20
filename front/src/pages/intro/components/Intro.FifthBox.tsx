@@ -15,10 +15,10 @@ const FifthBox = () => {
         <div>이모지2</div>
         <div>이모지3</div>
       </div>
-      <Link to="/login" className="doneBtn">
+      <Link to="/signin" className="doneBtn">
         로그인
       </Link>
-      <Link to="/register" className="doneBtn">
+      <Link to="/signup" className="doneBtn">
         회원가입
       </Link>
     </section>

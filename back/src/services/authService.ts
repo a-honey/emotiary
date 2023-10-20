@@ -156,3 +156,30 @@ export const getUserFromDatabase = async (userId: string) => {
     throw error;
   }
 };
+
+// 내 아이디 for문돌리는 id
+export const areUsersFriends = async (userId1 : string, userId2 : string) => {
+  try{
+    const friendShip = await prisma.friend.findFirst({
+      where : {
+        OR : [
+          {
+            sentUserId : userId1,
+            receivedUserId : userId2,
+          },
+          {
+            sentUserId : userId2,
+            receivedUserId : userId1,
+          },
+        ]
+      }
+    });
+    if(userId1 === userId2){
+      return true;
+    }else{
+      return !!friendShip;
+    }
+  }catch(error){
+    throw error;
+  }
+}

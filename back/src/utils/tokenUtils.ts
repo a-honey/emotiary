@@ -1,15 +1,15 @@
-import jwt from "jsonwebtoken";
-import { IUser } from "../types/user";
-import { PrismaClient } from "@prisma/client";
+import jwt from 'jsonwebtoken';
+import { IUser } from '../types/user';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
-import jwtSecret from "../passport-config/jwtSecret";
+import jwtSecret from '../config/passport/strategy/jwtSecret';
 
 // Access Token 생성 함수
 export const generateAccessToken = (user: IUser): string => {
   // 사용자 ID를 기반으로 새로운 Access Token 생성
   const accessToken = jwt.sign({ id: user.id }, jwtSecret, {
-    expiresIn: "15m",
+    expiresIn: '3d',
   });
   return accessToken;
 };
@@ -18,7 +18,7 @@ export const generateAccessToken = (user: IUser): string => {
 export const generateRefreshToken = (user: IUser): string => {
   // 사용자 ID를 기반으로 새로운 Refresh Token 생성
   const refreshToken = jwt.sign({ id: user.id }, jwtSecret, {
-    expiresIn: "30d", // 예: 30일
+    expiresIn: '30d', // 예: 30일
   });
   return refreshToken;
 };
@@ -26,7 +26,7 @@ export const generateRefreshToken = (user: IUser): string => {
 // Refresh Token을 데이터베이스에 저장하는 함수
 export const storeRefreshTokenInDatabase = async (
   userId: string,
-  refreshToken: string
+  refreshToken: string,
 ): Promise<void> => {
   try {
     // 데이터베이스에 Refresh Token 저장
@@ -43,7 +43,7 @@ export const storeRefreshTokenInDatabase = async (
 
 // Refresh Token의 유효성을 확인하고 사용자 ID 반환하는 함수
 export const verifyRefreshToken = async (
-  refreshToken: string
+  refreshToken: string,
 ): Promise<string> => {
   try {
     // 데이터베이스에서 해당 Refresh Token을 찾기
