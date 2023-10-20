@@ -3,12 +3,11 @@ import { instance } from '../instance';
 
 export const usePostDiaryData = (
   queryClient: QueryClient,
-  id: string,
   handleIsAdding?: () => void,
 ) => {
   const postMutation = useMutation(
     async ({ body }: { body: any }) => {
-      return await instance.post(`/diary/${id}`, body);
+      return await instance.post(`/diary`, body);
     },
     {
       onSuccess: () => {

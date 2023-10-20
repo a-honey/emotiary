@@ -32,11 +32,7 @@ const DiaryWriting = ({
 
   const queryClient = useQueryClient();
 
-  const postMutation = usePostDiaryData(
-    queryClient,
-    getUserId as string,
-    handleIsOpenDiaryWriting,
-  );
+  const postMutation = usePostDiaryData(queryClient, handleIsOpenDiaryWriting);
 
   const { handleImgChange, imgContainer, imgRef } = useImgChange();
 
@@ -55,7 +51,7 @@ const DiaryWriting = ({
 
     setIsEmojiSelectOpen(true);
     postMutation.mutate({
-      body: { ...formData, createdDate: formatDate(day) },
+      body: { ...formData, createdDate: formatDate(day), emotion: 'happiness' },
     });
   };
 
