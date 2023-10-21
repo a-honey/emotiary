@@ -18,7 +18,7 @@ export const jwtAuthentication = async (
                 }
                 if(info){
                     console.log(info);
-                    next(info);
+                    res.status(403).json(info);
                 }
                 req.user = user;
                 next();

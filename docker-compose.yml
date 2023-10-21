@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: front:1.0
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://backend:5001
+
+  backend:
+    image: back:1.0
+    env_file:
+      - ./back/.env
+    ports:
+      - "5001:5001"
+    depends_on:
+      - database
+
+  database:
+    image: mysql:latest
+    env_file:
+    - ./back/.env
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+    - "3306:3306"
+
+  flask:
+    image: flask-image
+    ports:
+    - "5000:5000"
+    command: python app.py
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx-config:/etc/nginx/conf.d
+    depends_on:
+      - frontend
+      - backend
+
+volumes:
+  db_data:

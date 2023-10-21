@@ -8,7 +8,7 @@ import {
   getOtherUsersDiary,
   getAllMyDiaries,
 } from '../controllers/diaryController';
-import { Router } from 'express';
+import { Response, Router } from 'express';
 
 const diaryRouter = Router();
 
@@ -39,8 +39,11 @@ const diaryRouter = Router();
  *
  */
 
+// 다이어리 생성
+diaryRouter.post('/', jwtAuthentication, createDiary);
+
 // 네트워크 페이지 (Done)
-// /diary/views/users?select&page&limit
+// /diary/views/users?select&page&limit&emotion
 diaryRouter.get('/views/users', jwtAuthentication, getOtherUsersDiary);
 
 // 캘린더 페이지 (Done)
@@ -53,7 +56,6 @@ diaryRouter.get('/views', jwtAuthentication, getAllMyDiaries);
 
 // 다이어리 생성
 // /diary/:userId
-diaryRouter.post('/:userId', jwtAuthentication, createDiary);
 
 // /diary/:diaryId
 diaryRouter

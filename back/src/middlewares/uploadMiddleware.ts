@@ -1,82 +1,110 @@
 import { Response, NextFunction } from "express";
 import { PrismaClient } from ".prisma/client";
-import { uploadMiddleware } from "./fileMiddleware";
+import { fileUploadMiddleware } from "./fileMiddleware";
 import { IRequest } from "../types/user";
+import { FileObjects } from "../types/upload";
+import { emptyApiResponseDTO } from "../utils/emptyResult";
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 
 const prisma = new PrismaClient();
 
-// 파일 업로드 및 Prisma 처리 미들웨어
-export const fileUpload = async (
-    req: IRequest,
-    res: Response,
-    next: NextFunction
-  ) => {
-    try {
-      // 파일 업로드 처리
-      uploadMiddleware(req, res, async (err: any) => {
-        const imageFile = (req as any).file;
-        if (err instanceof multer.MulterError) {
-          return res
-            .status(400)
-            .json({ message: "File upload error", error: err.message });
-        } else if (err) {
-          return res
-            .status(500)
-            .json({ message: "Internal server error", error: err.message });
-        }
-  
-        // 파일 업로드 성공 시 파일 정보를 req.body에 저장
-        // const imageFile = (req as any).file;
-        if (!imageFile) {
-          return res.status(400).json({ message: "No file uploaded" });
-        }
-  
-        // Prisma를 사용하여 파일 정보를 저장
-        const { userId } = req.params;
-        const imagePath = `imageUpload/${imageFile.filename}`;
-        if (!userId) {
-          return res.status(404).json({ message: "User not found" });
-        }
-  
-        const foundUser = await prisma.user.findUnique({
-          where: { id: userId },
-        });
-  
-        if (!foundUser) {
-          return res.status(404).json({ message: "User not found" });
-        }
-  
-        // 이미지 업로드 시 기존 이미지 파일 삭제 및 새 이미지 정보 저장
-        const oldImage = foundUser.profileImage;
-        if (oldImage) {
-          // 기존 이미지 파일 삭제
-          const filenameToDelete = oldImage.replace("imageUpload/", "");
-          const filePathToDelete = path.join("./imageUpload", filenameToDelete);
-          // 파일 삭제 시도
-          fs.unlink(filePathToDelete, async (err) => {
-            if (err) {
-              console.error("Error deleting old file:", err);
-              next(err);
-            } 
-            try {
-                // 이미지 정보를 업데이트합니다.
-                const updatedUser = await prisma.user.update({
-                  where: { id: userId },
-                  data: {
-                    profileImage: imagePath,
-                  },
+export const fileUpload = async (req : IRequest, res : Response, next : NextFunction) => {
+    try{
+        fileUploadMiddleware(req,res,async(err : any)=> {
+            try{
+                if (err instanceof multer.MulterError) {
+                    return res
+                        .status(400)
+                        .json({ message: 'Image upload error', error: err.message });
+                } else if (err) {
+                    return res
+                        .status(500)
+                        .json({ message: 'Internal server error', error: err.message });
+                }
+                const files: FileObjects[] = req.files ? ([] as FileObjects[]).concat(...Object.values(req.files)) : [];
+
+                if(files.length >= 2){
+                    const firstFileType = files[0].mimetype;
+                    const areAllFilesSameType = files.every((file) => file.mimetype === firstFileType);
+
+                    if (!areAllFilesSameType) {
+
+                        return res.status(400).json({ message: 'Files have different types' });
+                    }
+
+                }
+
+                const filePaths = files.map((file) => `fileUpload/${file.filename}`);
+
+                const { userId } = req.params;
+                const foundUser = await prisma.user.findUnique({
+                    where: { id: userId },
+                    include : {
+                        filesUpload : true,
+                    }
+                });
+
+                if (!foundUser) {
+                    const response = emptyApiResponseDTO();
+                    return response;
+                }
+
+                const oldFiles = foundUser.filesUpload;
+                console.log(oldFiles);
+                if(oldFiles){
+                    oldFiles.forEach(async(file) => {
+                        const filenameToDelete = file.url.replace('fileUpload/', '');
+                        const filePathToDelete = path.join('./fileUpload', filenameToDelete);
+
+                        fs.unlink(filePathToDelete, async(err) => {
+                            if(err){
+                                console.error('Error deleting old file:', err);
+                                next(err);
+                            }
+                        });
+                    });
+                }
+                const FilesUpload = filePaths.map((filename) => ({ url: filename, userId : userId }));
+
+                for (const file of FilesUpload) {
+                    // 중복 검사: 파일 URL로 이미 존재하는 파일 찾기
+                    const existingFile = await prisma.fileUpload.findFirst({
+                        where: { url: file.url },
+                    });
+                
+                    if (existingFile) {
+                        // 파일 URL이 이미 존재하면 업데이트
+                        await prisma.fileUpload.update({
+                            where: { url: existingFile.url },
+                            data: { userId: userId },
+                        });
+                    } else {
+                        // 파일 URL이 존재하지 않으면 새로운 파일 엔트리 생성
+                        await prisma.fileUpload.create({
+                            data: file,
+                        });
+                    }
+                }
+
+                // 기존 파일 업로드를 모두 삭제
+                await prisma.fileUpload.deleteMany({
+                    where: {
+                        userId: userId,
+                    },
+                });
+
+                // 새로 업로드한 파일들을 생성
+                await prisma.fileUpload.createMany({
+                    data: FilesUpload,
                 });
                 next();
-            } catch (error) {
-                next(error);
+            }catch(err){
+                next(err);
             }
         });
-        }
-      });
-    } catch (error) {
-      next(error);
+    }catch(error){
+        next(error);
     }
-};
+}

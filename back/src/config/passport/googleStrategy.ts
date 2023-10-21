@@ -1,10 +1,11 @@
 import passport from 'passport';
+require('dotenv').config();
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import {
   generateAccessToken,
   generateRefreshToken,
-} from '../../../utils/tokenUtils';
-import { storeRefreshTokenInDatabase } from '../../../utils/tokenUtils';
+} from '../../utils/tokenUtils';
+import { storeRefreshTokenInDatabase } from '../../utils/tokenUtils';
 
 import { PrismaClient } from '@prisma/client';
 

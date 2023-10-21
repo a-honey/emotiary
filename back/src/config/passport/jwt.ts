@@ -1,5 +1,5 @@
 import passportJWT from 'passport-jwt';
-import jwtSecret from './jwtSecret';
+import jwtSecret from '../jwtSecret';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();

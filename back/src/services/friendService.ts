@@ -114,7 +114,7 @@ export const listRequestsSent = async (userId: string) => {
           select: {
             id: true,
             username: true,
-            profileImage: true,
+            filesUpload: true,
           },
         },
       },
@@ -188,7 +188,7 @@ export const listRequestsReceived = async (userId: string) => {
           select: {
             id: true,
             username: true,
-            profileImage: true,
+            filesUpload: true,
           },
         },
       },
@@ -263,7 +263,7 @@ export const rejectFriend = async (userId: string, requestId: string) => {
 export const getMyWholeFriends = async (userId: string) => {
   const friendList = await prisma.friend.findMany({
     where: {
-      sentUserId: userId,
+      OR: [{ sentUserId: userId }, { receivedUserId: userId }],
       status: true,
     },
   });
