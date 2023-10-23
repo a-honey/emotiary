@@ -1,14 +1,8 @@
 import React, { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
-import { instance } from '../../../api/instance';
+import { usePutSignupData } from '../../../api/mutation/usePutSiginupData';
+import { QueryClient } from '@tanstack/react-query';
 import styles from './index.module.scss';
-
-const USER_INFOS = {
-  username: '',
-  email: '',
-  password: '',
-};
 
 interface UserData {
   username: string;
@@ -26,9 +20,32 @@ interface InputFieldProps {
   boxStyle: string;
 }
 
-interface SignupProps {}
+const InputField: React.FC<InputFieldProps> = ({
+  id,
+  name,
+  type,
+  placeholder,
+  value,
+  onChange,
+  boxStyle,
+}) => (
+  <div className={styles.formGroup}>
+    <label htmlFor={id}></label>
+    <div className={styles.inputGroup}>
+      <i className={boxStyle}></i>
+      <input
+        id={id}
+        name={name}
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+      />
+    </div>
+  </div>
+);
 
-const Signup: React.FC<SignupProps> = () => {
+const Signup: React.FC = () => {
   const [userInfo, setUserInfo] = useState<UserData>({
     username: '',
     email: '',
@@ -36,20 +53,9 @@ const Signup: React.FC<SignupProps> = () => {
   });
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const navigate = useNavigate();
+  const queryClient = new QueryClient();
 
-  const mutation = useMutation(
-    (newUserInfo: UserData) => instance.post('/users/register', newUserInfo),
-    {
-      onSuccess: (data: any) => {
-        console.log('회원가입 성공', data);
-        navigate('/signin');
-      },
-      onError: (error: any) => {
-        alert(`${error} 에러 발생.`);
-        console.log('회원가입 실패', error);
-      },
-    },
-  );
+  const signupMutation = usePutSignupData(queryClient);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -68,33 +74,8 @@ const Signup: React.FC<SignupProps> = () => {
       return;
     }
 
-    mutation.mutate(userInfo);
+    signupMutation.mutate(userInfo);
   };
-
-  const InputField: React.FC<InputFieldProps> = ({
-    id,
-    name,
-    type,
-    placeholder,
-    value,
-    onChange,
-    boxStyle,
-  }) => (
-    <div className={styles.formGroup}>
-      <label htmlFor={id}></label>
-      <div className={styles.inputGroup}>
-        <i className={boxStyle}></i>
-        <input
-          id={id}
-          name={name}
-          type={type}
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}
-        />
-      </div>
-    </div>
-  );
 
   return (
     <>
