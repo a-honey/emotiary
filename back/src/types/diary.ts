@@ -10,13 +10,4 @@ export interface IDiary {
     emoji: string;
     createdAt: Date;
     updatedAt: Date;
-    filesUpload: diaryFileUpload[];
 }
-
-export interface diaryFileUpload {
-    url?: string;
-    diary?: string;
-    diaryId?: string;
-    createdAt?: Date;
-    deleteData? : string;
-  }

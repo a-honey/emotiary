@@ -22,7 +22,7 @@ testAuthRouter.post('/predict', async(req : Request, res :Response, next : NextF
 
       const musicData = await searchMusic(emotionType);
       const videoId = musicData.videoId;
-
+      console.log(1);
       const info = await ytdl.getInfo(videoId);
       // 오디오 스트림 URL 가져오기
       const audioUrl = ytdl.chooseFormat(info.formats, { filter: 'audioonly' }).url;

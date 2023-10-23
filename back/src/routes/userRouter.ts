@@ -35,7 +35,7 @@ userAuthRouter.get("/logout", jwtAuthentication, userLogout);
 
 userAuthRouter
   .route("/:userId")
-  .get(jwtAuthentication, getUserId)
+  .get(getUserId)
   .put(jwtAuthentication, fileUpload, updateUser)
   .delete(jwtAuthentication, deleteUser);
 

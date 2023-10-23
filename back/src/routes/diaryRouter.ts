@@ -9,7 +9,6 @@ import {
   getAllMyDiaries,
 } from '../controllers/diaryController';
 import { Response, Router } from 'express';
-import { diaryUpload, postDiaryUpload } from '../middlewares/uploadMiddleware';
 
 const diaryRouter = Router();
 
@@ -41,7 +40,7 @@ const diaryRouter = Router();
  */
 
 // 다이어리 생성
-diaryRouter.post('/', jwtAuthentication, postDiaryUpload, createDiary);
+diaryRouter.post('/', jwtAuthentication, createDiary);
 
 // 네트워크 페이지 (Done)
 // /diary/views/users?select&page&limit&emotion
@@ -63,7 +62,7 @@ diaryRouter
   .route('/:diaryId')
   // 다이어리 하나 가져오기
   .get(jwtAuthentication, getDiaryByDiaryId)
-  .put(jwtAuthentication, diaryUpload, updateDiary)
+  .put(jwtAuthentication, updateDiary)
   .delete(jwtAuthentication, deleteDiary);
 
 export default diaryRouter;

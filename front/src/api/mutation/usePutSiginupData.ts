@@ -6,7 +6,7 @@ export const usePutSignupData = (queryClient: QueryClient) => {
   const navigate = useNavigate();
   const signupMutation = useMutation(
     async (newUserInfo: { username: string; email: string; password: string }) => {
-      const response = await instance.post('http://localhost:5001/users/register', newUserInfo);
+      const response = await instance.post('/users/register', newUserInfo);
       return response.data;
     },
     {

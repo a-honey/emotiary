@@ -9,7 +9,7 @@ export interface IUser {
   filesUpload: fileUpload[];
   updatedAt: Date;
   createdAt: Date;
-  isFriend : Boolean;
+  // isFriend : Boolean;
 }
 
 export interface fileUpload {
