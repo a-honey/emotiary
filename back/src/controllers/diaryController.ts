@@ -27,9 +27,13 @@ export const createDiary = async (
   next: NextFunction,
 ) => {
   try {
+    const fileUrls = res.locals.myData;
     // const { emoji,...inputData } = req.body;
-
     const inputData = req.body;
+    inputData.createdDate = '2023-03-29T00:00:00Z';
+    inputData.title = 'aaaaaa';
+    inputData.content = '2ssssssssss';
+    inputData.is_public = 'friend';
     const diaryInput = plainToClass(DiaryValidateDTO, inputData);
 
     // TODO 밸리데이터 수정 필요
@@ -42,7 +46,7 @@ export const createDiary = async (
 
     const { id: userId } = req.user;
 
-    const createdDiary = await createDiaryService(userId, inputData);
+    const createdDiary = await createDiaryService(userId, inputData, fileUrls);
     console.log(createDiary);
     return res.status(createdDiary.status).json(createdDiary);
   } catch (error) {
@@ -156,14 +160,14 @@ export const updateDiary = async (
     const { id: userId } = req.user;
     const { diaryId } = req.params;
     const inputData = req.body;
-
-    const diaryInput = plainToClass(DiaryValidateDTO, inputData);
+    const { deleteData, ...updatedData } = inputData;
+    const diaryInput = plainToClass(DiaryValidateDTO, updatedData);
 
     // TODO 밸리데이터 수정 필요
     const errors = await validate(diaryInput);
     if (errors.length > 0) return res.status(400).json(errors);
     console.log('!!!!!!!!!!!!', errors);
-    const updatedDiary = await updateDiaryService(userId, diaryId, inputData);
+    const updatedDiary = await updateDiaryService(userId, diaryId, updatedData);
 
     return res.status(updatedDiary.status).json(updatedDiary);
   } catch (error) {

@@ -94,7 +94,11 @@ export const getAllUser = async(
         const userId = req.user.id;
 
         // 모든 사용자 정보를 데이터베이스에서 가져오기
-        const allUsers = await prisma.user.findMany();
+        const allUsers = await prisma.user.findMany({
+            include: {
+                filesUpload: true
+            }
+        });
 
         // 페이징 관련 정보 계산
         const totalUsers = allUsers.length;
@@ -141,7 +145,11 @@ export const getMyFriend = async(
         const page: number = parseInt(req.query.page as string) || 1;
         const limit: number = parseInt(req.query.limit as string) || 10;
         const userId = req.user.id;
-        const allUsers = await prisma.user.findMany();
+        const allUsers = await prisma.user.findMany({
+            include: {
+                filesUpload: true
+            }
+        });
         const filteredUsers = [];
         for (const user of allUsers) {
             if (user.id !== userId) { // 현재 사용자의 ID 제외
@@ -175,7 +183,7 @@ export const getMyFriend = async(
             totalPage: totalPage,
             totalItem: filteredUsers.length,
             currentPage: page,
-            limit: limit,
+            limit: limit
         });
     }catch(error){
         next(error);
