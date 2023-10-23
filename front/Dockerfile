@@ -1,29 +1,19 @@
-# Use an official Node.js runtime as the base image
-FROM node:18.17 as build
+# 첫 번째 단계: Node.js를 사용하여 React 애플리케이션 빌드
+FROM node:lts as builder
+WORKDIR /usr/src/app
+COPY package*.json ./
+RUN yarn install
+COPY . .
+RUN yarn build
 
-# Set the working directory
+# 두 번째 단계: Nginx로 빌드된 애플리케이션 서빙
+FROM nginx:latest
+
+# COPY nginx/nginx.conf /etc/nginx
+# COPY nginx/default.conf /etc/nginx/site-available/default
+# RUN ln -s etc/nginx/site-available /etc/nginx/sites-enabled
+
 WORKDIR /app
+COPY --from=builder /usr/src/app/build ./build
 
-# Copy package.json and package-lock.json
-COPY front/package*.json ./
-
-# Install app dependencies
-RUN npm install
-
-# Copy the rest of the application code
-COPY front ./
-
-# Build the React application
-RUN npm run build
-
-# Use an official Nginx runtime as the final image
-FROM nginx:1.21
-
-# Copy the built React application from the build image
-COPY --from=build /app/build /usr/share/nginx/html
-
-# Expose port 80
-EXPOSE 80
-
-# Start Nginx
 CMD ["nginx", "-g", "daemon off;"]

@@ -1,7 +1,7 @@
 {
   "tabWidth": 2,
   "semi": true,
-  "arrowParens": "always",
+  "arrowParents": "always",
   "endOfLine": "lf",
   "embeddedLanguageFormatting": "auto",
   "bracketSpacing": true,
