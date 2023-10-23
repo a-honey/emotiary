@@ -4,7 +4,7 @@ import {
 } from 'class-validator';
 import { Exclude, Expose } from 'class-transformer';
 import 'reflect-metadata';
-import { IUser, fileUpload } from '../types/user';
+import { fileUpload } from '../types/user';
 
 export class ApiResponseDTO<T>{
     data : T;
@@ -18,7 +18,7 @@ export class ApiResponseDTO<T>{
     }
 }
 
-export class userResponseDTO implements IUser{
+export class userResponseDTO{
     @Expose()
     id : string;
 

@@ -7,6 +7,7 @@ import { DiaryResponseDTO, PaginationResponseDTO } from '../dtos/diaryDTO';
 import { plainToClass } from 'class-transformer';
 import { successApiResponseDTO } from '../utils/successResult';
 import { emptyApiResponseDTO } from '../utils/emptyResult';
+import { diaryUpload } from '../middlewares/uploadMiddleware';
 
 const prisma = new PrismaClient();
 
@@ -20,29 +21,11 @@ const prisma = new PrismaClient();
 export const createDiaryService = async (
   authorId: string,
   inputData: Prisma.DiaryCreateInput,
+  fileUrls : string[],
 ) => {
-  // flask 테스트용
-  const text = inputData.content;
 
-  const responseData = await axios.post('http://127.0.0.1:5000/predict', {
-    text: text,
-  });
-  // const emotion = response.data.emoji;
-  const emotion = responseData.data;
-
-  const emotionType = emotion.emoji;
-
-  const emojis = await prisma.emoji.findMany({
-    where: {
-      type: emotionType, // 이모지 테이블의 감정 유형 필드에 따라 변경
-    },
-  });
-
-  const randomEmoji : Emoji = emojis[Math.floor(Math.random() * emojis.length)];
-
-  console.log(randomEmoji);
-  // // 여기까지 flask 테스트용
-  inputData.emoji = randomEmoji.emotion;
+  inputData.emotion = "슬픔";
+  inputData.emoji = "슬픔";
 
   const diary = await prisma.diary.create({
     data: {
@@ -54,9 +37,19 @@ export const createDiaryService = async (
       },
     },
     include: {
-      author: true,
+      author: true
     },
   });
+  const diaryId = diary.id;
+  for (const url of fileUrls) {
+    // For each URL, create a diaryFileUpload record.
+    await prisma.diaryFileUpload.updateMany({
+      where : { url : url },
+      data: {
+        diaryId: diaryId,
+      },
+    });
+  }
   const diaryResponseData = plainToClass(DiaryResponseDTO, diary, {
     excludeExtraneousValues: true,
   });
@@ -82,6 +75,9 @@ export const getAllMyDiariesService = async (
     take: limit,
     where: { authorId: userId },
     orderBy: { createdDate: 'desc' },
+    include : {
+      filesUpload : true,
+    }
   });
 
   // 다이어리 결과 없을 때 빈 배열 값 반환
@@ -346,6 +342,9 @@ export const updateDiaryService = async (
   const updatedDiary = await prisma.diary.update({
     where: { id: diaryId, authorId: userId },
     data: inputData,
+    include : {
+      filesUpload : true,
+    }
   });
 
   if (updatedDiary == null) {
