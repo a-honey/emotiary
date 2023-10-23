@@ -42,7 +42,6 @@ const InputField: React.FC<InputFieldProps> = ({
 const Signin: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const navigate = useNavigate();
   const queryClient = new QueryClient();
   
   const signinMutation = usePutSigninData(queryClient);

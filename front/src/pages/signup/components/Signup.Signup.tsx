@@ -52,7 +52,6 @@ const Signup: React.FC = () => {
     password: '',
   });
   const [confirmPassword, setConfirmPassword] = useState<string>('');
-  const navigate = useNavigate();
   const queryClient = new QueryClient();
 
   const signupMutation = usePutSignupData(queryClient);
