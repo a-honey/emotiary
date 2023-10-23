@@ -36,7 +36,6 @@ export const fileUpload = async (req : IRequest, res : Response, next : NextFunc
                     }
 
                 }
-
                 const filePaths = files.map((file) => `fileUpload/${file.filename}`);
 
                 const { userId } = req.params;
@@ -46,15 +45,17 @@ export const fileUpload = async (req : IRequest, res : Response, next : NextFunc
                         filesUpload : true,
                     }
                 });
-
+                console.log(1);
+                console.log(foundUser);
                 if (!foundUser) {
                     const response = emptyApiResponseDTO();
                     return response;
                 }
 
                 const oldFiles = foundUser.filesUpload;
-
+                console.log(1);
                 if(oldFiles){
+                    console.log(1);
                     oldFiles.forEach(async(file) => {
                         const filenameToDelete = file.url.replace('fileUpload/', '');
                         const filePathToDelete = path.join('./fileUpload', filenameToDelete);
@@ -67,8 +68,9 @@ export const fileUpload = async (req : IRequest, res : Response, next : NextFunc
                         });
                     });
                 }
+                console.log(1);
                 const FilesUpload = filePaths.map((filename) => ({ url: filename, userId : userId }));
-
+                console.log(1);
                 // 기존 파일 업로드를 모두 삭제
                 await prisma.fileUpload.deleteMany({
                     where: {

@@ -37,7 +37,7 @@ export const createDiaryService = async (
       },
     },
     include: {
-      author: true
+      author: true,
     },
   });
   const diaryId = diary.id;
@@ -50,7 +50,14 @@ export const createDiaryService = async (
       },
     });
   }
-  const diaryResponseData = plainToClass(DiaryResponseDTO, diary, {
+  const updatedDiary = await prisma.diary.findUnique({
+    where: { id: diaryId },
+    include: {
+      author: true,
+      filesUpload: true,
+    },
+  });
+  const diaryResponseData = plainToClass(DiaryResponseDTO, updatedDiary, {
     excludeExtraneousValues: true,
   });
 
