@@ -14,16 +14,18 @@ export interface DairyItemType {
 
 // 마이 페이지에서 내 다이어리를 불러옴
 export interface MyDairyItemType {
-  diary_id: number;
+  id: string;
   title: string;
-  dateCreated: Date;
-  emoji: string;
+  is_public: boolean;
+  createdDate: string;
 }
 
 // 캘린더에 들어갈 다이어리를 불러옴
 
 export interface CalendarDiaryItemType {
   id: string;
-  dateCreated: Date;
+  authorId: string;
+  createdDate: string;
+  title: string;
   emoji: string;
 }

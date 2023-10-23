@@ -8,23 +8,33 @@ import {
   startOfWeek,
 } from 'date-fns';
 import { CalendarDiaryItemType } from '../../types/diaryType';
-import DiaryItemShow from '../modal/DiaryItemShow';
+import DiaryItemShow from '../diary/DiaryItemShow';
 import {
   DragDropContext,
   Droppable,
   Draggable,
   DroppableProvided,
 } from 'react-beautiful-dnd';
+import DiaryWriting from '../../pages/main/components/Main.DiaryWriting';
+
+const isTodayDayTile = ({ day }: { day: Date }) => {
+  const today = new Date();
+  return (
+    day.getFullYear() === today.getFullYear() &&
+    day.getMonth() === today.getMonth() &&
+    day.getDate() === today.getDate()
+  );
+};
 
 // 메인페이지 UI 미확정으로 배치만 해둠 추후 변경 예정
 const Day = ({
   currentDate,
   data,
-  handleIsOpenDiaryWriting,
+  isLogin,
 }: {
   currentDate: { year: number; month: number };
   data: CalendarDiaryItemType[];
-  handleIsOpenDiaryWriting?: () => void;
+  isLogin: boolean;
 }) => {
   const week = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -73,15 +83,11 @@ const Day = ({
             >
               {days.map((day: Date, index) => (
                 <div ref={provided.innerRef} className={styles.dayItem}>
+                  {/* 돌리는 날짜가 오늘 년도, 월, 일과 같으면 오늘날의 스타일 */}
                   <div
-                    className={
-                      day.getFullYear() === today.getFullYear() &&
-                      day.getMonth() === today.getMonth() &&
-                      day.getDate() === today.getDate()
-                        ? `${styles.dayItem} ${styles.today}`
-                        : styles.dayItem
-                    }
+                    className={isTodayDayTile({ day }) ? `${styles.today}` : ''}
                   >
+                    {/* 돌리는 날짜가 월이 다르면 회색 스타일 */}
                     <div
                       className={
                         day.getFullYear() === currentDate.year &&
@@ -97,10 +103,10 @@ const Day = ({
                       day.getMonth() + 1 === currentDate.month &&
                       day.getDate() <= today.getDate() && (
                         <DayItem
-                          day={day.getDate()}
+                          day={day}
                           data={data}
                           index={index}
-                          handleIsOpenDiaryWriting={handleIsOpenDiaryWriting}
+                          isLogin={isLogin}
                         />
                       )}
                   </div>
@@ -120,12 +126,12 @@ const DayItem = ({
   day,
   data,
   index,
-  handleIsOpenDiaryWriting,
+  isLogin,
 }: {
-  day: number;
+  day: Date;
   data: CalendarDiaryItemType[];
   index: number;
-  handleIsOpenDiaryWriting?: () => void;
+  isLogin: boolean;
 }) => {
   const [isOpenDiary, setIsOpenDiary] = useState(false);
 
@@ -133,13 +139,12 @@ const DayItem = ({
     setIsOpenDiary((prev) => !prev);
   };
 
-  // day.getDate()와 일치하는 데이터를 찾아서 반환
-  // 매번 데이터를 돌아야 하는가? 생각
-  const filteredData = data.filter(
-    (item) => day === item.dateCreated.getDate(),
+  const filteredData = data?.filter(
+    (item) =>
+      day.getDate().toString() === item?.createdDate.split('T')[0].slice(-2),
   );
 
-  if (filteredData.length > 0) {
+  if (filteredData?.length > 0) {
     const data = filteredData[0];
     return (
       <Draggable draggableId={day.toString()} index={index}>
@@ -148,9 +153,7 @@ const DayItem = ({
             ref={provided.innerRef}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
-            className={
-              snapshot.isDragging ? styles.dayItemDragging : styles.dayItem
-            }
+            className={snapshot.isDragging ? styles.dayItemDragging : ''}
           >
             <div className={styles.emoji} onClick={toggleIsOpenModal}>
               {data.emoji}
@@ -165,14 +168,20 @@ const DayItem = ({
         )}
       </Draggable>
     );
-  } else {
+  } else if (isLogin) {
     // 데이터가 없으면 게시글 작성 버튼
     return (
       <>
-        {handleIsOpenDiaryWriting && (
-          <button className={styles.addBtn} onClick={handleIsOpenDiaryWriting}>
+        {
+          <button className={styles.addBtn} onClick={toggleIsOpenModal}>
             +
           </button>
+        }
+        {isOpenDiary && (
+          <DiaryWriting
+            handleIsOpenDiaryWriting={toggleIsOpenModal}
+            day={day}
+          />
         )}
       </>
     );

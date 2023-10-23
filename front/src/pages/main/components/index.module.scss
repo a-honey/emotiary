@@ -21,3 +21,31 @@
     gap: 20px;
   }
 }
+
+.contentContainer {
+  display: flex;
+  gap: 20px;
+}
+
+.imgContainer {
+  width: 300px;
+  img {
+    background-color: #ededed;
+    border-radius: 5px;
+    width: 300px;
+  }
+}
+
+.emojiSelect {
+  padding: 20px;
+  width: 500px;
+  height: 400px;
+  background-color: white;
+  .emojis {
+    display: flex;
+    justify-content: space-evenly;
+    div {
+      font-size: 100px;
+    }
+  }
+}
