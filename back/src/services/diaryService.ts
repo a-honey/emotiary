@@ -37,8 +37,8 @@ export const createDiaryService = async (
       type: emotionType, // 이모지 테이블의 감정 유형 필드에 따라 변경
     },
   });
-
-  const randomEmoji : Emoji = emojis[Math.floor(Math.random() * emojis.length)];
+  await prisma.$disconnect();
+  const randomEmoji: Emoji = emojis[Math.floor(Math.random() * emojis.length)];
 
   console.log(randomEmoji);
   // // 여기까지 flask 테스트용
