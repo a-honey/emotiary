@@ -5,9 +5,11 @@ import { MyUserDataType, UserItemType } from './useGetUserData.types';
 
 //** USERSPAGE 모든 유저 조회 */
 export const useGetUsersData = ({
+  select,
   page,
   limit,
 }: {
+  select: 'all' | 'friends';
   page: number;
   limit: number;
 }) => {
@@ -16,7 +18,7 @@ export const useGetUsersData = ({
     limit: limit.toString(),
   }).toString();
   return useQuery(
-    queryKeys.usersData({ page }),
+    queryKeys.usersData({ page, select }),
     async () => {
       const response = await instance.get<{
         data: UserItemType[];
@@ -28,7 +30,11 @@ export const useGetUsersData = ({
           currentPage: number;
           limit: number;
         };
-      }>(`/users/allUser?${urlQueryString}`);
+      }>(
+        `${
+          select === 'all' ? '/users/allUser' : '/users/myfriend'
+        }?${urlQueryString}`,
+      );
       return response.data;
     },
     { refetchOnWindowFocus: false },

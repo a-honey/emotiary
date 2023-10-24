@@ -34,7 +34,11 @@ export const queryKeys = {
 
   /* USER */
 
-  usersData: ({ page }: { page: number }) => ['usersData', page],
+  usersData: ({ page, select }: { page: number; select: string }) => [
+    'usersData',
+    page,
+    select,
+  ],
   myUserData: () => ['myUserData'],
   userData: () => ['userData'],
 
