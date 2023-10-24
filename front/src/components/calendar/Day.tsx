@@ -101,7 +101,7 @@ const Day = ({
                     {/* 현재 년월이 같고, 오늘보다 과거이면 내용 추가 */}
                     {day.getFullYear() === currentDate.year &&
                       day.getMonth() + 1 === currentDate.month &&
-                      day.getDate() <= today.getDate() && (
+                      day <= today && (
                         <DayItem
                           day={day}
                           data={data}
