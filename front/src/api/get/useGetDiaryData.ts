@@ -1,4 +1,5 @@
 import { instance } from '../instance';
+import { queryKeys } from '../queryKeys';
 import { useQuery } from '@tanstack/react-query';
 
 //** NETWORKPAGE 모든 다이어리 조회 */
@@ -11,7 +12,7 @@ export const useGetDiarysData = ({
   page: number;
   limit: number;
 }) => {
-  return useQuery(['diarysData', select, page], async () => {
+  return useQuery(queryKeys.diarysData({ select, page }), async () => {
     const urlQueryString = new URLSearchParams({
       select,
       page: page.toString(),
@@ -34,7 +35,7 @@ export const useGetMyDiaryData = ({
   month: number;
 }) => {
   return useQuery(
-    ['myDiaryData', year, month],
+    queryKeys.myDiaryData({ year, month }),
     async () => {
       const urlQueryString = new URLSearchParams({
         year: year.toString(),
@@ -58,7 +59,7 @@ export const useGetMyAllDiarysData = ({
   page: number;
   limit: number;
 }) => {
-  return useQuery(['myAllDiarysData'], async () => {
+  return useQuery(queryKeys.myAllDiarysData(), async () => {
     const urlQueryString = new URLSearchParams({
       page: page.toString(),
       limit: limit.toString(),
@@ -71,7 +72,7 @@ export const useGetMyAllDiarysData = ({
 //** 다이어리 모달 id로 조회 ['diaryData', id] */
 export const useGetDiaryData = ({ id }: { id: string }) => {
   return useQuery(
-    ['diaryData', id],
+    queryKeys.diaryData({ id }),
     async () => {
       const response = await instance.get(`/diary/${id}`);
       return response.data;

@@ -1,23 +1,23 @@
 import { QueryClient, useMutation } from '@tanstack/react-query';
 import { instance } from '../instance';
+import { queryKeys } from '../queryKeys';
 
-export const usePostDiaryData = (
+export const usePutDiaryData = (
   queryClient: QueryClient,
+  id: string,
   handleIsAdding?: () => void,
 ) => {
   const postMutation = useMutation(
     async ({ body }: { body: any }) => {
-      return await instance.post(`/diary`, body);
+      return await instance.put(`/diary/${id}`, body);
     },
     {
-      onSuccess: (res) => {
+      onSuccess: () => {
         handleIsAdding?.();
-        queryClient.invalidateQueries([
-          'myDiaryData',
-          new Date(res.data.data.createdDate).getFullYear(),
-          new Date(res.data.data.createdDate).getMonth() + 1,
-        ]);
-        queryClient.invalidateQueries(['myAllDiarysData']);
+        queryClient.invalidateQueries(
+          queryKeys.diarysData({ select: null, page: null }),
+        );
+        queryClient.invalidateQueries(queryKeys.myAllDiarysData());
       },
       onError: (error) => {
         console.error('useMutation api 요청 에러', error);
@@ -28,14 +28,14 @@ export const usePostDiaryData = (
   return postMutation;
 };
 
-export const usePostCommentData = (
+export const usePutCommentData = (
   queryClient: QueryClient,
   id: string,
   done?: () => void,
 ) => {
   const postMutation = useMutation(
     async ({ body }: { body: any }) => {
-      return await instance.post(`/comments/${id}`, body);
+      return await instance.put(`/comments/${id}`, body);
     },
     {
       onSuccess: () => {

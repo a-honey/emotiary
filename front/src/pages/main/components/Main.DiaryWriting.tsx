@@ -6,7 +6,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import getUserId from '../../../utils/localStorageHandlers';
 import useImgChange from '../../../hooks/useImgChange';
 import EmojiSelect from './Main.EmojiSelect';
-import { usePostDiaryData } from '../../../api/mutation/usePostDiaryData';
+import { usePostDiaryData } from '../../../api/post/usePostDiaryData';
 import { formatDatetoString } from '../../../utils/formatHandlers';
 
 const DIARY_WRITING_INITIAL_DATA = {
