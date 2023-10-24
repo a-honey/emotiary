@@ -30,17 +30,22 @@
     font-size: 25px;
   }
   .navContainer {
-    width: 25%;
+    width: 30%;
     display: flex;
     justify-content: space-between;
     .active {
       background-color: #ededed;
+      font-size: 17px;
     }
     a {
-      width: 140px;
+      width: 200px;
       text-align: center;
       padding: 10px;
       border-radius: 30px;
+      &:hover {
+        font-size: 17px;
+        background-color: map-get($colors, bg);
+      }
     }
   }
   .userInfo {
