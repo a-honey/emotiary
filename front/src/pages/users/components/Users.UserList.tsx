@@ -60,8 +60,6 @@ export default UserList;
 const UserItem = ({ data }: { data: UserItemType }) => {
   const navigator = useNavigate();
 
-  const setToastMessage = useSetRecoilState(toastState);
-
   const { id, profileImage, username, description, latestEmoji, isFriend } =
     data;
 
@@ -69,16 +67,7 @@ const UserItem = ({ data }: { data: UserItemType }) => {
   const postMutation = usePostFriendReqMutation(queryClient);
 
   const handleFriendToast = () => {
-    // 친구요청을 성공했을때
-    setToastMessage((oldState: any) => [
-      ...oldState,
-      { message: `${username}에게 친구요청 성공하였습니다.` },
-    ]);
-    // 이미 했을 때
-    setToastMessage((oldState: any) => [
-      ...oldState,
-      { message: `${username}에게 이미 친구요청을 하였습니다.` },
-    ]);
+    console.log('친구요청');
   };
 
   const handleFriendReqBtnClick = async () => {

@@ -21,8 +21,6 @@ const UserCard = () => {
   const location = useLocation();
   const navigator = useNavigate();
 
-  const setToastMessage = useSetRecoilState(toastState);
-
   const { data: userData, isFetching } = useGetUserData({
     user_id: location.pathname.split('/')[2],
   });
@@ -34,20 +32,7 @@ const UserCard = () => {
   }, [navigator, location]);
 
   const handleFriendBtnClick = () => {
-    handleFriendToast();
-  };
-
-  const handleFriendToast = () => {
-    // 친구요청을 성공했을때
-    setToastMessage((oldState: any) => [
-      ...oldState,
-      { message: `${userData.username}에게 친구요청 성공하였습니다.` },
-    ]);
-    // 이미 했을 때
-    setToastMessage((oldState: any) => [
-      ...oldState,
-      { message: `${userData.username}에게 이미 친구요청을 하였습니다.` },
-    ]);
+    console.log();
   };
 
   return (
