@@ -7,6 +7,7 @@ const withLogin = (InnerComponent: React.FC) => {
     const navigator = useNavigate();
 
     const userId = getUserId;
+
     useEffect(() => {
       if (!userId) {
         alert('로그인이 필요합니다.');
@@ -15,7 +16,7 @@ const withLogin = (InnerComponent: React.FC) => {
       }
     }, [userId, navigator]);
 
-    return <InnerComponent />;
+    return userId ? <InnerComponent /> : null;
   };
 };
 
