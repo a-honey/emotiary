@@ -1,10 +1,43 @@
+@import '../../../styles/variables.scss';
+
 .myCard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   img {
     width: 400px;
     height: 400px;
   }
-  div {
+  .show {
     display: flex;
+    flex-direction: column;
+    gap: 20px;
+    div {
+      display: grid;
+      grid-template-columns: 100px 300px;
+      gap: 10px;
+    }
+    h2 {
+      font-size: 20px;
+    }
+    p {
+      height: 100px;
+    }
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  div {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    align-items: center;
+  }
+  .btns {
+    display: flex;
+    align-items: normal;
     flex-direction: column;
     gap: 20px;
   }
@@ -16,11 +49,11 @@
   display: flex;
   gap: 20px;
   flex-direction: column;
-  padding: 20px;
+  padding: 40px;
   .listBlock {
     gap: 20px;
     display: grid;
-    grid-template-rows: repeat(15, 1fr);
+    grid-template-rows: repeat(15, 25px);
   }
   h2 {
     width: 100%;
@@ -30,6 +63,15 @@
 }
 
 .diaryItem {
+  background-color: map-get($colors, bg);
+  border-radius: 5px;
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  gap: 40px;
+  grid-template-columns: 0.2fr 2fr 1fr;
+  div {
+    font-size: 20px;
+  }
+  .index {
+    text-align: right;
+  }
 }

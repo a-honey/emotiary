@@ -1,9 +1,9 @@
 import React from 'react';
-import styles from './index.module.scss';
+import styles from './Pagination.module.scss';
 
 const Pagination = ({
-  totalPage,
-  currentPage,
+  totalPage = 1,
+  currentPage = 1,
   handlePage,
 }: {
   totalPage: number;
@@ -45,26 +45,24 @@ const Pagination = ({
   };
 
   return (
-    <div className={styles.pagenation}>
-      <ul>
-        <li
-          className={currentPage === 1 ? styles.disabled : ''}
-          onClick={handleLeftClick}
-        >
-          &lt;
-        </li>
+    <ul className={styles.pagenation}>
+      <li
+        className={currentPage === 1 ? styles.disabled : ''}
+        onClick={handleLeftClick}
+      >
+        &lt;
+      </li>
 
-        {/* 페이지 번호 */}
-        {renderPageNumbers()}
+      {/* 페이지 번호 */}
+      {renderPageNumbers()}
 
-        <li
-          className={currentPage === totalPage ? styles.disabled : ''}
-          onClick={handleRightClick}
-        >
-          &gt;
-        </li>
-      </ul>
-    </div>
+      <li
+        className={currentPage === totalPage ? styles.disabled : ''}
+        onClick={handleRightClick}
+      >
+        &gt;
+      </li>
+    </ul>
   );
 };
 
