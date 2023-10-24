@@ -132,23 +132,34 @@ export const getOtherUsersDiary = async (
   res: Response,
   next: NextFunction,
 ) => {
-  try {
-    const { id: userId } = req.user;
-    const { select } = req.query; // friend or all
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 8;
-    const { emotion } = req.query;
+  // try {
+  //   const { id: userId } = req.user;
+  //   const { select } = req.query; // friend or all
+  //   const page = Number(req.query.page) || 1;
+  //   const limit = Number(req.query.limit) || 8;
+  //   const { emotion } = req.query;
+  //   // diary 데이터 가져오기
+  //   const otherUsersDiary =
+  //     select == 'friend'
+  //       ? await getFriendsDiaryService(userId, page, limit, emotion as string)
+  //       : await getAllDiaryService(userId, page, limit, emotion as string);
+  //   return res.status(otherUsersDiary.status).json(otherUsersDiary);
+  // } catch (error) {
+  //   next(error);
+  // }
 
-    // diary 데이터 가져오기
-    const otherUsersDiary =
-      select == 'friend'
-        ? await getFriendsDiaryService(userId, page, limit, emotion as string)
-        : await getAllDiaryService(userId, page, limit, emotion as string);
-
-    return res.status(otherUsersDiary.status).json(otherUsersDiary);
-  } catch (error) {
-    next(error);
-  }
+  const { id: userId } = req.user;
+  const { select } = req.query; // friend or all
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 8;
+  const { emotion } = req.query;
+  // diary 데이터 가져오기
+  throw new Error('으앙');
+  const otherUsersDiary =
+    select == 'friend'
+      ? await getFriendsDiaryService(userId, page, limit, emotion as string)
+      : await getAllDiaryService(userId, page, limit, emotion as string);
+  return res.status(otherUsersDiary.status).json(otherUsersDiary);
 };
 
 export const updateDiary = async (

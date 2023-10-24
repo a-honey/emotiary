@@ -10,6 +10,7 @@ import {
 } from '../controllers/diaryController';
 import { Response, Router } from 'express';
 import { diaryUpload, postDiaryUpload } from '../middlewares/uploadMiddleware';
+import { wrapAsyncController } from '../utils/wrapper';
 
 const diaryRouter = Router();
 
@@ -45,7 +46,11 @@ diaryRouter.post('/', jwtAuthentication, postDiaryUpload, createDiary);
 
 // 네트워크 페이지 (Done)
 // /diary/views/users?select&page&limit&emotion
-diaryRouter.get('/views/users', jwtAuthentication, getOtherUsersDiary);
+diaryRouter.get(
+  '/views/users',
+  jwtAuthentication,
+  wrapAsyncController(getOtherUsersDiary),
+);
 
 // 캘린더 페이지 (Done)
 // /diary/views/date/:userId?year&month

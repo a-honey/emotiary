@@ -8,7 +8,7 @@ RUN ["/usr/local/bin/npm","install"]
 RUN ["/usr/local/bin/npm","run","build"]
 # RUN ["/usr/local/bin/npx", "prisma", "generate"]
 
-FROM node:lts
+FROM node:alpine
 
 WORKDIR /app
 
