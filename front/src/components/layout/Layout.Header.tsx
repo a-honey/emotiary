@@ -18,6 +18,8 @@ const locations = [
 const Header = () => {
   // 로컬 스토리지에서 토큰을 가져와서 로그인 상태 확인
   const token = localStorage.getItem('token');
+  const userImg = localStorage.getItem('userImg');
+
   const isLogin = token !== null;
 
   const messages = useRecoilValue(toastState);
@@ -41,6 +43,7 @@ const Header = () => {
     setIsOpenFriendReqList(false);
   }, [location.pathname]);
 
+  useEffect(() => {}, [userImg]);
   return (
     <>
       <header className={styles.header}>
