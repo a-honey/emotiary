@@ -3,9 +3,19 @@ import { useQuery } from '@tanstack/react-query';
 import { queryKeys } from '../queryKeys';
 
 //** USERSPAGE 모든 유저 조회 */
-export const useGetUsersData = () => {
+export const useGetUsersData = ({
+  page,
+  limit,
+}: {
+  page: number;
+  limit: number;
+}) => {
+  const urlQueryString = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+  }).toString();
   return useQuery(queryKeys.usersData(), async () => {
-    const response = await instance.get('/users/allUser');
+    const response = await instance.get(`/users/allUser?${urlQueryString}`);
     return response.data;
   });
 };

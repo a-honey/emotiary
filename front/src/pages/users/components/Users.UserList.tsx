@@ -1,15 +1,11 @@
 import React, { useState } from 'react';
 import styles from './index.module.scss';
-import { handleImgError } from '../../../utils/imgHandlers';
 import { useNavigate } from 'react-router-dom';
 import { useGetUsersData } from '../../../api/get/useGetUserData';
 import ImageComponent from '../../../components/ImageComponent';
-import { instance } from '../../../api/instance';
 import Pagination from '../../../components/Pagination';
 import { usePostFriendReqMutation } from '../../../api/post/usePostFriendData';
 import { QueryClient } from '@tanstack/react-query';
-import { useRecoilState, useSetRecoilState } from 'recoil';
-import { toastState } from '../../../atoms/toastState';
 
 interface UserItemType {
   id: string;
@@ -23,7 +19,7 @@ interface UserItemType {
 const UserList = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { data, isFetching } = useGetUsersData();
+  const { data, isFetching } = useGetUsersData({ page: currentPage, limit: 8 });
 
   /** 페이지네이션의 현재 페이지 업데이트 함수 */
   const handleCurrentPage = (page: number) => {
@@ -41,9 +37,9 @@ const UserList = () => {
         {isFetching ? (
           <div>로딩중</div>
         ) : (
-          data?.data?.map((item: UserItemType) => (
-            <UserItem data={item} key={item.id} />
-          ))
+          data?.data
+            .slice(0, 8) // api 수정 후 삭제 예정
+            .map((item: UserItemType) => <UserItem data={item} key={item.id} />)
         )}
       </div>
       <Pagination

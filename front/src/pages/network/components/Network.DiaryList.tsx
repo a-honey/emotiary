@@ -49,15 +49,6 @@ const DiaryList = () => {
     setSelect(newSelect);
   };
 
-  /*
-  useEffect(() => {
-    if (!userId) {
-      navigator('/intro');
-    }
-  }, [userId, navigator]);
-  */
-
-  // checkbox로 select가 변경되면 변경된 select로 데이터를 새로 받아옴
   useEffect(() => {
     refetch();
   }, [refetch]);
