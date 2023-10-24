@@ -1,7 +1,7 @@
 import { instance } from '../instance';
 import { useQuery } from '@tanstack/react-query';
 import { queryKeys } from '../queryKeys';
-import { MyUserDataType } from './useGetUserData.types';
+import { MyUserDataType, UserItemType } from './useGetUserData.types';
 
 //** USERSPAGE 모든 유저 조회 */
 export const useGetUsersData = ({
@@ -15,10 +15,24 @@ export const useGetUsersData = ({
     page: page.toString(),
     limit: limit.toString(),
   }).toString();
-  return useQuery(queryKeys.usersData(), async () => {
-    const response = await instance.get(`/users/allUser?${urlQueryString}`);
-    return response.data;
-  });
+  return useQuery(
+    queryKeys.usersData({ page }),
+    async () => {
+      const response = await instance.get<{
+        data: UserItemType[];
+        message: string;
+        status: number;
+        pageInfo: {
+          totalItem: number;
+          totalPage: number;
+          currentPage: number;
+          limit: number;
+        };
+      }>(`/users/allUser?${urlQueryString}`);
+      return response.data;
+    },
+    { refetchOnWindowFocus: false },
+  );
 };
 
 //** MYPAGE 모든 유저 조회 */

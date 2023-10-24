@@ -81,7 +81,11 @@ const MyCard = () => {
     <section className={styles.myCard}>
       <img
         ref={imgRef}
-        src={`${process.env.REACT_APP_BASE_URL}/${userInfoData.filesUpload[0].url}`}
+        src={
+          userInfoData?.filesUpload[0]?.url
+            ? `${process.env.REACT_APP_BASE_URL}/${userInfoData.filesUpload[0].url}`
+            : 'usure'
+        }
         alt={`${username}의 프로필사진`}
         onError={handleImgError}
       />

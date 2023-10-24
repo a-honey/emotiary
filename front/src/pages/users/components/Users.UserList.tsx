@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './index.module.scss';
 import { useNavigate } from 'react-router-dom';
 import { useGetUsersData } from '../../../api/get/useGetUserData';
@@ -6,15 +6,7 @@ import ImageComponent from '../../../components/ImageComponent';
 import Pagination from '../../../components/Pagination';
 import { usePostFriendReqMutation } from '../../../api/post/usePostFriendData';
 import { QueryClient } from '@tanstack/react-query';
-
-interface UserItemType {
-  id: string;
-  username: string;
-  description: string;
-  profileImage: string;
-  latestEmoji: string;
-  isFriend: boolean;
-}
+import { UserItemType } from '../../../api/get/useGetUserData.types';
 
 const UserList = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -37,14 +29,14 @@ const UserList = () => {
         {isFetching ? (
           <div>로딩중</div>
         ) : (
-          data?.data
-            .slice(0, 8) // api 수정 후 삭제 예정
-            .map((item: UserItemType) => <UserItem data={item} key={item.id} />)
+          data?.data?.map((item: UserItemType) => (
+            <UserItem data={item} key={item.id} />
+          ))
         )}
       </div>
       <Pagination
-        totalPage={data?.totalPage}
-        currentPage={data?.currentPage}
+        totalPage={data?.pageInfo.totalPage}
+        currentPage={currentPage}
         handlePage={handleCurrentPage}
       />
     </div>
@@ -56,7 +48,7 @@ export default UserList;
 const UserItem = ({ data }: { data: UserItemType }) => {
   const navigator = useNavigate();
 
-  const { id, profileImage, username, description, latestEmoji, isFriend } =
+  const { id, username, description, latestEmoji, isFriend, filesUpload } =
     data;
 
   const queryClient = new QueryClient();
@@ -65,7 +57,6 @@ const UserItem = ({ data }: { data: UserItemType }) => {
   const handleFriendReqBtnClick = async () => {
     postMutation.mutate({ id });
   };
-
   return (
     <div
       className={styles.item}
@@ -74,12 +65,15 @@ const UserItem = ({ data }: { data: UserItemType }) => {
       }}
     >
       <div>
-        <ImageComponent src={profileImage} alt={`${username}의 프로필사진`} />
+        <ImageComponent
+          src={filesUpload[filesUpload.length - 1]?.url ?? null}
+          alt={`${username}의 프로필사진`}
+        />
         <div className={styles.emoji}>{latestEmoji}</div>
       </div>
       <div className={styles.content}>
-        <div className={styles.name}>
-          <div>{username}</div>
+        <div>
+          <div className={styles.name}>{username}</div>
           {!isFriend && (
             <button
               className={`doneBtn ${styles.friendReqBtn}`}
@@ -89,7 +83,7 @@ const UserItem = ({ data }: { data: UserItemType }) => {
             </button>
           )}
         </div>
-        <div>{description}</div>
+        <div className={styles.description}>{description}</div>
       </div>
     </div>
   );
