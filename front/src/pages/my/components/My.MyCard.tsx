@@ -8,15 +8,7 @@ import { formDataInstance, instance } from '../../../api/instance';
 import useImgChange from '../../../hooks/useImgChange';
 import ChangePW from './My.ChangePW';
 import { usePutUserData } from '../../../api/put/usePutUserData';
-
-interface UserInfoType {
-  email: string;
-  username: string;
-  id: string;
-  description: string;
-  latestEmoji: string;
-  alarmSetting: string;
-}
+import { MyUserDataType } from '../../../api/get/useGetUserData.types';
 
 const USER_INFO_INITIAL_DATA = {
   email: '',
@@ -25,15 +17,19 @@ const USER_INFO_INITIAL_DATA = {
   description: '',
   latestEmoji: '',
   alarmSetting: '1',
+  filesUpload: [{ url: '' }],
 };
 
-// formdata img api 요청 따로할지 미정
 const MyCard = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isOpenChangePW, setIsOpenChangePW] = useState(false);
 
   const toggleIsOpenChangePW = () => {
     setIsOpenChangePW((prev) => !prev);
+  };
+
+  const toggleIsEditing = () => {
+    setIsEditing((prev) => !prev);
   };
 
   const { data: userData, isFetching } = useGetMyUserData();
@@ -48,7 +44,7 @@ const MyCard = () => {
 
   const queryClient = useQueryClient();
 
-  const putMutation = usePutUserData(queryClient, id, toggleIsOpenChangePW);
+  const putMutation = usePutUserData(queryClient, id, toggleIsEditing);
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,6 +59,7 @@ const MyCard = () => {
     body.append('description', userInfoData.description);
     body.append('alarmSetting', userInfoData?.alarmSetting?.toString() ?? 1);
 
+    console.log(body);
     putMutation.mutate({
       body,
     });
@@ -74,7 +71,7 @@ const MyCard = () => {
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
-    setUserInfoData((prevData: UserInfoType) => ({
+    setUserInfoData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
@@ -84,8 +81,8 @@ const MyCard = () => {
     <section className={styles.myCard}>
       <img
         ref={imgRef}
-        src={'/user_none.png'}
-        alt="의 프로필사진"
+        src={`${process.env.REACT_APP_BASE_URL}/${userInfoData.filesUpload[0].url}`}
+        alt={`${username}의 프로필사진`}
         onError={handleImgError}
       />
       <div>{latestEmoji}</div>

@@ -1,6 +1,7 @@
 import { instance } from '../instance';
 import { useQuery } from '@tanstack/react-query';
 import { queryKeys } from '../queryKeys';
+import { MyUserDataType } from './useGetUserData.types';
 
 //** USERSPAGE 모든 유저 조회 */
 export const useGetUsersData = ({
@@ -24,14 +25,7 @@ export const useGetUsersData = ({
 export const useGetMyUserData = () => {
   return useQuery(queryKeys.myUserData(), async () => {
     const response = await instance.get<{
-      data: {
-        id: string;
-        email: string;
-        username: string;
-        description: string;
-        latestEmoji: string;
-        alarmSetting: string;
-      };
+      data: MyUserDataType;
     }>('/users/current');
     return response.data.data;
   });

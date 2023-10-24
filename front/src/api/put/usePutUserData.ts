@@ -5,7 +5,7 @@ import { queryKeys } from '../queryKeys';
 export const usePutUserData = (
   queryClient: QueryClient,
   id: string,
-  handleIsAdding?: () => void,
+  fn?: () => void,
 ) => {
   const putMutation = useMutation(
     async ({ body }: { body: any }) => {
@@ -13,7 +13,7 @@ export const usePutUserData = (
     },
     {
       onSuccess: () => {
-        handleIsAdding?.();
+        fn?.();
         queryClient.invalidateQueries(queryKeys.myUserData());
       },
       onError: (error) => {
