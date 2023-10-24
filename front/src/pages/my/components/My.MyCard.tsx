@@ -39,7 +39,9 @@ const MyCard = () => {
   const { data: userData, isFetching } = useGetMyUserData();
 
   // 받아온 캐시데이터를 담아야함
-  const [userInfoData, setUserInfoData] = useState(USER_INFO_INITIAL_DATA);
+  const [userInfoData, setUserInfoData] = useState(
+    userData ?? USER_INFO_INITIAL_DATA,
+  );
 
   const body = new FormData();
 
@@ -77,13 +79,6 @@ const MyCard = () => {
       [name]: value,
     }));
   };
-
-  useEffect(() => {
-    if (userData) {
-      // userData를 받아오면 userInfoData를 업데이트
-      setUserInfoData(userData);
-    }
-  }, [userData]);
 
   return (
     <section className={styles.myCard}>

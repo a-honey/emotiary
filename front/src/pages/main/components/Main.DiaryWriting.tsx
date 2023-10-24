@@ -7,7 +7,7 @@ import getUserId from '../../../utils/localStorageHandlers';
 import useImgChange from '../../../hooks/useImgChange';
 import EmojiSelect from './Main.EmojiSelect';
 import { usePostDiaryData } from '../../../api/mutation/usePostDiaryData';
-import { formatDate } from '../../../utils/formatHandlers';
+import { formatDatetoString } from '../../../utils/formatHandlers';
 
 const DIARY_WRITING_INITIAL_DATA = {
   title: '',
@@ -51,7 +51,11 @@ const DiaryWriting = ({
 
     setIsEmojiSelectOpen(true);
     postMutation.mutate({
-      body: { ...formData, createdDate: formatDate(day), emotion: 'happiness' },
+      body: {
+        ...formData,
+        createdDate: formatDatetoString(day),
+        emotion: 'happiness',
+      },
     });
   };
 

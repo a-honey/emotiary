@@ -8,7 +8,7 @@ import { instance } from '../../../api/instance';
 import Pagination from '../../../components/Pagination';
 import { usePostFriendReqMutation } from '../../../api/mutation/usePostFriendData';
 import { QueryClient } from '@tanstack/react-query';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { toastState } from '../../../atoms/toastState';
 
 interface UserItemType {
@@ -60,7 +60,7 @@ export default UserList;
 const UserItem = ({ data }: { data: UserItemType }) => {
   const navigator = useNavigate();
 
-  const [state, setState] = useRecoilState(toastState);
+  const setToastMessage = useSetRecoilState(toastState);
 
   const { id, profileImage, username, description, latestEmoji, isFriend } =
     data;
@@ -70,12 +70,12 @@ const UserItem = ({ data }: { data: UserItemType }) => {
 
   const handleFriendToast = () => {
     // 친구요청을 성공했을때
-    setState((oldState: any) => [
+    setToastMessage((oldState: any) => [
       ...oldState,
       { message: `${username}에게 친구요청 성공하였습니다.` },
     ]);
     // 이미 했을 때
-    setState((oldState: any) => [
+    setToastMessage((oldState: any) => [
       ...oldState,
       { message: `${username}에게 이미 친구요청을 하였습니다.` },
     ]);

@@ -5,7 +5,7 @@ import { useGetUserData } from '../../../api/get/useGetUserData';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styles from './UserId.UserCard.module.scss';
 import getUserId from '../../../utils/localStorageHandlers';
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { toastState } from '../../../atoms/toastState';
 interface UserInfoType {
   id: string;
@@ -21,7 +21,7 @@ const UserCard = () => {
   const location = useLocation();
   const navigator = useNavigate();
 
-  const [state, setState] = useRecoilState(toastState);
+  const setToastMessage = useSetRecoilState(toastState);
 
   const { data: userData, isFetching } = useGetUserData({
     user_id: location.pathname.split('/')[2],
@@ -39,12 +39,12 @@ const UserCard = () => {
 
   const handleFriendToast = () => {
     // 친구요청을 성공했을때
-    setState((oldState: any) => [
+    setToastMessage((oldState: any) => [
       ...oldState,
       { message: `${userData.username}에게 친구요청 성공하였습니다.` },
     ]);
     // 이미 했을 때
-    setState((oldState: any) => [
+    setToastMessage((oldState: any) => [
       ...oldState,
       { message: `${userData.username}에게 이미 친구요청을 하였습니다.` },
     ]);

@@ -12,9 +12,13 @@ export const useGetDiarysData = ({
   limit: number;
 }) => {
   return useQuery(['diarysData', select, page], async () => {
-    const response = await instance.get(
-      `/diary/views/users?select=${select}&page=${page}&limit=${limit}`,
-    );
+    const urlQueryString = new URLSearchParams({
+      select,
+      page: page.toString(),
+      limit: limit.toString(),
+    }).toString();
+
+    const response = await instance.get(`/diary/views/users?${urlQueryString}`);
     return response.data;
   });
 };
@@ -32,8 +36,13 @@ export const useGetMyDiaryData = ({
   return useQuery(
     ['myDiaryData', year, month],
     async () => {
+      const urlQueryString = new URLSearchParams({
+        year: year.toString(),
+        month: month.toString(),
+      }).toString();
+
       const response: any = await instance.get(
-        `/diary/views/date/${user_id}?year=${year}&month=${month}`,
+        `/diary/views/date/${user_id}?${urlQueryString}`,
       );
       return response.data;
     },
@@ -50,9 +59,11 @@ export const useGetMyAllDiarysData = ({
   limit: number;
 }) => {
   return useQuery(['myAllDiarysData'], async () => {
-    const response = await instance.get(
-      `/diary/views?page=${page}&limit=${limit}`,
-    );
+    const urlQueryString = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+    });
+    const response = await instance.get(`/diary/views?${urlQueryString}`);
     return response.data;
   });
 };

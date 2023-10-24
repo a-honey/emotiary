@@ -14,8 +14,8 @@ export const usePostDiaryData = (
         handleIsAdding?.();
         queryClient.invalidateQueries([
           'myDiaryData',
-          res.data.data.createdDate.split('T')[0].split('-')[0],
-          res.data.data.createdDate.split('T')[0].split('-')[1],
+          new Date(res.data.data.createdDate).getFullYear(),
+          new Date(res.data.data.createdDate).getMonth() + 1,
         ]);
         queryClient.invalidateQueries(['myAllDiarysData']);
       },

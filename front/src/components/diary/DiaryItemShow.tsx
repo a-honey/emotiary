@@ -65,9 +65,9 @@ const DiaryItemShow = ({
             </div>
             <div className={styles.diaryInfo}>
               <div>
-                {diaryData.createdDate.split('T')[0].split('-')[0]}년{' '}
-                {diaryData.createdDate.split('T')[0].split('-')[1]}월{' '}
-                {diaryData.createdDate.split('T')[0].split('-')[2]}일{' '}
+                {`${new Date(diaryData.createdDate).getFullYear()}년 ${
+                  new Date(diaryData.createdDate).getMonth() + 1
+                }월 ${new Date(diaryData.createdDate).getDate()}일`}
               </div>
               <div
                 className={styles.userInfo}
