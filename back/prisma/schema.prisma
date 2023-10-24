@@ -77,8 +77,8 @@ model Diary {
   title         String
   content       String
   is_public     String
-  emoji         String
-  emotion       String
+  emoji         String?
+  emotion       String?
   filesUpload   diaryFileUpload[]
   favoriteCount Int      @default(value: 0)
   createdAt     DateTime @default(now())

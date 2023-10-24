@@ -8,6 +8,8 @@ import {
   getAllMyDiariesService,
   updateDiaryService,
   getFriendsDiaryService,
+  mailService,
+  selectedEmoji,
 } from '../services/diaryService';
 import { IRequest } from 'types/user';
 import { plainToClass } from 'class-transformer';
@@ -189,6 +191,42 @@ export const deleteDiary = async (
   } catch (error) {
     //TODO ErrorGenerator 생성 후 status code랑 error.meta 동적으로 할당해주기
     console.log('!!!!!!!!!!!!!!!!!!!!!', error.meta);
+    next(error);
+  }
+};
+
+export const sendRecommendationEmail = async (
+  req: IRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  try{
+    const { diaryId } = req.params;
+    const { username } = req.user;
+    const { friendEmail } = req.body;
+
+    const sendMail = await mailService(friendEmail, diaryId, username);
+
+    return res.status(200).json(sendMail);
+  }catch(error){
+    next(error);
+  }
+}
+
+export const selectEmotion = async(
+  req: IRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  try{
+    const { diaryId } = req.params;
+    const { id : userId } = req.user;
+    const { selectedEmotion } = req.body;
+
+    const updatedDiary = await selectedEmoji(selectedEmotion, diaryId, userId);
+
+    return res.status(updatedDiary.status).json(updatedDiary);
+  }catch(error){
     next(error);
   }
 };

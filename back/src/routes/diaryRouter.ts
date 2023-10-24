@@ -7,6 +7,8 @@ import {
   getDiaryByDate,
   getOtherUsersDiary,
   getAllMyDiaries,
+  sendRecommendationEmail,
+  selectEmotion,
 } from '../controllers/diaryController';
 import { Response, Router } from 'express';
 import { diaryUpload, postDiaryUpload } from '../middlewares/uploadMiddleware';
@@ -42,6 +44,12 @@ const diaryRouter = Router();
 
 // 다이어리 생성
 diaryRouter.post('/', jwtAuthentication, postDiaryUpload, createDiary);
+
+// 일기 초대 메일?
+diaryRouter.post('/recommendation/:diaryId', jwtAuthentication, sendRecommendationEmail);
+
+// 감정 선택?
+diaryRouter.put('/selectEmotion/:diaryId', jwtAuthentication, selectEmotion);
 
 // 네트워크 페이지 (Done)
 // /diary/views/users?select&page&limit&emotion
