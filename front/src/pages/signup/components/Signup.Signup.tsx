@@ -58,6 +58,15 @@ const Signup: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
+    if (name === 'username') {
+      const han = /^[가-힣]+$/;
+      if (!han.test(value)) {
+        alert('한글만 입력해주세요.');
+        return;
+      }
+    }
+
     if (name === 'confirmPassword') {
       setConfirmPassword(value);
     } else {
@@ -84,7 +93,7 @@ const Signup: React.FC = () => {
             id="username"
             name="username"
             type="text"
-            placeholder="이름을 한글/영어로만 입력하세요"
+            placeholder="이름을 한글로만 입력하세요"
             value={userInfo.username}
             onChange={handleChange}
             boxStyle={styles.box1}
