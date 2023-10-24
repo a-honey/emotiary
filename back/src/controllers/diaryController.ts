@@ -207,7 +207,7 @@ export const sendRecommendationEmail = async (
 
     const sendMail = await mailService(friendEmail, diaryId, username);
 
-    return res.status(200).json(sendMail);
+    return res.status(sendMail.status).json(sendMail);
   }catch(error){
     next(error);
   }

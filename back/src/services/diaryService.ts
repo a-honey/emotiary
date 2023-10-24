@@ -393,13 +393,15 @@ export const mailService = async(friendEmail : string, diaryId : string, usernam
     console.error('다이어리를 찾을 수 없습니다.');
     return;
   }
-
+  const currentUrl = `http://localhost:5001`;
   await sendEmail(
     friendEmail,
     `추천 유저: ${username}`,
-    `다음 다이어리를 추천드립니다: ${diary}`,
+    `다음 다이어리를 추천드립니다: ${currentUrl}`,
     ``,
   )
+  const response = successApiResponseDTO(null);
+  return response;
 }
 
 export const selectedEmoji = async(selectEmotion : string, diaryId : string, userId : string) => {
