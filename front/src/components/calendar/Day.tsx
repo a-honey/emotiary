@@ -135,28 +135,13 @@ const DayItem = ({
 }) => {
   const [isOpenDiary, setIsOpenDiary] = useState(false);
 
+  if (!isLogin) {
+    return null;
+  }
+
   const toggleIsOpenModal = () => {
     setIsOpenDiary((prev) => !prev);
   };
-
-  if (isLogin) {
-    // 데이터가 없으면 게시글 작성 버튼
-    return (
-      <>
-        {
-          <button className={styles.addBtn} onClick={toggleIsOpenModal}>
-            +
-          </button>
-        }
-        {isOpenDiary && (
-          <DiaryWriting
-            handleIsOpenDiaryWriting={toggleIsOpenModal}
-            day={day}
-          />
-        )}
-      </>
-    );
-  }
 
   const filteredData = data?.filter(
     (item) =>
@@ -188,4 +173,17 @@ const DayItem = ({
       </Draggable>
     );
   }
+
+  return (
+    <>
+      {
+        <button className={styles.addBtn} onClick={toggleIsOpenModal}>
+          +
+        </button>
+      }
+      {isOpenDiary && (
+        <DiaryWriting handleIsOpenDiaryWriting={toggleIsOpenModal} day={day} />
+      )}
+    </>
+  );
 };
