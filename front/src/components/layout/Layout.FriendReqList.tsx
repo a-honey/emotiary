@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './index.module.scss';
 import { useGetFriendData } from '../../api/get/useGetFriendData';
+import { ReceivedUserDataType } from '../../api/get/useGetFriendData.types';
 
 const FriendReqList = () => {
   const [isReqList, setIsReqList] = useState(true);
@@ -24,11 +25,15 @@ const FriendReqList = () => {
         </button>
       </div>
       <div>
-        {data?.data?.map((item: any) => {
+        {data?.data.map((item: ReceivedUserDataType) => {
           if (isReqList) {
-            return <ReqItem item={item} key={item.id} />;
+            return (
+              <ReqItem item={item.receivedUser} key={item.receivedUser.id} />
+            );
           } else {
-            return <ResItem item={item} key={item.id} />;
+            return (
+              <ResItem item={item.receivedUser} key={item.receivedUser.id} />
+            );
           }
         })}
       </div>
@@ -38,10 +43,10 @@ const FriendReqList = () => {
 
 export default FriendReqList;
 
-const ResItem = ({ item }: { item: any }) => {
+const ResItem = ({ item }: { item: ReceivedUserDataType['receivedUser'] }) => {
   return (
     <div className={styles.reqItemContainer}>
-      <div>username </div>
+      <div>{item.username}</div>
       <div className={styles.btns}>
         <button>수락</button>
         <button>거절</button>

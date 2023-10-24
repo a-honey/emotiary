@@ -1,11 +1,7 @@
-export interface ResponseFriendType {
-  data: ReceivedUserDataType[];
-  message: string;
-  status: number;
+export interface ReceivedUserDataType {
+  receivedUser: { id: string; username: string; filesUpload: string[] };
 }
 
 export interface ReceivedUserDataType {
-  id: string;
-  username: string;
-  profileImage: string | null;
+  receivedUser: { id: string; username: string; filesUpload: string[] };
 }
