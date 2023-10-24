@@ -5,6 +5,8 @@ import bcrypt from "bcrypt";
 import { plainToClass } from "class-transformer";
 import { userResponseDTO } from "../dtos/userDTO";
 import { successApiResponseDTO } from "../utils/successResult";
+import { userCalculatePageInfo } from '../utils/pageInfo';
+import { PaginationResponseDTO } from "../dtos/diaryDTO";
 
 const prisma = new PrismaClient();
 
@@ -57,6 +59,103 @@ export const myInfo = async (userId: string) => {
     throw error;
   }
 };
+
+export const getAllUsers = async (userId : string, page : number, limit : number) => {
+   // 모든 사용자 정보를 데이터베이스에서 가져오기
+   const allUsers = await prisma.user.findMany({
+    skip : (page - 1) * limit,
+    take : limit,
+    include: {
+        filesUpload: true
+    }
+});
+
+for (const user of allUsers) {
+
+    const areFriends = await areUsersFriends(userId, user.id);
+    user.isFriend = areFriends;
+
+
+    const latestDiary = await prisma.diary.findFirst({
+        where : {
+            authorId : user.id
+        },
+        orderBy : {
+            createdAt : 'desc'
+        }
+    });
+    if(latestDiary) {
+        user.latestEmoji = latestDiary.emoji;
+    }
+}
+
+const { totalItem, totalPage } = await userCalculatePageInfo(limit, {});
+
+const pageInfo = { totalItem, totalPage, currentPage: page, limit };
+
+const userResponseDataList = allUsers.map((user) =>
+    plainToClass(userResponseDTO, user, { excludeExtraneousValues: true }),
+  );
+
+  const response = new PaginationResponseDTO(
+    200,
+    userResponseDataList,
+    pageInfo,
+    '성공',
+  );
+
+  return response;
+}
+
+export const getMyFriends = async (userId : string, page : number, limit : number) => {
+const allUsers = await prisma.user.findMany({
+  include: {
+      filesUpload: true
+  }
+});
+const filteredUsers = [];
+for (const user of allUsers) {
+    if (user.id !== userId) {
+        const areFriends = await areUsersFriends(userId, user.id);
+        user.isFriend = areFriends;
+
+        const latestDiary = await prisma.diary.findFirst({
+            where: {
+                authorId: user.id,
+            },
+            orderBy: {
+                createdAt: 'desc',
+            },
+        });
+
+        if (latestDiary) {
+            user.latestEmoji = latestDiary.emoji;
+        }
+
+        if (areFriends) {
+            // 친구인 경우만 결과에 포함
+            filteredUsers.push(user);
+        }
+    }
+}
+const totalItem = filteredUsers.length;
+const totalPage = Math.ceil(totalItem / limit);
+
+const pageInfo = { totalItem, totalPage, currentPage: page, limit };
+
+const userResponseDataList = filteredUsers.map((user) =>
+    plainToClass(userResponseDTO, user, { excludeExtraneousValues: true }),
+  );
+
+  const response = new PaginationResponseDTO(
+    200,
+    userResponseDataList,
+    pageInfo,
+    '성공',
+  );
+
+  return response;
+}
 
 export const getUserInfo = async (userId: string) => {
   try {

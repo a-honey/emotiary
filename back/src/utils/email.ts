@@ -14,6 +14,13 @@ export const sendEmail = async (
   try {
     // 이메일을 전송하기 위한 transporter(전송자) 객체를 생성합니다.
     const transporter = nodemailer.createTransport({
+      pool : true,
+      maxConnections : 1,
+      secure : false,
+      requireTLS : true,
+      tls : {
+        rejectUnauthorized : false,
+      },
       service: email_service,
       auth: {
         user: user,

@@ -11,3 +11,13 @@ export const calculatePageInfo = async (limit: number, where: any) => {
 
   return { totalItem, totalPage };
 };
+
+export const userCalculatePageInfo = async (limit: number, where: any) => {
+  const totalItem = await prisma.user.count({
+    where,
+  });
+
+  const totalPage = Math.ceil(totalItem / limit);
+
+  return { totalItem, totalPage };
+};
