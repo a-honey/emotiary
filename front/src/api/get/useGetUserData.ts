@@ -13,7 +13,16 @@ export const useGetUsersData = () => {
 //** MYPAGE 모든 유저 조회 */
 export const useGetMyUserData = () => {
   return useQuery(queryKeys.myUserData(), async () => {
-    const response = await instance.get('/users/current');
+    const response = await instance.get<{
+      data: {
+        id: string;
+        email: string;
+        username: string;
+        description: string;
+        latestEmoji: string;
+        alarmSetting: string;
+      };
+    }>('/users/current');
     return response.data.data;
   });
 };

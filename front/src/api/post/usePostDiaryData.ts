@@ -1,13 +1,15 @@
 import { QueryClient, useMutation } from '@tanstack/react-query';
 import { instance } from '../instance';
 import { queryKeys } from '../queryKeys';
+import { CommentBodyType, DiaryBodyType } from './usePostDiaryData.types';
+import { Error } from '../types';
 
 export const usePostDiaryData = (
   queryClient: QueryClient,
   handleIsAdding?: () => void,
 ) => {
   const postMutation = useMutation(
-    async ({ body }: { body: any }) => {
+    async ({ body }: { body: DiaryBodyType }) => {
       return await instance.post(`/diary`, body);
     },
     {
@@ -21,7 +23,7 @@ export const usePostDiaryData = (
         );
         queryClient.invalidateQueries(queryKeys.myAllDiarysData());
       },
-      onError: (error) => {
+      onError: (error: Error) => {
         console.error('useMutation api 요청 에러', error);
       },
     },
@@ -36,7 +38,7 @@ export const usePostCommentData = (
   done?: () => void,
 ) => {
   const postMutation = useMutation(
-    async ({ body }: { body: any }) => {
+    async ({ body }: { body: CommentBodyType }) => {
       return await instance.post(`/comments/${id}`, body);
     },
     {
@@ -44,7 +46,7 @@ export const usePostCommentData = (
         queryClient.invalidateQueries(queryKeys.diaryData({ id }));
         done?.();
       },
-      onError: (error) => {
+      onError: (error: Error) => {
         console.error('useMutation api 요청 에러', error);
       },
     },

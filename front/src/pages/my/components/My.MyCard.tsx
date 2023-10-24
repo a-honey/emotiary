@@ -15,7 +15,7 @@ interface UserInfoType {
   id: string;
   description: string;
   latestEmoji: string;
-  alarmSetting: number;
+  alarmSetting: string;
 }
 
 const USER_INFO_INITIAL_DATA = {
@@ -24,7 +24,7 @@ const USER_INFO_INITIAL_DATA = {
   id: '',
   description: '',
   latestEmoji: '',
-  alarmSetting: 1,
+  alarmSetting: '1',
 };
 
 // formdata img api 요청 따로할지 미정
@@ -43,8 +43,6 @@ const MyCard = () => {
     userData ?? USER_INFO_INITIAL_DATA,
   );
 
-  const body = new FormData();
-
   const { id, email, username, description, latestEmoji, alarmSetting } =
     userInfoData;
 
@@ -54,6 +52,8 @@ const MyCard = () => {
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const body = new FormData();
 
     if (imgContainer) {
       body.append('filesUpload', imgContainer);
@@ -143,7 +143,7 @@ const MyCard = () => {
                 const confirmDelete =
                   window.confirm('변경사항이 저장되지 않았습니다.');
                 if (confirmDelete) {
-                  setUserInfoData(userData);
+                  setUserInfoData(userData!);
                   setIsEditing(false);
                   return;
                 } else {
