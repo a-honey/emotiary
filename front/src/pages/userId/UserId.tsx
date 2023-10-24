@@ -4,6 +4,7 @@ import Calendar from '../../components/calendar/Calendar';
 import { useGetMyDiaryData } from '../../api/get/useGetDiaryData';
 import { useLocation } from 'react-router-dom';
 import useCalendar from '../../hooks/useCalendar';
+import withLogin from '../../components/withLogin';
 
 const UserIdPage: React.FC = () => {
   const location = useLocation();
@@ -31,4 +32,4 @@ const UserIdPage: React.FC = () => {
   );
 };
 
-export default UserIdPage;
+export default withLogin(UserIdPage);
