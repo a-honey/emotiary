@@ -7,7 +7,7 @@ import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { formDataInstance, instance } from '../../../api/instance';
 import useImgChange from '../../../hooks/useImgChange';
 import ChangePW from './My.ChangePW';
-import { usePutUserData } from '../../../api/mutation/usePutUserData';
+import { usePutUserData } from '../../../api/put/usePutUserData';
 
 interface UserInfoType {
   email: string;

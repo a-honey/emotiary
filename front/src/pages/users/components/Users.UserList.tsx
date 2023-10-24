@@ -6,13 +6,13 @@ import { useGetUsersData } from '../../../api/get/useGetUserData';
 import ImageComponent from '../../../components/ImageComponent';
 import { instance } from '../../../api/instance';
 import Pagination from '../../../components/Pagination';
-import { usePostFriendReqMutation } from '../../../api/mutation/usePostFriendData';
+import { usePostFriendReqMutation } from '../../../api/post/usePostFriendData';
 import { QueryClient } from '@tanstack/react-query';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { toastState } from '../../../atoms/toastState';
 
 interface UserItemType {
-  id: number;
+  id: string;
   username: string;
   description: string;
   profileImage: string;
@@ -66,17 +66,8 @@ const UserItem = ({ data }: { data: UserItemType }) => {
   const queryClient = new QueryClient();
   const postMutation = usePostFriendReqMutation(queryClient);
 
-  const handleFriendToast = () => {
-    console.log('친구요청');
-  };
-
   const handleFriendReqBtnClick = async () => {
-    try {
-      await instance.post(`/friend/req/${id}`);
-      alert('친구요청완료');
-    } catch {
-      console.error('친구요청실패');
-    }
+    postMutation.mutate({ id });
   };
 
   return (

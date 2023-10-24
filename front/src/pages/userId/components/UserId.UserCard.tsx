@@ -7,6 +7,8 @@ import styles from './UserId.UserCard.module.scss';
 import getUserId from '../../../utils/localStorageHandlers';
 import { useSetRecoilState } from 'recoil';
 import { toastState } from '../../../atoms/toastState';
+import { usePostFriendReqMutation } from '../../../api/post/usePostFriendData';
+import { QueryClient } from '@tanstack/react-query';
 interface UserInfoType {
   id: string;
   username: string;
@@ -25,6 +27,10 @@ const UserCard = () => {
     user_id: location.pathname.split('/')[2],
   });
 
+  const queryClient = new QueryClient();
+  const postMutation = usePostFriendReqMutation(queryClient);
+
+  // 로그인 사용자의 경우 마이페이지로 이동
   useEffect(() => {
     if (location.pathname.split('/')[2] === getUserId) {
       navigator('/mypage');
@@ -32,7 +38,7 @@ const UserCard = () => {
   }, [navigator, location]);
 
   const handleFriendBtnClick = () => {
-    console.log();
+    postMutation.mutate({ id: userData.id });
   };
 
   return (
