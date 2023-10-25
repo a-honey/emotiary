@@ -18,6 +18,7 @@ interface InputFieldProps {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   boxStyle: string;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -28,6 +29,7 @@ const InputField: React.FC<InputFieldProps> = ({
   value,
   onChange,
   boxStyle,
+  onBlur,
 }) => (
   <div className={styles.formGroup}>
     <label htmlFor={id}></label>
@@ -40,6 +42,7 @@ const InputField: React.FC<InputFieldProps> = ({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        onBlur={onBlur}
       />
     </div>
   </div>
@@ -56,16 +59,54 @@ const Signup: React.FC = () => {
 
   const signupMutation = usePutSignupData(queryClient);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const signupInputForms = [
+    {
+      id: 'username',
+      name: 'username',
+      type: 'text',
+      placeholder: '이름을 한글로만 입력하세요',
+      value: userInfo.username,
+      boxStyle: styles.box1,
+    },
+    {
+      id: 'email',
+      name: 'email',
+      type: 'email',
+      placeholder: '이메일을 입력하세요',
+      value: userInfo.email,
+      boxStyle: styles.box1,
+    },
+    {
+      id: 'password',
+      name: 'password',
+      type: 'password',
+      placeholder: '패스워드를 입력하세요',
+      value: userInfo.password,
+      boxStyle: styles.box2,
+    },
+    {
+      id: 'confirmPassword',
+      name: 'confirmPassword',
+      type: 'password',
+      placeholder: '패스워드를 다시 입력하세요',
+      value: confirmPassword,
+      boxStyle: styles.box2,
+    },
+  ];
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
     if (name === 'username') {
       const han = /^[가-힣]+$/;
       if (!han.test(value)) {
         alert('한글만 입력해주세요.');
-        return;
       }
     }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
 
     if (name === 'confirmPassword') {
       setConfirmPassword(value);
@@ -86,51 +127,26 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <>
-      <div className={styles.centerContainer}>
-        <form onSubmit={handleSubmit} className={styles.signupForm}>
+    <div className={styles.centerContainer}>
+      <form onSubmit={handleSubmit} className={styles.signupForm}>
+        {signupInputForms.map((input, index) => (
           <InputField
-            id="username"
-            name="username"
-            type="text"
-            placeholder="이름을 한글로만 입력하세요"
-            value={userInfo.username}
+            key={index}
+            id={input.id}
+            name={input.name}
+            type={input.type}
+            placeholder={input.placeholder}
+            value={input.value}
             onChange={handleChange}
-            boxStyle={styles.box1}
+            boxStyle={input.boxStyle}
+            onBlur={handleBlur}
           />
-          <InputField
-            id="email"
-            name="email"
-            type="email"
-            placeholder="이메일을 입력하세요"
-            value={userInfo.email}
-            onChange={handleChange}
-            boxStyle={styles.box1}
-          />
-          <InputField
-            id="password"
-            name="password"
-            type="password"
-            placeholder="패스워드를 입력하세요"
-            value={userInfo.password}
-            onChange={handleChange}
-            boxStyle={styles.box2}
-          />
-          <InputField
-            id="confirmPassword"
-            name="confirmPassword"
-            type="password"
-            placeholder="패스워드를 다시 입력하세요"
-            value={confirmPassword}
-            onChange={handleChange}
-            boxStyle={styles.box2}
-          />
-          <button type="submit" className={styles.submitButton}>
-            SIGN UP
-          </button>
-        </form>
-      </div>
-    </>
+        ))}
+        <button type="submit" className={styles.submitButton}>
+          SIGN UP
+        </button>
+      </form>
+    </div>
   );
 };
 
