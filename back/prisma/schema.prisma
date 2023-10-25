@@ -9,9 +9,9 @@ datasource db {
 
 model User {
   id           String   @id @default(uuid())
-  username     String   @unique
+  username     String?
   email        String   @unique
-  password     String
+  password     String?
   description  String?
   filesUpload fileUpload[]
   updatedAt    DateTime @default(now()) // 기본값 추가
@@ -28,6 +28,11 @@ model User {
   latestEmoji String?
   isFriend    Boolean   @default(false)
   alarmSetting Int      @default(1)
+
+  // 이메일인증
+  verificationToken String?
+  verificationTokenExpires DateTime?
+  isVerified Boolean?
 }
 
 model fileUpload{

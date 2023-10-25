@@ -20,6 +20,7 @@ import { PrismaClient } from '@prisma/client';
 import { userValidateDTO } from "../dtos/userDTO";
 import { plainToClass } from "class-transformer";
 import { emptyApiResponseDTO } from "../utils/emptyResult";
+import { emailToken, sendEmail } from "../utils/email";
 
 const prisma = new PrismaClient();
 
@@ -200,6 +201,15 @@ export const deleteUser = async(
 
         const userId = req.params.userId;
 
+        const user = await prisma.user.findUnique({
+            where: { id: userId }, // userId를 적절한 값으로 대체
+        });
+        
+        if (!user) {
+            // 사용자를 찾을 수 없는 경우 적절한 오류 처리를 수행
+            return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+        }
+
         // deleteUserService 함수를 사용하여 사용자 삭제
         const message = await deleteUserService(userId);
 
@@ -311,3 +321,96 @@ export const loginCallback = (req : IRequest, res :Response) => {
     res.redirect('/');
 }
 
+//1111111111
+export const emailLink = async (req : IRequest, res : Response) => {
+    const { email } = req.body;
+
+    const user = await prisma.user.create({
+        data : {
+            email,
+            isVerified : false,
+        },
+    });
+
+    const result = emailToken();
+    console.log(result);
+    await prisma.user.update({
+        where : {
+            id : user.id
+        },
+        data : {
+            verificationToken : result.token,
+            verificationTokenExpires : result.expires,
+        },
+    });
+
+    const verifyUrl = `http://localhost:5001/api/users/verifyEmail/${result.token}`;
+    
+    await sendEmail(
+        email,
+        "이메일 인증",
+        "",
+        `<p>눌러 주세요</p>
+        <p><a href = "${verifyUrl}">Verify Email</a></p>
+        <p>${result.expires}</p>`
+    );
+
+    res.json({ message: '이메일을 확인해주세요' });
+}
+
+//2222222222222
+export const verifyEmail = async (req : IRequest, res : Response) => {
+    const { token } = req.params;
+    console.log(1);
+    const user = await prisma.user.findFirst({
+        where : {
+            verificationToken : token,
+            verificationTokenExpires : {
+                gte : new Date(),
+            },
+        },
+    });
+
+    if(!user){
+        return res.status(400).json({message : '토큰이 유효하지 않습니다.'});
+    }
+
+    await prisma.user.update({
+        where : {
+            id : user.id,
+        },
+        data : {
+            isVerified : true,
+            verificationToken : null,
+            verificationTokenExpires : null,
+        },
+    })
+    res.redirect('/api/users/verified');
+}
+
+export const emailVerified = (req : IRequest, res : Response) => {
+    res.send('이메일이 성공적으로 인증되었습니다.');
+}
+//3333333333333
+
+export const testEmail = async (req : IRequest, res : Response) => {
+    const { email, username, password } = req.body;
+
+    const user = await prisma.user.findUnique({
+        where: { email },
+    });
+
+    if (!user || !user.isVerified) {
+        return res.status(400).json({ message: '이메일 인증이 필요합니다.' });
+    }
+
+    await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          username,
+          password,
+        },
+    });
+    
+    res.json({ message: '회원가입이 완료되었습니다.' });
+}

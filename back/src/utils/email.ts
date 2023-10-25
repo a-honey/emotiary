@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import * as crypto from 'crypto';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -21,7 +22,7 @@ export const sendEmail = async (
       tls : {
         rejectUnauthorized : false,
       },
-      service: email_service,
+      service : email_service,
       auth: {
         user: user,
         pass: pass,
@@ -37,14 +38,22 @@ export const sendEmail = async (
     };
 
     // 설정한 이메일 옵션을 사용하여 이메일을 전송합니다.
-    await transporter.sendMail(mailOptions);
+    // await transporter.sendMail(mailOptions);
+    await transporter.sendMail(mailOptions, function(error, info){
+      if(error){
+        console.log(error);
+      }else{
+        console.log('email sent: ' + info.response);
+      }
+    }); 
   } catch (error) {
     throw error;
   }
 };
 
-export const generateRandomNumber = function (min : number, max : number) {
-  const randNum = Math.floor(Math.random() * (max - min +1)) +min;
-
-  return randNum;
-}
+export const emailToken = () => {
+  const token = crypto.randomBytes(20).toString('hex');
+  const expires = new Date();
+  expires.setHours(expires.getHours() + 1);
+  return { token, expires };
+};
