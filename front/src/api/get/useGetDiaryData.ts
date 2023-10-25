@@ -1,6 +1,7 @@
 import { instance } from '../instance';
 import { queryKeys } from '../queryKeys';
 import { useQuery } from '@tanstack/react-query';
+import { DiaryItemType } from './useGetDiaryData.types';
 
 //** NETWORKPAGE 모든 다이어리 조회 */
 export const useGetDiarysData = ({
@@ -39,19 +40,26 @@ export const useGetMyDiaryData = ({
   month: number;
 }) => {
   return useQuery(
-    queryKeys.myDiaryData({ year, month }),
+    queryKeys.calendarDiaryData({ user_id, year, month }),
     () => {
       const urlQueryString = new URLSearchParams({
         year: year.toString(),
         month: month.toString(),
       }).toString();
 
-      const response: any = instance.get(
-        `/diary/views/date/${user_id}?${urlQueryString}`,
-      );
-      return response.data;
+      return instance
+        .get(`/diary/views/date/${user_id}?${urlQueryString}`)
+        .then((res) => {
+          if (res.data.data) {
+            return res.data.data;
+          } else {
+            return [];
+          }
+        });
     },
-    { select: (data) => data.data },
+    {
+      initialData: [],
+    },
   );
 };
 
@@ -63,16 +71,26 @@ export const useGetMyAllDiarysData = ({
   page: number;
   limit: number;
 }) => {
-  return useQuery(queryKeys.myAllDiarysData(), () => {
-    const urlQueryString = new URLSearchParams({
-      page: page.toString(),
-      limit: limit.toString(),
-    });
+  return useQuery(
+    queryKeys.myAllDiarysData(),
+    () => {
+      const urlQueryString = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+      });
 
-    return instance
-      .get(`/diary/views?${urlQueryString}`)
-      .then((res) => res.data);
-  });
+      return instance.get(`/diary/views?${urlQueryString}`).then((res) => {
+        if (res.data) {
+          return res.data;
+        } else {
+          return [];
+        }
+      });
+    },
+    {
+      initialData: [],
+    },
+  );
 };
 
 //** 다이어리 모달 id로 조회 ['diaryData', id] */

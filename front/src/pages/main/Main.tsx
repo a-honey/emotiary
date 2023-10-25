@@ -9,7 +9,7 @@ const MainPage: React.FC = () => {
   const { currentDate, handleBeforeMonth, handleNextMonth } = useCalendar();
 
   const { data: myDiaryData, isFetching } = useGetMyDiaryData({
-    user_id: `${localStorage.getItem('userId')}`,
+    user_id: localStorage.getItem('userId')!,
     year: currentDate.year,
     month: currentDate.month,
   });

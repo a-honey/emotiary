@@ -17,11 +17,15 @@ export const queryKeys = {
     return ['diarysData', select, page, emotion];
   },
   //** MAINPAGE 나의 캘린더별, USERIDPAGE 캘린더 다이어리 조회 */
-  myDiaryData: ({ year, month }: { year: number; month: number }) => [
-    'myDiaryData',
+  calendarDiaryData: ({
+    user_id,
     year,
     month,
-  ],
+  }: {
+    user_id: string;
+    year: number;
+    month: number;
+  }) => ['calendarDiaryData', user_id, year, month],
   //** 마이페이지 모든  다이어리 조회 */
   myAllDiarysData: () => ['myAllDiarysData'],
   //** 다이어리 모달 id로 조회

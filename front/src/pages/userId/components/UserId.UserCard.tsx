@@ -21,7 +21,6 @@ interface UserInfoType {
 
 const UserCard = () => {
   const location = useLocation();
-  const navigator = useNavigate();
 
   const { data: userData, isFetching } = useGetUserData({
     user_id: location.pathname.split('/')[2],
@@ -31,11 +30,6 @@ const UserCard = () => {
   const postMutation = usePostFriendReqMutation(queryClient);
 
   // 로그인 사용자의 경우 마이페이지로 이동
-  useEffect(() => {
-    if (location.pathname.split('/')[2] === getUserId) {
-      navigator('/mypage');
-    }
-  }, [navigator, location]);
 
   const handleFriendBtnClick = () => {
     postMutation.mutate({ id: userData.id });

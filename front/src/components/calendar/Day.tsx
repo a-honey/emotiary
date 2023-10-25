@@ -16,6 +16,7 @@ import {
   DroppableProvided,
 } from 'react-beautiful-dnd';
 import DiaryWriting from '../../pages/main/components/Main.DiaryWriting';
+import { DiaryItemType } from '../../api/get/useGetDiaryData.types';
 
 const isTodayDayTile = ({ day }: { day: Date }) => {
   const today = new Date();
@@ -33,7 +34,7 @@ const Day = ({
   isLogin,
 }: {
   currentDate: { year: number; month: number };
-  data: CalendarDiaryItemType[];
+  data?: DiaryItemType[];
   isLogin: boolean;
 }) => {
   const week = ['일', '월', '화', '수', '목', '금', '토'];
@@ -99,7 +100,8 @@ const Day = ({
                       {day.getDate()}
                     </div>
                     {/* 현재 년월이 같고, 오늘보다 과거이면 내용 추가 */}
-                    {day.getFullYear() === currentDate.year &&
+                    {data &&
+                      day.getFullYear() === currentDate.year &&
                       day.getMonth() + 1 === currentDate.month &&
                       day <= today && (
                         <DayItem
@@ -122,6 +124,9 @@ const Day = ({
 
 export default Day;
 
+// 데이터가 있는 경우 데이터를 보여줌
+// 로그인이 없는 경우 아무것도 반환하지 않음
+// 로그인인 경우 + 반환
 const DayItem = ({
   day,
   data,
@@ -129,60 +134,68 @@ const DayItem = ({
   isLogin,
 }: {
   day: Date;
-  data: CalendarDiaryItemType[];
+  data: DiaryItemType[];
   index: number;
   isLogin: boolean;
 }) => {
   const [isOpenDiary, setIsOpenDiary] = useState(false);
 
-  if (!isLogin) {
-    return null;
-  }
-
   const toggleIsOpenModal = () => {
     setIsOpenDiary((prev) => !prev);
   };
 
-  const filteredData = data?.filter(
-    (item) =>
-      day.getDate().toString() === item?.createdDate.split('T')[0].slice(-2),
-  );
+  const filteredData = data?.filter((item) => {
+    const diaryDate = new Date(item?.createdDate);
+    return (
+      day.getFullYear() === diaryDate.getFullYear() &&
+      day.getMonth() === diaryDate.getMonth() &&
+      day.getDate() === diaryDate.getDate()
+    );
+  });
 
   if (filteredData?.length > 0) {
     const data = filteredData[0];
     return (
-      <>
-        <Draggable draggableId={day.toString()} index={index}>
-          {(provided, snapshot) => (
-            <div
-              ref={provided.innerRef}
-              {...provided.draggableProps}
-              {...provided.dragHandleProps}
-              className={snapshot.isDragging ? styles.dayItemDragging : ''}
-            >
-              <div className={styles.emoji} onClick={toggleIsOpenModal}>
-                {data.emoji}
-              </div>
+      <Draggable draggableId={day.toString()} index={index}>
+        {(provided, snapshot) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            className={snapshot.isDragging ? styles.dayItemDragging : ''}
+          >
+            <div className={styles.emoji} onClick={toggleIsOpenModal}>
+              {data.emoji}
             </div>
-          )}
-        </Draggable>
+            {isOpenDiary && (
+              <DiaryItemShow
+                toggleIsOpenModal={toggleIsOpenModal}
+                id={data.id}
+              />
+            )}
+          </div>
+        )}
+      </Draggable>
+    );
+  } else {
+    // 데이터가 없으면 게시글 작성 버튼
+    if (!isLogin) {
+      return null;
+    }
+    return (
+      <>
+        {
+          <button className={styles.addBtn} onClick={toggleIsOpenModal}>
+            +
+          </button>
+        }
         {isOpenDiary && (
-          <DiaryItemShow toggleIsOpenModal={toggleIsOpenModal} id={data.id} />
+          <DiaryWriting
+            handleIsOpenDiaryWriting={toggleIsOpenModal}
+            day={day}
+          />
         )}
       </>
     );
   }
-
-  return (
-    <>
-      {
-        <button className={styles.addBtn} onClick={toggleIsOpenModal}>
-          +
-        </button>
-      }
-      {isOpenDiary && (
-        <DiaryWriting handleIsOpenDiaryWriting={toggleIsOpenModal} day={day} />
-      )}
-    </>
-  );
 };

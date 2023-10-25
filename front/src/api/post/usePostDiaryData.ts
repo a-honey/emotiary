@@ -16,7 +16,8 @@ export const usePostDiaryData = (
       onSuccess: (res) => {
         handleIsAdding?.();
         queryClient.invalidateQueries(
-          queryKeys.myDiaryData({
+          queryKeys.calendarDiaryData({
+            user_id: localStorage.getItem('userId')!,
             year: new Date(res.data.data.createdDate).getFullYear(),
             month: new Date(res.data.data.createdDate).getMonth() + 1,
           }),
