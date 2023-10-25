@@ -26,7 +26,7 @@ export const chat = (server: HttpServer) => {
   const io = new SocketIoServer(server, {
     path: '/chat',
     cors: {
-      origin: 'http://localhost:3000', // Replace with your actual frontend URL
+      origin: 'http://34.64.87.254:5001/api', // Replace with your actual frontend URL
       methods: ['GET', 'POST'],
     },
   });
