@@ -10,8 +10,20 @@ import { emptyApiResponseDTO } from '../utils/emptyResult';
 import { diaryUpload } from '../middlewares/uploadMiddleware';
 import { generateError } from '../utils/errorGenerator';
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 
+const getDb = async () => {
+  const prisma = new PrismaClient();
+
+  return {
+    prisma,
+    [Symbol.asyncDispose]: async () => {
+      await prisma.$disconnect().then(() => {
+        console.log('DB 끊겼어용');
+      });
+    },
+  };
+};
 /**
  * 다이어리 작성
  * @param title
@@ -25,6 +37,7 @@ export const createDiaryService = async (
   inputData: Prisma.DiaryCreateInput,
   fileUrls: string[],
 ) => {
+  await using db = await getDb();
   inputData.emotion = '슬픔,당황,기쁨';
 
   // const responseData = await axios.post('https://kdt-ai-8-team02.elicecoding.com:5000/predict', {
@@ -51,7 +64,7 @@ export const createDiaryService = async (
     };
   }
 
-  const diary = await prisma.diary.create({
+  const diary = await db.prisma.diary.create({
     data: diaryData,
     include: {
       author: true,
@@ -79,7 +92,8 @@ export const getAllMyDiariesService = async (
   page: number,
   limit: number,
 ) => {
-  const diaries = await prisma.diary.findMany({
+  await using db = await getDb();
+  const diaries = await db.prisma.diary.findMany({
     skip: (page - 1) * limit,
     take: limit,
     where: { authorId: userId },
@@ -128,8 +142,8 @@ export const getDiaryByMonthService = async (
 ) => {
   const ltMonth = month == 12 ? 1 : month + 1;
   const ltYear = month == 12 ? year + 1 : year;
-
-  const diary = await prisma.diary.findMany({
+  await using db = await getDb();
+  const diary = await db.prisma.diary.findMany({
     where: {
       authorId: userId,
       createdDate: {
@@ -165,7 +179,8 @@ export const getDiaryByDiaryIdService = async (
   userId: string,
   diaryId: string,
 ) => {
-  const diary = await prisma.diary.findUnique({
+  await using db = await getDb();
+  const diary = await db.prisma.diary.findUnique({
     where: { id: diaryId },
     include: { author: true, filesUpload: true },
   });
@@ -209,6 +224,7 @@ export const getFriendsDiaryService = async (
   limit: number,
   emotion: string | undefined,
 ) => {
+  await using db = await getDb();
   // 친구 목록 읽어오기
   const friends = await getMyWholeFriends(userId);
 
@@ -238,7 +254,7 @@ export const getFriendsDiaryService = async (
   }
 
   // 친구들의 다이어리 가져오기 (최신순)
-  const friendsDiary = await prisma.diary.findMany({
+  const friendsDiary = await db.prisma.diary.findMany({
     ...friendsDiaryQuery,
     orderBy: { createdDate: 'desc' },
   });
@@ -277,6 +293,7 @@ export const getAllDiaryService = async (
   limit: number,
   emotion: string,
 ) => {
+  await using db = await getDb();
   //TODO controller로 넘기기 refactoring
   const friends = await getMyWholeFriends(userId);
 
@@ -313,7 +330,7 @@ export const getAllDiaryService = async (
   if (emotion != 'all') (allDiaryQuery.where as any).emotion = emotion;
 
   // 친구 글 + 모르는 사람의 all 글 포함
-  const allDiary = await prisma.diary.findMany({
+  const allDiary = await db.prisma.diary.findMany({
     ...allDiaryQuery,
     orderBy: { createdDate: 'desc' },
   });
@@ -348,7 +365,8 @@ export const updateDiaryService = async (
   diaryId: string,
   inputData: Prisma.DiaryUpdateInput,
 ) => {
-  const updatedDiary = await prisma.diary.update({
+  await using db = await getDb();
+  const updatedDiary = await db.prisma.diary.update({
     where: { id: diaryId, authorId: userId },
     data: inputData,
     include: {
@@ -369,7 +387,8 @@ export const updateDiaryService = async (
 };
 
 export const deleteDiaryService = async (userId: string, diaryId: string) => {
-  const deletedDiary = await prisma.diary.delete({
+  await using db = await getDb();
+  const deletedDiary = await db.prisma.diary.delete({
     where: { id: diaryId, authorId: userId },
   });
 
