@@ -1,8 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import getUserId from '../utils/localStorageHandlers';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
-import { userIdState } from '../atoms/userIdState';
 
 const withLogin = (InnerComponent: React.FC) => {
   return () => {
