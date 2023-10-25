@@ -50,10 +50,6 @@ const DiaryList = () => {
     setSelect(newSelect);
   };
 
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
-
   return (
     <div className={styles.diaryBlock}>
       <div className={styles.nav}>
