@@ -42,7 +42,12 @@ const diaryRouter = Router();
  */
 
 // 다이어리 생성
-diaryRouter.post('/', jwtAuthentication, postDiaryUpload, createDiary);
+diaryRouter.post(
+  '/',
+  jwtAuthentication,
+  postDiaryUpload,
+  wrapAsyncController(createDiary),
+);
 
 // 네트워크 페이지 (Done)
 // /diary/views/users?select&page&limit&emotion
@@ -54,11 +59,19 @@ diaryRouter.get(
 
 // 캘린더 페이지 (Done)
 // /diary/views/date/:userId?year&month
-diaryRouter.get('/views/date/:userId', jwtAuthentication, getDiaryByDate);
+diaryRouter.get(
+  '/views/date/:userId',
+  jwtAuthentication,
+  wrapAsyncController(getDiaryByDate),
+);
 
 // 내 글 전체 가져오기 (Done)
 // /diary/views?page&limit
-diaryRouter.get('/views', jwtAuthentication, getAllMyDiaries);
+diaryRouter.get(
+  '/views',
+  jwtAuthentication,
+  wrapAsyncController(getAllMyDiaries),
+);
 
 // 다이어리 생성
 // /diary/:userId
@@ -67,8 +80,8 @@ diaryRouter.get('/views', jwtAuthentication, getAllMyDiaries);
 diaryRouter
   .route('/:diaryId')
   // 다이어리 하나 가져오기
-  .get(jwtAuthentication, getDiaryByDiaryId)
-  .put(jwtAuthentication, diaryUpload, updateDiary)
-  .delete(jwtAuthentication, deleteDiary);
+  .get(jwtAuthentication, wrapAsyncController(getDiaryByDiaryId))
+  .put(jwtAuthentication, diaryUpload, wrapAsyncController(updateDiary))
+  .delete(jwtAuthentication, wrapAsyncController(deleteDiary));
 
 export default diaryRouter;

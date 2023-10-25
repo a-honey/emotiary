@@ -41,6 +41,8 @@ export class AuthorInDiaryDTO {
   @Expose()
   email: string;
 
+  @Expose()
+  filesUpload: diaryFileUpload[];
 }
 
 // exclude 사용해주기
@@ -77,7 +79,7 @@ export class DiaryResponseDTO {
   author: AuthorInDiaryDTO;
 
   @Expose()
-  filesUpload : diaryFileUpload[];
+  filesUpload: diaryFileUpload[];
 }
 
 export class DiaryValidateDTO {
@@ -91,7 +93,7 @@ export class DiaryValidateDTO {
   title: string;
 
   @IsOptional()
-  @IsString()
+  @IsString({ message: '문자 입력 해주세요' })
   content: string;
 
   @IsOptional()

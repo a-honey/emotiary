@@ -8,6 +8,7 @@ import { plainToClass } from 'class-transformer';
 import { successApiResponseDTO } from '../utils/successResult';
 import { emptyApiResponseDTO } from '../utils/emptyResult';
 import { diaryUpload } from '../middlewares/uploadMiddleware';
+import { generateError } from '../utils/errorGenerator';
 
 const prisma = new PrismaClient();
 
@@ -18,46 +19,47 @@ const prisma = new PrismaClient();
  * @param authorId
  * @returns diary (새롭게 생성된 diary Object)
  */
+
 export const createDiaryService = async (
   authorId: string,
   inputData: Prisma.DiaryCreateInput,
-  fileUrls : string[],
+  fileUrls: string[],
 ) => {
+  inputData.emotion = '슬픔,당황,기쁨';
 
-  inputData.emotion = "슬픔";
-  inputData.emoji = "슬픔";
+  // const responseData = await axios.post('https://kdt-ai-8-team02.elicecoding.com:5000/predict', {
+  //   text: inputData.content,
+  // });
+
+  // inputData.emotion = responseData.data;
+
+  const diaryData = {
+    ...inputData,
+    author: {
+      connect: {
+        id: authorId,
+      },
+    },
+  };
+
+  // fileUrls 배열에 데이터가 있는 경우에만 filesUpload를 추가
+  if (fileUrls && fileUrls.length > 0) {
+    diaryData.filesUpload = {
+      create: fileUrls.map((url) => ({
+        url,
+      })),
+    };
+  }
 
   const diary = await prisma.diary.create({
-    data: {
-      ...inputData,
-      author: {
-        connect: {
-          id: authorId,
-        },
-      },
-    },
-    include: {
-      author: true,
-    },
-  });
-  const diaryId = diary.id;
-  for (const url of fileUrls) {
-    // For each URL, create a diaryFileUpload record.
-    await prisma.diaryFileUpload.updateMany({
-      where : { url : url },
-      data: {
-        diaryId: diaryId,
-      },
-    });
-  }
-  const updatedDiary = await prisma.diary.findUnique({
-    where: { id: diaryId },
+    data: diaryData,
     include: {
       author: true,
       filesUpload: true,
     },
   });
-  const diaryResponseData = plainToClass(DiaryResponseDTO, updatedDiary, {
+
+  const diaryResponseData = plainToClass(DiaryResponseDTO, diary, {
     excludeExtraneousValues: true,
   });
 
@@ -82,9 +84,9 @@ export const getAllMyDiariesService = async (
     take: limit,
     where: { authorId: userId },
     orderBy: { createdDate: 'desc' },
-    include : {
-      filesUpload : true,
-    }
+    include: {
+      filesUpload: true,
+    },
   });
 
   // 다이어리 결과 없을 때 빈 배열 값 반환
@@ -165,7 +167,7 @@ export const getDiaryByDiaryIdService = async (
 ) => {
   const diary = await prisma.diary.findUnique({
     where: { id: diaryId },
-    include: { author: true },
+    include: { author: true, filesUpload: true },
   });
 
   if (diary == null) {
@@ -349,9 +351,9 @@ export const updateDiaryService = async (
   const updatedDiary = await prisma.diary.update({
     where: { id: diaryId, authorId: userId },
     data: inputData,
-    include : {
-      filesUpload : true,
-    }
+    include: {
+      filesUpload: true,
+    },
   });
 
   if (updatedDiary == null) {
