@@ -8,6 +8,7 @@ import ImageComponent from '../ImageComponent';
 import Toast from './Layout.Toast';
 import { useRecoilValue } from 'recoil';
 import { toastState } from '../../atoms/toastState';
+import logo from '../../assets/logo.gif';
 
 const locations = [
   { name: 'MY CALENDAR', to: '/' },
@@ -49,6 +50,7 @@ const Header = () => {
       <header className={styles.header}>
         <div className={styles.logoContainer}>
           <Link className={styles.logoContainer} key="logo" to="/intro">
+            <img src={logo} alt="로고" />
             EMOTIARY
           </Link>
         </div>
