@@ -101,6 +101,7 @@ const Signup: React.FC = () => {
       const han = /^[가-힣]+$/;
       if (!han.test(value)) {
         alert('한글만 입력해주세요.');
+        setUserInfo(prev => ({ ...prev, username: '' }));
       }
     }
   };
