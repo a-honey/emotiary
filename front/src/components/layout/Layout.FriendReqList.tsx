@@ -10,29 +10,31 @@ const FriendReqList = () => {
     userReqListType: isReqList ? 'received' : 'sent',
   });
 
-  const toggleIsReqList = () => {
-    setIsReqList((prev) => !prev);
-  };
-
   return (
     <div className={styles.reqListContainer}>
       <div className={styles.selects}>
-        <button className={isReqList && styles.ban} onClick={toggleIsReqList}>
-          받은요청
+        <button
+          className={isReqList && styles.ban}
+          onClick={() => setIsReqList(true)}
+        >
+          받은 요청
         </button>
-        <button className={!isReqList && styles.ban} onClick={toggleIsReqList}>
-          보낸요청
+        <button
+          className={!isReqList && styles.ban}
+          onClick={() => setIsReqList(false)}
+        >
+          보낸 요청
         </button>
       </div>
-      <div>
+      <div className={styles.itemList}>
         {data?.data.map((item: ReceivedUserDataType) => {
           if (isReqList) {
             return (
-              <ReqItem item={item.receivedUser} key={item.receivedUser.id} />
+              <ResItem item={item.receivedUser} key={item.receivedUser.id} />
             );
           } else {
             return (
-              <ResItem item={item.receivedUser} key={item.receivedUser.id} />
+              <ReqItem item={item.receivedUser} key={item.receivedUser.id} />
             );
           }
         })}
@@ -48,19 +50,19 @@ const ResItem = ({ item }: { item: ReceivedUserDataType['receivedUser'] }) => {
     <div className={styles.reqItemContainer}>
       <div>{item.username}</div>
       <div className={styles.btns}>
-        <button>수락</button>
-        <button>거절</button>
+        <button className="doneBtn">수락</button>
+        <button className="cancelBtn">거절</button>
       </div>
     </div>
   );
 };
 
-const ReqItem = ({ item }: { item: any }) => {
+const ReqItem = ({ item }: { item: ReceivedUserDataType['receivedUser'] }) => {
   return (
     <div className={styles.reqItemContainer}>
-      <div>username </div>
+      <div>{item.username}</div>
       <div className={styles.btns}>
-        <button>취소</button>
+        <button className="cancelBtn">취소</button>
       </div>
     </div>
   );

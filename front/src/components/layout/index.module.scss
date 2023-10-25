@@ -101,16 +101,30 @@
     button {
       width: 100%;
       height: 30px;
+      font-weight: 700;
+      background-color: map-get($colors, point);
     }
     .ban {
-      background-color: map-get($colors, point);
-      cursor: not-allowed;
+      background-color: white;
     }
   }
-}
-
-.reqItemContainer {
-  display: flex;
+  .itemList {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    .reqItemContainer {
+      display: flex;
+      justify-content: space-between;
+      border: 1px solid map-get($colors, point);
+      padding: 10px 15px;
+      border-radius: 5px;
+      align-items: center;
+      .btns {
+        display: flex;
+        gap: 10px;
+      }
+    }
+  }
 }
 
 .right {
