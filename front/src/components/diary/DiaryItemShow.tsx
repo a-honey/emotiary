@@ -7,7 +7,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GoHeartFill, GoHeart } from 'react-icons/go';
 import ImageComponent from '../ImageComponent';
 import { useNavigate } from 'react-router-dom';
-import { useGetCommentData } from '../../api/get/userGetCommendData';
+import { useGetCommentData } from '../../api/get/useGetCommentData';
 
 // 작성자 id가 로그인 id와 같을 경우, 수정 버튼 활성화, 다를경우 비활성화
 // 비공개일 경우 그냥 안띄우기, 친구공개일 경우 자물쇠 아이콘 + 친구만 볼 수 있습니다 모달 안에 띄우기

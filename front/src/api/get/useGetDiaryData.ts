@@ -14,7 +14,7 @@ export const useGetDiarysData = ({
   emotion: string;
   limit: number;
 }) => {
-  return useQuery(queryKeys.diarysData({ select, page, emotion }), async () => {
+  return useQuery(queryKeys.diarysData({ select, page, emotion }), () => {
     const urlQueryString = new URLSearchParams({
       select,
       page: page.toString(),
@@ -22,8 +22,9 @@ export const useGetDiarysData = ({
       emotion,
     }).toString();
 
-    const response = await instance.get(`/diary/views/users?${urlQueryString}`);
-    return response.data;
+    return instance
+      .get(`/diary/views/users?${urlQueryString}`)
+      .then((res) => res.data);
   });
 };
 
@@ -39,13 +40,13 @@ export const useGetMyDiaryData = ({
 }) => {
   return useQuery(
     queryKeys.myDiaryData({ year, month }),
-    async () => {
+    () => {
       const urlQueryString = new URLSearchParams({
         year: year.toString(),
         month: month.toString(),
       }).toString();
 
-      const response: any = await instance.get(
+      const response: any = instance.get(
         `/diary/views/date/${user_id}?${urlQueryString}`,
       );
       return response.data;
@@ -62,24 +63,21 @@ export const useGetMyAllDiarysData = ({
   page: number;
   limit: number;
 }) => {
-  return useQuery(queryKeys.myAllDiarysData(), async () => {
+  return useQuery(queryKeys.myAllDiarysData(), () => {
     const urlQueryString = new URLSearchParams({
       page: page.toString(),
       limit: limit.toString(),
     });
-    const response = await instance.get(`/diary/views?${urlQueryString}`);
-    return response.data;
+
+    return instance
+      .get(`/diary/views?${urlQueryString}`)
+      .then((res) => res.data);
   });
 };
 
 //** 다이어리 모달 id로 조회 ['diaryData', id] */
 export const useGetDiaryData = ({ id }: { id: string }) => {
-  return useQuery(
-    queryKeys.diaryData({ id }),
-    async () => {
-      const response = await instance.get(`/diary/${id}`);
-      return response.data;
-    },
-    { select: (data) => data.data },
-  );
+  return useQuery(queryKeys.diaryData({ id }), () => {
+    return instance.get(`/diary/${id}`).then((res) => res.data.data);
+  });
 };
