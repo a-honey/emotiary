@@ -27,7 +27,7 @@ model User {
   comments     Comment[]
   latestEmoji  String?
   isFriend     Boolean       @default(false)
-  alarmSetting Int           @default(1)
+  alarmSetting String        @default("1")
   chatMessage  ChatMessage[]
 }
 

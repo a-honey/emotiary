@@ -12,8 +12,8 @@ import {
 import { PrismaClient } from '@prisma/client';
 import { Server as HttpServer } from 'http';
 import { Server as SocketIoServer, Socket } from 'socket.io';
-import socketIoJwt from 'socketio-jwt';
 
+import * as socketIoJwt from 'socketio-jwt';
 const prisma = new PrismaClient();
 
 interface ConnectedUsers {
@@ -26,7 +26,7 @@ export const chat = (server: HttpServer) => {
   const io = new SocketIoServer(server, {
     path: '/chat',
     cors: {
-      origin: 'http://34.64.87.254:5001/api', // Replace with your actual frontend URL
+      origin: 'http://localhost:3000', // Replace with your actual frontend URL
       methods: ['GET', 'POST'],
     },
   });
@@ -42,7 +42,7 @@ export const chat = (server: HttpServer) => {
   const connectedUsers: { [key: string]: ConnectedUsers } = {};
 
   io.on("connection", async (socket: Socket) => {
-    const currentUserId = socket.decoded_token.id;
+    const currentUserId = (socket as any).decoded_token.id;
 
     const user = await currentUser(currentUserId);
 
