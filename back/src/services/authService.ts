@@ -116,6 +116,7 @@ const allUsers = await prisma.user.findMany({
 const filteredUsers = [];
 for (const user of allUsers) {
     if (user.id !== userId) {
+
         const areFriends = await areUsersFriends(userId, user.id);
         user.isFriend = areFriends;
 
@@ -305,7 +306,11 @@ export const areUsersFriends = async (userId1: string, userId2: string) => {
     if (userId1 === userId2) {
       return true;
     } else {
-      return !!friendShip;
+      if (friendShip) {
+        return friendShip.status;
+      } else {
+        return false;
+      }
     }
   } catch (error) {
     throw error;

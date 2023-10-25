@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   userLogin,
+  // verifyEmail,
   userRegister,
   getMyInfo,
   getAllUser,
@@ -24,6 +25,8 @@ const userAuthRouter = Router();
 userAuthRouter.post("/register", userRegister);
 
 userAuthRouter.post('/login', localAuthentication, userLogin);
+
+// userAuthRouter.post('/verifyEmail', jwtAuthentication, verifyEmail);
 
 userAuthRouter.get('/current', jwtAuthentication, getMyInfo);
 

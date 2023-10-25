@@ -42,3 +42,9 @@ export const sendEmail = async (
     throw error;
   }
 };
+
+export const generateRandomNumber = function (min : number, max : number) {
+  const randNum = Math.floor(Math.random() * (max - min +1)) +min;
+
+  return randNum;
+}
