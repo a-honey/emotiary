@@ -77,7 +77,7 @@ const DiaryItemShow = ({
                 }}
               >
                 <ImageComponent
-                  src={diaryData.author.profileImage ?? '/user_none.png'}
+                  src={diaryData.author.profileImage}
                   alt={`${diaryData.author.username}의 프로필사진`}
                 />
                 <div>{diaryData.author.username}</div>

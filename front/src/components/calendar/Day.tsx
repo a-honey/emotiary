@@ -151,26 +151,25 @@ const DayItem = ({
   if (filteredData?.length > 0) {
     const data = filteredData[0];
     return (
-      <Draggable draggableId={day.toString()} index={index}>
-        {(provided, snapshot) => (
-          <div
-            ref={provided.innerRef}
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-            className={snapshot.isDragging ? styles.dayItemDragging : ''}
-          >
-            <div className={styles.emoji} onClick={toggleIsOpenModal}>
-              {data.emoji}
+      <>
+        <Draggable draggableId={day.toString()} index={index}>
+          {(provided, snapshot) => (
+            <div
+              ref={provided.innerRef}
+              {...provided.draggableProps}
+              {...provided.dragHandleProps}
+              className={snapshot.isDragging ? styles.dayItemDragging : ''}
+            >
+              <div className={styles.emoji} onClick={toggleIsOpenModal}>
+                {data.emoji}
+              </div>
             </div>
-            {isOpenDiary && (
-              <DiaryItemShow
-                toggleIsOpenModal={toggleIsOpenModal}
-                id={data.id}
-              />
-            )}
-          </div>
+          )}
+        </Draggable>
+        {isOpenDiary && (
+          <DiaryItemShow toggleIsOpenModal={toggleIsOpenModal} id={data.id} />
         )}
-      </Draggable>
+      </>
     );
   }
 
