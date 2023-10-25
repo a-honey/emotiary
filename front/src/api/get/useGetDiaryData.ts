@@ -5,18 +5,21 @@ import { useQuery } from '@tanstack/react-query';
 //** NETWORKPAGE 모든 다이어리 조회 */
 export const useGetDiarysData = ({
   select,
+  emotion,
   page,
   limit,
 }: {
   select: string;
   page: number;
+  emotion: string;
   limit: number;
 }) => {
-  return useQuery(queryKeys.diarysData({ select, page }), async () => {
+  return useQuery(queryKeys.diarysData({ select, page, emotion }), async () => {
     const urlQueryString = new URLSearchParams({
       select,
       page: page.toString(),
       limit: limit.toString(),
+      emotion,
     }).toString();
 
     const response = await instance.get(`/diary/views/users?${urlQueryString}`);

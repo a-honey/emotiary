@@ -7,7 +7,7 @@ import { useGetDiarysData } from '../../../api/get/useGetDiaryData';
 import { instance } from '../../../api/instance';
 import { GoHeartFill, GoHeart } from 'react-icons/go';
 import Pagination from '../../../components/Pagination';
-import Tab from './Network.Tab';
+import Tab, { TapType } from './Network.Tab';
 
 interface DairyItemType {
   id: string;
@@ -27,19 +27,20 @@ interface DairyItemType {
 
 const DiaryList = () => {
   const [select, setSelect] = useState('all');
-  const [tapEmotion, setTapEmotion] = useState('all');
+  const [tapEmotion, setTapEmotion] = useState<TapType['resource']>('all');
 
   const [currentPage, setCurrentPage] = useState(1);
 
   const userId = localStorage.getItem('userId');
   const navigator = useNavigate();
   const { data, isFetching, refetch } = useGetDiarysData({
+    emotion: tapEmotion,
     select,
     page: currentPage,
     limit: 8,
   });
 
-  const handleTapEmotion = (tapName: string) => {
+  const handleTapEmotion = (tapName: TapType['resource']) => {
     setTapEmotion(tapName);
   };
 

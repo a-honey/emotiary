@@ -18,7 +18,7 @@ const UserIdPage: React.FC = () => {
   });
 
   return (
-    <main style={{ gap: '40px' }}>
+    <main style={{ gap: '40px', height: '93vh' }}>
       <UserCard />
       <Calendar
         currentDate={currentDate}

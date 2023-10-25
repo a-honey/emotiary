@@ -3,16 +3,18 @@ export const queryKeys = {
 
   //** NETWORKPAGE 모든 다이어리 조회 */
   diarysData: ({
+    emotion,
     select,
     page,
   }: {
+    emotion: string | null;
     select: string | null;
     page: number | null;
   }) => {
-    if (!select && !page) {
+    if (!select && !page && !emotion) {
       return ['diarysData'];
     }
-    return ['diarysData', select, page];
+    return ['diarysData', select, page, emotion];
   },
   //** MAINPAGE 나의 캘린더별, USERIDPAGE 캘린더 다이어리 조회 */
   myDiaryData: ({ year, month }: { year: number; month: number }) => [
