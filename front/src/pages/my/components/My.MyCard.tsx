@@ -33,9 +33,7 @@ const MyCard = () => {
   const { data: userData, isFetching } = useGetMyUserData();
 
   // 받아온 캐시데이터를 담아야함
-  const [userInfoData, setUserInfoData] = useState(
-    userData ?? USER_INFO_INITIAL_DATA,
-  );
+  const [userInfoData, setUserInfoData] = useState(USER_INFO_INITIAL_DATA);
 
   const { id, email, username, description, latestEmoji, alarmSetting } =
     userInfoData;
@@ -74,6 +72,12 @@ const MyCard = () => {
       [name]: value,
     }));
   };
+
+  useEffect(() => {
+    if (userData) {
+      setUserInfoData(userData);
+    }
+  }, [userData]);
 
   return (
     <>
