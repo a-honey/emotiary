@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './index.module.scss';
 import { useGetFriendData } from '../../api/get/useFriendData';
 
@@ -26,9 +26,9 @@ const FriendReqList = () => {
       <div>
         {data?.data?.map((item: any) => {
           if (isReqList) {
-            return <ReqItem item={item} key={item.username} />;
+            return <ReqItem item={item} key={item.id} />;
           } else {
-            return <ResItem item={item} key={item.username} />;
+            return <ResItem item={item} key={item.id} />;
           }
         })}
       </div>

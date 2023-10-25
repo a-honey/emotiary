@@ -7,21 +7,28 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 20px;
-  h2 {
-    width: 100%;
-    font-size: 20px;
-    font-weight: 700;
-  }
   .nav {
+    width: 100%;
     display: flex;
     font-size: 15px;
+    justify-content: space-between;
     gap: 5px;
-    input {
-      width: 20px;
-      display: inline-block;
+    h2 {
+      width: 100%;
+      font-size: 20px;
+      font-weight: 700;
     }
     div {
-      width: 130px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      input {
+        width: 20px;
+      }
+      div {
+        width: 140px;
+      }
     }
   }
   .diaryListBlock {
@@ -40,21 +47,31 @@
   border-radius: 5px;
   padding: 20px;
   display: flex;
-  h3 {
-    font-size: 20px;
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 5px;
-  }
-  p {
-    font-size: 15px;
-    height: calc(15px * 10);
-    text-overflow: ellipsis;
-    overflow: hidden;
-  }
   .emoji {
     font-size: 100px;
     line-height: 200px;
+  }
+  .content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    h3 {
+      font-size: 20px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 5px;
+    }
+    p {
+      font-size: 15px;
+      height: calc(15px * 10);
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    .like {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
   }
   .userInfo {
     display: flex;
