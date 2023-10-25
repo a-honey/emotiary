@@ -37,10 +37,6 @@
     width: 30%;
     display: flex;
     justify-content: space-between;
-    .active {
-      background-color: #ededed;
-      font-size: 17px;
-    }
     a {
       width: 200px;
       text-align: center;
@@ -48,7 +44,11 @@
       border-radius: 30px;
       &:hover {
         font-size: 17px;
+        background-color: #ededed;
+      }
+      &.active {
         background-color: map-get($colors, bg);
+        font-size: 17px;
       }
     }
   }
