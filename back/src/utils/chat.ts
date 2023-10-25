@@ -1,9 +1,35 @@
+import {
+  currentUser,
+  createRoomId,
+  createChatRoom,
+  getMyRoom,
+  getMyMessages,
+  unreadMessage,
+  changeReadStatus,
+  deleteMessage,
+  deleteRoom
+} from '../services/chatService';
 import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
-const socketIoJwt = require('socketio-jwt');
-import { Server as SocketIOServer } from 'socket.io';
+import { Server as HttpServer } from 'http';
+import { Server as SocketIoServer, Socket } from 'socket.io';
+import socketIoJwt from 'socketio-jwt';
 
-export const chat = (io: SocketIOServer) => {
+const prisma = new PrismaClient();
+
+interface ConnectedUsers {
+  socketId: string;
+  roomId: string | null;
+  user: any; // Replace with the actual user type
+}
+
+export const chat = (server: HttpServer) => {
+  const io = new SocketIoServer(server, {
+    path: '/chat',
+    cors: {
+      origin: 'http://localhost:3000', // Replace with your actual frontend URL
+      methods: ['GET', 'POST'],
+    },
+  });
 
   io.use(
     socketIoJwt.authorize({
@@ -13,66 +39,131 @@ export const chat = (io: SocketIOServer) => {
     }),
   );
 
-// 소켓 연결 & 로그인
-  io.on("connection", (socket)=> {
-    const userId = socket.decoded_token.id;
-    console.log(`${userId} connected`);
+  const connectedUsers: { [key: string]: ConnectedUsers } = {};
+
+  io.on("connection", async (socket: Socket) => {
+    const currentUserId = socket.decoded_token.id;
+
+    const user = await currentUser(currentUserId);
+
+    if (user) {
+      connectedUsers[currentUserId] = {
+        socketId: socket.id,
+        roomId: null,
+        user,
+      };
+      console.log(`[${user.username}] connected`);
+    }
 
 
-    socket.on("join", async (chatPartnerId : string) => {
-      // 채팅방
-      const roomId = `${userId}-${chatPartnerId}`;
+    socket.on('initialize', async (userId: string) => {
+      if (user) {
+        const messages = await unreadMessage(userId);
+        socket.emit('messages', messages);
+        console.log(messages, 'New messages');
+      }
+    });
 
-      //채팅방 입장
-      socket.join(roomId);
+    socket.on("join", async (chatPartnerId: string) => {
+      if (user) {
+        const roomId = await createRoomId(currentUserId, chatPartnerId);
+        const existingRoom = await getMyRoom(roomId);
 
-      // roomId에 해당하는 기존 채팅 메시지가 있는 경우 검색하고 내보냄
-      const messages = await prisma.chatMessage.findMany({
-        where: { roomId },
-      });
+        if (existingRoom) {
+          connectedUsers[currentUserId].roomId = roomId;
+          console.log(connectedUsers[currentUserId].roomId, 'Currently joined room');
+          socket.join(roomId);
+          console.log(`${user.username} joined [${roomId}] room`);
+          const messages = await getMyMessages(roomId);
 
-      socket.emit("messages", messages);
+          for (let message of messages) {
+            if (message.sendUserId !== currentUserId) {
+              if (!message.isRead) {
+                await changeReadStatus(message.id);
+              }
+            }
+          }
+          socket.emit('messages', messages);
+          console.log(`${user.username}'s chat history loaded`);
+        } else {
+          const newRoom = await createChatRoom(roomId);
+          console.log(`Room [${newRoom}] created`);
+          connectedUsers[currentUserId].roomId = roomId;
+          socket.join(newRoom.id);
+        }
+      }
     });
 
     socket.on("sendMessage", async (chatPartnerId: string, message: string) => {
-    // 마찬가지로 나와 상대방 ID를 기반으로 룸 ID를 만든 다음 보낼 메시지를 데이터베이스에 저장하고 상대방에게 보낸다.
-    const roomId = `${userId}-${chatPartnerId}`;
+      if (user) {
+        const roomId = await createRoomId(currentUserId, chatPartnerId);
+        let room = await getMyRoom(roomId);
 
-    await prisma.chatMessage.create({
-      data: {
-        roomId,
-        message,
-        sendUserId: userId,
-      },
+        if (!room) {
+          await createChatRoom(roomId);
+        }
+
+        const createdMessage = await prisma.chatMessage.create({
+          data: {
+            roomId,
+            message,
+            sendUserId: currentUserId,
+          },
+        });
+
+        if (connectedUsers[chatPartnerId]) {
+          const chatPartnerSocketId = connectedUsers[chatPartnerId].socketId;
+
+          if (connectedUsers[chatPartnerId].roomId === roomId) {
+            socket.to(roomId).emit('message', {
+              sendUserId: currentUserId,
+              username: user.username,
+              message,
+            });
+            console.log(`[${chatPartnerId}] sent a message: ${message}`);
+
+            await changeReadStatus(createdMessage.id);
+          }
+
+          if (connectedUsers[chatPartnerId].roomId === null) {
+            io.to(chatPartnerSocketId).emit('newMessage', {
+              sendUserId: currentUserId,
+              username: user.username,
+              messageId: createdMessage.id,
+            });
+          }
+        }
+      }
     });
-    // 상대방에게 브로드캐스팅
-    io.to(roomId).emit("message", { sendUserId: userId, message });
-  });
 
-    // 패팅방 퇴장
-    socket.on("leave", async(chatPartnerId: string) => {
-      const roomId = `${userId}-${chatPartnerId}`;
-
-      // 사용자가 방을 나가면, 해당 방과 속해있는 메시지를 데이터베이스에서 삭제한다
-      await prisma.chatMessage.deleteMany({
-        where: { roomId },
-      });
-      await prisma.chatRoom.delete({
-        where: { id: roomId },
-      });
+    socket.on("leave", async (chatPartnerId: string) => {
+      const roomId = await createRoomId(currentUserId, chatPartnerId);
+      console.log(`[${roomId}] Leaving the room`);
+      connectedUsers[currentUserId].roomId = null;
       socket.leave(roomId);
     });
 
-    socket.on("messageViewed", async (messageId) => {
-    // isRead 를 true로 업데이트
-      await prisma.chatMessage.update({
-        where: { id: messageId },
-        data: { isRead: true },
-      });
+    socket.on('delete', async (chatPartnerId: string) => {
+      if (user) {
+        const roomId = `${currentUserId}-${chatPartnerId}`;
+        await deleteMessage(roomId);
+        await deleteRoom(roomId);
+        console.log(`Room [${roomId}] deleted`);
+      }
     });
 
-    socket.on("disconnect",()=> {
-    console.log(`${userId}  disconnected`);
+    socket.on('messageViewed', async (messageId: string) => {
+      if (user) {
+        await changeReadStatus(messageId);
+      }
+    });
+
+    socket.on('disconnect', () => {
+      if (user) {
+        console.log(`User ${currentUserId} disconnected`);
+        delete connectedUsers[currentUserId];
+      }
     });
   });
+  return io;
 };

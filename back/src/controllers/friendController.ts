@@ -20,6 +20,10 @@ import { IRequest } from "types/user";
 /** @description 친구 요청 */
 /** @Tag(name = "book service", description = "the book API with description tag annotation") */
 export const friendRequest = async (req : IRequest, res : Response, next : NextFunction) => {
+  /**
+   * #swagger.tags = ['Friend']
+   * #swagger.summary = '친구 요청'
+   */
   try {
     const userId = req.user.id;
     const requestId = req.params.userId;
@@ -27,7 +31,7 @@ export const friendRequest = async (req : IRequest, res : Response, next : NextF
     if (userId === requestId) {
       return res
         .status(400)
-        .json({ message: "나 자신과는 친구가 될 수 없어!" });
+        .json({ message: "셀프 친구 불가!" });
     }
     const alreadyFriends = await weAreFriends(userId, requestId);
     if (alreadyFriends) {
@@ -48,6 +52,10 @@ export const friendRequest = async (req : IRequest, res : Response, next : NextF
 
 /** @description 보낸 친구 요청 목록 */
 export const sentList = async (req : IRequest, res : Response, next : NextFunction) => {
+  /**
+   * #swagger.tags = ['Friend']
+   * #swagger.summary = '보낸 친구 요청 목록'
+   */
   try {
     const userId = req.user.id;
     const friendRequest = await listRequestsSent(userId);
@@ -61,6 +69,10 @@ export const sentList = async (req : IRequest, res : Response, next : NextFuncti
 
 /** @description 요청 취소 */
 export const requestCancel = async (req : IRequest, res : Response, next : NextFunction) => {
+  /**
+   * #swagger.tags = ['Friend']
+   * #swagger.summary = '친구 요청 취소'
+   */
   try {
     const userId = req.user.id;
     const requestId = req.params.userId;
@@ -77,6 +89,10 @@ export const requestCancel = async (req : IRequest, res : Response, next : NextF
 
 /** @description 받은 친구 요청 목록 */
 export const receivedList = async (req : IRequest, res : Response, next : NextFunction) => {
+  /**
+   * #swagger.tags = ['Friend']
+   * #swagger.summary = '받은 친구 요청 목록'
+   */
   try {
     const userId = req.user.id;
     const friendRequest = await listRequestsReceived(userId);
@@ -90,6 +106,10 @@ export const receivedList = async (req : IRequest, res : Response, next : NextFu
 
 /** @description 친구 수락 */
 export const friendAccept = async (req : IRequest, res : Response, next : NextFunction) => {
+  /**
+   * #swagger.tags = ['Friend']
+   * #swagger.summary = '친구 수락'
+   */
   try {
     const userId = req.user.id;
     const requestId = req.params.userId;
@@ -104,6 +124,10 @@ export const friendAccept = async (req : IRequest, res : Response, next : NextFu
 
 /** @description 친구 거절 */
 export const friendReject = async (req : IRequest, res : Response, next : NextFunction) => {
+  /**
+   * #swagger.tags = ['Friend']
+   * #swagger.summary = '친구 거절'
+   */
   try {
     const userId = req.user.id;
     const requestId = req.params.userId;
@@ -118,6 +142,10 @@ export const friendReject = async (req : IRequest, res : Response, next : NextFu
 
 /** @description 친구 목록 */
 export const getFriends = async (req : IRequest, res : Response, next : NextFunction) => {
+  /**
+   * #swagger.tags = ['Friend']
+   * #swagger.summary = '친구 목록'
+   */
   try {
     const page: number | null = req.query.page !== undefined ? Number(req.query.page) : null;
     const limit: number | null = req.query.limit !== undefined ? Number(req.query.limit) : null;
@@ -134,6 +162,10 @@ export const getFriends = async (req : IRequest, res : Response, next : NextFunc
 
 /** @description 친구 삭제 */
 export const friendDelete = async (req : IRequest, res : Response, next : NextFunction) => {
+  /**
+   * #swagger.tags = ['Friend']
+   * #swagger.summary = '친구 삭제'
+   */
   try {
     const userId = req.user.id;
     const friendId = req.params.userId;

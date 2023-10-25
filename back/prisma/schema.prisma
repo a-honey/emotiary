@@ -28,7 +28,6 @@ model User {
   latestEmoji  String?
   isFriend     Boolean       @default(false)
   alarmSetting Int           @default(1)
-  chatUser     ChatUser[]
   chatMessage  ChatMessage[]
 }
 
@@ -111,18 +110,8 @@ model Emoji {
 
 model ChatRoom {
   id        String        @id @default(uuid())
-  chatUser  ChatUser[]
   message   ChatMessage[]
   createdAt DateTime      @default(now())
-}
-
-model ChatUser {
-  chatRoomId String
-  chatRoom   ChatRoom @relation(fields: [chatRoomId], references: [id])
-  authorId   String
-  author     User     @relation(fields: [authorId], references: [id])
-
-  @@id([chatRoomId, authorId])
 }
 
 model ChatMessage {

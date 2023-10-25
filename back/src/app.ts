@@ -18,19 +18,20 @@ import { Logger } from './config/logger';
 import testAuthRouter from './routes/testRouter';
 import { errorMiddleware } from './middlewares/errorMiddleware';
 import { sendAlarm } from './utils/alarm';
-
 import http from 'http';
-import { Server as SocketIOServer } from 'socket.io';
-import {chat} from './utils/chat';
-
+import { chat } from './utils/chat';
+import { Server as SocketIoServer, Socket } from 'socket.io';
 
 // import axios, { AxiosResponse } from "axios";
 
-const app: Express = express();
+const app: Express & { io?: SocketIoServer } = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(Logger);
 sendAlarm();
+
+export const server = http.createServer(app);
+export const io = chat(server);
 
 app.use(passport.initialize());
 
@@ -129,19 +130,7 @@ apiRouter.use('/comments', commentRouter);
 app.use('/api', apiRouter);
 
 
-
-// 1:1채딩 웹소켓
-const server = http.createServer(app);
-const io = new SocketIOServer(server, {
-  path: '/chat',
-  cors: {
-    origin: 'http://localhost:3000',
-    methods: ['GET', 'POST'],
-  },
-});
-
-chat(io);
-app.set('io', io);
+app.io = io;
 
 // // 정적 파일 제공을 위한 미들웨어 설정
 // app.use(express.static("public"));
