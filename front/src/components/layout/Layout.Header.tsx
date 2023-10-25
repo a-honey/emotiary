@@ -12,7 +12,7 @@ import logo from '../../assets/logo.gif';
 import { logout } from '../../utils/localStorageHandlers';
 
 const locations = [
-  { name: 'MY CALENDAR', to: '/' },
+  { name: 'MY CALENDAR', to: '/main' },
   { name: 'LATEST DIARY', to: '/network' },
   { name: 'ALL USERS', to: '/users' },
 ];
@@ -34,8 +34,8 @@ const Header = () => {
   const handleLogout = () => {
     logout();
 
-    // 로그아웃 후 /intro 경로로 이동
-    navigator('/intro');
+    // 로그아웃 후 / 경로로 이동
+    navigator('/');
   };
 
   useEffect(() => {
@@ -47,7 +47,7 @@ const Header = () => {
     <>
       <header className={styles.header}>
         <div className={styles.logoContainer}>
-          <Link className={styles.logoContainer} key="logo" to="/intro">
+          <Link className={styles.logoContainer} key="logo" to="/">
             <img src={logo} alt="로고" />
             EMOTIARY
           </Link>

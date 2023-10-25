@@ -47,7 +47,7 @@ const ChangePW = ({
         password: changeData.password,
       });
       alert('비밀번호가 변경되었습니다. 다시 로그인 해주세요.');
-      navigator('/intro');
+      navigator('/');
       logout();
     } catch {
       console.error('비밀번호 변경 실패');

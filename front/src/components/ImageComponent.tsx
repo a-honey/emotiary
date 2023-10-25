@@ -1,5 +1,6 @@
 import React from 'react';
 import user_none from '../assets/user_none.png';
+import post_none from '../assets/post_none.png';
 import { handleImgError } from '../utils/imgHandlers';
 
 const ImageComponent = ({ src, alt }: { src: string | null; alt: string }) => {
@@ -20,7 +21,7 @@ export const ImagePostComponent = ({
   src: string | null;
   alt: string;
 }) => {
-  return <img src={src ?? user_none} alt={alt} onError={handleImgError} />;
+  return <img src={src ?? post_none} alt={alt} onError={handleImgError} />;
 };
 
 export default ImageComponent;
