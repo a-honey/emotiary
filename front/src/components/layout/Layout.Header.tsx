@@ -9,6 +9,7 @@ import Toast from './Layout.Toast';
 import { useRecoilValue } from 'recoil';
 import { toastState } from '../../atoms/toastState';
 import logo from '../../assets/logo.gif';
+import { logout } from '../../utils/localStorageHandlers';
 
 const locations = [
   { name: 'MY CALENDAR', to: '/' },
@@ -31,10 +32,7 @@ const Header = () => {
   const [isOpenFriendReqList, setIsOpenFriendReqList] = useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('username');
-    localStorage.removeItem('refreshToken');
+    logout();
 
     // 로그아웃 후 /intro 경로로 이동
     navigator('/intro');
@@ -44,7 +42,7 @@ const Header = () => {
     setIsOpenFriendReqList(false);
   }, [location.pathname]);
 
-  useEffect(() => {}, [userImg]);
+  useEffect(() => {}, [userImg, token]);
   return (
     <>
       <header className={styles.header}>
