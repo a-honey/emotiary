@@ -9,7 +9,7 @@ const withLogin = (InnerComponent: React.FC) => {
     useEffect(() => {
       if (!userId) {
         alert('로그인이 필요합니다.');
-        navigator('/');
+        navigator('/signin');
       }
     }, [userId, navigator]);
 

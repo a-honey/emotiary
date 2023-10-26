@@ -18,13 +18,13 @@ const FriendReqList = () => {
     <div className={styles.reqListContainer}>
       <div className={styles.selects}>
         <button
-          className={isReqList && styles.ban}
+          className={isReqList ? styles.ban : ''}
           onClick={() => setIsReqList(true)}
         >
           받은 요청
         </button>
         <button
-          className={!isReqList && styles.ban}
+          className={!isReqList ? styles.ban : ''}
           onClick={() => setIsReqList(false)}
         >
           보낸 요청
