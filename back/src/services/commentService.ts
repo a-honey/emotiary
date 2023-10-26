@@ -7,6 +7,7 @@ import { nonAuthorizedApiResponseDTO } from '../utils/nonAuthorizeResult';
 import axios from 'axios';
 import { Emoji } from '../types/emoji';
 import { calculatePageInfoForComment } from '../utils/pageInfo';
+// import { callChatGPT } from '../utils/chatGPT';
 
 const prisma = new PrismaClient();
 
@@ -45,8 +46,12 @@ export async function createdComment(
     const emoji = randomEmoji.emotion;
 
     const comment = await prisma.comment.create({
-      data: { diaryId: diary_id, authorId, content, nestedComment, emoji },
+      data: { diaryId: diary_id, authorId, content, nestedComment },
     });
+
+    // // openai를 이용한 chatGPT 연결
+    // const testChatGPT = await callChatGPT(comment.content);
+    // console.log(testChatGPT);
 
     const commentResponseData = plainToClass(commentResponseDTO, comment, {
       excludeExtraneousValues: true,
@@ -166,32 +171,22 @@ export async function updatedComment(
     const randomEmoji: Emoji =
       emojis[Math.floor(Math.random() * emojis.length)];
     const emoji = randomEmoji.emotion;
-    // 댓글 작성자인지 확인하기 위한 조회
-    const userCheck = await prisma.comment.findUnique({
-      where: { id: comment_id },
+
+    const comment = await prisma.comment.update({
+      where: { id: comment_id, authorId },
+      data: {
+        content: inputData.content,
+        emoji: emoji,
+      },
     });
 
-    if (userCheck.authorId == authorId) {
-      const comment = await prisma.comment.update({
-        where: { id: comment_id },
-        data: {
-          content: inputData.content,
-          emoji: emoji,
-        },
-      });
+    const commentResponseData = plainToClass(commentResponseDTO, comment, {
+      excludeExtraneousValues: true,
+    });
 
-      const commentResponseData = plainToClass(commentResponseDTO, comment, {
-        excludeExtraneousValues: true,
-      });
+    const response = successApiResponseDTO(commentResponseData);
 
-      const response = successApiResponseDTO(commentResponseData);
-
-      return response;
-    } else {
-      const response = nonAuthorizedApiResponseDTO();
-
-      return response;
-    }
+    return response;
   } catch (error) {
     throw error;
   }
@@ -200,28 +195,17 @@ export async function updatedComment(
 // 댓글 삭제
 export async function deletedComment(comment_id: string, authorId: string) {
   try {
-    // 댓글 작성자인지 확인하기 위한 조회
-    const userCheck = await prisma.comment.findUnique({
-      where: { id: comment_id },
+    const comment = await prisma.comment.delete({
+      where: { id: comment_id, authorId },
     });
 
-    if (userCheck.authorId == authorId) {
-      const comment = await prisma.comment.deleteMany({
-        where: { id: comment_id },
-      });
+    const commentResponseData = plainToClass(commentResponseDTO, comment, {
+      excludeExtraneousValues: true,
+    });
 
-      const commentResponseData = plainToClass(commentResponseDTO, comment, {
-        excludeExtraneousValues: true,
-      });
+    const response = successApiResponseDTO(commentResponseData);
 
-      const response = successApiResponseDTO(commentResponseData);
-
-      return response;
-    } else {
-      const response = nonAuthorizedApiResponseDTO();
-
-      return response;
-    }
+    return response;
   } catch (error) {
     throw error;
   }
