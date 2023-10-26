@@ -18,14 +18,20 @@ import { Logger } from './config/logger';
 import testAuthRouter from './routes/testRouter';
 import { errorMiddleware } from './middlewares/errorMiddleware';
 import { sendAlarm } from './utils/alarm';
+import http from 'http';
+import { chat } from './utils/chat';
+import { Server as SocketIoServer, Socket } from 'socket.io';
 
 // import axios, { AxiosResponse } from "axios";
 
-const app: Express = express();
+const app: Express & { io?: SocketIoServer } = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(Logger);
 sendAlarm();
+
+export const server = http.createServer(app);
+export const io = chat(server);
 
 app.use(passport.initialize());
 
@@ -70,7 +76,12 @@ apiRouter.use('/comments', commentRouter);
 
 app.use('/api', apiRouter);
 
-app.use(express.static('fileUpload'));
+
+app.io = io;
+
+// // 정적 파일 제공을 위한 미들웨어 설정
+// app.use(express.static("public"));
+app.use('/api/fileUpload', express.static('fileUpload'));
 app.use(errorMiddleware);
 
 export { app };

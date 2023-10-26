@@ -42,7 +42,7 @@ export const fileUpload = async (req : IRequest, res : Response, next : NextFunc
                 const foundUser = await prisma.user.findUnique({
                     where: { id: userId },
                     include : {
-                        filesUpload : true,
+                        profileImage : true,
                     }
                 });
                 console.log(1);
@@ -52,7 +52,7 @@ export const fileUpload = async (req : IRequest, res : Response, next : NextFunc
                     return response;
                 }
 
-                const oldFiles = foundUser.filesUpload;
+                const oldFiles = foundUser.profileImage;
                 console.log(1);
                 if(oldFiles){
                     console.log(1);
@@ -69,7 +69,7 @@ export const fileUpload = async (req : IRequest, res : Response, next : NextFunc
                     });
                 }
                 console.log(1);
-                const FilesUpload = filePaths.map((filename) => ({ url: filename, userId : userId }));
+                const profileImage = filePaths.map((filename) => ({ url: filename, userId : userId }));
                 console.log(1);
                 // 기존 파일 업로드를 모두 삭제
                 await prisma.fileUpload.deleteMany({
@@ -80,7 +80,7 @@ export const fileUpload = async (req : IRequest, res : Response, next : NextFunc
 
                 // 새로 업로드한 파일들을 생성
                 await prisma.fileUpload.createMany({
-                    data: FilesUpload,
+                    data: profileImage,
                 });
                 next();
             }catch(err){

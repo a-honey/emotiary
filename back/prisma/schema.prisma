@@ -9,11 +9,11 @@ datasource db {
 
 model User {
   id           String   @id @default(uuid())
-  username     String   @unique
+  username     String?
   email        String   @unique
-  password     String
+  password     String?
   description  String?
-  filesUpload fileUpload[]
+  profileImage fileUpload[]
   updatedAt    DateTime @default(now()) // 기본값 추가
   createdAt    DateTime @default(now())
   friendS      Friend[] @relation("UserFriendS")
@@ -23,11 +23,18 @@ model User {
   // 사용자와 Refresh Token 간의 일대다 관계 설정
   refreshTokens RefreshToken[]
 
-  favorites    Favorite[]
-  comments     Comment[]
-  latestEmoji  String?
-  isFriend     Boolean   @default(false)
-  alarmSetting String    @default("1")
+  favorites   Favorite[]
+  comments    Comment[]
+  latestEmoji String?
+  isFriend    Boolean   @default(false)
+  alarmSetting String      @default("1")
+  chatMessage  ChatMessage[]
+
+  // 이메일인증
+  verificationToken String?
+  verificationTokenExpires DateTime?
+  isVerified Boolean?
+
 }
 
 model fileUpload{
@@ -77,9 +84,10 @@ model Diary {
   title         String
   content       String
   is_public     String
-  emoji         String
-  emotion       String
+  emoji         String?
+  emotion       String?
   filesUpload   diaryFileUpload[]
+  audioUrl      String?  @db.VarChar(1200)
   favoriteCount Int      @default(value: 0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -113,7 +121,24 @@ model Comment {
 }
 
 model Emoji {
-  id         Int     @id @default(autoincrement())
-  type       String
-  emotion    String?
+  id      Int     @id @default(autoincrement())
+  type    String
+  emotion String?
+}
+
+model ChatRoom {
+  id        String        @id @default(uuid())
+  message   ChatMessage[]
+  createdAt DateTime      @default(now())
+}
+
+model ChatMessage {
+  id         String   @id @default(uuid())
+  room       ChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId     String
+  sendUser   User     @relation(fields: [sendUserId], references: [id], onDelete: Cascade)
+  sendUserId String
+  message    String
+  createdAt  DateTime @default(now())
+  isRead     Boolean  @default(false)
 }
