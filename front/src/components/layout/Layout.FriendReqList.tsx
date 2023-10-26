@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from './index.module.scss';
-import { useGetFriendData } from '../../api/get/useFriendData';
+import { useGetFriendData } from '../../api/get/useGetFriendData';
 
 const FriendReqList = () => {
   const [isReqList, setIsReqList] = useState(true);

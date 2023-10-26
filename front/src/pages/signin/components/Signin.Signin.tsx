@@ -1,17 +1,8 @@
 import React, { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
-import { instance } from '../../../api/instance';
+import { usePutSigninData } from '../../../api/mutation/usePutSigininData';
+import { QueryClient } from '@tanstack/react-query';
 import styles from './index.module.scss';
-
-interface UserData {
-  email: string;
-  id: string;
-  name: string;
-  token: string;
-  uploadFile: string;
-  refreshToken: string;
-}
 
 interface InputFieldProps {
   id: string;
@@ -23,43 +14,42 @@ interface InputFieldProps {
   boxStyle: string;
 }
 
+const InputField: React.FC<InputFieldProps> = ({
+  id,
+  name,
+  type,
+  placeholder,
+  value,
+  onChange,
+  boxStyle,
+}) => (
+  <div className={styles.formGroup}>
+    <label htmlFor={id}></label>
+    <div className={styles.inputGroup}>
+      <i className={boxStyle}></i>
+      <input
+        id={id}
+        name={name}
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+      />
+    </div>
+  </div>
+);
+
 const Signin: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const navigate = useNavigate();
-
-  const saveToLocalStorage = (data: UserData) => {
-    localStorage.setItem('email', data.email);
-    localStorage.setItem('userId', data.id);
-    localStorage.setItem('username', data.name);
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('userImg', data.uploadFile);
-    localStorage.setItem('refreshToken', data.refreshToken);
-  };
-
-  const mutation = useMutation(
-    async (userSigninInfos: { email: string; password: string }) => {
-      const response = await instance.post('/users/login', userSigninInfos);
-      return response.data;
-    },
-    {
-      // 로그인 성공
-      onSuccess: (data: any) => {
-        console.log('로그인 성공', data.data);
-        saveToLocalStorage(data.data);
-        navigate('/');
-      },
-      // 로그인 실패
-      onError: (error: any) => {
-        console.log('로그인 실패', error);
-      },
-    },
-  );
+  const queryClient = new QueryClient();
+  
+  const signinMutation = usePutSigninData(queryClient);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     const userSigninInfos = { email, password };
-    mutation.mutate(userSigninInfos);
+    signinMutation.mutate(userSigninInfos);
   };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,31 +59,6 @@ const Signin: React.FC = () => {
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
   };
-
-  const InputField: React.FC<InputFieldProps> = ({
-    id,
-    name,
-    type,
-    placeholder,
-    value,
-    onChange,
-    boxStyle,
-  }) => (
-    <div className={styles.formGroup}>
-      <label htmlFor={id}></label>
-      <div className={styles.inputGroup}>
-        <i className={boxStyle}></i>
-        <input
-          id={id}
-          name={name}
-          type={type}
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}
-        />
-      </div>
-    </div>
-  );
 
   return (
     <>
