@@ -46,7 +46,7 @@ export const myInfo = async (userId: string) => {
         id: userId,
       },
       include : {
-        filesUpload : true,
+        profileImage : true,
       }
     });
     const UserResponseDTO = plainToClass(userResponseDTO, myInfo,{
@@ -66,7 +66,7 @@ export const getAllUsers = async (userId : string, page : number, limit : number
     skip : (page - 1) * limit,
     take : limit,
     include: {
-        filesUpload: true
+        profileImage: true
     }
 });
 
@@ -110,7 +110,7 @@ const userResponseDataList = allUsers.map((user) =>
 export const getMyFriends = async (userId : string, page : number, limit : number) => {
 const allUsers = await prisma.user.findMany({
   include: {
-      filesUpload: true
+      profileImage: true
   }
 });
 const filteredUsers = [];
@@ -188,7 +188,7 @@ export const updateUserService = async (
       },
       data: inputData,
       include: {
-        filesUpload: {
+        profileImage: {
           select: {
             url: true // url 필드만 선택
           }
