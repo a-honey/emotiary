@@ -70,7 +70,7 @@ apiRouter.use('/comments', commentRouter);
 
 app.use('/api', apiRouter);
 
-app.use(express.static('fileUpload'));
+app.use('/api/fileUpload', express.static('fileUpload'));
 app.use(errorMiddleware);
-
+  
 export { app };

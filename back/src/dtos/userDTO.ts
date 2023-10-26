@@ -35,7 +35,7 @@ export class userResponseDTO{
     description : string | null;
 
     @Expose()
-    filesUpload : fileUpload[];
+    profileImage : fileUpload[];
 
     @Expose()
     createdAt : Date;
@@ -66,7 +66,7 @@ export class userValidateDTO{
 
     @IsOptional()
     @IsString({ each: true })
-    filesUpload: fileUpload[];
+    profileImage: fileUpload[];
 
     @IsOptional()
     isFriend : boolean;

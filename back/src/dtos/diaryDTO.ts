@@ -73,6 +73,9 @@ export class DiaryResponseDTO {
   favoriteCount: number;
 
   @Expose()
+  audioUrl : string;
+
+  @Expose()
   @Type(() => AuthorInDiaryDTO)
   author: AuthorInDiaryDTO;
 

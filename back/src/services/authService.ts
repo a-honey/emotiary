@@ -5,6 +5,8 @@ import bcrypt from "bcrypt";
 import { plainToClass } from "class-transformer";
 import { userResponseDTO } from "../dtos/userDTO";
 import { successApiResponseDTO } from "../utils/successResult";
+import { userCalculatePageInfo } from '../utils/pageInfo';
+import { PaginationResponseDTO } from "../dtos/diaryDTO";
 
 const prisma = new PrismaClient();
 
@@ -44,7 +46,7 @@ export const myInfo = async (userId: string) => {
         id: userId,
       },
       include : {
-        filesUpload : true,
+        profileImage : true,
       }
     });
     const UserResponseDTO = plainToClass(userResponseDTO, myInfo,{
@@ -58,12 +60,113 @@ export const myInfo = async (userId: string) => {
   }
 };
 
+export const getAllUsers = async (userId : string, page : number, limit : number) => {
+   // 모든 사용자 정보를 데이터베이스에서 가져오기
+   const allUsers = await prisma.user.findMany({
+    skip : (page - 1) * limit,
+    take : limit,
+    include: {
+        profileImage: true
+    }
+});
+
+for (const user of allUsers) {
+
+    const areFriends = await areUsersFriends(userId, user.id);
+    user.isFriend = areFriends;
+
+
+    const latestDiary = await prisma.diary.findFirst({
+        where : {
+            authorId : user.id
+        },
+        orderBy : {
+            createdAt : 'desc'
+        }
+    });
+    if(latestDiary) {
+        user.latestEmoji = latestDiary.emoji;
+    }
+}
+
+const { totalItem, totalPage } = await userCalculatePageInfo(limit, {});
+
+const pageInfo = { totalItem, totalPage, currentPage: page, limit };
+
+const userResponseDataList = allUsers.map((user) =>
+    plainToClass(userResponseDTO, user, { excludeExtraneousValues: true }),
+  );
+
+  const response = new PaginationResponseDTO(
+    200,
+    userResponseDataList,
+    pageInfo,
+    '성공',
+  );
+
+  return response;
+}
+
+export const getMyFriends = async (userId : string, page : number, limit : number) => {
+const allUsers = await prisma.user.findMany({
+  include: {
+      profileImage: true
+  }
+});
+const filteredUsers = [];
+for (const user of allUsers) {
+    if (user.id !== userId) {
+
+        const areFriends = await areUsersFriends(userId, user.id);
+        user.isFriend = areFriends;
+
+        const latestDiary = await prisma.diary.findFirst({
+            where: {
+                authorId: user.id,
+            },
+            orderBy: {
+                createdAt: 'desc',
+            },
+        });
+
+        if (latestDiary) {
+            user.latestEmoji = latestDiary.emoji;
+        }
+
+        if (areFriends) {
+            // 친구인 경우만 결과에 포함
+            filteredUsers.push(user);
+        }
+    }
+}
+const totalItem = filteredUsers.length;
+const totalPage = Math.ceil(totalItem / limit);
+
+const pageInfo = { totalItem, totalPage, currentPage: page, limit };
+
+const userResponseDataList = filteredUsers.map((user) =>
+    plainToClass(userResponseDTO, user, { excludeExtraneousValues: true }),
+  );
+
+  const response = new PaginationResponseDTO(
+    200,
+    userResponseDataList,
+    pageInfo,
+    '성공',
+  );
+
+  return response;
+}
+
 export const getUserInfo = async (userId: string) => {
   try {
     // 사용자 ID를 기반으로 사용자 정보 조회
     const userInfo = await prisma.user.findUnique({
       where: {
         id: userId,
+      },
+      include : {
+        profileImage : true,
       },
     });
     const response = successApiResponseDTO(userInfo);
@@ -88,7 +191,7 @@ export const updateUserService = async (
       },
       data: inputData,
       include: {
-        filesUpload: {
+        profileImage: {
           select: {
             url: true // url 필드만 선택
           }
@@ -206,7 +309,11 @@ export const areUsersFriends = async (userId1: string, userId2: string) => {
     if (userId1 === userId2) {
       return true;
     } else {
-      return !!friendShip;
+      if (friendShip) {
+        return friendShip.status;
+      } else {
+        return false;
+      }
     }
   } catch (error) {
     throw error;
