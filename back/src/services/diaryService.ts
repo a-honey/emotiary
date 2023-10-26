@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { checkFriend, getMyWholeFriends, weAreFriends } from './friendService';
 import axios from 'axios';
 import { Emoji } from '../types/emoji';
@@ -9,21 +9,8 @@ import { successApiResponseDTO } from '../utils/successResult';
 import { emptyApiResponseDTO } from '../utils/emptyResult';
 import { diaryUpload } from '../middlewares/uploadMiddleware';
 import { generateError } from '../utils/errorGenerator';
+import { getDb } from '../utils/dbconnection';
 
-// const prisma = new PrismaClient();
-
-const getDb = async () => {
-  const prisma = new PrismaClient();
-
-  return {
-    prisma,
-    [Symbol.asyncDispose]: async () => {
-      await prisma.$disconnect().then(() => {
-        console.log('DB 끊겼어용');
-      });
-    },
-  };
-};
 /**
  * 다이어리 작성
  * @param title
@@ -93,6 +80,7 @@ export const getAllMyDiariesService = async (
   limit: number,
 ) => {
   await using db = await getDb();
+  // const prisma = new PrismaClient();
   const diaries = await db.prisma.diary.findMany({
     skip: (page - 1) * limit,
     take: limit,
@@ -102,6 +90,10 @@ export const getAllMyDiariesService = async (
       filesUpload: true,
     },
   });
+
+  // prisma.$disconnect().then(() => {
+  //   console.log('disconnection time check');
+  // });
 
   // 다이어리 결과 없을 때 빈 배열 값 반환
   if (diaries.length == 0) {
