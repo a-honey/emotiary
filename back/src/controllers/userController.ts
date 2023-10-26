@@ -333,7 +333,7 @@ export const emailLink = async (req : IRequest, res : Response) => {
     });
 
     const result = emailToken();
-    console.log(result);
+
     await prisma.user.update({
         where : {
             id : user.id
@@ -361,7 +361,7 @@ export const emailLink = async (req : IRequest, res : Response) => {
 //2222222222222
 export const verifyEmail = async (req : IRequest, res : Response) => {
     const { token } = req.params;
-    console.log(1);
+
     const user = await prisma.user.findFirst({
         where : {
             verificationToken : token,
