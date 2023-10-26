@@ -46,16 +46,17 @@ const Header = () => {
 
   useEffect(() => {}, [userImg, token]);
 
-  /*
+
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
     if (token) {
-      socketRef.current = io('ws://localhost:3001', {
+      socketRef.current = io('ws://localhost:5001', {
         path: '/chat',
         extraHeaders: {
           Authorization: `Bearer ${token}`,
         },
+       
       });
 
       socketRef.current.on('connect', () => {
@@ -63,6 +64,7 @@ const Header = () => {
       });
 
       socketRef.current.on('connect_error', (error) => {
+        console.log('에러가 났어요')
         console.log('소켓 연결 에러:', error);
       });
 
@@ -81,7 +83,7 @@ const Header = () => {
       }
     };
   }, [token]);
-*/
+
   return (
     <>
       <header className={styles.header}>
@@ -133,7 +135,7 @@ const Header = () => {
       </header>
       {messages.length !== 0 && <Toast />}
       <Outlet />
-      {/*token && <ChatButton socket={socketRef.current!} />*/}
+      {token && <ChatButton socket={socketRef.current!} />}
     </>
   );
 };

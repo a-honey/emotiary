@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { getRefreshToken } from '../utils/localStorageHandlers';
 
-const baseURL = process.env.REACT_APP_BASE_URL;
+const baseURL = "http://localhost:5001/api";
 
+console.log(baseURL);
 export const instance = axios.create({
   baseURL,
   timeout: 5000,
