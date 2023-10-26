@@ -12,7 +12,6 @@ const exceptionLogDir = path.join(logDir, 'exception'); // exception 로그 저�
 const { combine, timestamp, printf } = winston.format;
 
 const logFormat = printf((info) => {
-  console.log(info)
   return `${info.timestamp} ${info.level}: ${info.message}`;
 });
 
