@@ -1,9 +1,8 @@
 import axios from 'axios';
 import { getRefreshToken } from '../utils/localStorageHandlers';
 
-const baseURL = "http://localhost:5001/api";
+const baseURL = process.env.REACT_APP_BASE_URL;
 
-console.log(baseURL);
 export const instance = axios.create({
   baseURL,
   timeout: 5000,
@@ -17,7 +16,6 @@ instance.interceptors.request.use(
     config.headers['Authorization'] = `Bearer ${userToken}`;
 
     // refreshToken 요청
-
     return config;
   },
   (error) => {
