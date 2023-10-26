@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Socket } from 'socket.io-client';
 import styles from './Chat.ChatRoom.module.scss';
 
@@ -12,6 +12,7 @@ const ChatRoom = ({
   userId: string;
 }) => {
   const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState<string[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,6 +30,15 @@ const ChatRoom = ({
     }
   };
 
+  useEffect(() => {
+    // 채팅방이 마운트되면 채팅방에 들어감
+    socket.emit('join', userId);
+    // 채팅방에 들어가면 messages 이벤트에서 이전 내역을 가져옴
+    socket.on('messages', (msgs: string[]) => {
+      setMessages(msgs);
+    });
+  }, [userId, socket]);
+
   return (
     <div className={styles.container}>
       <div className={styles.info}>
@@ -38,6 +48,9 @@ const ChatRoom = ({
         </button>
       </div>
       <div className={styles.messageContainer}>
+        {messages?.map((item) => (
+          <div>{item}</div>
+        ))}
         <div>보낸 메시지</div>
         <div>보낸 메시지</div>
         <div>보낸 메시지</div>

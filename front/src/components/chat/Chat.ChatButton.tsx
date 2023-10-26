@@ -6,10 +6,12 @@ import { useLocation } from 'react-router-dom';
 
 const ChatButton = ({ socket }: { socket: Socket }) => {
   const [isOpenChatList, setIsOpenChatList] = useState(false);
+  const [isNewMessage, setIsNewMessage] = useState(true);
 
   const location = useLocation();
   const toggleIsOpenChatList = () => {
     setIsOpenChatList((prev) => !prev);
+    setIsNewMessage(false);
   };
 
   useEffect(() => {
@@ -19,6 +21,10 @@ const ChatButton = ({ socket }: { socket: Socket }) => {
   if (location.pathname === '/mypage') {
     return null;
   }
+
+  socket.on('sendMessage', () => {
+    setIsNewMessage(true);
+  });
 
   return (
     <>
@@ -31,6 +37,7 @@ const ChatButton = ({ socket }: { socket: Socket }) => {
       >
         채팅목록
       </button>
+      {isNewMessage && <div className={styles.new} />}
     </>
   );
 };
