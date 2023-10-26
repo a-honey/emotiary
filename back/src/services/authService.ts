@@ -165,6 +165,9 @@ export const getUserInfo = async (userId: string) => {
       where: {
         id: userId,
       },
+      include : {
+        profileImage : true,
+      },
     });
     const response = successApiResponseDTO(userInfo);
     return response;

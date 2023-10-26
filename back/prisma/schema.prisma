@@ -85,6 +85,7 @@ model Diary {
   emoji         String?
   emotion       String?
   filesUpload   diaryFileUpload[]
+  audioUrl      String?  @db.VarChar(1200)
   favoriteCount Int      @default(value: 0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

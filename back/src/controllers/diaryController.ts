@@ -32,10 +32,6 @@ export const createDiary = async (
     const fileUrls = res.locals.myData;
     // const { emoji,...inputData } = req.body;
     const inputData = req.body;
-    inputData.createdDate = '2023-03-29T00:00:00Z';
-    inputData.title = 'aaaaaa';
-    inputData.content = '2ssssssssss';
-    inputData.is_public = 'friend';
     const diaryInput = plainToClass(DiaryValidateDTO, inputData);
 
     // TODO 밸리데이터 수정 필요
