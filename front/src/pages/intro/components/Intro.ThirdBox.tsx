@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import useIsScrollAnimation from '../../../hooks/useIsScrollAnimation';
-
+import mac from '../../../assets/mac.png';
 import styles from './index.module.scss';
 
 const ThirdBox: React.FC = () => {
@@ -13,7 +13,7 @@ const ThirdBox: React.FC = () => {
         <div>우리의 AI가 감정을 빠르고 정확하게 분석합니다.</div>
       </div>
       <div className={styles.thirdBoxImg}>
-        <img src="/mac.png" alt="mac.png" />
+        <img src={mac} alt="mac.png" />
       </div>
     </section>
   );

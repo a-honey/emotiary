@@ -33,7 +33,7 @@ formDataInstance.interceptors.request.use(
   (config) => {
     const userToken = localStorage.getItem('token');
 
-    config.headers['Content-Type'] = 'application/json';
+    config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
     config.headers['Authorization'] = `Bearer ${userToken}`;
     return config;
   },
