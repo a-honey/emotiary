@@ -58,7 +58,9 @@ export const sentList = async (req : IRequest, res : Response, next : NextFuncti
    */
   try {
     const userId = req.user.id;
-    const friendRequest = await listRequestsSent(userId);
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 8;
+    const friendRequest = await listRequestsSent(userId, page, limit);
     res.status(200).json(friendRequest);
   } catch (error) {
     console.error(error);
@@ -95,7 +97,9 @@ export const receivedList = async (req : IRequest, res : Response, next : NextFu
    */
   try {
     const userId = req.user.id;
-    const friendRequest = await listRequestsReceived(userId);
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 8;
+    const friendRequest = await listRequestsReceived(userId, page, limit);
     res.status(200).json(friendRequest);
   } catch (error) {
     console.error(error);
@@ -147,10 +151,9 @@ export const getFriends = async (req : IRequest, res : Response, next : NextFunc
    * #swagger.summary = '친구 목록'
    */
   try {
-    const page: number | null = req.query.page !== undefined ? Number(req.query.page) : null;
-    const limit: number | null = req.query.limit !== undefined ? Number(req.query.limit) : null;
-
     const userId = req.user.id;
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 8;
     const friendsList = await getMyFriends(userId, page, limit);
     res.status(200).json(friendsList);
 } catch (error) {

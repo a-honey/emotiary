@@ -2,7 +2,7 @@
 import { IsString, IsDate, IsNotEmpty, IsUUID } from 'class-validator';
 import { Exclude, Expose, Type } from 'class-transformer';
 import 'reflect-metadata';
-import {AuthorInDiaryDTO} from "dtos/diaryDTO";
+
 
 export class ApiResponseDTO {
   data: any;

@@ -82,7 +82,7 @@ export const listRequestsSent = async (userId: string, page: number, limit: numb
           select: {
             id: true,
             username: true,
-            filesUpload: true,
+            profileImage: true,
           },
         },
       },
@@ -150,7 +150,7 @@ export const listRequestsReceived = async (userId: string, page: number, limit: 
           select: {
             id: true,
             username: true,
-            filesUpload: true,
+            profileImage: true,
           },
         },
       },
