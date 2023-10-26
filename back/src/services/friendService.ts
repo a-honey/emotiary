@@ -1,9 +1,10 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 import { FriendResponseDTO, PaginationResponseDTO } from '../dtos/friendDTO';
+import { userResponseDTO} from '../dtos/userDTO';
 import { emptyApiResponseDTO } from '../utils/emptyResult';
 import { successApiResponseDTO } from '../utils/successResult';
-import { calculatePageInfoForFriend } from '../utils/pageInfo';
+import {calculatePageInfoForFriend, userCalculatePageInfo} from '../utils/pageInfo';
 import { plainToClass } from 'class-transformer';
 
 export const checkFriend = async (userId: string, requestId: string) => {
@@ -17,8 +18,7 @@ export const checkFriend = async (userId: string, requestId: string) => {
         status: true,
       },
     });
-    const response = successApiResponseDTO(friend);
-    return response;
+    return friend;
   } catch (error) {
     throw error;
   }
@@ -35,11 +35,7 @@ export const weAreFriends = async (userId: string, requestId: string) => {
         },
       },
     });
-    // const friendResponseDataList =
-    // plainToClass(FriendResponseDTO, friend, { excludeExtraneousValues: true });
-    const response = successApiResponseDTO(friend);
-    return response;
-    // return friend;
+    return friend;
   } catch (error) {
     throw error;
   }
@@ -235,71 +231,8 @@ export const getMyWholeFriends = async (userId: string) => {
   return friendList;
 };
 
-// export const getMyFriends = async (
-//   userId: string,
-//   page: number,
-//   limit: number,
-// ) => {
-//   try {
-//     const paginationOptions =
-//       page !== null && limit !== null
-//         ? { skip: (page - 1) * limit, take: limit }
-//         : {};
-//
-//     const myFriendsSent = await prisma.friend.findMany({
-//       where: {
-//         sentUserId: userId,
-//         status: true,
-//       },
-//       select: {
-//         receivedUserId: true,
-//       },
-//     });
-//
-//     const myFriendsReceived = await prisma.friend.findMany({
-//       where: {
-//         receivedUserId: userId,
-//         status: true,
-//       },
-//       select: {
-//         sentUserId: true,
-//       },
-//     });
-//
-//     const uniqueFriendIds: string[] = [
-//       ...new Set(myFriendsSent.map((friend) => friend.receivedUserId)),
-//       ...new Set(myFriendsReceived.map((friend) => friend.sentUserId)),
-//     ];
-//
-//     const users = await prisma.user.findMany({
-//       where: {
-//         id: {
-//           in: uniqueFriendIds,
-//         },
-//       },
-//       select: {
-//         id: true,
-//         username: true,
-//       },
-//       orderBy: { id: 'asc' },
-//       // ...paginationOptions,
-//     });
-//
-//     const allUserCount = await prisma.user.count({
-//       where: { id: { in: uniqueFriendIds } },
-//     });
-//     const totalPages = Math.ceil(allUserCount / limit);
-//
-//     return {
-//       user: users,
-//       currentPage: page,
-//       totalPages: totalPages,
-//     };
-//   } catch (error) {
-//     throw error;
-//   }
-// };
 
+/** @description 친구 목록 */
 export const getMyFriends = async (
   userId: string,
   page: number,
@@ -344,39 +277,26 @@ export const getMyFriends = async (
         username: true,
       },
       orderBy: { id: 'asc' },
-      // ...paginationOptions,
     });
-
-    // const allUserCount = await prisma.user.count({
-    //   skip: (page - 1) * limit,
-    //   take: limit,
-    //   where: { id: { in: uniqueFriendIds } },
-    //   orderBy: { id: 'asc' },
-    // });
-    // const totalPages = Math.ceil(allUserCount / limit);
-
-    // return {
-    //   user: users,
-    //   currentPage: page,
-    //   totalPages: totalPages,
-    // };
       if (users.length == 0) {
       const response = emptyApiResponseDTO();
       return response;
     }
 
-    const { totalItem, totalPage } = await calculatePageInfoForFriend(limit, {
-    users,
+    const { totalItem, totalPage } = await userCalculatePageInfo(limit, {
+      id: {
+          in: uniqueFriendIds,
+        },
     });
 
     const pageInfo = { totalItem, totalPage, currentPage: page, limit };
 
-    const friendResponseDataList = users.map((friend) =>
-    plainToClass(FriendResponseDTO, friend, { excludeExtraneousValues: true }),
+    const userResponseDataList = users.map((user) =>
+    plainToClass(userResponseDTO, user, { excludeExtraneousValues: true }),
   );
     const response = new PaginationResponseDTO(
     200,
-    friendResponseDataList,
+    userResponseDataList,
     pageInfo,
     '성공',
     );

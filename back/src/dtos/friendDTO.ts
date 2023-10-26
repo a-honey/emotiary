@@ -37,28 +37,6 @@ export class AuthorInFriendDTO {
   profileImage: string;
 }
 
-
-
-
-// export class FriendResponseDTO {
-//   @Expose()
-//   id: string;
-//
-//   @Expose()
-//   sentUserId : string;
-//
-//   @Expose()
-//   receivedUserId: string;
-//
-//   @Expose()
-//   status: boolean;
-//
-//   @Expose()
-//   @Type(() => AuthorInFriendDTO)
-//   authorUser: AuthorInFriendDTO;
-//
-// }
-
 export class FriendResponseDTO {
   @Expose()
   id: string;
@@ -77,12 +55,4 @@ export class FriendResponseDTO {
 
   @Expose()
   status: boolean;
-
-  // @Expose()
-  // @Type(() => AuthorInFriendDTO)
-  // author:AuthorInFriendDTO;
-  // @Type(() => SentUserInFriendDTO)
-  // sentUser: SentUserInFriendDTO;
-  // @Type(() => ReceivedUserInFriendDTO)
-  // receivedUser: ReceivedUserInFriendDTO;
 }

@@ -37,7 +37,7 @@ export const userCalculatePageInfo = async (limit: number, where: any) => {
 
 
 export const calculatePageInfoForFriend = async (limit: number, where: any) => {
-  const totalItem = await prisma.user.count({
+  const totalItem = await prisma.friend.count({
     where,
   });
 
