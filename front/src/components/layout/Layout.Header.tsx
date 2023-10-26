@@ -46,7 +46,6 @@ const Header = () => {
 
   useEffect(() => {}, [userImg, token]);
 
-
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
@@ -56,7 +55,6 @@ const Header = () => {
         extraHeaders: {
           Authorization: `Bearer ${token}`,
         },
-       
       });
 
       socketRef.current.on('connect', () => {
