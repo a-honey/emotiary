@@ -2,6 +2,7 @@
 import { IsString, IsDate, IsNotEmpty, IsUUID } from 'class-validator';
 import { Exclude, Expose, Type } from 'class-transformer';
 import 'reflect-metadata';
+import {AuthorInDiaryDTO} from "dtos/diaryDTO";
 
 export class ApiResponseDTO {
   data: any;
@@ -25,20 +26,52 @@ export class AuthorInFriendDTO {
   profileImage: string;
 }
 
+
+
+
+// export class FriendResponseDTO {
+//   @Expose()
+//   id: string;
+//
+//   @Expose()
+//   sentUserId : string;
+//
+//   @Expose()
+//   receivedUserId: string;
+//
+//   @Expose()
+//   status: boolean;
+//
+//   @Expose()
+//   @Type(() => AuthorInFriendDTO)
+//   authorUser: AuthorInFriendDTO;
+//
+// }
+
 export class FriendResponseDTO {
   @Expose()
   id: string;
 
   @Expose()
-  sentUserId : string;
+  sentUserId: string;
 
   @Expose()
   receivedUserId: string;
 
   @Expose()
-  status: boolean;
+  sentUser : AuthorInFriendDTO;
 
   @Expose()
-  @Type(() => AuthorInFriendDTO)
-  author: AuthorInFriendDTO;
+  receivedUser: AuthorInFriendDTO;
+
+  @Expose()
+  status: boolean;
+
+  // @Expose()
+  // @Type(() => AuthorInFriendDTO)
+  // author:AuthorInFriendDTO;
+  // @Type(() => SentUserInFriendDTO)
+  // sentUser: SentUserInFriendDTO;
+  // @Type(() => ReceivedUserInFriendDTO)
+  // receivedUser: ReceivedUserInFriendDTO;
 }

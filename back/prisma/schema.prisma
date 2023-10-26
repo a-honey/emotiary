@@ -8,17 +8,17 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid())
-  username     String   @unique
-  email        String   @unique
-  password     String
-  description  String?
+  id          String       @id @default(uuid())
+  username    String       @unique
+  email       String       @unique
+  password    String
+  description String?
   filesUpload fileUpload[]
-  updatedAt    DateTime @default(now()) // 기본값 추가
-  createdAt    DateTime @default(now())
-  friendS      Friend[] @relation("UserFriendS")
-  friendR      Friend[] @relation("UserFriendR")
-  Diary        Diary[]
+  updatedAt   DateTime     @default(now()) // 기본값 추가
+  createdAt   DateTime     @default(now())
+  friendS     Friend[]     @relation("UserFriendS")
+  friendR     Friend[]     @relation("UserFriendR")
+  Diary       Diary[]
 
   // 사용자와 Refresh Token 간의 일대다 관계 설정
   refreshTokens RefreshToken[]
@@ -26,8 +26,9 @@ model User {
   favorites    Favorite[]
   comments     Comment[]
   latestEmoji  String?
-  isFriend     Boolean   @default(false)
-  alarmSetting String    @default("1")
+  isFriend     Boolean       @default(false)
+  alarmSetting String        @default("1")
+  chatMessage  ChatMessage[]
 }
 
 model fileUpload{
@@ -113,7 +114,24 @@ model Comment {
 }
 
 model Emoji {
-  id         Int     @id @default(autoincrement())
-  type       String
-  emotion    String?
+  id      Int     @id @default(autoincrement())
+  type    String
+  emotion String?
+}
+
+model ChatRoom {
+  id        String        @id @default(uuid())
+  message   ChatMessage[]
+  createdAt DateTime      @default(now())
+}
+
+model ChatMessage {
+  id         String   @id @default(uuid())
+  room       ChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId     String
+  sendUser   User     @relation(fields: [sendUserId], references: [id], onDelete: Cascade)
+  sendUserId String
+  message    String
+  createdAt  DateTime @default(now())
+  isRead     Boolean  @default(false)
 }
