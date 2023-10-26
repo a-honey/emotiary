@@ -12,6 +12,7 @@ export const checkFriend = async (userId: string, requestId: string) => {
         status: true,
       },
     });
+    // console.log(friend);
     return friend;
   } catch (error) {
     throw error;
@@ -66,7 +67,7 @@ export const listRequestsSent = async (userId: string) => {
           select: {
             id: true,
             username: true,
-            filesUpload: true,
+            profileImage: true,
           },
         },
       },
@@ -105,7 +106,7 @@ export const listRequestsReceived = async (userId: string) => {
           select: {
             id: true,
             username: true,
-            filesUpload: true,
+            profileImage: true,
           },
         },
       },

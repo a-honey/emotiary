@@ -10,7 +10,7 @@ testAuthRouter.post('/predict', async(req : Request, res :Response, next : NextF
   try{
     const text : string = req.body.text as string;
 
-    const response = await axios.post('http://kdt-ai-8-team02.elicecoding.com:5000/predict', { text });
+    const response = await axios.post('http://127.0.0.1:5000/predict', { text });
 
     if (response.status === 200) {
       // 성공적으로 처리됐을 때

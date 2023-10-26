@@ -8,6 +8,8 @@ import {
   getAllMyDiariesService,
   updateDiaryService,
   getFriendsDiaryService,
+  mailService,
+  selectedEmoji,
 } from '../services/diaryService';
 import { IRequest } from 'types/user';
 import { plainToClass } from 'class-transformer';
@@ -30,10 +32,6 @@ export const createDiary = async (
     const fileUrls = res.locals.myData;
     // const { emoji,...inputData } = req.body;
     const inputData = req.body;
-    inputData.createdDate = '2023-03-29T00:00:00Z';
-    inputData.title = 'aaaaaa';
-    inputData.content = '2ssssssssss';
-    inputData.is_public = 'friend';
     const diaryInput = plainToClass(DiaryValidateDTO, inputData);
 
     // TODO 밸리데이터 수정 필요
@@ -189,6 +187,42 @@ export const deleteDiary = async (
   } catch (error) {
     //TODO ErrorGenerator 생성 후 status code랑 error.meta 동적으로 할당해주기
     console.log('!!!!!!!!!!!!!!!!!!!!!', error.meta);
+    next(error);
+  }
+};
+
+export const sendRecommendationEmail = async (
+  req: IRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  try{
+    const { diaryId } = req.params;
+    const { username } = req.user;
+    const { friendEmail } = req.body;
+
+    const sendMail = await mailService(friendEmail, diaryId, username);
+
+    return res.status(sendMail.status).json(sendMail);
+  }catch(error){
+    next(error);
+  }
+}
+
+export const selectEmotion = async(
+  req: IRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  try{
+    const { diaryId } = req.params;
+    const { id : userId } = req.user;
+    const { selectedEmotion } = req.body;
+
+    const updatedDiary = await selectedEmoji(selectedEmotion, diaryId, userId);
+
+    return res.status(updatedDiary.status).json(updatedDiary);
+  }catch(error){
     next(error);
   }
 };

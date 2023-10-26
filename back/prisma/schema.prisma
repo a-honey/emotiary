@@ -8,27 +8,33 @@ datasource db {
 }
 
 model User {
-  id          String       @id @default(uuid())
-  username    String       @unique
-  email       String       @unique
-  password    String
-  description String?
-  filesUpload fileUpload[]
-  updatedAt   DateTime     @default(now()) // 기본값 추가
-  createdAt   DateTime     @default(now())
-  friendS     Friend[]     @relation("UserFriendS")
-  friendR     Friend[]     @relation("UserFriendR")
-  Diary       Diary[]
+  id           String   @id @default(uuid())
+  username     String?
+  email        String   @unique
+  password     String?
+  description  String?
+  profileImage fileUpload[]
+  updatedAt    DateTime @default(now()) // 기본값 추가
+  createdAt    DateTime @default(now())
+  friendS      Friend[] @relation("UserFriendS")
+  friendR      Friend[] @relation("UserFriendR")
+  Diary        Diary[]
 
   // 사용자와 Refresh Token 간의 일대다 관계 설정
   refreshTokens RefreshToken[]
 
-  favorites    Favorite[]
-  comments     Comment[]
-  latestEmoji  String?
-  isFriend     Boolean       @default(false)
-  alarmSetting String        @default("1")
+  favorites   Favorite[]
+  comments    Comment[]
+  latestEmoji String?
+  isFriend    Boolean   @default(false)
+  alarmSetting String      @default("1")
   chatMessage  ChatMessage[]
+
+  // 이메일인증
+  verificationToken String?
+  verificationTokenExpires DateTime?
+  isVerified Boolean?
+
 }
 
 model fileUpload{
@@ -78,9 +84,10 @@ model Diary {
   title         String
   content       String
   is_public     String
-  emoji         String
-  emotion       String
+  emoji         String?
+  emotion       String?
   filesUpload   diaryFileUpload[]
+  audioUrl      String?  @db.VarChar(1200)
   favoriteCount Int      @default(value: 0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

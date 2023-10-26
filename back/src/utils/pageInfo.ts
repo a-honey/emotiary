@@ -23,4 +23,14 @@ export const calculatePageInfoForComment = async (
   const totalPage = Math.ceil(totalComment / limit);
 
   return { totalComment, totalPage };
+}
+
+export const userCalculatePageInfo = async (limit: number, where: any) => {
+  const totalItem = await prisma.user.count({
+    where,
+  });
+
+  const totalPage = Math.ceil(totalItem / limit);
+
+  return { totalItem, totalPage };
 };
