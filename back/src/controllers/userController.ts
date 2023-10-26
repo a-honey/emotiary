@@ -344,7 +344,13 @@ export const emailLink = async (req : IRequest, res : Response) => {
         },
     });
 
-    const verifyUrl = `http://localhost:5001/api/users/verifyEmail/${result.token}`;
+    let baseUrl;
+    if (process.env.NODE_ENV === 'development') {
+        baseUrl = 'http://localhost:5001';
+    } else {
+        baseUrl = 'https://kdt-ai-8-team02.elicecoding.com:5001';
+    }
+    const verifyUrl = `${baseUrl}/api/users/verifyEmail/${result.token}`;
     
     await sendEmail(
         email,
