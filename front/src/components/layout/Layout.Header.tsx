@@ -64,7 +64,6 @@ const Header = () => {
       });
 
       socketRef.current.on('connect_error', (error) => {
-        console.log('에러가 났어요')
         console.log('소켓 연결 에러:', error);
       });
 

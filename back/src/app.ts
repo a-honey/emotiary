@@ -127,7 +127,7 @@ interface ConnectedUsers {
 
   const connectedUsers: { [key: string]: ConnectedUsers } = {};
 
-io.on("connection", async (socket: Socket) => {
+io.on('connection', async (socket: Socket) => {
   socket.emit('hello', '안녕!')
   const currentUserId = (socket as any).decoded_token.id;
 
@@ -150,7 +150,7 @@ io.on("connection", async (socket: Socket) => {
     }
   });
 
-  socket.on("join", async (chatPartnerId: string) => {
+  socket.on('join', async (chatPartnerId: string) => {
     if (user) {
       const roomId = await createRoomId(currentUserId, chatPartnerId);
       const existingRoom = await getMyRoom(roomId);
@@ -180,7 +180,7 @@ io.on("connection", async (socket: Socket) => {
     }
   });
 
-  socket.on("sendMessage", async (chatPartnerId: string, message: string) => {
+  socket.on('sendMessage', async (chatPartnerId: string, message: string) => {
     if (user) {
       const roomId = await createRoomId(currentUserId, chatPartnerId);
       let room = await getMyRoom(roomId);
@@ -222,7 +222,7 @@ io.on("connection", async (socket: Socket) => {
     }
   });
 
-  socket.on("leave", async (chatPartnerId: string) => {
+  socket.on('leave', async (chatPartnerId: string) => {
     const roomId = await createRoomId(currentUserId, chatPartnerId);
     console.log(`[${roomId}] Leaving the room`);
     connectedUsers[currentUserId].roomId = null;
