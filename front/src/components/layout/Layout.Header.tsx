@@ -46,6 +46,7 @@ const Header = () => {
 
   useEffect(() => {}, [userImg, token]);
 
+  /*
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
@@ -60,6 +61,18 @@ const Header = () => {
       socketRef.current.on('connect', () => {
         console.log('소켓이 연결되었습니다.');
       });
+
+      socketRef.current.on('connect_error', (error) => {
+        console.log('소켓 연결 에러:', error);
+      });
+
+      socketRef.current.on('error', (error) => {
+        console.log('소켓 에러:', error);
+      });
+
+      socketRef.current.on('disconnect', (reason) => {
+        console.log('소켓이 연결이 끊어졌습니다. 사유:', reason);
+      });
     }
 
     return () => {
@@ -68,7 +81,7 @@ const Header = () => {
       }
     };
   }, [token]);
-
+*/
   return (
     <>
       <header className={styles.header}>
@@ -120,7 +133,7 @@ const Header = () => {
       </header>
       {messages.length !== 0 && <Toast />}
       <Outlet />
-      {token && <ChatButton socket={socketRef.current!} />}
+      {/*token && <ChatButton socket={socketRef.current!} />*/}
     </>
   );
 };
