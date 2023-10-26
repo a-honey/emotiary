@@ -31,12 +31,20 @@ const ChatRoom = ({
 
   return (
     <div className={styles.container}>
-      <div>보낸 메시지</div>
-      <div>보낸 메시지</div>
-      <div>보낸 메시지</div>
-      <div>받은 메시지</div>
-      <div>보낸 메시지</div>
-      <div>보낸 메시지</div>
+      <div className={styles.info}>
+        <div>{userId}님과의 채팅방</div>
+        <button className="doneBtn" onClick={toggleIsOpenChatRoom}>
+          채팅방 닫기
+        </button>
+      </div>
+      <div className={styles.messageContainer}>
+        <div>보낸 메시지</div>
+        <div>보낸 메시지</div>
+        <div>보낸 메시지</div>
+        <div>받은 메시지</div>
+        <div>보낸 메시지</div>
+        <div>보낸 메시지</div>
+      </div>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -44,7 +52,9 @@ const ChatRoom = ({
             setMessage(e.target.value)
           }
         />
-        <button type="submit">전송</button>
+        <button type="submit" className="doneBtn">
+          전송
+        </button>
       </form>
     </div>
   );
