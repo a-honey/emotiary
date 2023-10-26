@@ -1,7 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { instance } from '../instance';
 import { queryKeys } from '../queryKeys';
-import { ReceivedUserDataType } from './useGetFriendData.types';
+import {
+  ReceivedUserDataType,
+  sentUserDataType,
+} from './useGetFriendData.types';
 
 //** 친구요청목록 조회 ['sentFriends'], ['receivedFriends'] */
 export const useGetFriendData = ({
@@ -16,7 +19,7 @@ export const useGetFriendData = ({
     () => {
       return instance
         .get<{
-          data: ReceivedUserDataType[];
+          data: ReceivedUserDataType[] | sentUserDataType[];
           status: number;
           message: string;
         }>(`/friend/${userReqListType}/list`)

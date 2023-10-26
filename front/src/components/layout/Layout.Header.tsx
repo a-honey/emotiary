@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import styles from './index.module.scss';
@@ -10,6 +10,8 @@ import { useRecoilValue } from 'recoil';
 import { toastState } from '../../atoms/toastState';
 import logo from '../../assets/logo.gif';
 import { logout } from '../../utils/localStorageHandlers';
+import { io, Socket } from 'socket.io-client';
+import ChatButton from '../chat/Chat.ChatButton';
 
 const locations = [
   { name: 'MY CALENDAR', to: '/main' },
@@ -43,6 +45,30 @@ const Header = () => {
   }, [location.pathname]);
 
   useEffect(() => {}, [userImg, token]);
+
+  const socketRef = useRef<Socket | null>(null);
+
+  useEffect(() => {
+    if (token) {
+      socketRef.current = io('ws://localhost:3001', {
+        path: '/chat',
+        extraHeaders: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      socketRef.current.on('connect', () => {
+        console.log('소켓이 연결되었습니다.');
+      });
+    }
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
+    };
+  }, [token]);
+
   return (
     <>
       <header className={styles.header}>
@@ -94,6 +120,7 @@ const Header = () => {
       </header>
       {messages.length !== 0 && <Toast />}
       <Outlet />
+      {token && <ChatButton socket={socketRef.current!} />}
     </>
   );
 };
