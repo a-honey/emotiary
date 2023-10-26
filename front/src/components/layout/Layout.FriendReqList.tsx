@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styles from './index.module.scss';
 import { useGetFriendData } from '../../api/get/useGetFriendData';
-import { ReceivedUserDataType } from '../../api/get/useGetFriendData.types';
+import {
+  ReceivedUserDataType,
+  sentUserDataType,
+} from '../../api/get/useGetFriendData.types';
+import ImageComponent from '../ImageComponent';
 
 const FriendReqList = () => {
   const [isReqList, setIsReqList] = useState(true);
@@ -27,16 +31,29 @@ const FriendReqList = () => {
         </button>
       </div>
       <div className={styles.itemList}>
-        {data?.data.map((item: ReceivedUserDataType) => {
+        {data?.data?.map((item) => {
           if (isReqList) {
-            return (
-              <ResItem item={item.receivedUser} key={item.receivedUser.id} />
-            );
+            if ('sentUser' in item) {
+              const sentUserItem = item as sentUserDataType;
+              return (
+                <ResItem
+                  item={sentUserItem.sentUser}
+                  key={sentUserItem.sentUser.id}
+                />
+              );
+            }
           } else {
-            return (
-              <ReqItem item={item.receivedUser} key={item.receivedUser.id} />
-            );
+            if ('receivedUser' in item) {
+              const receivedUserItem = item as ReceivedUserDataType;
+              return (
+                <ReqItem
+                  item={receivedUserItem.receivedUser}
+                  key={receivedUserItem.receivedUser.id}
+                />
+              );
+            }
           }
+          return null;
         })}
       </div>
     </div>
@@ -45,10 +62,20 @@ const FriendReqList = () => {
 
 export default FriendReqList;
 
-const ResItem = ({ item }: { item: ReceivedUserDataType['receivedUser'] }) => {
+const ResItem = ({ item }: { item: sentUserDataType['sentUser'] }) => {
   return (
     <div className={styles.reqItemContainer}>
-      <div>{item.username}</div>
+      <div>
+        <ImageComponent
+          src={
+            item?.filesUpload.length > 0
+              ? item.filesUpload[item.filesUpload.length - 1].url
+              : null
+          }
+          alt={`${item.username}의 프로필 사진`}
+        />
+        {item.username}
+      </div>
       <div className={styles.btns}>
         <button className="doneBtn">수락</button>
         <button className="cancelBtn">거절</button>
@@ -60,7 +87,17 @@ const ResItem = ({ item }: { item: ReceivedUserDataType['receivedUser'] }) => {
 const ReqItem = ({ item }: { item: ReceivedUserDataType['receivedUser'] }) => {
   return (
     <div className={styles.reqItemContainer}>
-      <div>{item.username}</div>
+      <div>
+        <ImageComponent
+          src={
+            item?.filesUpload.length > 0
+              ? item.filesUpload[item.filesUpload.length - 1].url
+              : null
+          }
+          alt={`${item.username}의 프로필 사진`}
+        />
+        {item.username}
+      </div>
       <div className={styles.btns}>
         <button className="cancelBtn">취소</button>
       </div>

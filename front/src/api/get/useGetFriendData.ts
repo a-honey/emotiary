@@ -13,13 +13,23 @@ export const useGetFriendData = ({
     userReqListType === 'sent'
       ? queryKeys.sentFriends()
       : queryKeys.receivedFriends(),
-    async () => {
-      const response = await instance.get<{
-        data: ReceivedUserDataType[];
-        status: number;
-        message: string;
-      }>(`/friend/${userReqListType}/list`);
-      return response.data;
+    () => {
+      return instance
+        .get<{
+          data: ReceivedUserDataType[];
+          status: number;
+          message: string;
+        }>(`/friend/${userReqListType}/list`)
+        .then((res) => {
+          if (res.data) {
+            return res.data;
+          } else {
+            return { data: [] };
+          }
+        });
+    },
+    {
+      initialData: { data: [] },
     },
   );
 };
