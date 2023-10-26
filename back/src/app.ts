@@ -28,7 +28,7 @@ const app: Express & { io?: SocketIoServer } = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(Logger);
-// sendAlarm();
+sendAlarm();
 
 export const server = http.createServer(app);
 export const io = chat(server);
