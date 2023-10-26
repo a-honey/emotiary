@@ -29,13 +29,13 @@ userAuthRouter.post("/register", userRegister);
 
 userAuthRouter.post('/login', localAuthentication, userLogin);
 
-//test
+//test4
 userAuthRouter.post("/testregister", testEmail);
-
+//1
 userAuthRouter.post('/verifyEmail', emailLink);
-
+//2
 userAuthRouter.get('/verifyEmail/:token', verifyEmail);
-
+//3
 userAuthRouter.get('/verified', emailVerified);
 
 userAuthRouter.get('/current', jwtAuthentication, getMyInfo);
