@@ -1,7 +1,7 @@
 import React, { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePutSignupData } from '../../../api/mutation/usePutSiginupData';
-import { QueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import styles from './index.module.scss';
 
 interface UserData {
@@ -55,7 +55,7 @@ const Signup: React.FC = () => {
     password: '',
   });
   const [confirmPassword, setConfirmPassword] = useState<string>('');
-  const queryClient = new QueryClient();
+  const queryClient = useQueryClient();
 
   const signupMutation = usePutSignupData(queryClient);
 
