@@ -2,6 +2,7 @@ import React, { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePutSigninData } from '../../../api/mutation/usePutSigininData';
 import { QueryClient } from '@tanstack/react-query';
+import GoogleLogin from 'react-google-login';
 import styles from './index.module.scss';
 
 interface InputFieldProps {
@@ -46,6 +47,11 @@ const Signin: React.FC = () => {
   
   const signinMutation = usePutSigninData(queryClient);
 
+  const responseGoogle = (response: any) => {
+    console.log(response);
+    // 여기에 Google OAuth 응답 처리 로직을 넣을 수 있어
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     const userSigninInfos = { email, password };
@@ -70,7 +76,7 @@ const Signin: React.FC = () => {
             type="email"
             placeholder="이메일을 입력하세요"
             value={email}
-            onChange={handleEmailChange}
+            onChange={(e) => setEmail(e.target.value)}
             boxStyle={styles.box1}
           />
           <InputField
@@ -79,12 +85,18 @@ const Signin: React.FC = () => {
             type="password"
             placeholder="패스워드를 입력하세요"
             value={password}
-            onChange={handlePasswordChange}
+            onChange={(e) => setPassword(e.target.value)}
             boxStyle={styles.box2}
           />
           <button type="submit" className={styles.submitButton}>
             SIGN IN
           </button>
+          <GoogleLogin
+            clientId="YOUR_CLIENT_ID_HERE"  // 이 부분에 실제 Google Client ID를 넣어야 해
+            buttonText="Sign in with Google"
+            onSuccess={responseGoogle}
+            onFailure={responseGoogle}
+          />
         </form>
       </div>
     </>
