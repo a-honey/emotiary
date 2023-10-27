@@ -19,7 +19,7 @@ export const usePutUserData = (
         localStorage.removeItem('userImg');
         localStorage.setItem(
           'userImg',
-          data.data.filesUpload[data.data.filesUpload.length - 1].url,
+          data.data.profileImage[data.data.profileImage.length - 1].url,
         );
         queryClient.invalidateQueries(queryKeys.myUserData());
       },

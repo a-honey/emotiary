@@ -15,7 +15,7 @@ const USER_INFO_INITIAL_DATA = {
   description: '',
   latestEmoji: '',
   alarmSetting: '1',
-  filesUpload: [{ url: '' }],
+  profileImage: [{ url: '' }],
 };
 
 const MyCard = () => {
@@ -35,8 +35,15 @@ const MyCard = () => {
   // 받아온 캐시데이터를 담아야함
   const [userInfoData, setUserInfoData] = useState(USER_INFO_INITIAL_DATA);
 
-  const { id, email, username, description, latestEmoji, alarmSetting } =
-    userInfoData;
+  const {
+    id,
+    email,
+    username,
+    description,
+    latestEmoji,
+    alarmSetting,
+    profileImage,
+  } = userInfoData;
 
   const queryClient = useQueryClient();
 
@@ -85,8 +92,8 @@ const MyCard = () => {
         <img
           ref={imgRef}
           src={
-            userInfoData?.filesUpload[0]?.url
-              ? `${process.env.REACT_APP_BASE_URL}/${userInfoData.filesUpload[0].url}`
+            profileImage[0]?.url
+              ? `${process.env.REACT_APP_BASE_URL}/${userInfoData.profileImage[0].url}`
               : 'usure'
           }
           alt={`${username}의 프로필사진`}

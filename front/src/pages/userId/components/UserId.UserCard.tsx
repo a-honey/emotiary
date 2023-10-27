@@ -37,8 +37,14 @@ const UserCard = () => {
 
   return (
     <div className={styles.userCardContainer}>
-      <ImageComponent src={null} alt={`유저의 프로필사진`} />
-
+      <ImageComponent
+        src={
+          userData.profileImage?.length !== 0
+            ? userData.profileImage[userData.profileImage?.length - 1]?.url
+            : null
+        }
+        alt={`${userData.username}의 프로필사진`}
+      />
       {isFetching ? (
         <div>로딩중</div>
       ) : (

@@ -77,7 +77,7 @@ export default UserList;
 const UserItem = ({ data }: { data: UserItemType }) => {
   const navigator = useNavigate();
 
-  const { id, username, description, latestEmoji, isFriend, filesUpload } =
+  const { id, username, description, latestEmoji, isFriend, profileImage } =
     data;
 
   const queryClient = new QueryClient();
@@ -114,8 +114,8 @@ const UserItem = ({ data }: { data: UserItemType }) => {
       <div>
         <ImageComponent
           src={
-            filesUpload?.length !== 0
-              ? filesUpload[filesUpload?.length - 1]?.url
+            profileImage?.length !== 0
+              ? profileImage[profileImage?.length - 1]?.url
               : null
           }
           alt={`${username}의 프로필사진`}
