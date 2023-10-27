@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styles from './index.module.scss';
 import { useNavigate } from 'react-router-dom';
 import { useGetUsersData } from '../../../api/get/useGetUserData';
@@ -7,10 +7,18 @@ import Pagination from '../../../components/Pagination';
 import { usePostFriendReqMutation } from '../../../api/post/usePostFriendData';
 import { QueryClient } from '@tanstack/react-query';
 import { UserItemType } from '../../../api/get/useGetUserData.types';
+import search from '../../../assets/search.png';
+import SearchList from '../../../components/search/Search.SearchList';
 
 const UserList = () => {
   const [select, setSelect] = useState<'all' | 'friends'>('all');
   const [currentPage, setCurrentPage] = useState(1);
+
+  const [isOpenSearchList, setIsOpenSearchList] = useState(false);
+
+  const toggleIsOpenList = () => {
+    setIsOpenSearchList((prev) => !prev);
+  };
 
   const { data, isFetching } = useGetUsersData({
     page: currentPage,
@@ -29,27 +37,38 @@ const UserList = () => {
   };
 
   return (
-    <div className={styles.block}>
-      <h2>유저 모아보기</h2>
-      <div className={styles.nav}>
-        <input type="checkbox" onChange={handleCheckboxChange} />
-        <div>내 친구만 보기</div>
+    <>
+      {isOpenSearchList && (
+        <SearchList
+          toggleIsOpenSearchList={toggleIsOpenList}
+          targetName="유저"
+        />
+      )}
+      <div className={styles.block}>
+        <div className={styles.head}>
+          <h2>유저 모아보기</h2>
+          <img onClick={toggleIsOpenList} src={search} alt="검색이미지" />
+        </div>
+        <div className={styles.nav}>
+          <input type="checkbox" onChange={handleCheckboxChange} />
+          <div>내 친구만 보기</div>
+        </div>
+        <div className={styles.listBlock}>
+          {isFetching ? (
+            <div>로딩중</div>
+          ) : (
+            data?.data?.map((item: UserItemType) => (
+              <UserItem data={item} key={item.id} />
+            ))
+          )}
+        </div>
+        <Pagination
+          totalPage={data?.pageInfo.totalPage}
+          currentPage={currentPage}
+          handlePage={handleCurrentPage}
+        />
       </div>
-      <div className={styles.listBlock}>
-        {isFetching ? (
-          <div>로딩중</div>
-        ) : (
-          data?.data?.map((item: UserItemType) => (
-            <UserItem data={item} key={item.id} />
-          ))
-        )}
-      </div>
-      <Pagination
-        totalPage={data?.pageInfo.totalPage}
-        currentPage={currentPage}
-        handlePage={handleCurrentPage}
-      />
-    </div>
+    </>
   );
 };
 
@@ -94,7 +113,11 @@ const UserItem = ({ data }: { data: UserItemType }) => {
       )}
       <div>
         <ImageComponent
-          src={filesUpload[filesUpload.length - 1]?.url ?? null}
+          src={
+            filesUpload?.length !== 0
+              ? filesUpload[filesUpload?.length - 1]?.url
+              : null
+          }
           alt={`${username}의 프로필사진`}
         />
         <div className={styles.emoji}>{latestEmoji}</div>

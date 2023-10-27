@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import styles from './index.module.scss';
 import { handleImgError } from '../../../utils/imgHandlers';
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +8,8 @@ import { instance } from '../../../api/instance';
 import { GoHeartFill, GoHeart } from 'react-icons/go';
 import Pagination from '../../../components/Pagination';
 import Tab, { TapType } from './Network.Tab';
-
+import search from '../../../assets/search.png';
+import SearchList from '../../../components/search/Search.SearchList';
 interface DairyItemType {
   id: string;
   authorId: string;
@@ -30,6 +31,11 @@ const DiaryList = () => {
   const [tapEmotion, setTapEmotion] = useState<TapType['resource']>('all');
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [isOpenSearchList, setIsOpenSearchList] = useState(false);
+
+  const toggleIsOpenList = () => {
+    setIsOpenSearchList((prev) => !prev);
+  };
 
   const userId = localStorage.getItem('userId');
   const navigator = useNavigate();
@@ -51,33 +57,45 @@ const DiaryList = () => {
   };
 
   return (
-    <div className={styles.diaryBlock}>
-      <div className={styles.nav}>
-        <h2>다른 유저의 일기 모아보기</h2>
-        <div>
-          <input type="checkbox" onChange={handleCheckboxChange} />
-          <div>친구 일기만 보기</div>
-        </div>
-      </div>
-      <Tab tapEmotion={tapEmotion} handleTapEmotion={handleTapEmotion} />
-      <div className={styles.diaryListBlock}>
-        {isFetching ? (
-          <div>로딩중</div>
-        ) : data?.length === 0 ? (
-          <div>데이터가 없습니다.</div>
-        ) : (
-          data?.data?.map((item: DairyItemType) => (
-            <DairyItem data={item} key={item.id} />
-          ))
-        )}
-      </div>
+    <>
+      {isOpenSearchList && (
+        <SearchList
+          toggleIsOpenSearchList={toggleIsOpenList}
+          targetName="일기"
+        />
+      )}
+      <div className={styles.diaryBlock}>
+        <div className={styles.nav}>
+          <div className={styles.head}>
+            <h2>다른 유저의 일기 모아보기</h2>
+            <img onClick={toggleIsOpenList} src={search} alt="검색이미지" />
+          </div>
 
-      <Pagination
-        totalPage={data?.pageInfo?.totalPage}
-        currentPage={currentPage}
-        handlePage={setCurrentPage}
-      />
-    </div>
+          <div>
+            <input type="checkbox" onChange={handleCheckboxChange} />
+            <div>친구 일기만 보기</div>
+          </div>
+        </div>
+        <Tab tapEmotion={tapEmotion} handleTapEmotion={handleTapEmotion} />
+        <div className={styles.diaryListBlock}>
+          {isFetching ? (
+            <div>로딩중</div>
+          ) : data?.length === 0 ? (
+            <div>데이터가 없습니다.</div>
+          ) : (
+            data?.data?.map((item: DairyItemType) => (
+              <DairyItem data={item} key={item.id} />
+            ))
+          )}
+        </div>
+
+        <Pagination
+          totalPage={data?.pageInfo?.totalPage}
+          currentPage={currentPage}
+          handlePage={setCurrentPage}
+        />
+      </div>
+    </>
   );
 };
 
