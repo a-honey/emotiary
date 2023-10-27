@@ -9,17 +9,13 @@ import diaryRouter from './routes/diaryRouter';
 import favoriteRouter from './routes/favoriteRouter';
 import friendRouter from './routes/friendRouter';
 import commentRouter from './routes/commentRouter';
-import {
-  jwtStrategy,
-  localStrategy,
-  googleStrategy,
-} from './config/passport';
+import { jwtStrategy, localStrategy, googleStrategy } from './config/passport';
 import { Logger } from './config/logger';
 import testAuthRouter from './routes/testRouter';
 import { errorMiddleware } from './middlewares/errorMiddleware';
 import { sendAlarm } from './utils/alarm';
 import http from 'http';
-import { chat } from './utils/chat';
+// import { chat } from './utils/chat';
 import { Server as SocketIoServer, Socket } from 'socket.io';
 
 // import axios, { AxiosResponse } from "axios";
@@ -31,7 +27,7 @@ app.use(Logger);
 sendAlarm();
 
 export const server = http.createServer(app);
-export const io = chat(server);
+// export const io = chat(server);
 
 app.use(passport.initialize());
 
@@ -76,8 +72,7 @@ apiRouter.use('/comments', commentRouter);
 
 app.use('/api', apiRouter);
 
-
-app.io = io;
+// app.io = io;
 
 // // 정적 파일 제공을 위한 미들웨어 설정
 // app.use(express.static("public"));
