@@ -7,6 +7,7 @@ import { Error } from '../types';
 export const usePostDiaryData = (
   queryClient: QueryClient,
   toggleIsOpenModal?: () => void,
+  handleChangeEmojis?: (emojis: string) => void,
 ) => {
   const postMutation = useMutation(
     async ({ body }: { body: DiaryBodyType }) => {
@@ -14,8 +15,10 @@ export const usePostDiaryData = (
     },
     {
       onSuccess: (res) => {
-        // res.data.idres.data.emotion으로 오는데, emotion 하나를 골라서
         toggleIsOpenModal?.();
+        // VM 에러,, 확인 필요
+        console.log('응답데이터', res.data.data);
+        handleChangeEmojis?.(res.data.data.emoji);
       },
       onError: (error: Error) => {
         console.error('useMutation api 요청 에러', error);

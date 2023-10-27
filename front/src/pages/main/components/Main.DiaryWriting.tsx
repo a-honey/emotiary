@@ -25,19 +25,27 @@ const DiaryWriting = ({
   toggleIsOpenModal: () => void;
 }) => {
   const [imgsContainer, setImgsContainer] = useState<File[]>([]);
+  const [emojis, setEmojis] = useState('');
 
   const [formData, setFormData] = useState<DiaryBodyType>(
     DIARY_WRITING_INITIAL_DATA,
   );
   const [isEmojiSelectOpen, setIsEmojiSelectOpen] = useState(false);
 
-  const toogleIsEmojiSelectOpen = () => {
+  const toggleIsEmojiSelectOpen = () => {
     setIsEmojiSelectOpen((prev) => !prev);
   };
 
+  const handleChangeEmojis = (resEmojis: string) => {
+    setEmojis(resEmojis);
+  };
   const queryClient = useQueryClient();
 
-  const postMutation = usePostDiaryData(queryClient, toggleIsOpenModal);
+  const postMutation = usePostDiaryData(
+    queryClient,
+    toggleIsOpenModal,
+    handleChangeEmojis,
+  );
 
   const { handleImgChange, imgContainer, imgRef } = useImgChange();
 
@@ -76,6 +84,28 @@ const DiaryWriting = ({
         </div>
         <div className={styles.contentContainer}>
           <div className={styles.imgContainer}>
+            {/* 일단 map 해서 슬라이드로 넘기기 */}
+            <img
+              ref={imgRef}
+              src={post_none}
+              alt="일기 사진 및 비디오 업로드"
+            />
+            <img
+              ref={imgRef}
+              src={post_none}
+              alt="일기 사진 및 비디오 업로드"
+            />
+            <img
+              ref={imgRef}
+              src={post_none}
+              alt="일기 사진 및 비디오 업로드"
+            />
+            <img
+              ref={imgRef}
+              src={post_none}
+              alt="일기 사진 및 비디오 업로드"
+            />
+            {/* 현재 마지막 돔요소만 src 변함 */}
             <img
               ref={imgRef}
               src={post_none}
@@ -139,7 +169,10 @@ const DiaryWriting = ({
             작성완료
           </button>
           {isEmojiSelectOpen && (
-            <EmojiSelect toogleIsEmojiSelectOpen={toogleIsEmojiSelectOpen} />
+            <EmojiSelect
+              emojis={emojis}
+              toggleIsEmojiSelectOpen={toggleIsEmojiSelectOpen}
+            />
           )}
         </div>
       </form>
