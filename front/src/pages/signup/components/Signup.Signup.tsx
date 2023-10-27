@@ -1,5 +1,4 @@
 import React, { FormEvent, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { usePutSignupData } from '../../../api/mutation/usePutSiginupData';
 import { useQueryClient } from '@tanstack/react-query';
 import GoogleLogin from 'react-google-login';
@@ -153,7 +152,7 @@ const Signup: React.FC = () => {
         SIGN UP
       </button>
       <GoogleLogin
-        clientId=""
+        clientId="594577452303-n7paj5690d9l35dg3sskk755prrmv389.apps.googleusercontent.com"
         buttonText="Sign up with Google"
         onSuccess={responseGoogle}
         onFailure={responseGoogle}

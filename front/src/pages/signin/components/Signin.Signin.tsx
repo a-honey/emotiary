@@ -1,5 +1,4 @@
 import React, { FormEvent, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { usePutSigninData } from '../../../api/mutation/usePutSigininData';
 import { QueryClient } from '@tanstack/react-query';
 import GoogleLogin from 'react-google-login';
@@ -58,14 +57,6 @@ const Signin: React.FC = () => {
     signinMutation.mutate(userSigninInfos);
   };
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
-
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
-
   return (
     <>
       <div className={styles.centerContainer}>
@@ -92,7 +83,7 @@ const Signin: React.FC = () => {
             SIGN IN
           </button>
           <GoogleLogin
-            clientId=""
+            clientId="594577452303-n7paj5690d9l35dg3sskk755prrmv389.apps.googleusercontent.com"
             buttonText="Sign in with Google"
             onSuccess={responseGoogle}
             onFailure={responseGoogle}
