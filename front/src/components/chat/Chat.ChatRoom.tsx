@@ -20,12 +20,14 @@ const ChatRoom = ({
     // 빈값이면 if문 종료
     if (!message.trim()) return;
 
+    console.log('메시지내용:', message);
     try {
       // 메시지를 socket에 전송
       await socket?.emit('sendMessage', userId, message);
       // input value 초기화
       setMessage('');
     } catch (err) {
+      console.log('에러');
       console.log('메시지 전송 실패', err);
     }
   };

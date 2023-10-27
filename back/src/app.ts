@@ -100,6 +100,10 @@ app.use('/api', apiRouter);
 app.use('/api/fileUpload', express.static('fileUpload'));
 app.use(errorMiddleware);
 
+
+
+
+// 웹소켓을 이용한 1:1 채팅
 interface ConnectedUsers {
   socketId: string;
   roomId: string | null;
@@ -116,7 +120,6 @@ interface ConnectedUsers {
     
   });
 
-  console.log('hi')
   io.use(
     socketIoJwt.authorize({
       secret: process.env.JWT_SECRET_KEY,
@@ -128,9 +131,9 @@ interface ConnectedUsers {
   const connectedUsers: { [key: string]: ConnectedUsers } = {};
 
 io.on('connection', async (socket: Socket) => {
-  socket.emit('hello', '안녕!')
   const currentUserId = (socket as any).decoded_token.id;
 
+  
   const user = await currentUser(currentUserId);
   if (user) {
     connectedUsers[currentUserId] = {
@@ -141,6 +144,9 @@ io.on('connection', async (socket: Socket) => {
     console.log(`[${user.username}] connected`);
   }
 
+  socket.onAny((eventName: string, ...args: any[]) => {
+    console.log(`이벤트 발생: ${eventName}, 데이터: ${args}`);
+  });
 
   socket.on('initialize', async (userId: string) => {
     if (user) {

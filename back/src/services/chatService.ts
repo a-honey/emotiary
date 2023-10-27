@@ -5,7 +5,6 @@ import { PrismaClient } from '@prisma/client';
 // import { emptyApiResponseDTO } from '../utils/emptyResult';
 const prisma = new PrismaClient();
 
-
 /** @description 현재 사용자 */
 export const currentUser = async (currentUserId: string) => {
   try {
@@ -19,6 +18,24 @@ export const currentUser = async (currentUserId: string) => {
     throw error;
   }
 }
+
+// /** @description 현재 사용자 */
+// export const currentUser = async (currentUserId: string) => {
+//   try {
+//     const user = await prisma.user.findUnique({
+//       where: {
+//         id: currentUserId,
+//       },
+//       select: {
+//         username: true,
+//         profileImage: true,
+//       },
+//     });
+//     return user;
+//   } catch (error) {
+//     throw error;
+//   }
+// }
 
 /** @description roomId 생성 */
 export const createRoomId = async (currentUserId: string, chatPartnerId: string) => {
@@ -45,6 +62,42 @@ export const createChatRoom = async (roomId: string) => {
   }
 }
 
+/** @description 모든 채팅룸 가져오기 */
+export const getAllMyRoom = async (currentUserId: string) => {
+  try {
+    const room = await prisma.chatRoom.findMany({
+      where: {
+        id: currentUserId,
+      },
+    })
+    return room;
+  } catch (error) {
+    throw error;
+  }
+}
+
+// /** @description 모든 채팅룸 가져오기 */
+// export const getAllMyRoom = async (currentUserId: string) => {
+//   try {
+//     const room = await prisma.chatRoom.findMany({
+//       where: {
+//         id: currentUserId,
+//       },
+//       select: {
+//         snedUser: {
+//           select: {
+//             id: true,
+//             username: true,
+//             profileImage: true,
+//           },
+//         },
+//       },
+//     })
+//     return room;
+//   } catch (error) {
+//     throw error;
+//   }
+// }
 
 /** @description 채팅룸 가져오기 */
 export const getMyRoom = async (roomId: string) => {
@@ -59,7 +112,6 @@ export const getMyRoom = async (roomId: string) => {
     throw error;
   }
 }
-
 
 /** @description 메세지 가져오기 */
 export const getMyMessages = async (roomId: string) => {
