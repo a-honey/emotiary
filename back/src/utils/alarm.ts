@@ -45,8 +45,6 @@ export const sendAlarm = async () => {
         // 해당 최신일기와 오늘 일자 비교
         const daysSinceLastWrite = today - diaryLastWrite;
 
-        console.log(daysSinceLastWrite);
-        console.log(parseInt(user.alarmSetting));
         // daysSinceLastWrite가 유저별로 설정한 알림일수 이상일 경우 메일 발송
         if (daysSinceLastWrite >= parseInt(user.alarmSetting)) {
           await sendEmail(
