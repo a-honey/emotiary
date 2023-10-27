@@ -23,13 +23,12 @@
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-20px);
+    transform: translateY(-40px);
   }
 }
 
 .animation {
   animation: moveUpAndDown 2s forwards;
-  background-color: pink;
 }
 
 .emojis {
@@ -39,6 +38,9 @@
 
 .emoji {
   font-size: 100px;
+  &:hover {
+    animation: moveUpAndDown 1s infinite;
+  }
 }
 
 .thirdBoxImg {

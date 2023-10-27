@@ -27,20 +27,22 @@ export const createDiaryService = async (
   inputData: Prisma.DiaryCreateInput,
   fileUrls: string[],
 ) => {
-  // const responseData = await axios.post(
-  //   'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
-  //   {
-  //     text: inputData.content,
-  //   },
-  // );
+  const responseData = await axios.post(
+    'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
+    {
+      text: inputData.content,
+    },
+  );
+  console.log(responseData.data.emotion);
+  const labels = responseData.data.emotion.map(
+    (item: { label: string }) => item.label,
+  );
 
-  // const labels = responseData.data.emotion.map(
-  //   (item: { label: string }) => item.label,
-  // );
+  const emotionString = labels.join(',');
 
-  // const emotionString = labels.join(',');
+  inputData.emotion = emotionString;
 
-  // inputData.emotion = emotionString;
+  inputData.emoji = '❎';
 
   const diaryData = {
     ...inputData,
@@ -357,21 +359,23 @@ export const updateDiaryService = async (
   diaryId: string,
   inputData: Prisma.DiaryUpdateInput,
 ) => {
-  // if (inputData.content) {
-  //   const responseData = await axios.post(
-  //     'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
-  //     {
-  //       text: inputData.content,
-  //     },
-  //   );
-  //   const labels = responseData.data.emotion.map(
-  //     (item: { label: string }) => item.label,
-  //   );
+  if (inputData.content) {
+    const responseData = await axios.post(
+      'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
+      {
+        text: inputData.content,
+      },
+    );
+    const labels = responseData.data.emotion.map(
+      (item: { label: string }) => item.label,
+    );
 
-  //   const emotionString = labels.join(',');
+    const emotionString = labels.join(',');
 
-  //   inputData.emotion = emotionString;
-  // }
+    inputData.emotion = emotionString;
+
+    inputData.emoji = '❎';
+  }
 
   const updatedDiary = await prisma.diary.update({
     where: { id: diaryId, authorId: userId },

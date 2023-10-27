@@ -16,7 +16,7 @@ const useImgChange = () => {
       e.dataTransfer.files.length > 0
     ) {
       // 드래그 앤 드롭 이벤트에서 파일 가져오기
-      if (e.dataTransfer && e.dataTransfer.files.length > 0) {
+      if (e.dataTransfer && e.dataTransfer.files) {
         img = e.dataTransfer.files[0];
       }
     } else if (e.target instanceof HTMLInputElement && e.target.files) {

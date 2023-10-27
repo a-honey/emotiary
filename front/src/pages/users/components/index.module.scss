@@ -29,7 +29,7 @@
     height: 100%;
     display: grid;
     grid-template-columns: repeat(4, 350px);
-    grid-template-rows: repeat(2, 280px);
+    grid-template-rows: repeat(2, 310px);
     gap: 20px;
   }
 }
@@ -37,12 +37,30 @@
 .item {
   border: 1px solid map-get($colors, bg);
   border-radius: 5px;
-  padding: 20px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   position: relative;
   cursor: pointer;
+  &:hover {
+    background-color: map-get($colors, bg);
+  }
+  .friendBtn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    &.red {
+      background-color: rgb(146, 53, 53);
+    }
+  }
   div {
     position: relative;
     display: flex;
@@ -57,6 +75,7 @@
   img {
     width: 200px;
     height: 200px;
+    border-radius: 50%;
   }
   .content {
     display: flex;
@@ -67,6 +86,12 @@
       justify-content: center;
       align-items: center;
       gap: 10px;
+      font-weight: 700;
+    }
+    .description {
+      padding: 10px;
+      overflow: hidden;
+      height: 50px;
     }
   }
 }

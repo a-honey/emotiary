@@ -319,3 +319,59 @@ export const areUsersFriends = async (userId1: string, userId2: string) => {
     throw error;
   }
 };
+
+export const getUsers = async(searchTerm : string, field : string, page : number, limit : number) => {
+  if (!field || (field !== 'username' && field !== 'email')) {
+    throw ({ error: '올바른 필드 값을 지정하세요.' });
+}
+
+let searchResults;
+
+if (field === 'username') {
+// Prisma를 사용하여 username을 포함하는 유저 검색
+searchResults = await prisma.user.findMany({
+  skip : (page - 1) * limit,
+  take : limit,
+    where: {
+    username: {
+        contains: searchTerm,
+    },
+    },
+    include : {
+      profileImage : true,
+    },
+});
+} else if (field === 'email') {
+// Prisma를 사용하여 email을 포함하는 유저 검색
+searchResults = await prisma.user.findMany({
+  skip : (page - 1) * limit,
+  take : limit,
+    where: {
+    email: {
+        contains: searchTerm,
+    },
+    },
+    include : {
+      profileImage : true,
+    },
+});
+}
+
+const totalItem = searchResults.length;
+const totalPage = Math.ceil(totalItem / limit);
+
+const pageInfo = { totalItem, totalPage, currentPage: page, limit };
+
+const userResponseDataList = searchResults.map((user) =>
+    plainToClass(userResponseDTO, user, { excludeExtraneousValues: true }),
+  );
+
+  const response = new PaginationResponseDTO(
+    200,
+    userResponseDataList,
+    pageInfo,
+    '성공',
+  );
+
+  return response;
+}
