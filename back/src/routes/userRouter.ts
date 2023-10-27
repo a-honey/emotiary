@@ -33,7 +33,7 @@ userAuthRouter.post('/login', localAuthentication, userLogin);
 //test4
 userAuthRouter.post("/testregister", testEmail);
 //1
-userAuthRouter.post('/verifyEmail', emailLink);
+userAuthRouter.post('/email', emailLink);
 //2
 userAuthRouter.get('/verifyEmail/:token', verifyEmail);
 //3

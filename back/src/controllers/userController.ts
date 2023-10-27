@@ -324,7 +324,6 @@ export const loginCallback = (req : IRequest, res :Response) => {
 
 export const searchKeyword = async(req : IRequest, res : Response, next : NextFunction) => {
     try{
-        const userId = req.user.id;
         const searchTerm = req.query.searchTerm as string;
         const field = req.query.field as string;
         const page = parseInt(req.query.page as string) || 1;

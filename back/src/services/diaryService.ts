@@ -43,6 +43,8 @@ export const createDiaryService = async (
 
   inputData.emotion = emotionString;
 
+  inputData.emoji = "❎";
+
   const diaryData = {
     ...inputData,
     author: {
@@ -372,6 +374,8 @@ export const updateDiaryService = async (
     const emotionString = labels.join(',');
 
     inputData.emotion = emotionString;
+
+    inputData.emoji = "❎";
   }
 
   const updatedDiary = await prisma.diary.update({
