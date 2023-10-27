@@ -2,6 +2,7 @@ import { QueryClient, useMutation } from '@tanstack/react-query';
 import { instance } from '../instance';
 import { useSetRecoilState } from 'recoil';
 import { toastState } from '../../atoms/toastState';
+import { queryKeys } from '../queryKeys';
 
 export const usePostFriendReqMutation = (queryClient: QueryClient) => {
   const setState = useSetRecoilState(toastState);
@@ -12,12 +13,13 @@ export const usePostFriendReqMutation = (queryClient: QueryClient) => {
     },
     {
       onSuccess: (res) => {
-        queryClient.invalidateQueries([
-          'myDiaryData',
-          res.data.data.createdDate.split('T')[0].split('-')[0],
-          res.data.data.createdDate.split('T')[0].split('-')[1],
-        ]);
-        queryClient.invalidateQueries(['myAllDiarysData']);
+        queryClient.invalidateQueries(
+          queryKeys.myDiaryData({
+            year: new Date(res.data.data.createdDate).getFullYear(),
+            month: new Date(res.data.data.createdDate).getMonth() + 1,
+          }),
+        );
+        queryClient.invalidateQueries(queryKeys.sentFriends());
         setState((oldState) => [
           ...oldState,
           {
@@ -44,7 +46,7 @@ export const useAcceptFriendReqMutation = (queryClient: QueryClient) => {
     },
     {
       onSuccess: (res) => {
-        queryClient.invalidateQueries(['friendListData']);
+        queryClient.invalidateQueries(queryKeys.receivedFriends());
         setState((oldState) => [
           ...oldState,
           {
@@ -71,7 +73,7 @@ export const useRejectFriendReqMutation = (queryClient: QueryClient) => {
     },
     {
       onSuccess: (res) => {
-        queryClient.invalidateQueries(['friendListData']);
+        queryClient.invalidateQueries(queryKeys.receivedFriends());
         setState((oldState) => [
           ...oldState,
           {

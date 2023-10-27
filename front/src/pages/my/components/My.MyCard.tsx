@@ -7,7 +7,7 @@ import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { formDataInstance, instance } from '../../../api/instance';
 import useImgChange from '../../../hooks/useImgChange';
 import ChangePW from './My.ChangePW';
-import { usePutUserData } from '../../../api/mutation/usePutUserData';
+import { usePutUserData } from '../../../api/put/usePutUserData';
 
 interface UserInfoType {
   email: string;
@@ -15,7 +15,7 @@ interface UserInfoType {
   id: string;
   description: string;
   latestEmoji: string;
-  alarmSetting: number;
+  alarmSetting: string;
 }
 
 const USER_INFO_INITIAL_DATA = {
@@ -24,7 +24,7 @@ const USER_INFO_INITIAL_DATA = {
   id: '',
   description: '',
   latestEmoji: '',
-  alarmSetting: 1,
+  alarmSetting: '1',
 };
 
 // formdata img api 요청 따로할지 미정
@@ -39,9 +39,9 @@ const MyCard = () => {
   const { data: userData, isFetching } = useGetMyUserData();
 
   // 받아온 캐시데이터를 담아야함
-  const [userInfoData, setUserInfoData] = useState(USER_INFO_INITIAL_DATA);
-
-  const body = new FormData();
+  const [userInfoData, setUserInfoData] = useState(
+    userData ?? USER_INFO_INITIAL_DATA,
+  );
 
   const { id, email, username, description, latestEmoji, alarmSetting } =
     userInfoData;
@@ -52,6 +52,8 @@ const MyCard = () => {
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const body = new FormData();
 
     if (imgContainer) {
       body.append('filesUpload', imgContainer);
@@ -77,13 +79,6 @@ const MyCard = () => {
       [name]: value,
     }));
   };
-
-  useEffect(() => {
-    if (userData) {
-      // userData를 받아오면 userInfoData를 업데이트
-      setUserInfoData(userData);
-    }
-  }, [userData]);
 
   return (
     <section className={styles.myCard}>
@@ -148,7 +143,7 @@ const MyCard = () => {
                 const confirmDelete =
                   window.confirm('변경사항이 저장되지 않았습니다.');
                 if (confirmDelete) {
-                  setUserInfoData(userData);
+                  setUserInfoData(userData!);
                   setIsEditing(false);
                   return;
                 } else {

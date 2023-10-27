@@ -1,18 +1,14 @@
 import React, { useState } from 'react';
 import styles from './index.module.scss';
-import { handleImgError } from '../../../utils/imgHandlers';
 import { useNavigate } from 'react-router-dom';
 import { useGetUsersData } from '../../../api/get/useGetUserData';
 import ImageComponent from '../../../components/ImageComponent';
-import { instance } from '../../../api/instance';
 import Pagination from '../../../components/Pagination';
-import { usePostFriendReqMutation } from '../../../api/mutation/usePostFriendData';
+import { usePostFriendReqMutation } from '../../../api/post/usePostFriendData';
 import { QueryClient } from '@tanstack/react-query';
-import { useRecoilState } from 'recoil';
-import { toastState } from '../../../atoms/toastState';
 
 interface UserItemType {
-  id: number;
+  id: string;
   username: string;
   description: string;
   profileImage: string;
@@ -23,7 +19,7 @@ interface UserItemType {
 const UserList = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { data, isFetching } = useGetUsersData();
+  const { data, isFetching } = useGetUsersData({ page: currentPage, limit: 8 });
 
   /** 페이지네이션의 현재 페이지 업데이트 함수 */
   const handleCurrentPage = (page: number) => {
@@ -41,9 +37,9 @@ const UserList = () => {
         {isFetching ? (
           <div>로딩중</div>
         ) : (
-          data?.data?.map((item: UserItemType) => (
-            <UserItem data={item} key={item.id} />
-          ))
+          data?.data
+            .slice(0, 8) // api 수정 후 삭제 예정
+            .map((item: UserItemType) => <UserItem data={item} key={item.id} />)
         )}
       </div>
       <Pagination
@@ -60,34 +56,14 @@ export default UserList;
 const UserItem = ({ data }: { data: UserItemType }) => {
   const navigator = useNavigate();
 
-  const [state, setState] = useRecoilState(toastState);
-
   const { id, profileImage, username, description, latestEmoji, isFriend } =
     data;
 
   const queryClient = new QueryClient();
   const postMutation = usePostFriendReqMutation(queryClient);
 
-  const handleFriendToast = () => {
-    // 친구요청을 성공했을때
-    setState((oldState: any) => [
-      ...oldState,
-      { message: `${username}에게 친구요청 성공하였습니다.` },
-    ]);
-    // 이미 했을 때
-    setState((oldState: any) => [
-      ...oldState,
-      { message: `${username}에게 이미 친구요청을 하였습니다.` },
-    ]);
-  };
-
   const handleFriendReqBtnClick = async () => {
-    try {
-      await instance.post(`/friend/req/${id}`);
-      alert('친구요청완료');
-    } catch {
-      console.error('친구요청실패');
-    }
+    postMutation.mutate({ id });
   };
 
   return (

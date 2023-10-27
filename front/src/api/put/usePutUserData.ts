@@ -1,5 +1,6 @@
 import { QueryClient, useMutation } from '@tanstack/react-query';
 import { formDataInstance } from '../instance';
+import { queryKeys } from '../queryKeys';
 
 export const usePutUserData = (
   queryClient: QueryClient,
@@ -13,7 +14,7 @@ export const usePutUserData = (
     {
       onSuccess: () => {
         handleIsAdding?.();
-        queryClient.invalidateQueries(['myUserData']);
+        queryClient.invalidateQueries(queryKeys.myUserData());
       },
       onError: (error) => {
         console.error('useMutation api 요청 에러', error);

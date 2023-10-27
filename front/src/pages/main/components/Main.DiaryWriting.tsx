@@ -6,14 +6,17 @@ import { useQueryClient } from '@tanstack/react-query';
 import getUserId from '../../../utils/localStorageHandlers';
 import useImgChange from '../../../hooks/useImgChange';
 import EmojiSelect from './Main.EmojiSelect';
-import { usePostDiaryData } from '../../../api/mutation/usePostDiaryData';
-import { formatDate } from '../../../utils/formatHandlers';
+import { usePostDiaryData } from '../../../api/post/usePostDiaryData';
+import { formatDatetoString } from '../../../utils/formatHandlers';
+import { DiaryBodyType } from '../../../api/post/usePostDiaryData.types';
 
 const DIARY_WRITING_INITIAL_DATA = {
   title: '',
   content: '',
   is_public: 'all',
   emoji: '🥰',
+  emotion: '',
+  createdDate: '2023-10-31',
 };
 
 const DiaryWriting = ({
@@ -23,7 +26,9 @@ const DiaryWriting = ({
   day: Date;
   handleIsOpenDiaryWriting: () => void;
 }) => {
-  const [formData, setFormData] = useState(DIARY_WRITING_INITIAL_DATA);
+  const [formData, setFormData] = useState<DiaryBodyType>(
+    DIARY_WRITING_INITIAL_DATA,
+  );
   const [isEmojiSelectOpen, setIsEmojiSelectOpen] = useState(false);
 
   const toogleIsEmojiSelectOpen = () => {
@@ -51,7 +56,11 @@ const DiaryWriting = ({
 
     setIsEmojiSelectOpen(true);
     postMutation.mutate({
-      body: { ...formData, createdDate: formatDate(day), emotion: 'happiness' },
+      body: {
+        ...formData,
+        createdDate: formatDatetoString(day),
+        emotion: 'happiness',
+      },
     });
   };
 

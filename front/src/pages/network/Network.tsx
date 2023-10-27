@@ -1,5 +1,6 @@
 import React from 'react';
 import DiaryList from './components/Network.DiaryList';
+import withLogin from '../../components/withLogin';
 
 const NetworkPage: React.FC = () => {
   return (
@@ -9,4 +10,4 @@ const NetworkPage: React.FC = () => {
   );
 };
 
-export default NetworkPage;
+export default withLogin(NetworkPage);
