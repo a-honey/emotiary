@@ -27,20 +27,20 @@ export const createDiaryService = async (
   inputData: Prisma.DiaryCreateInput,
   fileUrls: string[],
 ) => {
-  const responseData = await axios.post(
-    'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
-    {
-      text: inputData.content,
-    },
-  );
-  console.log(responseData.data.emotion);
-  const labels = responseData.data.emotion.map(
-    (item: { label: string }) => item.label,
-  );
+  // const responseData = await axios.post(
+  //   'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
+  //   {
+  //     text: inputData.content,
+  //   },
+  // );
 
-  const emotionString = labels.join(',');
+  // const labels = responseData.data.emotion.map(
+  //   (item: { label: string }) => item.label,
+  // );
 
-  inputData.emotion = emotionString;
+  // const emotionString = labels.join(',');
+
+  // inputData.emotion = emotionString;
 
   const diaryData = {
     ...inputData,
@@ -357,21 +357,21 @@ export const updateDiaryService = async (
   diaryId: string,
   inputData: Prisma.DiaryUpdateInput,
 ) => {
-  if (inputData.content) {
-    const responseData = await axios.post(
-      'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
-      {
-        text: inputData.content,
-      },
-    );
-    const labels = responseData.data.emotion.map(
-      (item: { label: string }) => item.label,
-    );
+  // if (inputData.content) {
+  //   const responseData = await axios.post(
+  //     'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
+  //     {
+  //       text: inputData.content,
+  //     },
+  //   );
+  //   const labels = responseData.data.emotion.map(
+  //     (item: { label: string }) => item.label,
+  //   );
 
-    const emotionString = labels.join(',');
+  //   const emotionString = labels.join(',');
 
-    inputData.emotion = emotionString;
-  }
+  //   inputData.emotion = emotionString;
+  // }
 
   const updatedDiary = await prisma.diary.update({
     where: { id: diaryId, authorId: userId },
@@ -477,4 +477,22 @@ export const selectedEmoji = async (
 
   const response = successApiResponseDTO(diaryResponseData);
   return response;
+};
+
+export const searchDiaryService = async (title: string, content: string) => {
+  const words = content.split(' ');
+  const modifiedWords = words.map((word) => {
+    return `${word}*`;
+  });
+  //TODO elastic search 찾아보기
+  const queryContent: string = modifiedWords.join(' ');
+  console.log(queryContent);
+  const searchedDiary = await prisma.diary.findMany({
+    where: {
+      content: {
+        search: queryContent,
+      },
+    },
+  });
+  return searchedDiary;
 };

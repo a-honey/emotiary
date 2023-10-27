@@ -52,13 +52,7 @@ app.get('/', (req: Request, res: Response) => {
   res.send('기본 페이지');
 });
 
-//TODO api 붙여주기
 //TODO node 부하테스트
-
-// app.all('/api/*', (req: Request, res: Response, next: NextFunction) => {
-//   console.log('api통신 테스트');
-//   next();
-// });
 
 const apiRouter = express.Router();
 const router = express.Router();
