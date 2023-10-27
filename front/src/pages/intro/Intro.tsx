@@ -4,6 +4,7 @@ import FirstBox from './components/Intro.FirstBox';
 import FourthBox from './components/Intro.FourthBox';
 import SecondBox from './components/Intro.SecondBox';
 import ThirdBox from './components/Intro.ThirdBox';
+import { withLoginSoNot } from '../../components/withLogin';
 
 const IntroPage: React.FC = () => {
   return (
@@ -22,4 +23,4 @@ const IntroPage: React.FC = () => {
   );
 };
 
-export default IntroPage;
+export default withLoginSoNot(IntroPage);

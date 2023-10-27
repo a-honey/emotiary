@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { getRefreshToken } from '../utils/localStorageHandlers';
 
-const baseURL = process.env.REACT_APP_BASE_URL;
+//const baseURL = process.env.REACT_APP_BASE_URL;
+const baseURL = "http://localhost:5001"
 
 export const instance = axios.create({
   baseURL,
@@ -16,7 +17,6 @@ instance.interceptors.request.use(
     config.headers['Authorization'] = `Bearer ${userToken}`;
 
     // refreshToken 요청
-
     return config;
   },
   (error) => {
@@ -33,7 +33,7 @@ formDataInstance.interceptors.request.use(
   (config) => {
     const userToken = localStorage.getItem('token');
 
-    config.headers['Content-Type'] = 'application/json';
+    config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
     config.headers['Authorization'] = `Bearer ${userToken}`;
     return config;
   },

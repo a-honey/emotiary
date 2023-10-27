@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styles from './DiaryComment.module.scss';
 import { useQueryClient } from '@tanstack/react-query';
-import { usePostCommentData } from '../../api/mutation/usePostDiaryData';
+import { usePostCommentData } from '../../api/post/usePostDiaryData';
 import { useNavigate } from 'react-router-dom';
 import ImageComponent from '../ImageComponent';
 

@@ -3,9 +3,11 @@ import useIsScrollAnimation from '../../../hooks/useIsScrollAnimation';
 
 import { Link } from 'react-router-dom';
 import styles from './index.module.scss';
+import getUserId from '../../../utils/localStorageHandlers';
 
 const FifthBox = () => {
   const { isAnimated, boxRef } = useIsScrollAnimation();
+  const userId = getUserId;
 
   return (
     <section className={styles.block} ref={boxRef}>
@@ -15,12 +17,16 @@ const FifthBox = () => {
         <div>이모지2</div>
         <div>이모지3</div>
       </div>
-      <Link to="/signin" className="doneBtn">
-        로그인
-      </Link>
-      <Link to="/signup" className="doneBtn">
-        회원가입
-      </Link>
+      {!userId && (
+        <>
+          <Link to="/signin" className="doneBtn">
+            로그인
+          </Link>
+          <Link to="/signup" className="doneBtn">
+            회원가입
+          </Link>
+        </>
+      )}
     </section>
   );
 };

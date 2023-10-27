@@ -2,9 +2,7 @@ import { QueryClient, useMutation } from '@tanstack/react-query';
 import { instance } from '../instance';
 import { useNavigate } from 'react-router-dom';
 
-export const usePutSigninData = (
-  queryClient: QueryClient,
-) => {
+export const usePutSigninData = (queryClient: QueryClient) => {
   const navigate = useNavigate();
   const signinMutation = useMutation(
     async (userSigninInfos: { email: string; password: string }) => {
@@ -21,7 +19,7 @@ export const usePutSigninData = (
         localStorage.setItem('userImg', data.data.uploadFile);
         localStorage.setItem('refreshToken', data.data.refreshToken);
 
-        navigate('/');
+        navigate('/main');
       },
       onError: (error: any) => {
         console.log('로그인 실패', error);

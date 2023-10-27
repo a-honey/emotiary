@@ -15,6 +15,7 @@
 
 // import * as socketIoJwt from 'socketio-jwt';
 // const prisma = new PrismaClient();
+// const path = require('path');
 
 // interface ConnectedUsers {
 //   socketId: string;
@@ -27,10 +28,13 @@
 //     path: '/chat',
 //     cors: {
 //       origin: 'http://localhost:3000', // Replace with your actual frontend URL
-//       methods: ['GET', 'POST'],
+//       methods: ['GET', 'POST',  'WEBSOCKET'],
+
 //     },
+
 //   });
 
+//   console.log('hi')
 //   io.use(
 //     socketIoJwt.authorize({
 //       secret: process.env.JWT_SECRET_KEY,
@@ -42,10 +46,10 @@
 //   const connectedUsers: { [key: string]: ConnectedUsers } = {};
 
 //   io.on("connection", async (socket: Socket) => {
+//     socket.emit('hello', '안녕!')
 //     const currentUserId = (socket as any).decoded_token.id;
 
 //     const user = await currentUser(currentUserId);
-
 //     if (user) {
 //       connectedUsers[currentUserId] = {
 //         socketId: socket.id,
@@ -54,6 +58,7 @@
 //       };
 //       console.log(`[${user.username}] connected`);
 //     }
+
 
 //     socket.on('initialize', async (userId: string) => {
 //       if (user) {
