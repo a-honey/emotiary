@@ -190,10 +190,7 @@ const DayItem = ({
           </button>
         }
         {isOpenDiary && (
-          <DiaryWriting
-            handleIsOpenDiaryWriting={toggleIsOpenModal}
-            day={day}
-          />
+          <DiaryWriting toggleIsOpenModal={toggleIsOpenModal} day={day} />
         )}
       </>
     );

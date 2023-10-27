@@ -17,7 +17,9 @@ const EmojiSelect = ({
           <div>😊</div>
         </div>
         <div className={styles.btns}>
-          <button className="cancelBtn">다시쓰기</button>
+          <button className="cancelBtn" onClick={toogleIsEmojiSelectOpen}>
+            다시쓰기
+          </button>
           <button
             className="doneBtn"
             type="button"

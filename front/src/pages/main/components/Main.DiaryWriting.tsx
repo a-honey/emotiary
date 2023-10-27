@@ -14,17 +14,15 @@ const DIARY_WRITING_INITIAL_DATA = {
   title: '',
   content: '',
   is_public: 'all',
-  emoji: '🥰',
-  emotion: '',
   createdDate: '2023-10-31',
 };
 
 const DiaryWriting = ({
   day,
-  handleIsOpenDiaryWriting,
+  toggleIsOpenModal,
 }: {
   day: Date;
-  handleIsOpenDiaryWriting: () => void;
+  toggleIsOpenModal: () => void;
 }) => {
   const [imgsContainer, setImgsContainer] = useState<File[]>([]);
 
@@ -39,7 +37,7 @@ const DiaryWriting = ({
 
   const queryClient = useQueryClient();
 
-  const postMutation = usePostDiaryData(queryClient, handleIsOpenDiaryWriting);
+  const postMutation = usePostDiaryData(queryClient, toggleIsOpenModal);
 
   const { handleImgChange, imgContainer, imgRef } = useImgChange();
 
@@ -65,7 +63,6 @@ const DiaryWriting = ({
       body: {
         ...formData,
         createdDate: formatDatetoString(day),
-        emotion: 'happiness',
       },
     });
   };
@@ -134,7 +131,7 @@ const DiaryWriting = ({
           <button
             className="cancelBtn"
             type="button"
-            onClick={handleIsOpenDiaryWriting}
+            onClick={toggleIsOpenModal}
           >
             작성취소
           </button>
