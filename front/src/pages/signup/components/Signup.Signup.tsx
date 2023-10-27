@@ -62,7 +62,7 @@ const Signup: React.FC = () => {
 
   const responseGoogle = (response: any) => {
     console.log(response);
-    // 여기에 Google OAuth 응답 처리 로직을 넣을 수 있어
+    // 구글 가입 로직
   };
 
   const signupInputForms = [
@@ -153,7 +153,7 @@ const Signup: React.FC = () => {
         SIGN UP
       </button>
       <GoogleLogin
-        clientId="YOUR_CLIENT_ID_HERE"  // 이 부분에 실제 Google Client ID를 넣어야 해
+        clientId=""
         buttonText="Sign up with Google"
         onSuccess={responseGoogle}
         onFailure={responseGoogle}

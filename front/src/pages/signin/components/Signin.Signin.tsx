@@ -49,7 +49,7 @@ const Signin: React.FC = () => {
 
   const responseGoogle = (response: any) => {
     console.log(response);
-    // 여기에 Google OAuth 응답 처리 로직을 넣을 수 있어
+    // 구글 로그인 로직
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
@@ -92,7 +92,7 @@ const Signin: React.FC = () => {
             SIGN IN
           </button>
           <GoogleLogin
-            clientId="YOUR_CLIENT_ID_HERE"  // 이 부분에 실제 Google Client ID를 넣어야 해
+            clientId=""
             buttonText="Sign in with Google"
             onSuccess={responseGoogle}
             onFailure={responseGoogle}
