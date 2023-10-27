@@ -6,12 +6,32 @@ import {
   updateComment,
   deleteComment,
 } from '../controllers/commentContorller';
+import { wrapAsyncController } from '../utils/wrapper';
 
 const commentRouter = Router();
 
-commentRouter.post('/:diaryId', jwtAuthentication, createComment);
-commentRouter.get('/:diaryId', getComment);
-commentRouter.put('/:commentId', jwtAuthentication, updateComment);
-commentRouter.delete('/:commentId', jwtAuthentication, deleteComment);
+// 댓글 작성
+commentRouter.post(
+  '/:diaryId',
+  jwtAuthentication,
+  wrapAsyncController(createComment),
+);
+
+// 댓글 조회
+commentRouter.get('/:diaryId', wrapAsyncController(getComment));
+
+// 댓글 수정
+commentRouter.put(
+  '/:commentId',
+  jwtAuthentication,
+  wrapAsyncController(updateComment),
+);
+
+// 댓글 삭제
+commentRouter.delete(
+  '/:commentId',
+  jwtAuthentication,
+  wrapAsyncController(deleteComment),
+);
 
 export default commentRouter;
