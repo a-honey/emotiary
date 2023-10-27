@@ -17,6 +17,7 @@ import {
   userLogout,
   emailLink,
   testEmail,
+  searchKeyword,
 } from "../controllers/userController";
 import { localAuthentication } from "../middlewares/authenticateLocal";
 import { jwtAuthentication } from "../middlewares/authenticateJwt";
@@ -37,6 +38,8 @@ userAuthRouter.post('/verifyEmail', emailLink);
 userAuthRouter.get('/verifyEmail/:token', verifyEmail);
 //3
 userAuthRouter.get('/verified', emailVerified);
+
+userAuthRouter.get('/search', jwtAuthentication, searchKeyword);
 
 userAuthRouter.get('/current', jwtAuthentication, getMyInfo);
 

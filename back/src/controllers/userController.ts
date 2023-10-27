@@ -10,6 +10,7 @@ import {
     forgotUserPassword,
     resetUserPassword,
     getUserFromDatabase,
+    getUsers,
 } from '../services/authService';
 import {
     generateAccessToken,
@@ -319,6 +320,22 @@ export const profile = async (req : IRequest, res : Response, next : NextFunctio
 export const loginCallback = (req : IRequest, res :Response) => {
     // 소셜 로그인 성공 시 홈 페이지로 리다이렉션
     res.redirect('/');
+}
+
+export const searchKeyword = async(req : IRequest, res : Response, next : NextFunction) => {
+    try{
+        const userId = req.user.id;
+        const searchTerm = req.query.searchTerm as string;
+        const field = req.query.field as string;
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+
+        const searchKeyword = await getUsers(searchTerm, field, page, limit);
+
+        res.json(searchKeyword);
+    }catch(error){
+        next(error);
+    }
 }
 
 //1111111111
