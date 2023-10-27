@@ -60,8 +60,11 @@ const Signup: React.FC = () => {
   const signupMutation = usePutSignupData(queryClient);
 
   const responseGoogle = (response: any) => {
-    console.log(response);
-    // 구글 가입 로직
+    if (response?.tokenId) {
+      console.log('로그인 성공', response);
+    } else {
+      console.log('로그인 실패', response);
+    }
   };
 
   const signupInputForms = [

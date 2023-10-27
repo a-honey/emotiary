@@ -47,8 +47,11 @@ const Signin: React.FC = () => {
   const signinMutation = usePutSigninData(queryClient);
 
   const responseGoogle = (response: any) => {
-    console.log(response);
-    // 구글 로그인 로직
+    if (response?.tokenId) {
+      console.log('로그인 성공', response);
+    } else {
+      console.log('로그인 실패', response);
+    }
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
