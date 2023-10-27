@@ -28,6 +28,7 @@ export const createDiaryService = async (
   inputData: Prisma.DiaryCreateInput,
   fileUrls: string[],
 ) => {
+  
   const responseData = await axios.post(
     'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
     {
