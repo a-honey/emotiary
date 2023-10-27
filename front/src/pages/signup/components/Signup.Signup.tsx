@@ -2,6 +2,7 @@ import React, { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePutSignupData } from '../../../api/mutation/usePutSiginupData';
 import { useQueryClient } from '@tanstack/react-query';
+import GoogleLogin from 'react-google-login';
 import styles from './index.module.scss';
 
 interface UserData {
@@ -58,6 +59,11 @@ const Signup: React.FC = () => {
   const queryClient = useQueryClient();
 
   const signupMutation = usePutSignupData(queryClient);
+
+  const responseGoogle = (response: any) => {
+    console.log(response);
+    // 여기에 Google OAuth 응답 처리 로직을 넣을 수 있어
+  };
 
   const signupInputForms = [
     {
@@ -128,26 +134,32 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <div className={styles.centerContainer}>
-      <form onSubmit={handleSubmit} className={styles.signupForm}>
-        {signupInputForms.map((input, index) => (
-          <InputField
-            key={index}
-            id={input.id}
-            name={input.name}
-            type={input.type}
-            placeholder={input.placeholder}
-            value={input.value}
-            onChange={handleChange}
-            boxStyle={input.boxStyle}
-            onBlur={handleBlur}
-          />
-        ))}
-        <button type="submit" className={styles.submitButton}>
-          SIGN UP
-        </button>
-      </form>
-    </div>
+  <div className={styles.centerContainer}>
+    <form onSubmit={handleSubmit} className={styles.signupForm}>
+      {signupInputForms.map((input, index) => (
+        <InputField
+          key={index}
+          id={input.id}
+          name={input.name}
+          type={input.type}
+          placeholder={input.placeholder}
+          value={input.value}
+          onChange={handleChange}
+          boxStyle={input.boxStyle}
+          onBlur={handleBlur}
+        />
+      ))}
+      <button type="submit" className={styles.submitButton}>
+        SIGN UP
+      </button>
+      <GoogleLogin
+        clientId="YOUR_CLIENT_ID_HERE"  // 이 부분에 실제 Google Client ID를 넣어야 해
+        buttonText="Sign up with Google"
+        onSuccess={responseGoogle}
+        onFailure={responseGoogle}
+      />
+    </form>
+  </div>
   );
 };
 
