@@ -22,7 +22,7 @@ const ChatRoom = ({
 
     try {
       // 메시지를 socket에 전송
-      await socket.emit('sendMessage', userId, message);
+      await socket?.emit('sendMessage', userId, message);
       // input value 초기화
       setMessage('');
     } catch (err) {
@@ -32,9 +32,9 @@ const ChatRoom = ({
 
   useEffect(() => {
     // 채팅방이 마운트되면 채팅방에 들어감
-    socket.emit('join', userId);
+    socket?.emit('join', userId);
     // 채팅방에 들어가면 messages 이벤트에서 이전 내역을 가져옴
-    socket.on('messages', (msgs: string[]) => {
+    socket?.on('messages', (msgs: string[]) => {
       setMessages(msgs);
     });
   }, [userId, socket]);
