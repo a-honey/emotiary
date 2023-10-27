@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom';
 
 const ChatButton = ({ socket }: { socket: Socket }) => {
   const [isOpenChatList, setIsOpenChatList] = useState(false);
-  const [isNewMessage, setIsNewMessage] = useState(true);
+  const [isNewMessage, setIsNewMessage] = useState(false);
 
   const location = useLocation();
   const toggleIsOpenChatList = () => {
@@ -22,7 +22,7 @@ const ChatButton = ({ socket }: { socket: Socket }) => {
     return null;
   }
 
-  socket.on('sendMessage', () => {
+  socket?.on('sendMessage', () => {
     setIsNewMessage(true);
   });
 

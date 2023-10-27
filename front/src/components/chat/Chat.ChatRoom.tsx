@@ -20,21 +20,24 @@ const ChatRoom = ({
     // 빈값이면 if문 종료
     if (!message.trim()) return;
 
+    console.log('메시지내용:', message);
     try {
       // 메시지를 socket에 전송
-      await socket.emit('sendMessage', userId, message);
+      await socket?.emit('sendMessage', userId, message);
+      console.log('보낸 메시지내용:', message);
       // input value 초기화
       setMessage('');
     } catch (err) {
+      console.log('에러');
       console.log('메시지 전송 실패', err);
     }
   };
 
   useEffect(() => {
     // 채팅방이 마운트되면 채팅방에 들어감
-    socket.emit('join', userId);
+    socket?.emit('join', userId);
     // 채팅방에 들어가면 messages 이벤트에서 이전 내역을 가져옴
-    socket.on('messages', (msgs: string[]) => {
+    socket?.on('messages', (msgs: string[]) => {
       setMessages(msgs);
     });
   }, [userId, socket]);
