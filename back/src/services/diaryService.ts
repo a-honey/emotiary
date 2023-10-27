@@ -13,8 +13,7 @@ import { searchMusic } from '../utils/music';
 import ytdl from 'ytdl-core';
 
 import { generateError } from '../utils/errorGenerator';
-import { getDb } from '../utils/dbconnection';
-
+const prisma = new PrismaClient();
 /**
  * 다이어리 작성
  * @param title
@@ -28,6 +27,7 @@ export const createDiaryService = async (
   inputData: Prisma.DiaryCreateInput,
   fileUrls: string[],
 ) => {
+  
   const responseData = await axios.post(
     'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
     {
@@ -43,7 +43,7 @@ export const createDiaryService = async (
 
   inputData.emotion = emotionString;
 
-  await using db = await getDb();
+  inputData.emoji = "❎";
 
   const diaryData = {
     ...inputData,
@@ -63,7 +63,7 @@ export const createDiaryService = async (
     };
   }
 
-  const diary = await db.prisma.diary.create({
+  const diary = await prisma.diary.create({
     data: diaryData,
     include: {
       author: true,
@@ -91,9 +91,7 @@ export const getAllMyDiariesService = async (
   page: number,
   limit: number,
 ) => {
-  await using db = await getDb();
-  // const prisma = new PrismaClient();
-  const diaries = await db.prisma.diary.findMany({
+  const diaries = await prisma.diary.findMany({
     skip: (page - 1) * limit,
     take: limit,
     where: { authorId: userId },
@@ -102,10 +100,6 @@ export const getAllMyDiariesService = async (
       filesUpload: true,
     },
   });
-
-  // prisma.$disconnect().then(() => {
-  //   console.log('disconnection time check');
-  // });
 
   // 다이어리 결과 없을 때 빈 배열 값 반환
   if (diaries.length == 0) {
@@ -146,8 +140,8 @@ export const getDiaryByMonthService = async (
 ) => {
   const ltMonth = month == 12 ? 1 : month + 1;
   const ltYear = month == 12 ? year + 1 : year;
-  await using db = await getDb();
-  const diary = await db.prisma.diary.findMany({
+
+  const diary = await prisma.diary.findMany({
     where: {
       authorId: userId,
       createdDate: {
@@ -183,8 +177,7 @@ export const getDiaryByDiaryIdService = async (
   userId: string,
   diaryId: string,
 ) => {
-  await using db = await getDb();
-  const diary = await db.prisma.diary.findUnique({
+  const diary = await prisma.diary.findUnique({
     where: { id: diaryId },
     include: { author: true, filesUpload: true },
   });
@@ -228,7 +221,6 @@ export const getFriendsDiaryService = async (
   limit: number,
   emotion: string | undefined,
 ) => {
-  await using db = await getDb();
   // 친구 목록 읽어오기
   const friends = await getMyWholeFriends(userId);
 
@@ -258,7 +250,7 @@ export const getFriendsDiaryService = async (
   }
 
   // 친구들의 다이어리 가져오기 (최신순)
-  const friendsDiary = await db.prisma.diary.findMany({
+  const friendsDiary = await prisma.diary.findMany({
     ...friendsDiaryQuery,
     orderBy: { createdDate: 'desc' },
   });
@@ -297,7 +289,6 @@ export const getAllDiaryService = async (
   limit: number,
   emotion: string,
 ) => {
-  await using db = await getDb();
   //TODO controller로 넘기기 refactoring
   const friends = await getMyWholeFriends(userId);
 
@@ -334,7 +325,7 @@ export const getAllDiaryService = async (
   if (emotion != 'all') (allDiaryQuery.where as any).emotion = emotion;
 
   // 친구 글 + 모르는 사람의 all 글 포함
-  const allDiary = await db.prisma.diary.findMany({
+  const allDiary = await prisma.diary.findMany({
     ...allDiaryQuery,
     orderBy: { createdDate: 'desc' },
   });
@@ -383,11 +374,11 @@ export const updateDiaryService = async (
     const emotionString = labels.join(',');
 
     inputData.emotion = emotionString;
+
+    inputData.emoji = "❎";
   }
 
-  await using db = await getDb();
-
-  const updatedDiary = await db.prisma.diary.update({
+  const updatedDiary = await prisma.diary.update({
     where: { id: diaryId, authorId: userId },
     data: inputData,
     include: {
@@ -408,8 +399,7 @@ export const updateDiaryService = async (
 };
 
 export const deleteDiaryService = async (userId: string, diaryId: string) => {
-  await using db = await getDb();
-  const deletedDiary = await db.prisma.diary.delete({
+  const deletedDiary = await prisma.diary.delete({
     where: { id: diaryId, authorId: userId },
   });
 
@@ -426,9 +416,7 @@ export const mailService = async (
   diaryId: string,
   username: string,
 ) => {
-  await using db = await getDb();
-
-  const diary = await db.prisma.diary.findUnique({
+  const diary = await prisma.diary.findUnique({
     where: {
       id: diaryId, // diaryId를 사용하여 다이어리를 식별
     },
@@ -455,9 +443,7 @@ export const selectedEmoji = async (
   diaryId: string,
   userId: string,
 ) => {
-  await using db = await getDb();
-
-  const emojis = await db.prisma.emoji.findMany({
+  const emojis = await prisma.emoji.findMany({
     where: {
       type: selectedEmotion,
     },
@@ -481,7 +467,7 @@ export const selectedEmoji = async (
   const randomEmoji: Emoji = emojis[Math.floor(Math.random() * emojis.length)];
   const emoji = randomEmoji.emotion;
 
-  const updatedDiary = await db.prisma.diary.update({
+  const updatedDiary = await prisma.diary.update({
     where: { id: diaryId, authorId: userId },
     data: { emoji, audioUrl },
   });
