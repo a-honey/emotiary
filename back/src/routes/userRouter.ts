@@ -1,6 +1,8 @@
 import { Router } from "express";
 import {
   userLogin,
+  verifyEmail,
+  emailVerified,
   userRegister,
   getMyInfo,
   getAllUser,
@@ -13,6 +15,9 @@ import {
   refresh,
   loginCallback,
   userLogout,
+  emailLink,
+  testEmail,
+  searchKeyword,
 } from "../controllers/userController";
 import { localAuthentication } from "../middlewares/authenticateLocal";
 import { jwtAuthentication } from "../middlewares/authenticateJwt";
@@ -24,6 +29,17 @@ const userAuthRouter = Router();
 userAuthRouter.post("/register", userRegister);
 
 userAuthRouter.post('/login', localAuthentication, userLogin);
+
+//test4
+userAuthRouter.post("/testregister", testEmail);
+//1
+userAuthRouter.post('/email', emailLink);
+//2
+userAuthRouter.get('/verifyEmail/:token', verifyEmail);
+//3
+userAuthRouter.get('/verified', emailVerified);
+
+userAuthRouter.get('/search', jwtAuthentication, searchKeyword);
 
 userAuthRouter.get('/current', jwtAuthentication, getMyInfo);
 
@@ -37,7 +53,7 @@ userAuthRouter
   .route("/:userId")
   .get(jwtAuthentication, getUserId)
   .put(jwtAuthentication, fileUpload, updateUser)
-  .delete(jwtAuthentication, deleteUser);
+  .delete( deleteUser);
 
 // 비밀번호 재설정 이메일 보내기
 userAuthRouter.post("/forgot-password", forgotPassword);

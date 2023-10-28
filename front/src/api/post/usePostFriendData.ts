@@ -13,12 +13,6 @@ export const usePostFriendReqMutation = (queryClient: QueryClient) => {
     },
     {
       onSuccess: (res) => {
-        queryClient.invalidateQueries(
-          queryKeys.myDiaryData({
-            year: new Date(res.data.data.createdDate).getFullYear(),
-            month: new Date(res.data.data.createdDate).getMonth() + 1,
-          }),
-        );
         queryClient.invalidateQueries(queryKeys.sentFriends());
         setState((oldState) => [
           ...oldState,

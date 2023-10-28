@@ -15,7 +15,7 @@ export const usePutDiaryData = (
       onSuccess: () => {
         handleIsAdding?.();
         queryClient.invalidateQueries(
-          queryKeys.diarysData({ select: null, page: null }),
+          queryKeys.diarysData({ select: null, page: null, emotion: null }),
         );
         queryClient.invalidateQueries(queryKeys.myAllDiarysData());
       },

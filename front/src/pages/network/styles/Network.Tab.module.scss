@@ -11,8 +11,15 @@
     padding: 5px;
     border-radius: 5px;
     font-weight: 700;
+    cursor: pointer;
+    &:hover {
+      background-color: map-get($colors, bg);
+      font-size: 17px;
+    }
+    // 후적용
     &.active {
       background-color: map-get($colors, point);
+      font-size: 17px;
     }
   }
 }

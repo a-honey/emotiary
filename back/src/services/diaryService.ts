@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { checkFriend, getMyWholeFriends, weAreFriends } from './friendService';
 import axios from 'axios';
 import { Emoji } from '../types/emoji';
@@ -8,9 +8,12 @@ import { plainToClass } from 'class-transformer';
 import { successApiResponseDTO } from '../utils/successResult';
 import { emptyApiResponseDTO } from '../utils/emptyResult';
 import { diaryUpload } from '../middlewares/uploadMiddleware';
+import { sendEmail } from '../utils/email';
+import { searchMusic } from '../utils/music';
+import ytdl from 'ytdl-core';
 
+import { generateError } from '../utils/errorGenerator';
 const prisma = new PrismaClient();
-
 /**
  * 다이어리 작성
  * @param title
@@ -18,46 +21,56 @@ const prisma = new PrismaClient();
  * @param authorId
  * @returns diary (새롭게 생성된 diary Object)
  */
+
 export const createDiaryService = async (
   authorId: string,
   inputData: Prisma.DiaryCreateInput,
-  fileUrls : string[],
+  fileUrls: string[],
 ) => {
+  const responseData = await axios.post(
+    'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
+    {
+      text: inputData.content,
+    },
+  );
+  console.log(responseData.data.emotion);
+  const labels = responseData.data.emotion.map(
+    (item: { label: string }) => item.label,
+  );
 
-  inputData.emotion = "슬픔";
-  inputData.emoji = "슬픔";
+  const emotionString = labels.join(',');
+
+  inputData.emotion = emotionString;
+
+  inputData.emoji = '❎';
+
+  const diaryData = {
+    ...inputData,
+    author: {
+      connect: {
+        id: authorId,
+      },
+    },
+  };
+
+  // fileUrls 배열에 데이터가 있는 경우에만 filesUpload를 추가
+  if (fileUrls && fileUrls.length > 0) {
+    diaryData.filesUpload = {
+      create: fileUrls.map((url) => ({
+        url,
+      })),
+    };
+  }
 
   const diary = await prisma.diary.create({
-    data: {
-      ...inputData,
-      author: {
-        connect: {
-          id: authorId,
-        },
-      },
-    },
-    include: {
-      author: true,
-    },
-  });
-  const diaryId = diary.id;
-  for (const url of fileUrls) {
-    // For each URL, create a diaryFileUpload record.
-    await prisma.diaryFileUpload.updateMany({
-      where : { url : url },
-      data: {
-        diaryId: diaryId,
-      },
-    });
-  }
-  const updatedDiary = await prisma.diary.findUnique({
-    where: { id: diaryId },
+    data: diaryData,
     include: {
       author: true,
       filesUpload: true,
     },
   });
-  const diaryResponseData = plainToClass(DiaryResponseDTO, updatedDiary, {
+
+  const diaryResponseData = plainToClass(DiaryResponseDTO, diary, {
     excludeExtraneousValues: true,
   });
 
@@ -82,9 +95,9 @@ export const getAllMyDiariesService = async (
     take: limit,
     where: { authorId: userId },
     orderBy: { createdDate: 'desc' },
-    include : {
-      filesUpload : true,
-    }
+    include: {
+      filesUpload: true,
+    },
   });
 
   // 다이어리 결과 없을 때 빈 배열 값 반환
@@ -165,7 +178,7 @@ export const getDiaryByDiaryIdService = async (
 ) => {
   const diary = await prisma.diary.findUnique({
     where: { id: diaryId },
-    include: { author: true },
+    include: { author: true, filesUpload: true },
   });
 
   if (diary == null) {
@@ -346,12 +359,30 @@ export const updateDiaryService = async (
   diaryId: string,
   inputData: Prisma.DiaryUpdateInput,
 ) => {
+  if (inputData.content) {
+    const responseData = await axios.post(
+      'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
+      {
+        text: inputData.content,
+      },
+    );
+    const labels = responseData.data.emotion.map(
+      (item: { label: string }) => item.label,
+    );
+
+    const emotionString = labels.join(',');
+
+    inputData.emotion = emotionString;
+
+    inputData.emoji = '❎';
+  }
+
   const updatedDiary = await prisma.diary.update({
     where: { id: diaryId, authorId: userId },
     data: inputData,
-    include : {
-      filesUpload : true,
-    }
+    include: {
+      filesUpload: true,
+    },
   });
 
   if (updatedDiary == null) {
@@ -377,4 +408,95 @@ export const deleteDiaryService = async (userId: string, diaryId: string) => {
 
   const response = successApiResponseDTO(diaryResponseData);
   return response;
+};
+
+export const mailService = async (
+  friendEmail: string,
+  diaryId: string,
+  username: string,
+) => {
+  const diary = await prisma.diary.findUnique({
+    where: {
+      id: diaryId, // diaryId를 사용하여 다이어리를 식별
+    },
+  });
+
+  if (!diary) {
+    // 다이어리를 찾을 수 없을 때의 처리
+    console.error('다이어리를 찾을 수 없습니다.');
+    return;
+  }
+  const currentUrl = `http://localhost:5001`;
+  await sendEmail(
+    friendEmail,
+    `추천 유저: ${username}`,
+    `다음 다이어리를 추천드립니다: ${currentUrl}`,
+    ``,
+  );
+  const response = successApiResponseDTO(null);
+  return response;
+};
+
+export const selectedEmoji = async (
+  selectedEmotion: string,
+  diaryId: string,
+  userId: string,
+) => {
+  const emojis = await prisma.emoji.findMany({
+    where: {
+      type: selectedEmotion,
+    },
+  });
+  console.log(emojis);
+  const emotionType = selectedEmotion;
+  const musicData = await searchMusic(emotionType);
+  const videoId = musicData.videoId;
+
+  const info = await ytdl.getInfo(videoId);
+  // 오디오 스트림 URL 가져오기
+  const audioUrl = ytdl.chooseFormat(info.formats, { filter: 'audioonly' }).url;
+  const urlLength = audioUrl.length;
+  console.log(audioUrl);
+  console.log(`URL 길이: ${urlLength} 자`);
+  if (!musicData) {
+    const errorMessage = '음악데이터가없습니다.';
+    throw errorMessage;
+  }
+
+  const randomEmoji: Emoji = emojis[Math.floor(Math.random() * emojis.length)];
+  const emoji = randomEmoji.emotion;
+
+  const updatedDiary = await prisma.diary.update({
+    where: { id: diaryId, authorId: userId },
+    data: { emoji, audioUrl },
+  });
+
+  if (updatedDiary == null) {
+    const response = emptyApiResponseDTO();
+    return response;
+  }
+  const diaryResponseData = plainToClass(DiaryResponseDTO, updatedDiary, {
+    excludeExtraneousValues: true,
+  });
+
+  const response = successApiResponseDTO(diaryResponseData);
+  return response;
+};
+
+export const searchDiaryService = async (title: string, content: string) => {
+  const words = content.split(' ');
+  const modifiedWords = words.map((word) => {
+    return `${word}*`;
+  });
+  //TODO elastic search 찾아보기
+  const queryContent: string = modifiedWords.join(' ');
+  console.log(queryContent);
+  const searchedDiary = await prisma.diary.findMany({
+    where: {
+      content: {
+        search: queryContent,
+      },
+    },
+  });
+  return searchedDiary;
 };

@@ -1,0 +1,22 @@
+@import '../../styles/variables.scss';
+
+.container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 300px;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: map-get($colors, deep);
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.item {
+  padding: 10px;
+  background-color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}

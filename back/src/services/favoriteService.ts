@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+// 좋아요 눌렀는지 조회
 export async function searchFavorite(diary_id: string, user_id: string) {
   try {
     const favorite = await prisma.favorite.findFirst({
@@ -13,6 +14,7 @@ export async function searchFavorite(diary_id: string, user_id: string) {
   }
 }
 
+// 좋아요 누르기
 export async function addFavorite(diary_id: string, user_id: string) {
   try {
     const favorite = await prisma.favorite.create({
@@ -34,6 +36,7 @@ export async function addFavorite(diary_id: string, user_id: string) {
   }
 }
 
+// 좋아요 취소
 export async function deleteFavorite(diary_id: string, user_id: string) {
   try {
     const favorite = await prisma.favorite.deleteMany({
@@ -56,6 +59,7 @@ export async function deleteFavorite(diary_id: string, user_id: string) {
   }
 }
 
+// 좋아요 횟수 체크
 export const countFavoriteByDiaryId = async (diaryId: string) => {
   try {
     const favorite = await prisma.favorite.count({

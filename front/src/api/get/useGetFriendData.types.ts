@@ -1,11 +1,12 @@
-export interface ResponseFriendType {
-  data: ReceivedUserDataType[];
-  message: string;
-  status: number;
+export interface ReceivedUserDataType {
+  receivedUser: {
+    id: string;
+    username: string;
+    filesUpload: { url: string }[];
+  };
 }
 
-export interface ReceivedUserDataType {
-  id: string;
-  username: string;
-  profileImage: string | null;
+// 받은 친구요청 리스트
+export interface sentUserDataType {
+  sentUser: { id: string; username: string; filesUpload: { url: string }[] };
 }

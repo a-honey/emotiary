@@ -1,12 +1,15 @@
 import { instance } from '../instance';
 import { useQuery } from '@tanstack/react-query';
 import { queryKeys } from '../queryKeys';
+import { MyUserDataType, UserItemType } from './useGetUserData.types';
 
 //** USERSPAGE 모든 유저 조회 */
 export const useGetUsersData = ({
+  select,
   page,
   limit,
 }: {
+  select: 'all' | 'friends';
   page: number;
   limit: number;
 }) => {
@@ -14,24 +17,35 @@ export const useGetUsersData = ({
     page: page.toString(),
     limit: limit.toString(),
   }).toString();
-  return useQuery(queryKeys.usersData(), async () => {
-    const response = await instance.get(`/users/allUser?${urlQueryString}`);
-    return response.data;
-  });
+  return useQuery(
+    queryKeys.usersData({ page, select }),
+    async () => {
+      const response = await instance.get<{
+        data: UserItemType[];
+        message: string;
+        status: number;
+        pageInfo: {
+          totalItem: number;
+          totalPage: number;
+          currentPage: number;
+          limit: number;
+        };
+      }>(
+        `${
+          select === 'all' ? '/users/allUser' : '/users/myfriend'
+        }?${urlQueryString}`,
+      );
+      return response.data;
+    },
+    { refetchOnWindowFocus: false },
+  );
 };
 
 //** MYPAGE 모든 유저 조회 */
 export const useGetMyUserData = () => {
   return useQuery(queryKeys.myUserData(), async () => {
     const response = await instance.get<{
-      data: {
-        id: string;
-        email: string;
-        username: string;
-        description: string;
-        latestEmoji: string;
-        alarmSetting: string;
-      };
+      data: MyUserDataType;
     }>('/users/current');
     return response.data.data;
   });

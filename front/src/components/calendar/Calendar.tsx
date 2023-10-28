@@ -3,6 +3,7 @@ import styles from './index.module.scss';
 import Month from './Month';
 import Day from './Day';
 import { CalendarDiaryItemType } from '../../types/diaryType';
+import { DiaryItemType } from '../../api/get/useGetDiaryData.types';
 
 const Calendar = ({
   data,
@@ -15,7 +16,7 @@ const Calendar = ({
   currentDate: { year: number; month: number };
   handleNextMonth: () => void;
   handleBeforeMonth: () => void;
-  data: CalendarDiaryItemType[];
+  data?: DiaryItemType[];
   isFetching: boolean;
   isLogin: boolean;
 }) => {
