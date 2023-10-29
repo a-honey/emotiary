@@ -14,9 +14,3 @@ export interface DiaryItemType {
     profileImgae: string;
   };
 }
-export interface PaginationType {
-  totalItem: number;
-  totalPage: number;
-  currentPage: number;
-  limit: number;
-}

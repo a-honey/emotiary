@@ -40,7 +40,7 @@ const UserCard = () => {
       <ImageComponent
         src={
           userData.profileImage?.length !== 0
-            ? userData.profileImage[userData.profileImage?.length - 1]?.url
+            ? userData.profileImage.at(-1)?.url
             : null
         }
         alt={`${userData.username}의 프로필사진`}

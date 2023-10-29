@@ -5,7 +5,7 @@ import { toastState } from '../../atoms/toastState';
 import { queryKeys } from '../queryKeys';
 
 export const usePostFriendReqMutation = (queryClient: QueryClient) => {
-  const setState = useSetRecoilState(toastState);
+  const setToastState = useSetRecoilState(toastState);
 
   const postMutation = useMutation(
     async ({ id }: { id: string }) => {
@@ -14,8 +14,8 @@ export const usePostFriendReqMutation = (queryClient: QueryClient) => {
     {
       onSuccess: (res) => {
         queryClient.invalidateQueries(queryKeys.sentFriends());
-        setState((oldState) => [
-          ...oldState,
+        setToastState((oldToastState) => [
+          ...oldToastState,
           {
             message: `${res.data.data.username} 에게 친구요청 성공하였습니다.`,
           },
