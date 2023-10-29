@@ -1,22 +1,15 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Socket } from 'socket.io-client';
 import ChatRoom from './Chat.ChatRoom';
 import styles from './Chat.ChatList.module.scss';
-import { useLocation } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { chatState } from '../../atoms/chatState';
+import useCallByLocation from '../../hooks/useCallByLocation';
 
-const ChatList = ({
-  socket,
-  toggleIsOpenChatList,
-}: {
-  socket: Socket;
-  toggleIsOpenChatList: () => void;
-}) => {
-  const { isOpenChatRoom, chatUserId } = useRecoilValue(chatState);
+const ChatList = ({ socket }: { socket: Socket }) => {
+  const { isOpenChatList, isOpenChatRoom, chatUserId } =
+    useRecoilValue(chatState);
   const setChatStateRecoil = useSetRecoilState(chatState);
-
-  const location = useLocation();
 
   const toggleIsOpenChatRoom = () => {
     setChatStateRecoil((prev) => ({
@@ -25,14 +18,9 @@ const ChatList = ({
     }));
   };
 
-  useEffect(() => {
-    setChatStateRecoil((prev) => ({
-      ...prev,
-      isOpenChatList: false,
-      isOpenChatRoom: false,
-    }));
-  }, [location.pathname, setChatStateRecoil]);
-
+  if (!isOpenChatList) {
+    return null;
+  }
   return (
     <>
       {isOpenChatRoom && (
@@ -43,7 +31,15 @@ const ChatList = ({
         />
       )}
       <div className={styles.container}>
-        <button className="doneBtn" onClick={toggleIsOpenChatList}>
+        <button
+          className="doneBtn"
+          onClick={() => {
+            setChatStateRecoil((prev) => ({
+              ...prev,
+              isOpenChatList: false,
+            }));
+          }}
+        >
           채팅목록닫기
         </button>
         <div onClick={toggleIsOpenChatRoom}>user1과의 채팅</div>
@@ -58,5 +54,20 @@ const ChatList = ({
 export default ChatList;
 
 const ChatListItem = () => {
-  return <div className={styles.item}>user4과의 채팅</div>;
+  const setChatStateRecoil = useSetRecoilState(chatState);
+
+  const handleChatUserIdAndUsername = () => {
+    setChatStateRecoil({
+      chatUserId: '3',
+      chatUsername: '이름',
+      isOpenChatList: true,
+      isOpenChatRoom: true,
+    });
+  };
+
+  return (
+    <div className={styles.item} onClick={handleChatUserIdAndUsername}>
+      user4과의 채팅
+    </div>
+  );
 };

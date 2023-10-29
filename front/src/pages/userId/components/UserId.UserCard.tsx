@@ -9,23 +9,29 @@ import { useSetRecoilState } from 'recoil';
 import { toastState } from '../../../atoms/toastState';
 import { usePostFriendReqMutation } from '../../../api/post/usePostFriendData';
 import { QueryClient } from '@tanstack/react-query';
-interface UserInfoType {
-  id: string;
-  username: string;
-  email: string;
-  description: string;
-  profileImage: string;
-  latestEmoji: string;
-  isFriend: boolean;
-}
+import { chatState } from '../../../atoms/chatState';
+
+const INIIAL_USER_DATA = {
+  id: '',
+  username: '',
+  email: '',
+  description: '',
+  profileImage: [{ url: '' }],
+  latestEmoji: '',
+  isFriend: false,
+};
 
 const UserCard = () => {
   const location = useLocation();
 
-  const { data: userData, isFetching } = useGetUserData({
+  const { data, isFetching } = useGetUserData({
     user_id: location.pathname.split('/')[2],
   });
 
+  const userData = data ?? INIIAL_USER_DATA;
+
+  const { id, username, description, profileImage, latestEmoji, isFriend } =
+    userData;
   const queryClient = new QueryClient();
   const postMutation = usePostFriendReqMutation(queryClient);
 
@@ -35,15 +41,22 @@ const UserCard = () => {
     postMutation.mutate({ id: userData.id });
   };
 
+  const setChatStateRecoil = useSetRecoilState(chatState);
+
+  const handleChatUserIdAndUsername = () => {
+    setChatStateRecoil({
+      chatUserId: id,
+      chatUsername: username,
+      isOpenChatList: true,
+      isOpenChatRoom: true,
+    });
+  };
+
   return (
     <div className={styles.userCardContainer}>
       <ImageComponent
-        src={
-          userData.profileImage?.length !== 0
-            ? userData.profileImage.at(-1)?.url
-            : null
-        }
-        alt={`${userData.username}의 프로필사진`}
+        src={profileImage.at(-1)?.url ?? null}
+        alt={`${username}의 프로필사진`}
       />
       {isFetching ? (
         <div>로딩중</div>
@@ -51,18 +64,20 @@ const UserCard = () => {
         <div className={styles.content}>
           <div>
             <label>유저 이름</label>
-            <h2>{userData.username}</h2>
+            <h2>{username}</h2>
           </div>
           <div>
             <label>유저 소개</label>
-            <h3>{userData.description}</h3>
+            <h3>{description}</h3>
           </div>
           <div>
             <label>유저 상태</label>
-            <h4>{userData.latestEmoji}</h4>
+            <h4>{latestEmoji}</h4>
           </div>
-          {userData.isFriend ? (
-            <button className="doneBtn">채팅보내기</button>
+          {isFriend ? (
+            <button className="doneBtn" onClick={handleChatUserIdAndUsername}>
+              채팅보내기
+            </button>
           ) : (
             <button className="doneBtn" onClick={handleFriendBtnClick}>
               친구추가
