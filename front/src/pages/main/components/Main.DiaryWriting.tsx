@@ -31,6 +31,10 @@ const DiaryWriting = ({
   );
   const [isEmojiSelectOpen, setIsEmojiSelectOpen] = useState(false);
 
+  const handleAddImgsContainer = (img: File) => {
+    setImgsContainer((prev) => [...prev, img]);
+  };
+
   const toggleIsEmojiSelectOpen = () => {
     setIsEmojiSelectOpen((prev) => !prev);
   };
@@ -40,8 +44,6 @@ const DiaryWriting = ({
   };
 
   const postMutation = usePostDiaryData(toggleIsOpenModal, handleChangeEmojis);
-
-  const { handleImgChange, imgContainer, imgRef } = useImgChange();
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
@@ -78,42 +80,11 @@ const DiaryWriting = ({
         </div>
         <div className={styles.contentContainer}>
           <div className={styles.imgContainer}>
-            {/* 일단 map 해서 슬라이드로 넘기기 */}
-            <img
-              ref={imgRef}
-              src={post_none}
-              alt="일기 사진 및 비디오 업로드"
-            />
-            <img
-              ref={imgRef}
-              src={post_none}
-              alt="일기 사진 및 비디오 업로드"
-            />
-            <img
-              ref={imgRef}
-              src={post_none}
-              alt="일기 사진 및 비디오 업로드"
-            />
-            <img
-              ref={imgRef}
-              src={post_none}
-              alt="일기 사진 및 비디오 업로드"
-            />
-            {/* 현재 마지막 돔요소만 src 변함 */}
-            <img
-              ref={imgRef}
-              src={post_none}
-              alt="일기 사진 및 비디오 업로드"
-            />
-            <input
-              type="file"
-              accept="image/*, video/*"
-              alt="일기 사진 및 비디오 업로드"
-              onChange={handleImgChange}
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={handleImgChange}
-              multiple
-            />
+            <ImgInputItem handleAddImgsContainer={handleAddImgsContainer} />
+            <ImgInputItem handleAddImgsContainer={handleAddImgsContainer} />
+            <ImgInputItem handleAddImgsContainer={handleAddImgsContainer} />
+            <ImgInputItem handleAddImgsContainer={handleAddImgsContainer} />
+            <ImgInputItem handleAddImgsContainer={handleAddImgsContainer} />
           </div>
           <div className={styles.content}>
             <label>제목</label>
@@ -175,3 +146,29 @@ const DiaryWriting = ({
 };
 
 export default DiaryWriting;
+
+const ImgInputItem = ({
+  handleAddImgsContainer,
+}: {
+  handleAddImgsContainer: (img: File) => void;
+}) => {
+  const { handleImgChange, imgContainer, imgRef } = useImgChange();
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    handleImgChange(e);
+    handleAddImgsContainer(imgContainer!);
+  };
+  return (
+    <div>
+      <img ref={imgRef} src={post_none} alt="일기 사진 및 비디오 업로드" />
+      <input
+        type="file"
+        accept="image/*, video/*"
+        alt="일기 사진 및 비디오 업로드"
+        onChange={handleChange}
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={handleImgChange}
+      />
+    </div>
+  );
+};

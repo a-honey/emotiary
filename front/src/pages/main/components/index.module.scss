@@ -28,7 +28,11 @@
 }
 
 .imgContainer {
-  width: 100px;
+  width: 700px;
+  div {
+    display: flex;
+    align-items: center;
+  }
   img {
     background-color: #ededed;
     border-radius: 5px;
