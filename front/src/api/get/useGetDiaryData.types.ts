@@ -11,6 +11,6 @@ export interface DiaryItemType {
     id: string;
     username: string;
     email: string;
-    profileImgae: string;
+    profileImage: { url: string }[];
   };
 }

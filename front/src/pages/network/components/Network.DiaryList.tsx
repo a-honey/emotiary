@@ -10,21 +10,7 @@ import Pagination from '../../../components/Pagination';
 import Tab, { TapType } from './Network.Tab';
 import search from '../../../assets/search.png';
 import SearchList from '../../../components/search/Search.SearchList';
-interface DairyItemType {
-  id: string;
-  authorId: string;
-  title: string;
-  createdDate: Date;
-  content: string;
-  emoji: string;
-  favoriteCount: number;
-  author: {
-    id: string;
-    username: string;
-    email: string;
-    profileImage: string;
-  };
-}
+import { DiaryItemType } from '../../../api/get/useGetDiaryData.types';
 
 const DiaryList = () => {
   const [select, setSelect] = useState('all');
@@ -80,10 +66,10 @@ const DiaryList = () => {
         <div className={styles.diaryListBlock}>
           {isFetching ? (
             <div>로딩중</div>
-          ) : data?.length === 0 ? (
+          ) : data?.data?.length === 0 ? (
             <div>데이터가 없습니다.</div>
           ) : (
-            data?.data?.map((item: DairyItemType) => (
+            data?.data?.map((item: DiaryItemType) => (
               <DairyItem data={item} key={item.id} />
             ))
           )}
@@ -101,7 +87,7 @@ const DiaryList = () => {
 
 export default DiaryList;
 
-const DairyItem = ({ data }: { data: DairyItemType }) => {
+const DairyItem = ({ data }: { data: DiaryItemType }) => {
   const navigator = useNavigate();
   const [isOpenDiary, setIsOpenDiary] = useState(false);
 
@@ -147,7 +133,7 @@ const DairyItem = ({ data }: { data: DairyItemType }) => {
           }}
         >
           <img
-            src={data.author.profileImage ?? '/user_none.png'}
+            src={data.author.profileImage.at(-1)?.url ?? '/user_none.png'}
             alt={`${data.author.username}의 프로필사진`}
             onError={handleImgError}
           />
