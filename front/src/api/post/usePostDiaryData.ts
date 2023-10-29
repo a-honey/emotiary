@@ -1,11 +1,14 @@
-import { QueryClient, useMutation } from '@tanstack/react-query';
+import {
+  QueryClient,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { instance } from '../instance';
 import { queryKeys } from '../queryKeys';
 import { CommentBodyType, DiaryBodyType } from './usePostDiaryData.types';
 import { Error } from '../types';
 
 export const usePostDiaryData = (
-  queryClient: QueryClient,
   toggleIsOpenModal?: () => void,
   handleChangeEmojis?: (emojis: string) => void,
 ) => {
@@ -29,11 +32,8 @@ export const usePostDiaryData = (
   return postMutation;
 };
 
-export const usePostCommentData = (
-  queryClient: QueryClient,
-  id: string,
-  done?: () => void,
-) => {
+export const usePostCommentData = (id: string, done?: () => void) => {
+  const queryClient = useQueryClient();
   const postMutation = useMutation(
     async ({ body }: { body: CommentBodyType }) => {
       return await instance.post(`/comments/${id}`, body);

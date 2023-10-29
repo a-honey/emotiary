@@ -2,7 +2,6 @@ import React, { ChangeEvent } from 'react';
 
 import { useState } from 'react';
 import styles from './index.module.scss';
-import { useQueryClient } from '@tanstack/react-query';
 import useImgChange from '../../../hooks/useImgChange';
 import EmojiSelect from './Main.EmojiSelect';
 import { usePostDiaryData } from '../../../api/post/usePostDiaryData';
@@ -39,13 +38,8 @@ const DiaryWriting = ({
   const handleChangeEmojis = (resEmojis: string) => {
     setEmojis(resEmojis);
   };
-  const queryClient = useQueryClient();
 
-  const postMutation = usePostDiaryData(
-    queryClient,
-    toggleIsOpenModal,
-    handleChangeEmojis,
-  );
+  const postMutation = usePostDiaryData(toggleIsOpenModal, handleChangeEmojis);
 
   const { handleImgChange, imgContainer, imgRef } = useImgChange();
 

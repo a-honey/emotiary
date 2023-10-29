@@ -3,7 +3,6 @@ import React, { ChangeEvent, useEffect, useState } from 'react';
 import styles from './index.module.scss';
 import { handleImgError } from '../../../utils/imgHandlers';
 import { useGetMyUserData } from '../../../api/get/useGetUserData';
-import { useQueryClient } from '@tanstack/react-query';
 import useImgChange from '../../../hooks/useImgChange';
 import ChangePW from './My.ChangePW';
 import { usePutUserData } from '../../../api/put/usePutUserData';
@@ -45,9 +44,7 @@ const MyCard = () => {
     profileImage,
   } = userInfoData;
 
-  const queryClient = useQueryClient();
-
-  const putMutation = usePutUserData(queryClient, id, toggleIsEditing);
+  const putMutation = usePutUserData(id, toggleIsEditing);
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,14 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import ImageComponent from '../../../components/ImageComponent';
 import { useGetUserData } from '../../../api/get/useGetUserData';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import styles from './UserId.UserCard.module.scss';
-import getUserId from '../../../utils/localStorageHandlers';
 import { useSetRecoilState } from 'recoil';
-import { toastState } from '../../../atoms/toastState';
 import { usePostFriendReqMutation } from '../../../api/post/usePostFriendData';
-import { QueryClient } from '@tanstack/react-query';
 import { chatState } from '../../../atoms/chatState';
 
 const INIIAL_USER_DATA = {
@@ -32,8 +29,7 @@ const UserCard = () => {
 
   const { id, username, description, profileImage, latestEmoji, isFriend } =
     userData;
-  const queryClient = new QueryClient();
-  const postMutation = usePostFriendReqMutation(queryClient);
+  const postMutation = usePostFriendReqMutation();
 
   // 로그인 사용자의 경우 마이페이지로 이동
 

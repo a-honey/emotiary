@@ -5,7 +5,6 @@ import { useGetUsersData } from '../../../api/get/useGetUserData';
 import ImageComponent from '../../../components/ImageComponent';
 import Pagination from '../../../components/Pagination';
 import { usePostFriendReqMutation } from '../../../api/post/usePostFriendData';
-import { QueryClient } from '@tanstack/react-query';
 import { UserItemType } from '../../../api/get/useGetUserData.types';
 import search from '../../../assets/search.png';
 import SearchList from '../../../components/search/Search.SearchList';
@@ -80,8 +79,7 @@ const UserItem = ({ data }: { data: UserItemType }) => {
   const { id, username, description, latestEmoji, isFriend, profileImage } =
     data;
 
-  const queryClient = new QueryClient();
-  const postMutation = usePostFriendReqMutation(queryClient);
+  const postMutation = usePostFriendReqMutation();
 
   const handleFriendReqBtnClick = async (
     e: React.MouseEvent<HTMLButtonElement>,

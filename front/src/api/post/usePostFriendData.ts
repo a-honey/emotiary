@@ -1,12 +1,16 @@
-import { QueryClient, useMutation } from '@tanstack/react-query';
+import {
+  QueryClient,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { instance } from '../instance';
 import { useSetRecoilState } from 'recoil';
 import { toastState } from '../../atoms/toastState';
 import { queryKeys } from '../queryKeys';
 
-export const usePostFriendReqMutation = (queryClient: QueryClient) => {
+export const usePostFriendReqMutation = () => {
   const setToastState = useSetRecoilState(toastState);
-
+  const queryClient = useQueryClient();
   const postMutation = useMutation(
     async ({ id }: { id: string }) => {
       return await instance.post(`/friend/req/${id}`);
@@ -31,9 +35,9 @@ export const usePostFriendReqMutation = (queryClient: QueryClient) => {
 };
 
 //* 친구 목록에서 친구 수락 */
-export const useAcceptFriendReqMutation = (queryClient: QueryClient) => {
+export const useAcceptFriendReqMutation = () => {
   const setState = useSetRecoilState(toastState);
-
+  const queryClient = useQueryClient();
   const postMutation = useMutation(
     async ({ id }: { id: string }) => {
       return await instance.post(`/friend/accept/${id}`);
@@ -58,9 +62,9 @@ export const useAcceptFriendReqMutation = (queryClient: QueryClient) => {
 };
 
 //* 친구 목록에서 친구 거절 */
-export const useRejectFriendReqMutation = (queryClient: QueryClient) => {
+export const useRejectFriendReqMutation = () => {
   const setState = useSetRecoilState(toastState);
-
+  const queryClient = useQueryClient();
   const deleteMutation = useMutation(
     async ({ id }: { id: string }) => {
       return await instance.delete(`/friend/reject/${id}`);
