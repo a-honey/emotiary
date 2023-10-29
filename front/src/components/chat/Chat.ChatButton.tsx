@@ -3,20 +3,27 @@ import styles from './Chat.ChatButton.module.scss';
 import { Socket } from 'socket.io-client';
 import ChatList from './Chat.ChatList';
 import { useLocation } from 'react-router-dom';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { chatState } from '../../atoms/chatState';
 
 const ChatButton = ({ socket }: { socket: Socket }) => {
-  const [isOpenChatList, setIsOpenChatList] = useState(false);
+  const isOpenChatList = useRecoilValue(chatState).isOpenChatList;
+  const setIsOpenChatList = useSetRecoilState(chatState);
+
   const [isNewMessage, setIsNewMessage] = useState(false);
 
   const location = useLocation();
   const toggleIsOpenChatList = () => {
-    setIsOpenChatList((prev) => !prev);
+    setIsOpenChatList((prev) => ({
+      ...prev,
+      isOpenChatList: !prev.isOpenChatList,
+    }));
     setIsNewMessage(false);
   };
 
   useEffect(() => {
-    setIsOpenChatList(false);
-  }, [location.pathname]);
+    setIsOpenChatList((prev) => ({ ...prev, isOpenChatList: false }));
+  }, [location.pathname, setIsOpenChatList]);
 
   if (location.pathname === '/mypage') {
     return null;
