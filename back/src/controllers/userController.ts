@@ -10,6 +10,7 @@ import {
     forgotUserPassword,
     resetUserPassword,
     getUserFromDatabase,
+    getUsers,
 } from '../services/authService';
 import {
     generateAccessToken,
@@ -321,6 +322,21 @@ export const loginCallback = (req : IRequest, res :Response) => {
     res.redirect('/');
 }
 
+export const searchKeyword = async(req : IRequest, res : Response, next : NextFunction) => {
+    try{
+        const searchTerm = req.query.searchTerm as string;
+        const field = req.query.field as string;
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+
+        const searchKeyword = await getUsers(searchTerm, field, page, limit);
+
+        res.json(searchKeyword);
+    }catch(error){
+        next(error);
+    }
+}
+
 //1111111111
 export const emailLink = async (req : IRequest, res : Response) => {
     const { email } = req.body;
@@ -348,7 +364,7 @@ export const emailLink = async (req : IRequest, res : Response) => {
     if (process.env.NODE_ENV === 'development') {
         baseUrl = 'http://localhost:5001';
     } else {
-        baseUrl = 'https://kdt-ai-8-team02.elicecoding.com:5001';
+        baseUrl = 'https://kdt-ai-8-team02.elicecoding.com';
     }
     const verifyUrl = `${baseUrl}/api/users/verifyEmail/${result.token}`;
     

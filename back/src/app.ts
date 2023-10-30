@@ -9,11 +9,7 @@ import diaryRouter from './routes/diaryRouter';
 import favoriteRouter from './routes/favoriteRouter';
 import friendRouter from './routes/friendRouter';
 import commentRouter from './routes/commentRouter';
-import {
-  jwtStrategy,
-  localStrategy,
-  googleStrategy,
-} from './config/passport';
+import { jwtStrategy, localStrategy, googleStrategy } from './config/passport';
 import { Logger } from './config/logger';
 import testAuthRouter from './routes/testRouter';
 import { errorMiddleware } from './middlewares/errorMiddleware';
@@ -73,13 +69,7 @@ app.get('/', (req: Request, res: Response) => {
   res.send('기본 페이지');
 });
 
-//TODO api 붙여주기
 //TODO node 부하테스트
-
-// app.all('/api/*', (req: Request, res: Response, next: NextFunction) => {
-//   console.log('api통신 테스트');
-//   next();
-// });
 
 const apiRouter = express.Router();
 const router = express.Router();
@@ -115,9 +105,9 @@ interface ConnectedUsers {
     cors: {
       origin: 'http://localhost:3000', // Replace with your actual frontend URL
       methods: ['GET', 'POST',  'WEBSOCKET'],
-      
+
     },
-    
+
   });
 
   io.use(
@@ -133,7 +123,7 @@ interface ConnectedUsers {
 io.on('connection', async (socket: Socket) => {
   const currentUserId = (socket as any).decoded_token.id;
 
-  
+
   const user = await currentUser(currentUserId);
   if (user) {
     connectedUsers[currentUserId] = {

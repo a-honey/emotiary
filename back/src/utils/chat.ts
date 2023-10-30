@@ -29,9 +29,9 @@
 //     cors: {
 //       origin: 'http://localhost:3000', // Replace with your actual frontend URL
 //       methods: ['GET', 'POST',  'WEBSOCKET'],
-      
+
 //     },
-    
+
 //   });
 
 //   console.log('hi')

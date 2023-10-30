@@ -10,6 +10,7 @@ import {
   getFriendsDiaryService,
   mailService,
   selectedEmoji,
+  searchDiaryService,
 } from '../services/diaryService';
 import { IRequest } from 'types/user';
 import { plainToClass } from 'class-transformer';
@@ -205,4 +206,15 @@ export const selectEmotion = async (
   } catch (error) {
     next(error);
   }
+};
+
+export const searchDiary = async (
+  req: IRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { title, content } = req.body;
+  const searchDiary = await searchDiaryService(title, content);
+
+  return res.status(200).json(searchDiary);
 };
