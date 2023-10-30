@@ -5,7 +5,7 @@ export interface MyUserDataType {
   description: string;
   latestEmoji: string;
   alarmSetting: string;
-  filesUpload: { url: string }[];
+  profileImage: { url: string }[];
 }
 
 export interface UserItemType {
@@ -13,7 +13,7 @@ export interface UserItemType {
   username: string;
   email: string;
   description: string;
-  filesUpload: FileDataType[];
+  profileImage: FileDataType[];
   latestEmoji: string;
   isFriend: boolean;
 }

@@ -11,7 +11,6 @@
   left: 0;
   right: 0;
   padding: map-get($spacing, large);
-  z-index: 9999;
   div,
   a {
     font-weight: 700;
@@ -75,8 +74,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #ffffff;
-  color: #686868;
+  background-color: #ededed;
+  color: black;
   .textContainer {
     width: 30%;
     display: flex;

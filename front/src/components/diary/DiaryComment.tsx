@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import styles from './DiaryComment.module.scss';
-import { useQueryClient } from '@tanstack/react-query';
 import { usePostCommentData } from '../../api/post/usePostDiaryData';
 import { useNavigate } from 'react-router-dom';
 import ImageComponent from '../ImageComponent';
@@ -27,9 +26,7 @@ const DiaryComment = ({
 }) => {
   const [comment, setComment] = useState('');
 
-  const queryClient = useQueryClient();
-
-  const postMutation = usePostCommentData(queryClient, id as string);
+  const postMutation = usePostCommentData(id as string);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -124,13 +121,7 @@ const DiaryReplyAdd = ({
 }) => {
   const [comment, setComment] = useState('');
 
-  const queryClient = useQueryClient();
-
-  const postMutation = usePostCommentData(
-    queryClient,
-    id as string,
-    handleIsAdding,
-  );
+  const postMutation = usePostCommentData(id as string, handleIsAdding);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

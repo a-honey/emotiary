@@ -11,12 +11,6 @@ export interface DiaryItemType {
     id: string;
     username: string;
     email: string;
-    profileImgae: string;
+    profileImage: { url: string }[];
   };
-}
-export interface PaginationType {
-  totalItem: number;
-  totalPage: number;
-  currentPage: number;
-  limit: number;
 }

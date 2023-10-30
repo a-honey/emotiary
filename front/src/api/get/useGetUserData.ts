@@ -56,7 +56,9 @@ export const useGetUserData = ({ user_id }: { user_id: string }) => {
   return useQuery(
     queryKeys.userData(),
     async () => {
-      const response = await instance.get(`/users/${user_id}`);
+      const response = await instance.get<{ data: UserItemType }>(
+        `/users/${user_id}`,
+      );
       return response.data;
     },
     { select: (data) => data.data },

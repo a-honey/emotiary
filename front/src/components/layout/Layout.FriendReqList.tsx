@@ -6,6 +6,7 @@ import {
   sentUserDataType,
 } from '../../api/get/useGetFriendData.types';
 import ImageComponent from '../ImageComponent';
+import { useAcceptFriendReqMutation } from '../../api/post/usePostFriendData';
 
 const FriendReqList = () => {
   const [isReqList, setIsReqList] = useState(true);
@@ -63,21 +64,21 @@ const FriendReqList = () => {
 export default FriendReqList;
 
 const ResItem = ({ item }: { item: sentUserDataType['sentUser'] }) => {
+  const postMutation = useAcceptFriendReqMutation();
+  const handleAcceptClick = () => {
+    postMutation.mutate({ id: item.id });
+  };
+
   return (
     <div className={styles.reqItemContainer}>
       <div>
-        <ImageComponent
-          src={
-            item?.filesUpload.length > 0
-              ? item.filesUpload[item.filesUpload.length - 1].url
-              : null
-          }
-          alt={`${item.username}의 프로필 사진`}
-        />
+        <ImageComponent src={null} alt={`${item.username}의 프로필 사진`} />
         {item.username}
       </div>
       <div className={styles.btns}>
-        <button className="doneBtn">수락</button>
+        <button className="doneBtn" onClick={handleAcceptClick}>
+          수락
+        </button>
         <button className="cancelBtn">거절</button>
       </div>
     </div>
@@ -90,7 +91,7 @@ const ReqItem = ({ item }: { item: ReceivedUserDataType['receivedUser'] }) => {
       <div>
         <ImageComponent
           src={
-            item?.filesUpload.length > 0
+            item?.filesUpload?.length > 0
               ? item.filesUpload[item.filesUpload.length - 1].url
               : null
           }
