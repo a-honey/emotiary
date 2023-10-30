@@ -133,7 +133,9 @@ const Header = () => {
       </header>
       {messages.length !== 0 && <Toast />}
       <Outlet />
-      {token && <ChatButton socket={socketRef.current!} />}
+      {token && location.pathname !== '/mypage' && (
+        <ChatButton socket={socketRef.current!} />
+      )}
     </>
   );
 };

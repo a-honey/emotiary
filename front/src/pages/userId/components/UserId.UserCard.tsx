@@ -69,10 +69,13 @@ const UserCard = () => {
           <div>
             <label>유저 상태</label>
             <h4>{latestEmoji}</h4>
-          </div>
+          </div>{' '}
+          <button className="doneBtn" onClick={handleChatUserIdAndUsername}>
+            채팅보내기
+          </button>
           {isFriend ? (
-            <button className="doneBtn" onClick={handleChatUserIdAndUsername}>
-              채팅보내기
+            <button className="cancelBtn" onClick={() => {}}>
+              친구삭제
             </button>
           ) : (
             <button className="doneBtn" onClick={handleFriendBtnClick}>

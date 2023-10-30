@@ -4,7 +4,6 @@ import { Socket } from 'socket.io-client';
 import ChatList from './Chat.ChatList';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { chatState } from '../../atoms/chatState';
-import useCallByLocation from '../../hooks/useCallByLocation';
 import { useLocation } from 'react-router-dom';
 
 const ChatButton = ({ socket }: { socket: Socket }) => {
@@ -26,6 +25,7 @@ const ChatButton = ({ socket }: { socket: Socket }) => {
       isOpenChatList: false,
     }));
   }, [setIsOpenChatList, location.pathname]);
+
   return (
     <>
       {isOpenChatList ? (
