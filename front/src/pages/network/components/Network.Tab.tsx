@@ -2,7 +2,19 @@ import React from 'react';
 
 import styles from '../styles/Network.Tab.module.scss';
 
-const TAPLIST = [
+export interface TapType {
+  resource:
+    | 'all'
+    | 'sadness'
+    | 'surprise'
+    | 'happiness'
+    | 'aversion'
+    | 'unrest'
+    | 'anger'
+    | 'neutrality';
+}
+
+const TAPLIST: TapType['resource'][] = [
   'all',
   'sadness',
   'surprise',
@@ -10,15 +22,15 @@ const TAPLIST = [
   'aversion',
   'unrest',
   'anger',
-  'neutality',
+  'neutrality',
 ];
 
 const Tab = ({
   handleTapEmotion,
   tapEmotion,
 }: {
-  handleTapEmotion: (args: string) => void;
-  tapEmotion: string;
+  handleTapEmotion: (args: TapType['resource']) => void;
+  tapEmotion: TapType['resource'];
 }) => {
   return (
     <div className={styles.tabContainer}>

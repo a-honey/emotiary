@@ -42,6 +42,8 @@ export const createDiaryService = async (
 
   inputData.emotion = emotionString;
 
+  inputData.emoji = '❎';
+
   const diaryData = {
     ...inputData,
     author: {
@@ -371,6 +373,8 @@ export const updateDiaryService = async (
     const emotionString = labels.join(',');
 
     inputData.emotion = emotionString;
+
+    inputData.emoji = '❎';
   }
 
   const updatedDiary = await prisma.diary.update({
@@ -477,4 +481,22 @@ export const selectedEmoji = async (
 
   const response = successApiResponseDTO(diaryResponseData);
   return response;
+};
+
+export const searchDiaryService = async (title: string, content: string) => {
+  const words = content.split(' ');
+  const modifiedWords = words.map((word) => {
+    return `${word}*`;
+  });
+  //TODO elastic search 찾아보기
+  const queryContent: string = modifiedWords.join(' ');
+  console.log(queryContent);
+  const searchedDiary = await prisma.diary.findMany({
+    where: {
+      content: {
+        search: queryContent,
+      },
+    },
+  });
+  return searchedDiary;
 };

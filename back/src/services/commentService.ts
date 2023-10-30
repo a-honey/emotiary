@@ -8,7 +8,6 @@ import axios from 'axios';
 import { Emoji } from '../types/emoji';
 import { calculatePageInfoForComment } from '../utils/pageInfo';
 // import { callChatGPT } from '../utils/chatGPT';
-
 const prisma = new PrismaClient();
 
 //댓글 작성
@@ -56,7 +55,6 @@ export async function createdComment(
     const commentResponseData = plainToClass(commentResponseDTO, comment, {
       excludeExtraneousValues: true,
     });
-
     const response = successApiResponseDTO(commentResponseData);
     return response;
   } catch (error) {

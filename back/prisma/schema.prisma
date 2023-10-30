@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -94,6 +95,11 @@ model Diary {
 
   favorites Favorite[]
   comments  Comment[]
+
+  @@fulltext([title])  
+  @@fulltext([content])
+  @@fulltext([content, title])
+
 }
 
 model Favorite {

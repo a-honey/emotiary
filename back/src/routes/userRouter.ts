@@ -17,6 +17,7 @@ import {
   userLogout,
   emailLink,
   testEmail,
+  searchKeyword,
 } from "../controllers/userController";
 import { localAuthentication } from "../middlewares/authenticateLocal";
 import { jwtAuthentication } from "../middlewares/authenticateJwt";
@@ -32,11 +33,13 @@ userAuthRouter.post('/login', localAuthentication, userLogin);
 //test4
 userAuthRouter.post("/testregister", testEmail);
 //1
-userAuthRouter.post('/verifyEmail', emailLink);
+userAuthRouter.post('/email', emailLink);
 //2
 userAuthRouter.get('/verifyEmail/:token', verifyEmail);
 //3
 userAuthRouter.get('/verified', emailVerified);
+
+userAuthRouter.get('/search', jwtAuthentication, searchKeyword);
 
 userAuthRouter.get('/current', jwtAuthentication, getMyInfo);
 

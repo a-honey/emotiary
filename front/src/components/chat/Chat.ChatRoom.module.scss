@@ -1,0 +1,46 @@
+@import '../../styles/variables.scss';
+
+.container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 400px;
+  height: 700px;
+  background-color: map-get($colors, deep);
+  padding: 20px;
+  border-radius: 5px;
+  display: grid;
+  grid-template-rows: 1fr 8fr 2fr;
+  z-index: 1;
+  > .info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    > div {
+      font-size: 20px;
+      font-weight: 700;
+    }
+  }
+  .messageContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    background-color: white;
+    border-radius: 5px;
+    padding: 10px;
+    &::-webkit-scrollbar {
+      width: 10px;
+      background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: 5px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+  }
+}

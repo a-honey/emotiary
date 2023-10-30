@@ -9,6 +9,7 @@ import {
   getAllMyDiaries,
   sendRecommendationEmail,
   selectEmotion,
+  searchDiary,
 } from '../controllers/diaryController';
 import { Response, Router } from 'express';
 import { diaryUpload, postDiaryUpload } from '../middlewares/uploadMiddleware';
@@ -52,7 +53,11 @@ diaryRouter.post(
 );
 
 // 일기 초대 메일?
-diaryRouter.post('/recommendation/:diaryId', jwtAuthentication, sendRecommendationEmail);
+diaryRouter.post(
+  '/recommendation/:diaryId',
+  jwtAuthentication,
+  sendRecommendationEmail,
+);
 
 // 감정 선택?
 diaryRouter.put('/selectEmotion/:diaryId', jwtAuthentication, selectEmotion);
@@ -81,8 +86,7 @@ diaryRouter.get(
   wrapAsyncController(getAllMyDiaries),
 );
 
-// 다이어리 생성
-// /diary/:userId
+diaryRouter.get('/search', wrapAsyncController(searchDiary));
 
 // /diary/:diaryId
 diaryRouter

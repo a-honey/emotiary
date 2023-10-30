@@ -2,6 +2,7 @@ import React from 'react';
 
 import MyCard from './components/My.MyCard';
 import DiaryList from './components/My.DiaryList';
+import withLogin from '../../components/withLogin';
 
 const MyPage: React.FC = () => {
   return (
@@ -12,4 +13,4 @@ const MyPage: React.FC = () => {
   );
 };
 
-export default MyPage;
+export default withLogin(MyPage);

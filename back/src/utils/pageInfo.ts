@@ -1,9 +1,26 @@
+import { prisma } from '../../prisma/prismaClient';
 import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
+// export const calculatePageInfo = async (
+//   tableName: string,
+//   limit: number,
+//   where: any,
+// ) => {
+//   const totalItem = await prisma.diary.count({
+//     where,
+//   });
 
-export const calculatePageInfo = async (limit: number, where: any) => {
-  const totalItem = await prisma.diary.count({
+//   const totalPage = Math.ceil(totalItem / limit);
+
+//   return { totalItem, totalPage };
+// };
+
+export const calculatePageInfo = async (
+  tableName: keyof PrismaClient,
+  limit: number,
+  where: any,
+) => {
+  const totalItem = await (prisma[tableName] as any).count({
     where,
   });
 
@@ -23,7 +40,7 @@ export const calculatePageInfoForComment = async (
   const totalPage = Math.ceil(totalComment / limit);
 
   return { totalComment, totalPage };
-}
+};
 
 export const userCalculatePageInfo = async (limit: number, where: any) => {
   const totalItem = await prisma.user.count({
@@ -34,7 +51,6 @@ export const userCalculatePageInfo = async (limit: number, where: any) => {
 
   return { totalItem, totalPage };
 };
-
 
 export const calculatePageInfoForFriend = async (limit: number, where: any) => {
   const totalItem = await prisma.friend.count({
