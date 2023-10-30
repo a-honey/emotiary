@@ -51,3 +51,25 @@ export const usePostCommentData = (id: string, done?: () => void) => {
 
   return postMutation;
 };
+
+export const usePostdLikeDiaryData = (id: string) => {
+  const queryClient = useQueryClient();
+  const postMutation = useMutation(
+    async () => {
+      return await instance.post(`/favorites/${id}`);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(
+          queryKeys.diarysData({ emotion: null, select: null, page: null }),
+        );
+        queryClient.invalidateQueries(queryKeys.diaryData({ id }));
+      },
+      onError: (error: Error) => {
+        console.error('useMutation api 요청 에러', error);
+      },
+    },
+  );
+
+  return postMutation;
+};

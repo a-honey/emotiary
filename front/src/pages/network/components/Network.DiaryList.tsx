@@ -11,6 +11,7 @@ import Tab, { TapType } from './Network.Tab';
 import search from '../../../assets/search.png';
 import SearchList from '../../../components/search/Search.SearchList';
 import { DiaryItemType } from '../../../api/get/useGetDiaryData.types';
+import { usePostdLikeDiaryData } from '../../../api/post/usePostDiaryData';
 
 const DiaryList = () => {
   const [select, setSelect] = useState('all');
@@ -93,15 +94,12 @@ const DairyItem = ({ data }: { data: DiaryItemType }) => {
     setIsOpenDiary((prev) => !prev);
   };
 
+  const postLikeMutation = usePostdLikeDiaryData(data.id);
+
   const handleDiaryLikeClick = async (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
 
-    try {
-      await instance.post(`/favorites/${data.id}`);
-      data.favoriteCount += 1;
-    } catch {
-      console.error('좋아요 누르기 실패');
-    }
+    postLikeMutation.mutate();
   };
 
   return (
