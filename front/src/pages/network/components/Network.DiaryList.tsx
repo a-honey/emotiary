@@ -38,7 +38,7 @@ const DiaryList = () => {
 
   const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
     // Update the 'select' state based on the checkbox value.
-    const newSelect = e.target.checked ? 'friends' : 'all';
+    const newSelect = e.target.checked ? 'friend' : 'all';
     setSelect(newSelect);
   };
 
