@@ -56,7 +56,7 @@ const MyCard = () => {
     }
 
     body.append('username', userInfoData.username);
-    body.append('description', userInfoData.description);
+    body.append('description', userInfoData.description ?? '');
     body.append('alarmSetting', userInfoData?.alarmSetting?.toString() ?? 1);
 
     console.log(body);
@@ -180,7 +180,11 @@ const MyCard = () => {
               </div>
               <div>
                 <label>소개</label>
-                <p>{description ?? '소개를 입력해주세요'}</p>
+                <p>
+                  {!description || description === ''
+                    ? '소개를 입력해주세요'
+                    : description}
+                </p>
               </div>
             </div>
             <div className={styles.btns}>
