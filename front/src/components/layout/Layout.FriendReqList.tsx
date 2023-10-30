@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styles from './index.module.scss';
 import { useGetFriendData } from '../../api/get/useGetFriendData';
 import {
@@ -11,7 +11,7 @@ import { useAcceptFriendReqMutation } from '../../api/post/usePostFriendData';
 const FriendReqList = () => {
   const [isReqList, setIsReqList] = useState(true);
 
-  const { data, isFetching } = useGetFriendData({
+  const { data } = useGetFriendData({
     userReqListType: isReqList ? 'received' : 'sent',
   });
 

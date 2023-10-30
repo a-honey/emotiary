@@ -23,9 +23,7 @@ const DiaryList = () => {
     setIsOpenSearchList((prev) => !prev);
   };
 
-  const userId = localStorage.getItem('userId');
-  const navigator = useNavigate();
-  const { data, isFetching, refetch } = useGetDiarysData({
+  const { data, isFetching } = useGetDiarysData({
     emotion: tapEmotion,
     select,
     page: currentPage,
