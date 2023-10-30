@@ -11,7 +11,7 @@ import Tab, { TapType } from './Network.Tab';
 import search from '../../../assets/search.png';
 import SearchList from '../../../components/search/Search.SearchList';
 import { DiaryItemType } from '../../../api/get/useGetDiaryData.types';
-import { usePostdLikeDiaryData } from '../../../api/post/usePostDiaryData';
+import { usePostLikeDiaryData } from '../../../api/post/usePostDiaryData';
 
 const DiaryList = () => {
   const [select, setSelect] = useState('all');
@@ -94,7 +94,10 @@ const DairyItem = ({ data }: { data: DiaryItemType }) => {
     setIsOpenDiary((prev) => !prev);
   };
 
-  const postLikeMutation = usePostdLikeDiaryData(data.id);
+  const postLikeMutation = usePostLikeDiaryData({
+    id: data.id,
+    isNetwork: true,
+  });
 
   const handleDiaryLikeClick = async (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();

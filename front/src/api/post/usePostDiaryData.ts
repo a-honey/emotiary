@@ -47,7 +47,13 @@ export const usePostCommentData = (id: string, done?: () => void) => {
   return postMutation;
 };
 
-export const usePostdLikeDiaryData = (id: string) => {
+export const usePostLikeDiaryData = ({
+  id,
+  isNetwork,
+}: {
+  id: string;
+  isNetwork: boolean;
+}) => {
   const queryClient = useQueryClient();
   const postMutation = useMutation(
     async () => {
@@ -55,9 +61,10 @@ export const usePostdLikeDiaryData = (id: string) => {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(
-          queryKeys.diarysData({ emotion: null, select: null, page: null }),
-        );
+        isNetwork &&
+          queryClient.invalidateQueries(
+            queryKeys.diarysData({ emotion: null, select: null, page: null }),
+          );
         queryClient.invalidateQueries(queryKeys.diaryData({ id }));
       },
       onError: (error: Error) => {
