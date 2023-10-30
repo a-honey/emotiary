@@ -1,14 +1,13 @@
-import { PrismaClient, Prisma } from "@prisma/client";
-import { sendEmail } from "../utils/email";
-import { generateRandomPassowrd } from "../utils/password";
-import bcrypt from "bcrypt";
-import { plainToClass } from "class-transformer";
-import { userResponseDTO } from "../dtos/userDTO";
-import { successApiResponseDTO } from "../utils/successResult";
+import { PrismaClient, Prisma } from '@prisma/client';
+import { sendEmail } from '../utils/email';
+import { generateRandomPassowrd } from '../utils/password';
+import bcrypt from 'bcrypt';
+import { plainToClass } from 'class-transformer';
+import { userResponseDTO } from '../dtos/userDTO';
+import { successApiResponseDTO } from '../utils/successResult';
 import { userCalculatePageInfo } from '../utils/pageInfo';
-import { PaginationResponseDTO } from "../dtos/diaryDTO";
-
-const prisma = new PrismaClient();
+import { PaginationResponseDTO } from '../dtos/diaryDTO';
+import { prisma } from '../../prisma/prismaClient';
 
 export const createUser = async (inputData: {
   username: string;
@@ -26,9 +25,8 @@ export const createUser = async (inputData: {
       data: { username, password: hashedPassword, email },
     });
 
-
-    const UserResponseDTO = plainToClass(userResponseDTO, user,{
-      excludeExtraneousValues : true,
+    const UserResponseDTO = plainToClass(userResponseDTO, user, {
+      excludeExtraneousValues: true,
     });
 
     const response = successApiResponseDTO(UserResponseDTO);
@@ -45,12 +43,12 @@ export const myInfo = async (userId: string) => {
       where: {
         id: userId,
       },
-      include : {
-        profileImage : true,
-      }
+      include: {
+        profileImage: true,
+      },
     });
-    const UserResponseDTO = plainToClass(userResponseDTO, myInfo,{
-      excludeExtraneousValues : true,
+    const UserResponseDTO = plainToClass(userResponseDTO, myInfo, {
+      excludeExtraneousValues: true,
     });
 
     const response = successApiResponseDTO(UserResponseDTO);
@@ -60,91 +58,42 @@ export const myInfo = async (userId: string) => {
   }
 };
 
-export const getAllUsers = async (userId : string, page : number, limit : number) => {
-   // 모든 사용자 정보를 데이터베이스에서 가져오기
-   const allUsers = await prisma.user.findMany({
-    skip : (page - 1) * limit,
-    take : limit,
+export const getAllUsers = async (
+  userId: string,
+  page: number,
+  limit: number,
+) => {
+  // 모든 사용자 정보를 데이터베이스에서 가져오기
+  const allUsers = await prisma.user.findMany({
+    skip: (page - 1) * limit,
+    take: limit,
     include: {
-        profileImage: true
-    }
-});
+      profileImage: true,
+    },
+  });
 
-for (const user of allUsers) {
-
+  for (const user of allUsers) {
     const areFriends = await areUsersFriends(userId, user.id);
     user.isFriend = areFriends;
 
-
     const latestDiary = await prisma.diary.findFirst({
-        where : {
-            authorId : user.id
-        },
-        orderBy : {
-            createdAt : 'desc'
-        }
+      where: {
+        authorId: user.id,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
-    if(latestDiary) {
-        user.latestEmoji = latestDiary.emoji;
+    if (latestDiary) {
+      user.latestEmoji = latestDiary.emoji;
     }
-}
-
-const { totalItem, totalPage } = await userCalculatePageInfo(limit, {});
-
-const pageInfo = { totalItem, totalPage, currentPage: page, limit };
-
-const userResponseDataList = allUsers.map((user) =>
-    plainToClass(userResponseDTO, user, { excludeExtraneousValues: true }),
-  );
-
-  const response = new PaginationResponseDTO(
-    200,
-    userResponseDataList,
-    pageInfo,
-    '성공',
-  );
-
-  return response;
-}
-
-export const getMyFriends = async (userId : string, page : number, limit : number) => {
-const allUsers = await prisma.user.findMany({
-  include: {
-      profileImage: true
   }
-});
-const filteredUsers = [];
-for (const user of allUsers) {
-    if (user.id !== userId) {
 
-        const areFriends = await areUsersFriends(userId, user.id);
-        user.isFriend = areFriends;
+  const { totalItem, totalPage } = await userCalculatePageInfo(limit, {});
 
-        const latestDiary = await prisma.diary.findFirst({
-            where: {
-                authorId: user.id,
-            },
-            orderBy: {
-                createdAt: 'desc',
-            },
-        });
+  const pageInfo = { totalItem, totalPage, currentPage: page, limit };
 
-        if (latestDiary) {
-            user.latestEmoji = latestDiary.emoji;
-        }
-
-        if (areFriends) {
-            // 친구인 경우만 결과에 포함
-            filteredUsers.push(user);
-        }
-    }
-}
-const totalItem = filteredUsers.length;
-const totalPage = Math.ceil(totalItem / limit);
-
-const pageInfo = { totalItem, totalPage, currentPage: page, limit };
-
-const userResponseDataList = filteredUsers.map((user) =>
+  const userResponseDataList = allUsers.map((user) =>
     plainToClass(userResponseDTO, user, { excludeExtraneousValues: true }),
   );
 
@@ -156,7 +105,61 @@ const userResponseDataList = filteredUsers.map((user) =>
   );
 
   return response;
-}
+};
+
+export const getMyFriends = async (
+  userId: string,
+  page: number,
+  limit: number,
+) => {
+  const allUsers = await prisma.user.findMany({
+    include: {
+      profileImage: true,
+    },
+  });
+  const filteredUsers = [];
+  for (const user of allUsers) {
+    if (user.id !== userId) {
+      const areFriends = await areUsersFriends(userId, user.id);
+      user.isFriend = areFriends;
+
+      const latestDiary = await prisma.diary.findFirst({
+        where: {
+          authorId: user.id,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+
+      if (latestDiary) {
+        user.latestEmoji = latestDiary.emoji;
+      }
+
+      if (areFriends) {
+        // 친구인 경우만 결과에 포함
+        filteredUsers.push(user);
+      }
+    }
+  }
+  const totalItem = filteredUsers.length;
+  const totalPage = Math.ceil(totalItem / limit);
+
+  const pageInfo = { totalItem, totalPage, currentPage: page, limit };
+
+  const userResponseDataList = filteredUsers.map((user) =>
+    plainToClass(userResponseDTO, user, { excludeExtraneousValues: true }),
+  );
+
+  const response = new PaginationResponseDTO(
+    200,
+    userResponseDataList,
+    pageInfo,
+    '성공',
+  );
+
+  return response;
+};
 
 export const getUserInfo = async (userId: string) => {
   try {
@@ -165,8 +168,8 @@ export const getUserInfo = async (userId: string) => {
       where: {
         id: userId,
       },
-      include : {
-        profileImage : true,
+      include: {
+        profileImage: true,
       },
     });
     const response = successApiResponseDTO(userInfo);
@@ -178,7 +181,7 @@ export const getUserInfo = async (userId: string) => {
 
 export const updateUserService = async (
   userId: string,
-  inputData : Prisma.UserUpdateInput,
+  inputData: Prisma.UserUpdateInput,
 ) => {
   try {
     if (inputData.password) {
@@ -193,9 +196,9 @@ export const updateUserService = async (
       include: {
         profileImage: {
           select: {
-            url: true // url 필드만 선택
-          }
-        }
+            url: true, // url 필드만 선택
+          },
+        },
       },
     });
     const response = successApiResponseDTO(updatedUser);
@@ -279,7 +282,7 @@ export const getUserFromDatabase = async (userId: string) => {
         id: userId,
       },
       select: {
-        id : true,
+        id: true,
         username: true,
         email: true,
       },
@@ -320,49 +323,54 @@ export const areUsersFriends = async (userId1: string, userId2: string) => {
   }
 };
 
-export const getUsers = async(searchTerm : string, field : string, page : number, limit : number) => {
+export const getUsers = async (
+  searchTerm: string,
+  field: string,
+  page: number,
+  limit: number,
+) => {
   if (!field || (field !== 'username' && field !== 'email')) {
-    throw ({ error: '올바른 필드 값을 지정하세요.' });
-}
+    throw { error: '올바른 필드 값을 지정하세요.' };
+  }
 
-let searchResults;
+  let searchResults;
 
-if (field === 'username') {
-// Prisma를 사용하여 username을 포함하는 유저 검색
-searchResults = await prisma.user.findMany({
-  skip : (page - 1) * limit,
-  take : limit,
-    where: {
-    username: {
-        contains: searchTerm,
-    },
-    },
-    include : {
-      profileImage : true,
-    },
-});
-} else if (field === 'email') {
-// Prisma를 사용하여 email을 포함하는 유저 검색
-searchResults = await prisma.user.findMany({
-  skip : (page - 1) * limit,
-  take : limit,
-    where: {
-    email: {
-        contains: searchTerm,
-    },
-    },
-    include : {
-      profileImage : true,
-    },
-});
-}
+  if (field === 'username') {
+    // Prisma를 사용하여 username을 포함하는 유저 검색
+    searchResults = await prisma.user.findMany({
+      skip: (page - 1) * limit,
+      take: limit,
+      where: {
+        username: {
+          contains: searchTerm,
+        },
+      },
+      include: {
+        profileImage: true,
+      },
+    });
+  } else if (field === 'email') {
+    // Prisma를 사용하여 email을 포함하는 유저 검색
+    searchResults = await prisma.user.findMany({
+      skip: (page - 1) * limit,
+      take: limit,
+      where: {
+        email: {
+          contains: searchTerm,
+        },
+      },
+      include: {
+        profileImage: true,
+      },
+    });
+  }
 
-const totalItem = searchResults.length;
-const totalPage = Math.ceil(totalItem / limit);
+  const totalItem = searchResults.length;
+  const totalPage = Math.ceil(totalItem / limit);
 
-const pageInfo = { totalItem, totalPage, currentPage: page, limit };
+  const pageInfo = { totalItem, totalPage, currentPage: page, limit };
 
-const userResponseDataList = searchResults.map((user) =>
+  const userResponseDataList = searchResults.map((user) =>
     plainToClass(userResponseDTO, user, { excludeExtraneousValues: true }),
   );
 
@@ -374,4 +382,4 @@ const userResponseDataList = searchResults.map((user) =>
   );
 
   return response;
-}
+};

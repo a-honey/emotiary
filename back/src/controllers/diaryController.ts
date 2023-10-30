@@ -42,9 +42,14 @@ export const createDiary = async (
   const errors = await validate(diaryInput);
 
   //TODO 추루 수정
-  if (errors.length > 0)
-    //throw generateError(400, errors[0].constraints);
-    console.log('!!!!!!!!!!!!', errors[0].constraints);
+  if (errors.length > 0) {
+    const errorMessages = errors.map((error) => {
+      return error.constraints;
+    });
+  }
+
+  //throw generateError(400, errors[0].constraints);
+  // console.log('!!!!!!!!!!!!', errors[0].constraints);
 
   const { id: userId } = req.user;
 
@@ -146,7 +151,7 @@ export const updateDiary = async (
 
   // TODO 밸리데이터 수정 필요
   const errors = await validate(diaryInput);
-  const errorMessages = [];
+  // const errorMessages = [];
   if (errors.length > 0) {
     console.log('!!!!!!!!!!!!', errors[0].constraints);
     // errorMessages = errors.map((error) => {
@@ -213,8 +218,8 @@ export const searchDiary = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const { title, content } = req.body;
-  const searchDiary = await searchDiaryService(title, content);
+  const search = req.body;
+  const searchDiary = await searchDiaryService(search);
 
   return res.status(200).json(searchDiary);
 };

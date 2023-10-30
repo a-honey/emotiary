@@ -11,9 +11,10 @@ import { diaryUpload } from '../middlewares/uploadMiddleware';
 import { sendEmail } from '../utils/email';
 import { searchMusic } from '../utils/music';
 import ytdl from 'ytdl-core';
-
+import { prisma } from '../../prisma/prismaClient';
 import { generateError } from '../utils/errorGenerator';
-const prisma = new PrismaClient();
+import { getDb } from '../utils/dbconnection';
+
 /**
  * 다이어리 작성
  * @param title
@@ -27,20 +28,22 @@ export const createDiaryService = async (
   inputData: Prisma.DiaryCreateInput,
   fileUrls: string[],
 ) => {
-  const responseData = await axios.post(
-    'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
-    {
-      text: inputData.content,
-    },
-  );
-  console.log(responseData.data.emotion);
-  const labels = responseData.data.emotion.map(
-    (item: { label: string }) => item.label,
-  );
+  // await using db = await getDb();
+  // const prisma = new PrismaClient();
+  // const responseData = await axios.post(
+  //   'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
+  //   {
+  //     text: inputData.content,
+  //   },
+  // );
+  // console.log(responseData.data.emotion);
+  // const labels = responseData.data.emotion.map(
+  //   (item: { label: string }) => item.label,
+  // );
 
-  const emotionString = labels.join(',');
+  // const emotionString = labels.join(',');
 
-  inputData.emotion = emotionString;
+  // inputData.emotion = emotionString;
 
   inputData.emoji = '❎';
 
@@ -90,6 +93,8 @@ export const getAllMyDiariesService = async (
   page: number,
   limit: number,
 ) => {
+  // await using db = await getDb();
+
   const diaries = await prisma.diary.findMany({
     skip: (page - 1) * limit,
     take: limit,
@@ -106,7 +111,7 @@ export const getAllMyDiariesService = async (
     return response;
   }
 
-  const { totalItem, totalPage } = await calculatePageInfo(limit, {
+  const { totalItem, totalPage } = await calculatePageInfo('diary', limit, {
     authorId: userId,
   });
 
@@ -137,6 +142,8 @@ export const getDiaryByMonthService = async (
   year: number,
   month: number,
 ) => {
+  // await using db = await getDb();
+
   const ltMonth = month == 12 ? 1 : month + 1;
   const ltYear = month == 12 ? year + 1 : year;
 
@@ -176,6 +183,8 @@ export const getDiaryByDiaryIdService = async (
   userId: string,
   diaryId: string,
 ) => {
+  // await using db = await getDb();
+
   const diary = await prisma.diary.findUnique({
     where: { id: diaryId },
     include: { author: true, filesUpload: true },
@@ -220,6 +229,8 @@ export const getFriendsDiaryService = async (
   limit: number,
   emotion: string | undefined,
 ) => {
+  // await using db = await getDb();
+
   // 친구 목록 읽어오기
   const friends = await getMyWholeFriends(userId);
 
@@ -265,6 +276,7 @@ export const getFriendsDiaryService = async (
 
   // 총 글 개수, 페이지 수
   const { totalItem, totalPage } = await calculatePageInfo(
+    'diary',
     limit,
     friendsDiaryQuery.where,
   );
@@ -288,6 +300,8 @@ export const getAllDiaryService = async (
   limit: number,
   emotion: string,
 ) => {
+  // await using db = await getDb();
+
   //TODO controller로 넘기기 refactoring
   const friends = await getMyWholeFriends(userId);
 
@@ -339,6 +353,7 @@ export const getAllDiaryService = async (
   );
 
   const { totalItem, totalPage } = await calculatePageInfo(
+    'diary',
     limit,
     allDiaryQuery.where,
   );
@@ -359,23 +374,25 @@ export const updateDiaryService = async (
   diaryId: string,
   inputData: Prisma.DiaryUpdateInput,
 ) => {
-  if (inputData.content) {
-    const responseData = await axios.post(
-      'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
-      {
-        text: inputData.content,
-      },
-    );
-    const labels = responseData.data.emotion.map(
-      (item: { label: string }) => item.label,
-    );
+  // await using db = await getDb();
 
-    const emotionString = labels.join(',');
+  // if (inputData.content) {
+  //   const responseData = await axios.post(
+  //     'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
+  //     {
+  //       text: inputData.content,
+  //     },
+  //   );
+  //   const labels = responseData.data.emotion.map(
+  //     (item: { label: string }) => item.label,
+  //   );
 
-    inputData.emotion = emotionString;
+  //   const emotionString = labels.join(',');
 
-    inputData.emoji = '❎';
-  }
+  //   inputData.emotion = emotionString;
+
+  //   inputData.emoji = '❎';
+  // }
 
   const updatedDiary = await prisma.diary.update({
     where: { id: diaryId, authorId: userId },
@@ -398,6 +415,8 @@ export const updateDiaryService = async (
 };
 
 export const deleteDiaryService = async (userId: string, diaryId: string) => {
+  // await using db = await getDb();
+
   const deletedDiary = await prisma.diary.delete({
     where: { id: diaryId, authorId: userId },
   });
@@ -415,6 +434,8 @@ export const mailService = async (
   diaryId: string,
   username: string,
 ) => {
+  // await using db = await getDb();
+
   const diary = await prisma.diary.findUnique({
     where: {
       id: diaryId, // diaryId를 사용하여 다이어리를 식별
@@ -442,6 +463,8 @@ export const selectedEmoji = async (
   diaryId: string,
   userId: string,
 ) => {
+  // await using db = await getDb();
+
   const emojis = await prisma.emoji.findMany({
     where: {
       type: selectedEmotion,
@@ -483,20 +506,39 @@ export const selectedEmoji = async (
   return response;
 };
 
-export const searchDiaryService = async (title: string, content: string) => {
-  const words = content.split(' ');
-  const modifiedWords = words.map((word) => {
-    return `${word}*`;
+export const searchDiaryService = async (search: string) => {
+  // await using db = await getDb();
+  const searchList = search.split(' ');
+  const modifiedSearch = searchList.map((search) => {
+    return `${search}*`;
   });
+
+  const querySearch = modifiedSearch.join(' ');
+
   //TODO elastic search 찾아보기
-  const queryContent: string = modifiedWords.join(' ');
-  console.log(queryContent);
+  //await using db = await getDb();
+
   const searchedDiary = await prisma.diary.findMany({
     where: {
-      content: {
-        search: queryContent,
-      },
+      OR: [
+        {
+          title: {
+            search: querySearch,
+          },
+        },
+        {
+          content: {
+            search: querySearch,
+          },
+        },
+      ],
     },
   });
+
+  if (searchedDiary.length == 0) {
+    const response = emptyApiResponseDTO();
+    return response;
+  }
+
   return searchedDiary;
 };
