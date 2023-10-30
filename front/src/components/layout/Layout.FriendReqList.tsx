@@ -6,7 +6,10 @@ import {
   sentUserDataType,
 } from '../../api/get/useGetFriendData.types';
 import ImageComponent from '../ImageComponent';
-import { useAcceptFriendReqMutation } from '../../api/post/usePostFriendData';
+import {
+  useAcceptFriendReqMutation,
+  useRejectFriendReqMutation,
+} from '../../api/post/usePostFriendData';
 
 const FriendReqList = () => {
   const [isReqList, setIsReqList] = useState(true);
@@ -64,9 +67,15 @@ const FriendReqList = () => {
 export default FriendReqList;
 
 const ResItem = ({ item }: { item: sentUserDataType['sentUser'] }) => {
-  const postMutation = useAcceptFriendReqMutation();
+  const postAcceptMutation = useAcceptFriendReqMutation();
+  const postRejectMutation = useRejectFriendReqMutation();
+
   const handleAcceptClick = () => {
-    postMutation.mutate({ id: item.id });
+    postAcceptMutation.mutate({ id: item.id });
+  };
+
+  const handleRejectClick = () => {
+    postRejectMutation.mutate({ id: item.id });
   };
 
   return (
@@ -79,7 +88,9 @@ const ResItem = ({ item }: { item: sentUserDataType['sentUser'] }) => {
         <button className="doneBtn" onClick={handleAcceptClick}>
           수락
         </button>
-        <button className="cancelBtn">거절</button>
+        <button className="cancelBtn" onClick={handleRejectClick}>
+          거절
+        </button>
       </div>
     </div>
   );
