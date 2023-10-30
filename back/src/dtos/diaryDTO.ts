@@ -75,7 +75,7 @@ export class DiaryResponseDTO {
   favoriteCount: number;
 
   @Expose()
-  audioUrl : string;
+  audioUrl: string;
 
   @Expose()
   @Type(() => AuthorInDiaryDTO)
@@ -96,11 +96,9 @@ export class DiaryValidateDTO {
   title: string;
 
   @IsOptional()
-  @IsString({ message: '문자 입력 해주세요' })
   content: string;
 
   @IsOptional()
-  @IsString({ message: '문자 입력 해주세요' })
   is_public: string;
 
   @IsOptional()

@@ -1,6 +1,13 @@
 import { prisma } from '../../prisma/prismaClient';
 import { PrismaClient } from '@prisma/client';
 
+/**
+ *
+ * @param tableName
+ * @param limit
+ * @param where
+ * @returns
+ */
 export const calculatePageInfo = async (
   tableName: keyof PrismaClient,
   limit: number,
