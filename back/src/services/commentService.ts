@@ -195,6 +195,10 @@ export async function updatedComment(
       const response = successApiResponseDTO(commentResponseData);
 
       return response;
+    } else {
+      const response = nonAuthorizedApiResponseDTO();
+
+      return response;
     }
   } catch (error) {
     throw error;
@@ -220,6 +224,10 @@ export async function deletedComment(comment_id: string, authorId: string) {
       });
 
       const response = successApiResponseDTO(commentResponseData);
+
+      return response;
+    } else {
+      const response = nonAuthorizedApiResponseDTO();
 
       return response;
     }
