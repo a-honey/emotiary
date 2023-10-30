@@ -1,12 +1,16 @@
-import { QueryClient, useMutation } from '@tanstack/react-query';
+import {
+  QueryClient,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { instance } from '../instance';
 import { queryKeys } from '../queryKeys';
 import { CommentBodyType, DiaryBodyType } from './usePostDiaryData.types';
 import { Error } from '../types';
 
 export const usePostDiaryData = (
-  queryClient: QueryClient,
-  handleIsAdding?: () => void,
+  toggleIsOpenModal?: () => void,
+  handleChangeEmojis?: (emojis: string) => void,
 ) => {
   const postMutation = useMutation(
     async ({ body }: { body: DiaryBodyType }) => {
@@ -14,15 +18,10 @@ export const usePostDiaryData = (
     },
     {
       onSuccess: (res) => {
-        handleIsAdding?.();
-        queryClient.invalidateQueries(
-          queryKeys.calendarDiaryData({
-            user_id: localStorage.getItem('userId')!,
-            year: new Date(res.data.data.createdDate).getFullYear(),
-            month: new Date(res.data.data.createdDate).getMonth() + 1,
-          }),
-        );
-        queryClient.invalidateQueries(queryKeys.myAllDiarysData());
+        toggleIsOpenModal?.();
+        // VM 에러,, 확인 필요
+        console.log('응답데이터', res.data.data);
+        handleChangeEmojis?.(res.data.data.emoji);
       },
       onError: (error: Error) => {
         console.error('useMutation api 요청 에러', error);
@@ -33,11 +32,8 @@ export const usePostDiaryData = (
   return postMutation;
 };
 
-export const usePostCommentData = (
-  queryClient: QueryClient,
-  id: string,
-  done?: () => void,
-) => {
+export const usePostCommentData = (id: string, done?: () => void) => {
+  const queryClient = useQueryClient();
   const postMutation = useMutation(
     async ({ body }: { body: CommentBodyType }) => {
       return await instance.post(`/comments/${id}`, body);

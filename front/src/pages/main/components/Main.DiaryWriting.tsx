@@ -2,7 +2,6 @@ import React, { ChangeEvent } from 'react';
 
 import { useState } from 'react';
 import styles from './index.module.scss';
-import { useQueryClient } from '@tanstack/react-query';
 import useImgChange from '../../../hooks/useImgChange';
 import EmojiSelect from './Main.EmojiSelect';
 import { usePostDiaryData } from '../../../api/post/usePostDiaryData';
@@ -14,34 +13,37 @@ const DIARY_WRITING_INITIAL_DATA = {
   title: '',
   content: '',
   is_public: 'all',
-  emoji: '🥰',
-  emotion: '',
   createdDate: '2023-10-31',
 };
 
 const DiaryWriting = ({
   day,
-  handleIsOpenDiaryWriting,
+  toggleIsOpenModal,
 }: {
   day: Date;
-  handleIsOpenDiaryWriting: () => void;
+  toggleIsOpenModal: () => void;
 }) => {
   const [imgsContainer, setImgsContainer] = useState<File[]>([]);
+  const [emojis, setEmojis] = useState('');
 
   const [formData, setFormData] = useState<DiaryBodyType>(
     DIARY_WRITING_INITIAL_DATA,
   );
   const [isEmojiSelectOpen, setIsEmojiSelectOpen] = useState(false);
 
-  const toogleIsEmojiSelectOpen = () => {
+  const handleAddImgsContainer = (img: File) => {
+    setImgsContainer((prev) => [...prev, img]);
+  };
+
+  const toggleIsEmojiSelectOpen = () => {
     setIsEmojiSelectOpen((prev) => !prev);
   };
 
-  const queryClient = useQueryClient();
+  const handleChangeEmojis = (resEmojis: string) => {
+    setEmojis(resEmojis);
+  };
 
-  const postMutation = usePostDiaryData(queryClient, handleIsOpenDiaryWriting);
-
-  const { handleImgChange, imgContainer, imgRef } = useImgChange();
+  const postMutation = usePostDiaryData(toggleIsOpenModal, handleChangeEmojis);
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
@@ -65,7 +67,6 @@ const DiaryWriting = ({
       body: {
         ...formData,
         createdDate: formatDatetoString(day),
-        emotion: 'happiness',
       },
     });
   };
@@ -79,20 +80,11 @@ const DiaryWriting = ({
         </div>
         <div className={styles.contentContainer}>
           <div className={styles.imgContainer}>
-            <img
-              ref={imgRef}
-              src={post_none}
-              alt="일기 사진 및 비디오 업로드"
-            />
-            <input
-              type="file"
-              accept="image/*, video/*"
-              alt="일기 사진 및 비디오 업로드"
-              onChange={handleImgChange}
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={handleImgChange}
-              multiple
-            />
+            <ImgInputItem handleAddImgsContainer={handleAddImgsContainer} />
+            <ImgInputItem handleAddImgsContainer={handleAddImgsContainer} />
+            <ImgInputItem handleAddImgsContainer={handleAddImgsContainer} />
+            <ImgInputItem handleAddImgsContainer={handleAddImgsContainer} />
+            <ImgInputItem handleAddImgsContainer={handleAddImgsContainer} />
           </div>
           <div className={styles.content}>
             <label>제목</label>
@@ -134,7 +126,7 @@ const DiaryWriting = ({
           <button
             className="cancelBtn"
             type="button"
-            onClick={handleIsOpenDiaryWriting}
+            onClick={toggleIsOpenModal}
           >
             작성취소
           </button>
@@ -142,7 +134,10 @@ const DiaryWriting = ({
             작성완료
           </button>
           {isEmojiSelectOpen && (
-            <EmojiSelect toogleIsEmojiSelectOpen={toogleIsEmojiSelectOpen} />
+            <EmojiSelect
+              emojis={emojis}
+              toggleIsEmojiSelectOpen={toggleIsEmojiSelectOpen}
+            />
           )}
         </div>
       </form>
@@ -151,3 +146,29 @@ const DiaryWriting = ({
 };
 
 export default DiaryWriting;
+
+const ImgInputItem = ({
+  handleAddImgsContainer,
+}: {
+  handleAddImgsContainer: (img: File) => void;
+}) => {
+  const { handleImgChange, imgContainer, imgRef } = useImgChange();
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    handleImgChange(e);
+    handleAddImgsContainer(imgContainer!);
+  };
+  return (
+    <div>
+      <img ref={imgRef} src={post_none} alt="일기 사진 및 비디오 업로드" />
+      <input
+        type="file"
+        accept="image/*, video/*"
+        alt="일기 사진 및 비디오 업로드"
+        onChange={handleChange}
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={handleImgChange}
+      />
+    </div>
+  );
+};
