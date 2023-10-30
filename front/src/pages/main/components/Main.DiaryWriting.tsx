@@ -64,7 +64,9 @@ const DiaryWriting = ({
     imgsContainer?.forEach((item) => body.append('filesUpload', item));
 
     Object.keys(formData).forEach((key) => {
-      body.append(key, formData[key]);
+      if (key !== 'createdDate') {
+        body.append(key, formData[key]);
+      }
     });
 
     body.append('createdDate', formatDatetoString(day));

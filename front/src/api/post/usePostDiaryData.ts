@@ -3,7 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
-import { instance } from '../instance';
+import { formDataInstance, instance } from '../instance';
 import { queryKeys } from '../queryKeys';
 import { CommentBodyType, DiaryBodyType } from './usePostDiaryData.types';
 import { Error } from '../types';
@@ -11,7 +11,7 @@ import { Error } from '../types';
 export const usePostDiaryData = (fn?: (emojis: string) => void) => {
   const postMutation = useMutation(
     async ({ body }: { body: FormData }) => {
-      return await instance.post(`/diary`, body);
+      return await formDataInstance.post(`/diary`, body);
     },
     {
       onSuccess: (res) => {
