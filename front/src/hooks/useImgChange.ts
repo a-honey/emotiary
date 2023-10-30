@@ -1,6 +1,6 @@
 import { useState, useRef, ChangeEvent, DragEvent } from 'react';
 
-const useImgChange = () => {
+const useImgChange = (handleAddImgsContainer?: (img: File) => void) => {
   const [imgContainer, setImgContainer] = useState<File | null>(null);
   // src를 변경할 요소(useRef 객체)
   const imgRef = useRef<HTMLImageElement | null>(null);
@@ -40,6 +40,7 @@ const useImgChange = () => {
 
         reader.readAsDataURL(img);
         setImgContainer(img);
+        handleAddImgsContainer?.(img);
       } catch (e) {
         alert(e);
       }
