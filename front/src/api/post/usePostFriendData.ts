@@ -21,7 +21,7 @@ export const usePostFriendReqMutation = () => {
         setToastState((oldToastState) => [
           ...oldToastState,
           {
-            message: `${res.data.data.username} 에게 친구요청 성공하였습니다.`,
+            message: `친구요청에 성공하였습니다.`,
           },
         ]);
       },
@@ -48,7 +48,7 @@ export const useAcceptFriendReqMutation = () => {
         setToastState((oldState) => [
           ...oldState,
           {
-            message: `${res.data.data.username}의 친구요청을 수락하였습니다.`,
+            message: `친구요청을 수락하였습니다.`,
           },
         ]);
       },
@@ -75,7 +75,7 @@ export const useRejectFriendReqMutation = () => {
         setToastState((oldState) => [
           ...oldState,
           {
-            message: `${res.data.data.username}의 친구요청을 거절하였습니다.`,
+            message: `친구요청을 거절하였습니다.`,
           },
         ]);
       },
@@ -102,7 +102,7 @@ export const useCancelFriendReqMutation = () => {
         setToastState((oldState) => [
           ...oldState,
           {
-            message: `${res.data.data.username}의 친구요청을 취소하였습니다.`,
+            message: `친구요청을 취소하였습니다.`,
           },
         ]);
       },
