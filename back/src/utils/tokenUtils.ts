@@ -1,12 +1,15 @@
 import jwt from 'jsonwebtoken';
-import { IUser } from '../types/user';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 import jwtSecret from '../config/jwtSecret';
 
 // Access Token 생성 함수
-export const generateAccessToken = (user: { id : string, username : string, email : string }): string => {
+export const generateAccessToken = (user: {
+  id: string;
+  username: string;
+  email: string;
+}): string => {
   // 사용자 ID를 기반으로 새로운 Access Token 생성
   const accessToken = jwt.sign({ id: user.id }, jwtSecret, {
     expiresIn: '1d',
@@ -15,7 +18,11 @@ export const generateAccessToken = (user: { id : string, username : string, emai
 };
 
 // Refresh Token 생성 함수
-export const generateRefreshToken = (user: { id : string, username : string, email : string }): string => {
+export const generateRefreshToken = (user: {
+  id: string;
+  username: string;
+  email: string;
+}): string => {
   // 사용자 ID를 기반으로 새로운 Refresh Token 생성
   const refreshToken = jwt.sign({ id: user.id }, jwtSecret, {
     expiresIn: '30d', // 예: 30일

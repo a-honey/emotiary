@@ -15,14 +15,14 @@ export const sendEmail = async (
   try {
     // 이메일을 전송하기 위한 transporter(전송자) 객체를 생성합니다.
     const transporter = nodemailer.createTransport({
-      pool : true,
-      maxConnections : 1,
-      secure : false,
-      requireTLS : true,
-      tls : {
-        rejectUnauthorized : false,
+      pool: true,
+      maxConnections: 1,
+      secure: false,
+      requireTLS: true,
+      tls: {
+        rejectUnauthorized: false,
       },
-      service : email_service,
+      service: email_service,
       auth: {
         user: user,
         pass: pass,
@@ -39,13 +39,13 @@ export const sendEmail = async (
 
     // 설정한 이메일 옵션을 사용하여 이메일을 전송합니다.
     // await transporter.sendMail(mailOptions);
-    await transporter.sendMail(mailOptions, function(error, info){
-      if(error){
+    await transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
         console.log(error);
-      }else{
+      } else {
         console.log('email sent: ' + info.response);
       }
-    }); 
+    });
   } catch (error) {
     throw error;
   }
