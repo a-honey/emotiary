@@ -8,6 +8,7 @@ import {
 import ImageComponent from '../ImageComponent';
 import {
   useAcceptFriendReqMutation,
+  useCancelFriendReqMutation,
   useRejectFriendReqMutation,
 } from '../../api/post/usePostFriendData';
 
@@ -97,6 +98,12 @@ const ResItem = ({ item }: { item: sentUserDataType['sentUser'] }) => {
 };
 
 const ReqItem = ({ item }: { item: ReceivedUserDataType['receivedUser'] }) => {
+  const postCancelMutation = useCancelFriendReqMutation();
+
+  const handleCancelClick = () => {
+    postCancelMutation.mutate({ id: item.id });
+  };
+
   return (
     <div className={styles.reqItemContainer}>
       <div>
@@ -111,7 +118,9 @@ const ReqItem = ({ item }: { item: ReceivedUserDataType['receivedUser'] }) => {
         {item.username}
       </div>
       <div className={styles.btns}>
-        <button className="cancelBtn">취소</button>
+        <button className="cancelBtn" onClick={handleCancelClick}>
+          취소
+        </button>
       </div>
     </div>
   );

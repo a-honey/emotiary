@@ -36,7 +36,7 @@ export const usePostFriendReqMutation = () => {
 
 //* 친구 목록에서 친구 수락 */
 export const useAcceptFriendReqMutation = () => {
-  const setState = useSetRecoilState(toastState);
+  const setToastState = useSetRecoilState(toastState);
   const queryClient = useQueryClient();
   const postMutation = useMutation(
     async ({ id }: { id: string }) => {
@@ -45,7 +45,7 @@ export const useAcceptFriendReqMutation = () => {
     {
       onSuccess: (res) => {
         queryClient.invalidateQueries(queryKeys.receivedFriends());
-        setState((oldState) => [
+        setToastState((oldState) => [
           ...oldState,
           {
             message: `${res.data.data.username}의 친구요청을 수락하였습니다.`,
@@ -63,7 +63,7 @@ export const useAcceptFriendReqMutation = () => {
 
 //* 친구 목록에서 친구 거절 */
 export const useRejectFriendReqMutation = () => {
-  const setState = useSetRecoilState(toastState);
+  const setToastState = useSetRecoilState(toastState);
   const queryClient = useQueryClient();
   const deleteMutation = useMutation(
     async ({ id }: { id: string }) => {
@@ -72,10 +72,37 @@ export const useRejectFriendReqMutation = () => {
     {
       onSuccess: (res) => {
         queryClient.invalidateQueries(queryKeys.receivedFriends());
-        setState((oldState) => [
+        setToastState((oldState) => [
           ...oldState,
           {
             message: `${res.data.data.username}의 친구요청을 거절하였습니다.`,
+          },
+        ]);
+      },
+      onError: (error) => {
+        console.error('useMutation api 요청 에러', error);
+      },
+    },
+  );
+
+  return deleteMutation;
+};
+
+//* 친구 목록에서 친구 취소 */
+export const useCancelFriendReqMutation = () => {
+  const setToastState = useSetRecoilState(toastState);
+  const queryClient = useQueryClient();
+  const deleteMutation = useMutation(
+    async ({ id }: { id: string }) => {
+      return await instance.delete(`/friend/req/drop/${id}`);
+    },
+    {
+      onSuccess: (res) => {
+        queryClient.invalidateQueries(queryKeys.sentFriends());
+        setToastState((oldState) => [
+          ...oldState,
+          {
+            message: `${res.data.data.username}의 친구요청을 취소하였습니다.`,
           },
         ]);
       },
