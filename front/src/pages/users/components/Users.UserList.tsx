@@ -94,7 +94,7 @@ const UserItem = ({ data }: { data: UserItemType }) => {
       )}
       <div>
         <ImageComponent
-          src={filesUpload[filesUpload.length - 1]?.url ?? null}
+          src={null}
           alt={`${username}의 프로필사진`}
         />
         <div className={styles.emoji}>{latestEmoji}</div>
