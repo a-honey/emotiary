@@ -21,7 +21,7 @@ export const usePutSigninData = (queryClient: QueryClient) => {
         // 프로필 이미지 받아와서 로컬스토리지에 위치만 넣음
         localStorage.setItem(
           'userImg',
-          data.data?.filesUpload.length > 0
+          data.data?.filesUpload?.length > 0
             ? data.data.filesUpload[data.data.filesUpload.length - 1].url
             : null,
         );

@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './Chat.ChatButton.module.scss';
 import { Socket } from 'socket.io-client';
 import ChatList from './Chat.ChatList';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { chatState } from '../../atoms/chatState';
 import useCallByLocation from '../../hooks/useCallByLocation';
+import { useLocation } from 'react-router-dom';
 
 const ChatButton = ({ socket }: { socket: Socket }) => {
   const isOpenChatList = useRecoilValue(chatState).isOpenChatList;
   const setIsOpenChatList = useSetRecoilState(chatState);
+
+  const location = useLocation();
 
   const [isNewMessage, setIsNewMessage] = useState(false);
 
@@ -16,6 +19,13 @@ const ChatButton = ({ socket }: { socket: Socket }) => {
     setIsNewMessage(true);
   });
 
+  useEffect(() => {
+    setIsOpenChatList((prev) => ({
+      ...prev,
+      isOpenChatRoom: false,
+      isOpenChatList: false,
+    }));
+  }, [setIsOpenChatList, location.pathname]);
   return (
     <>
       {isOpenChatList ? (

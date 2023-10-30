@@ -133,7 +133,7 @@ const DairyItem = ({ data }: { data: DiaryItemType }) => {
           }}
         >
           <img
-            src={data.author.profileImage.at(-1)?.url ?? '/user_none.png'}
+            src={data.author.profileImage?.at(-1)?.url ?? '/user_none.png'}
             alt={`${data.author.username}의 프로필사진`}
             onError={handleImgError}
           />
