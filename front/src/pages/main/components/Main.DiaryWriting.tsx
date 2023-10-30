@@ -39,11 +39,12 @@ const DiaryWriting = ({
     setIsEmojiSelectOpen((prev) => !prev);
   };
 
-  const handleChangeEmojis = (resEmojis: string) => {
-    setEmojis(resEmojis);
+  const handleOnSuccess = (emojis: string) => {
+    setEmojis(emojis);
+    toggleIsEmojiSelectOpen();
   };
 
-  const postMutation = usePostDiaryData(toggleIsOpenModal, handleChangeEmojis);
+  const postMutation = usePostDiaryData(handleOnSuccess);
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
@@ -62,13 +63,14 @@ const DiaryWriting = ({
 
     imgsContainer?.forEach((item) => body.append('filesUpload', item));
 
-    setIsEmojiSelectOpen(true);
     postMutation.mutate({
       body: {
         ...formData,
         createdDate: formatDatetoString(day),
       },
     });
+
+    setIsEmojiSelectOpen(true);
   };
 
   return (
@@ -133,14 +135,14 @@ const DiaryWriting = ({
           <button className="doneBtn" type="submit">
             작성완료
           </button>
-          {isEmojiSelectOpen && (
-            <EmojiSelect
-              emojis={emojis}
-              toggleIsEmojiSelectOpen={toggleIsEmojiSelectOpen}
-            />
-          )}
         </div>
       </form>
+      {isEmojiSelectOpen && (
+        <EmojiSelect
+          emojis={emojis!}
+          toggleIsEmojiSelectOpen={toggleIsEmojiSelectOpen}
+        />
+      )}
     </div>
   );
 };

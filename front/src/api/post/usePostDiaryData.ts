@@ -8,20 +8,15 @@ import { queryKeys } from '../queryKeys';
 import { CommentBodyType, DiaryBodyType } from './usePostDiaryData.types';
 import { Error } from '../types';
 
-export const usePostDiaryData = (
-  toggleIsOpenModal?: () => void,
-  handleChangeEmojis?: (emojis: string) => void,
-) => {
+export const usePostDiaryData = (fn?: (emojis: string) => void) => {
   const postMutation = useMutation(
     async ({ body }: { body: DiaryBodyType }) => {
       return await instance.post(`/diary`, body);
     },
     {
       onSuccess: (res) => {
-        toggleIsOpenModal?.();
-        // VM 에러,, 확인 필요
-        console.log('응답데이터', res.data.data);
-        handleChangeEmojis?.(res.data.data.emoji);
+        fn?.(res.data.data.emoji);
+        return res.data.data.emoji;
       },
       onError: (error: Error) => {
         console.error('useMutation api 요청 에러', error);
