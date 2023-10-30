@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './DiaryItemShow.module.scss';
 import DiaryComment from './DiaryComment';
 import { useGetDiaryData } from '../../api/get/useGetDiaryData';
@@ -19,6 +19,7 @@ const DiaryItemShow = ({
   id: string;
   toggleIsOpenModal: () => void;
 }) => {
+  const [isEditing, setIsEditing] = useState(false);
   const navigator = useNavigate();
 
   const queryClient = useQueryClient();
@@ -53,6 +54,17 @@ const DiaryItemShow = ({
       <div className={styles.modalContainer}>
         {isDiaryDataFetching ? (
           <div>로딩중</div>
+        ) : isEditing ? (
+          <div className={styles.diaryContent}>
+            <div>
+              <label>제목</label>
+              <input />
+            </div>
+            <div>
+              <label>내용</label>
+              <textarea />
+            </div>
+          </div>
         ) : (
           <div className={styles.diaryContent}>
             <div className={styles.titles}>
@@ -88,9 +100,14 @@ const DiaryItemShow = ({
         {!isDiaryDataFetching && (
           <DiaryComment data={diaryCommentData} id={diaryData.id} />
         )}
-        <button className="cancelBtn" onClick={toggleIsOpenModal}>
-          닫기
-        </button>
+        <div>
+          <button className="doneBtn" onClick={() => setIsEditing(true)}>
+            수정
+          </button>
+          <button className="cancelBtn" onClick={toggleIsOpenModal}>
+            닫기
+          </button>
+        </div>
       </div>
     </div>
   );
