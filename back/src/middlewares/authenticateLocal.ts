@@ -28,13 +28,14 @@ export const localAuthentication = (
         }
 
         if (user) {
-          const accessToken = generateAccessToken(user);
+          const { token, expiresAt } = generateAccessToken(user);
           const refreshToken = generateRefreshToken(user);
           await storeRefreshTokenInDatabase(user.id, refreshToken);
 
-          req.token = accessToken;
+          req.token = token;
           req.user = user;
           req.refreshTokens = [refreshToken];
+          req.expiresAt = expiresAt;
           return next();
         }
       },

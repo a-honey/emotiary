@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import {
   createUser,
   myInfo,
@@ -23,8 +23,34 @@ import { emailToken, sendEmail } from '../utils/email';
 const prisma = new PrismaClient();
 
 export const userRegister = async (req: Request, res: Response) => {
-  // swagger 데이터전용
-  // #swagger.tags = ['Users']
+    /* #swagger.tags = ['Users']
+  #swagger.security = [{
+    "bearerAuth": []
+  }]
+  #swagger.summary = 'Register a new user'
+  #swagger.description = 'Creates a new user account with the provided username, email, and password.'
+  #swagger.parameters['user'] = {
+    in: 'body',
+    description: 'User registration data',
+    required: true,
+    type: 'object',
+    schema: {
+      $ref: '#/definitions/UserRegisterInput'
+    }
+  }
+  #swagger.responses[201] = {
+    description: 'User registered successfully',
+    schema: {
+      $ref: '#/definitions/UserResponse'
+    }
+  }
+  #swagger.responses[400] = {
+    description: 'Bad request. Invalid user data.'
+  }
+  #swagger.responses[500] = {
+    description: 'Internal server error.'
+  }
+  */
   const { username, email, password } = req.body;
   const inputData = plainToClass(userValidateDTO, req.body);
 
@@ -38,13 +64,27 @@ export const userLogin = async (req: IRequest, res: Response) => {
   // swagger 데이터전용
   // #swagger.tags = ['Users']
   const { email, password } = req.body;
+
+  const myInfo = await prisma.user.findUnique({
+    where: {
+      id: req.user.id,
+    },
+    include: {
+      profileImage: true,
+    },
+  });
+  if (!myInfo) {
+    return res.status(404).json({ message: '사용자 정보를 찾을 수 없습니다.' });
+  }
   // 사용자 정보와 토큰 데이터를 사용하여 user 객체 생성
   const user = {
     token: req.token,
     refreshToken: req.refreshTokens,
+    expires : req.expiresAt,
     id: req.user.id,
     name: req.user.username,
     email: req.user.email,
+    profileImage: myInfo.profileImage,
   };
 
   return res.status(200).json({ data: user, message: '성공' });
@@ -184,12 +224,14 @@ export const forgotPassword = async (req: IRequest, res: Response) => {
     .status(200)
     .json({ message: '임시 비밀번호가 이메일로 전송되었습니다.' });
 };
-
+/** @description 친구 거절 */
 export const resetPassword = async (req: IRequest, res: Response) => {
-  /* #swagger.tags = ['Users']
-         #swagger.security = [{
-               "bearerAuth": []
-        }] */
+  /**
+   * #swagger.tags = ['Users']
+   *     #swagger.security = [{
+   *           "bearerAuth": []
+   * }]
+   */
 
   const { email, password } = req.body;
 
@@ -208,11 +250,6 @@ export const resetPassword = async (req: IRequest, res: Response) => {
 };
 
 export const refresh = async (req: IRequest, res: Response) => {
-  // #swagger.tags = ['Users']
-  // #swagger.security = [{
-  // "bearerAuth": []
-  // }] */
-
   const refreshToken = req.body.token;
 
   if (!refreshToken) {

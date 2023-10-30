@@ -9,12 +9,14 @@ export const generateAccessToken = (user: {
   id: string;
   username: string;
   email: string;
-}): string => {
+}): { token: string; expiresAt: number } => {
   // 사용자 ID를 기반으로 새로운 Access Token 생성
   const accessToken = jwt.sign({ id: user.id }, jwtSecret, {
     expiresIn: '1d',
   });
-  return accessToken;
+  const expirationTime = Math.floor(Date.now() / 1000) + 60 * 60 * 24;
+
+  return { token: accessToken, expiresAt: expirationTime };
 };
 
 // Refresh Token 생성 함수
