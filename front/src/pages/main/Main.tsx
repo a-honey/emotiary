@@ -15,14 +15,7 @@ const MainPage: React.FC = () => {
   });
 
   return (
-    <main
-      style={{
-        gap: '20px',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '95vh',
-      }}
-    >
+    <main className="column">
       <div
         style={{
           width: '100%',

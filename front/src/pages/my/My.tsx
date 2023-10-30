@@ -6,7 +6,7 @@ import withLogin from '../../components/withLogin';
 
 const MyPage: React.FC = () => {
   return (
-    <main style={{ gap: '40px', height: '95vh' }}>
+    <main>
       <MyCard />
       <DiaryList />
     </main>
