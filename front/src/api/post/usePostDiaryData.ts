@@ -10,7 +10,7 @@ import { Error } from '../types';
 
 export const usePostDiaryData = (fn?: (emojis: string) => void) => {
   const postMutation = useMutation(
-    async ({ body }: { body: DiaryBodyType }) => {
+    async ({ body }: { body: FormData }) => {
       return await instance.post(`/diary`, body);
     },
     {

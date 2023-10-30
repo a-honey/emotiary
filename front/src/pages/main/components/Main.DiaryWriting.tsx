@@ -26,7 +26,7 @@ const DiaryWriting = ({
   const [imgsContainer, setImgsContainer] = useState<File[]>([]);
   const [emojis, setEmojis] = useState('');
 
-  const [formData, setFormData] = useState<DiaryBodyType>(
+  const [formData, setFormData] = useState<Record<string, string>>(
     DIARY_WRITING_INITIAL_DATA,
   );
   const [isEmojiSelectOpen, setIsEmojiSelectOpen] = useState(false);
@@ -63,11 +63,14 @@ const DiaryWriting = ({
 
     imgsContainer?.forEach((item) => body.append('filesUpload', item));
 
+    Object.keys(formData).forEach((key) => {
+      body.append(key, formData[key]);
+    });
+
+    body.append('createdDate', formatDatetoString(day));
+
     postMutation.mutate({
-      body: {
-        ...formData,
-        createdDate: formatDatetoString(day),
-      },
+      body,
     });
 
     setIsEmojiSelectOpen(true);
