@@ -1,12 +1,13 @@
-import { QueryClient, useMutation } from '@tanstack/react-query';
+import {
+  QueryClient,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { instance } from '../instance';
 import { queryKeys } from '../queryKeys';
 
-export const usePutDiaryData = (
-  queryClient: QueryClient,
-  id: string,
-  handleIsAdding?: () => void,
-) => {
+export const usePutDiaryData = (id: string, handleIsAdding?: () => void) => {
+  const queryClient = useQueryClient();
   const postMutation = useMutation(
     async ({ body }: { body: any }) => {
       return await instance.put(`/diary/${id}`, body);
@@ -28,11 +29,8 @@ export const usePutDiaryData = (
   return postMutation;
 };
 
-export const usePutCommentData = (
-  queryClient: QueryClient,
-  id: string,
-  done?: () => void,
-) => {
+export const usePutCommentData = (id: string, done?: () => void) => {
+  const queryClient = useQueryClient();
   const postMutation = useMutation(
     async ({ body }: { body: any }) => {
       return await instance.put(`/comments/${id}`, body);

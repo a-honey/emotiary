@@ -50,4 +50,13 @@ export const queryKeys = {
 
   /* COMMENT */
   diaryCommentData: ({ id }: { id: string }) => ['diaryCommentData', id],
+
+  /* SEARCH */
+  searchUserData: ({
+    searchTerm,
+    field,
+  }: {
+    searchTerm: string;
+    field: 'email' | 'username';
+  }) => ['searchUserData', searchTerm, field],
 };

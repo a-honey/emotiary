@@ -24,7 +24,6 @@ const ChatRoom = ({
     try {
       // 메시지를 socket에 전송
       await socket?.emit('sendMessage', userId, message);
-      console.log('보낸 메시지내용:', message);
       // input value 초기화
       setMessage('');
     } catch (err) {

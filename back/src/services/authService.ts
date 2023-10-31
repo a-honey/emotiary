@@ -235,9 +235,9 @@ export const deleteUserService = async (userId: string) => {
 
   // 사용자의 친구 관계 삭제
   await prisma.friend.deleteMany({
-    where : {
+    where: {
       OR: [{ sentUserId: userId }, { receivedUserId: userId }],
-    }
+    },
   });
 
   // 사용자의 다이어리 삭제
@@ -360,7 +360,7 @@ export const getUsers = async (
   return response;
 };
 
-export const emailLinked = async(email : string) => {
+export const emailLinked = async (email: string) => {
   const user = await prisma.user.create({
     data: {
       email,
@@ -396,9 +396,9 @@ export const emailLinked = async(email : string) => {
         <p><a href = "${verifyUrl}">Verify Email</a></p>
         <p>${result.expires}</p>`,
   );
-}
+};
 
-export const verifyToken = async (token : string) => {
+export const verifyToken = async (token: string) => {
   const user = await prisma.user.findFirst({
     where: {
       verificationToken: token,
@@ -409,7 +409,7 @@ export const verifyToken = async (token : string) => {
   });
 
   if (!user) {
-    throw ({ message: '토큰이 유효하지 않습니다.' });
+    throw { message: '토큰이 유효하지 않습니다.' };
   }
 
   await prisma.user.update({
@@ -422,15 +422,19 @@ export const verifyToken = async (token : string) => {
       verificationTokenExpires: null,
     },
   });
-}
+};
 
-export const registerUser = async(email : string, username : string, password : string) => {
+export const registerUser = async (
+  email: string,
+  username: string,
+  password: string,
+) => {
   const user = await prisma.user.findUnique({
     where: { email },
   });
 
   if (!user || !user.isVerified) {
-    throw ({ message: '이메일 인증이 필요합니다.' });
+    throw { message: '이메일 인증이 필요합니다.' };
   }
 
   // 비밀번호를 해시하여 저장 (안전한 비밀번호 저장)
@@ -440,7 +444,7 @@ export const registerUser = async(email : string, username : string, password : 
     where: { id: user.id },
     data: {
       username,
-      password : hashedPassword,
+      password: hashedPassword,
     },
   });
 
@@ -450,4 +454,4 @@ export const registerUser = async(email : string, username : string, password : 
 
   const response = successApiResponseDTO(UserResponseDTO);
   return response;
-}
+};

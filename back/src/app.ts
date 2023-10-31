@@ -26,12 +26,12 @@ import {
   unreadMessage,
   changeReadStatus,
   deleteMessage,
-  deleteRoom
+  deleteRoom,
 } from './services/chatService';
 import { PrismaClient } from '@prisma/client';
 import * as socketIoJwt from 'socketio-jwt';
 const prisma = new PrismaClient();
-import path = require("path");
+import path = require('path');
 // import axios, { AxiosResponse } from "axios";
 
 // const app: Express & { io?: SocketIoServer } = express();
@@ -43,8 +43,6 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(Logger);
 sendAlarm();
-
-
 
 app.use(passport.initialize());
 
@@ -83,15 +81,10 @@ apiRouter.use('/comments', commentRouter);
 
 app.use('/api', apiRouter);
 
-
-
 // // 정적 파일 제공을 위한 미들웨어 설정
 // app.use(express.static("public"));
 app.use('/api/fileUpload', express.static('fileUpload'));
 app.use(errorMiddleware);
-
-
-
 
 // 웹소켓을 이용한 1:1 채팅
 interface ConnectedUsers {
@@ -100,29 +93,26 @@ interface ConnectedUsers {
   user: any; // Replace with the actual user type
 }
 
-  const io = new SocketIoServer(server, {
-    path: '/chat',
-    cors: {
-      origin: 'http://localhost:3000', // Replace with your actual frontend URL
-      methods: ['GET', 'POST',  'WEBSOCKET'],
+const io = new SocketIoServer(server, {
+  path: '/chat',
+  cors: {
+    origin: 'http://localhost:3000', // Replace with your actual frontend URL
+    methods: ['GET', 'POST', 'WEBSOCKET'],
+  },
+});
 
-    },
+io.use(
+  socketIoJwt.authorize({
+    secret: process.env.JWT_SECRET_KEY,
+    handshake: true,
+    auth_header_required: true,
+  }),
+);
 
-  });
-
-  io.use(
-    socketIoJwt.authorize({
-      secret: process.env.JWT_SECRET_KEY,
-      handshake: true,
-      auth_header_required: true,
-    }),
-  );
-
-  const connectedUsers: { [key: string]: ConnectedUsers } = {};
+const connectedUsers: { [key: string]: ConnectedUsers } = {};
 
 io.on('connection', async (socket: Socket) => {
   const currentUserId = (socket as any).decoded_token.id;
-
 
   const user = await currentUser(currentUserId);
   if (user) {
@@ -153,7 +143,10 @@ io.on('connection', async (socket: Socket) => {
 
       if (existingRoom) {
         connectedUsers[currentUserId].roomId = roomId;
-        console.log(connectedUsers[currentUserId].roomId, 'Currently joined room');
+        console.log(
+          connectedUsers[currentUserId].roomId,
+          'Currently joined room',
+        );
         socket.join(roomId);
         console.log(`${user.username} joined [${roomId}] room`);
         const messages = await getMyMessages(roomId);

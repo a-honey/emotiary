@@ -6269,7 +6269,11 @@ prettier@^3.0.3, prettier@>=3.0.0:
   resolved "https://registry.npmjs.org/prettier/-/prettier-3.0.3.tgz"
   integrity sha512-L/4pUDMxcNa8R/EthV08Zt42WBO4h1rarVtK0K+QJG0X187OLo7l699jWw0GKuwzkPQ//jMFA/8Xm6Fh3J/DAg==
 
+<<<<<<< HEAD
 prisma@*, prisma@^5.5.2:
+=======
+prisma@*, prisma@^5.5.0:
+>>>>>>> 56f8974f15d72f51fec602db3df450c1e9963f6a
   version "5.5.2"
   resolved "https://registry.npmjs.org/prisma/-/prisma-5.5.2.tgz"
   integrity sha512-WQtG6fevOL053yoPl6dbHV+IWgKo25IRN4/pwAGqcWmg7CrtoCzvbDbN9fXUc7QS2KK0LimHIqLsaCOX/vHl8w==

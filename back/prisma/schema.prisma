@@ -83,7 +83,7 @@ model Diary {
   authorId      String
   createdDate   DateTime
   title         String
-  content       String
+  content       String  @db.VarChar(1000)
   is_public     String
   emoji         String?
   emotion       String?
