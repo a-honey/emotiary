@@ -19,38 +19,16 @@ import { userValidateDTO } from '../dtos/userDTO';
 import { plainToClass } from 'class-transformer';
 import { emptyApiResponseDTO } from '../utils/emptyResult';
 import { emailToken, sendEmail } from '../utils/email';
+import { generateRefreshToken } from '../utils/tokenUtils';
+import { storeRefreshTokenInDatabase } from '../utils/tokenUtils';
 
 const prisma = new PrismaClient();
 
 export const userRegister = async (req: Request, res: Response) => {
     /* #swagger.tags = ['Users']
-  #swagger.security = [{
-    "bearerAuth": []
-  }]
-  #swagger.summary = 'Register a new user'
-  #swagger.description = 'Creates a new user account with the provided username, email, and password.'
-  #swagger.parameters['user'] = {
-    in: 'body',
-    description: 'User registration data',
-    required: true,
-    type: 'object',
-    schema: {
-      $ref: '#/definitions/UserRegisterInput'
-    }
-  }
-  #swagger.responses[201] = {
-    description: 'User registered successfully',
-    schema: {
-      $ref: '#/definitions/UserResponse'
-    }
-  }
-  #swagger.responses[400] = {
-    description: 'Bad request. Invalid user data.'
-  }
-  #swagger.responses[500] = {
-    description: 'Internal server error.'
-  }
-  */
+         #swagger.security = [{
+               "bearerAuth": []
+    }] */
   const { username, email, password } = req.body;
   const inputData = plainToClass(userValidateDTO, req.body);
 
@@ -186,11 +164,15 @@ export const deleteUser = async (req: IRequest, res: Response) => {
          #swagger.security = [{
                "bearerAuth": []
         }] */
+  const loginId = req.user.id;
+  const userIdToDelete = req.params.userId;
 
-  const userId = req.params.userId;
+  if (loginId !== userIdToDelete) {
+    return res.status(403).json({ message: '권한이 없습니다.' });
+  }
 
   const user = await prisma.user.findUnique({
-    where: { id: userId }, // userId를 적절한 값으로 대체
+    where: { id: userIdToDelete },
   });
 
   if (!user) {
@@ -199,7 +181,7 @@ export const deleteUser = async (req: IRequest, res: Response) => {
   }
 
   // deleteUserService 함수를 사용하여 사용자 삭제
-  const message = await deleteUserService(userId);
+  const message = await deleteUserService(userIdToDelete);
 
   res.status(200).json({ message });
 };
@@ -269,8 +251,10 @@ export const refresh = async (req: IRequest, res: Response) => {
   // 데이터베이스에서 사용자 정보 가져오고 재발급
   const user = await getUserFromDatabase(userId);
   const accessToken = generateAccessToken(user);
+  const newRefreshToken = generateRefreshToken(user);
+  await storeRefreshTokenInDatabase(userId, newRefreshToken);
 
-  res.json({ data: accessToken, message: '성공' });
+  res.json({ data: { accessToken, newRefreshToken }, message: '성공' });
 };
 
 export const profile = async (req: IRequest, res: Response) => {

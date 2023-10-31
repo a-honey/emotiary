@@ -38,7 +38,14 @@ export const storeRefreshTokenInDatabase = async (
   refreshToken: string,
 ): Promise<void> => {
   try {
-    // 데이터베이스에 Refresh Token 저장
+    // 기존 Refresh Token을 삭제
+    await prisma.refreshToken.deleteMany({
+      where: {
+        userId: userId,
+      },
+    });
+
+    // 새로운 Refresh Token 저장
     await prisma.refreshToken.create({
       data: {
         userId,

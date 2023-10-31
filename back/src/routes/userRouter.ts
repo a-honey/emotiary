@@ -54,7 +54,7 @@ userAuthRouter
   .route("/:userId")
   .get(jwtAuthentication, wrapAsyncController(getUserId))
   .put(jwtAuthentication, fileUpload, wrapAsyncController(updateUser))
-  .delete( wrapAsyncController(deleteUser));
+  .delete( jwtAuthentication, wrapAsyncController(deleteUser));
 
 // 비밀번호 재설정 이메일 보내기
 userAuthRouter.post("/forgot-password", wrapAsyncController(forgotPassword));
@@ -63,7 +63,7 @@ userAuthRouter.post("/forgot-password", wrapAsyncController(forgotPassword));
 userAuthRouter.post("/reset-password", jwtAuthentication, wrapAsyncController(resetPassword));
 
 // refresh token사용
-userAuthRouter.post('/refresh-token', jwtAuthentication, wrapAsyncController(refresh));
+userAuthRouter.post('/refresh-token', wrapAsyncController(refresh));
 
 userAuthRouter.get(
   "/google",
