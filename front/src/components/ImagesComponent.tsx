@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import styles from './ImagesComponent.module.scss';
 
 // VM 확인필요, 일단 로컬 스토리북으로 확인은 함
-const ImagesComponent = ({ imgDatas }: { imgDatas: string[] }) => {
+const ImagesComponent = ({ imgDatas }: { imgDatas: { url: string }[] }) => {
   const imgWrapperRef = useRef<HTMLDivElement | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -42,7 +42,7 @@ const ImagesComponent = ({ imgDatas }: { imgDatas: string[] }) => {
     <div className={styles.container}>
       <div ref={imgWrapperRef} className={styles.imgsWrapper}>
         {imgsData.map((img) => (
-          <img key={img} src={img} alt={img} />
+          <img key={img.url} src={img.url} alt={img.url} />
         ))}
       </div>
     </div>

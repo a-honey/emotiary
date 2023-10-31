@@ -103,6 +103,8 @@ export const useGetMyAllDiarysData = ({
 //** 다이어리 모달 id로 조회 ['diaryData', id] */
 export const useGetDiaryData = ({ id }: { id: string }) => {
   return useQuery(queryKeys.diaryData({ id }), () => {
-    return instance.get(`/diary/${id}`).then((res) => res.data.data);
+    return instance
+      .get<{ data: DiaryItemType }>(`/diary/${id}`)
+      .then((res) => res.data.data);
   });
 };

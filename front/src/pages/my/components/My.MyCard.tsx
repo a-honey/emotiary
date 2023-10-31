@@ -32,7 +32,9 @@ const MyCard = () => {
   const { data: userData, isFetching } = useGetMyUserData();
 
   // 받아온 캐시데이터를 담아야함
-  const [userInfoData, setUserInfoData] = useState(USER_INFO_INITIAL_DATA);
+  const [userInfoData, setUserInfoData] = useState(
+    userData ?? USER_INFO_INITIAL_DATA,
+  );
 
   const {
     id,
@@ -59,7 +61,6 @@ const MyCard = () => {
     body.append('description', userInfoData.description ?? '');
     body.append('alarmSetting', userInfoData?.alarmSetting?.toString() ?? 1);
 
-    console.log(body);
     putMutation.mutate({
       body,
     });
@@ -76,12 +77,6 @@ const MyCard = () => {
       [name]: value,
     }));
   };
-
-  useEffect(() => {
-    if (userData) {
-      setUserInfoData(userData);
-    }
-  }, [userData]);
 
   return (
     <>

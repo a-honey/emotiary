@@ -5,21 +5,15 @@ import {
 } from '@tanstack/react-query';
 import { instance } from '../instance';
 import { queryKeys } from '../queryKeys';
+import { DiaryItemType } from '../get/useGetDiaryData.types';
 
-export const usePutDiaryData = (id: string, handleIsAdding?: () => void) => {
-  const queryClient = useQueryClient();
+export const usePutDiaryData = (id: string) => {
   const postMutation = useMutation(
-    async ({ body }: { body: any }) => {
+    async ({ body }: { body: DiaryItemType }) => {
       return await instance.put(`/diary/${id}`, body);
     },
     {
-      onSuccess: () => {
-        handleIsAdding?.();
-        queryClient.invalidateQueries(
-          queryKeys.diarysData({ select: null, page: null, emotion: null }),
-        );
-        queryClient.invalidateQueries(queryKeys.myAllDiarysData());
-      },
+      onSuccess: () => {},
       onError: (error) => {
         console.error('useMutation api 요청 에러', error);
       },
