@@ -24,7 +24,6 @@ interface ConnectedUsers {
   user: any; // Replace with the actual user type
 }
 
-//TODO 토큰없음! 
 export const chat =  (io: SocketIoServer) => {
 
   io.use((socket: Socket, next) => {
