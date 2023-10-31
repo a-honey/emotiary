@@ -12,6 +12,7 @@ import UsersPage from './pages/users/Users';
 import Header from './components/layout/Layout.Header';
 import Footer from './components/layout/Layout.Footer';
 import ErrorPage from './pages/ErrorPage';
+import withLogin from './components/withLogin';
 
 const queryClient = new QueryClient();
 

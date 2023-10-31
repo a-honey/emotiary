@@ -8,6 +8,7 @@ import {
   IsOptional,
 } from 'class-validator';
 import { Exclude, Expose, Type } from 'class-transformer';
+import { diaryFileUpload } from '../types/diary';
 import 'reflect-metadata';
 
 export class ApiResponseDTO {
@@ -40,8 +41,6 @@ export class AuthorInDiaryDTO {
   @Expose()
   email: string;
 
-  @Expose()
-  profileImage: string;
 }
 
 // exclude 사용해주기
@@ -76,19 +75,30 @@ export class DiaryResponseDTO {
   @Expose()
   @Type(() => AuthorInDiaryDTO)
   author: AuthorInDiaryDTO;
+
+  @Expose()
+  filesUpload : diaryFileUpload[];
 }
 
 export class DiaryValidateDTO {
   @Type(() => Date)
+  @IsOptional()
   @IsDate()
   createdDate?: Date;
 
+  @IsOptional()
   @IsString()
   title: string;
 
+  @IsOptional()
   @IsString()
   content: string;
 
+  @IsOptional()
   @IsString({ message: '문자 입력 해주세요' })
   is_public: string;
+
+  @IsOptional()
+  @IsString({ each: true })
+  filesUpload: diaryFileUpload[];
 }

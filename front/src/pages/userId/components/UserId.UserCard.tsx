@@ -5,8 +5,10 @@ import { useGetUserData } from '../../../api/get/useGetUserData';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styles from './UserId.UserCard.module.scss';
 import getUserId from '../../../utils/localStorageHandlers';
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { toastState } from '../../../atoms/toastState';
+import { usePostFriendReqMutation } from '../../../api/post/usePostFriendData';
+import { QueryClient } from '@tanstack/react-query';
 interface UserInfoType {
   id: string;
   username: string;
@@ -21,12 +23,14 @@ const UserCard = () => {
   const location = useLocation();
   const navigator = useNavigate();
 
-  const [state, setState] = useRecoilState(toastState);
-
   const { data: userData, isFetching } = useGetUserData({
     user_id: location.pathname.split('/')[2],
   });
 
+  const queryClient = new QueryClient();
+  const postMutation = usePostFriendReqMutation(queryClient);
+
+  // 로그인 사용자의 경우 마이페이지로 이동
   useEffect(() => {
     if (location.pathname.split('/')[2] === getUserId) {
       navigator('/mypage');
@@ -34,20 +38,7 @@ const UserCard = () => {
   }, [navigator, location]);
 
   const handleFriendBtnClick = () => {
-    handleFriendToast();
-  };
-
-  const handleFriendToast = () => {
-    // 친구요청을 성공했을때
-    setState((oldState: any) => [
-      ...oldState,
-      { message: `${userData.username}에게 친구요청 성공하였습니다.` },
-    ]);
-    // 이미 했을 때
-    setState((oldState: any) => [
-      ...oldState,
-      { message: `${userData.username}에게 이미 친구요청을 하였습니다.` },
-    ]);
+    postMutation.mutate({ id: userData.id });
   };
 
   return (

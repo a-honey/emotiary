@@ -43,6 +43,9 @@ export const myInfo = async (userId: string) => {
       where: {
         id: userId,
       },
+      include : {
+        filesUpload : true,
+      }
     });
     const UserResponseDTO = plainToClass(userResponseDTO, myInfo,{
       excludeExtraneousValues : true,

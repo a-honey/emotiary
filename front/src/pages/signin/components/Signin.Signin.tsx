@@ -1,17 +1,8 @@
 import React, { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
-import { instance } from '../../../api/instance';
+import { usePutSigninData } from '../../../api/mutation/usePutSigininData';
+import { QueryClient } from '@tanstack/react-query';
 import styles from './index.module.scss';
-
-interface UserData {
-  email: string;
-  id: string;
-  name: string;
-  token: string;
-  uploadFile: string;
-  refreshToken: string;
-}
 
 interface InputFieldProps {
   id: string;
@@ -22,6 +13,31 @@ interface InputFieldProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   boxStyle: string;
 }
+
+const InputField: React.FC<InputFieldProps> = ({
+  id,
+  name,
+  type,
+  placeholder,
+  value,
+  onChange,
+  boxStyle,
+}) => (
+  <div className={styles.formGroup}>
+    <label htmlFor={id}></label>
+    <div className={styles.inputGroup}>
+      <i className={boxStyle}></i>
+      <input
+        id={id}
+        name={name}
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+      />
+    </div>
+  </div>
+);
 
 const Signin: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -59,7 +75,7 @@ const Signin: React.FC = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     const userSigninInfos = { email, password };
-    mutation.mutate(userSigninInfos);
+    signinMutation.mutate(userSigninInfos);
   };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {

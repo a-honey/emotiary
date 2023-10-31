@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { instance } from '../instance';
+import { queryKeys } from '../queryKeys';
 
 export const useGetCommentData = ({ id }: { id: string }) => {
   return useQuery(
-    ['diaryCommentData', id],
+    queryKeys.diaryCommentData({ id }),
     async () => {
       const response = await instance.get(`/comments/${id}`);
       return response.data;

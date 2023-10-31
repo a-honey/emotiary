@@ -1,18 +1,38 @@
 import { instance } from '../instance';
 import { useQuery } from '@tanstack/react-query';
+import { queryKeys } from '../queryKeys';
 
 //** USERSPAGE 모든 유저 조회 */
-export const useGetUsersData = () => {
-  return useQuery(['usersData'], async () => {
-    const response = await instance.get('/users/allUser');
+export const useGetUsersData = ({
+  page,
+  limit,
+}: {
+  page: number;
+  limit: number;
+}) => {
+  const urlQueryString = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+  }).toString();
+  return useQuery(queryKeys.usersData(), async () => {
+    const response = await instance.get(`/users/allUser?${urlQueryString}`);
     return response.data;
   });
 };
 
 //** MYPAGE 모든 유저 조회 */
 export const useGetMyUserData = () => {
-  return useQuery(['myUserData'], async () => {
-    const response = await instance.get('/users/current');
+  return useQuery(queryKeys.myUserData(), async () => {
+    const response = await instance.get<{
+      data: {
+        id: string;
+        email: string;
+        username: string;
+        description: string;
+        latestEmoji: string;
+        alarmSetting: string;
+      };
+    }>('/users/current');
     return response.data.data;
   });
 };
@@ -20,7 +40,7 @@ export const useGetMyUserData = () => {
 //** USERIDPAGE 유저 카드 조회 */
 export const useGetUserData = ({ user_id }: { user_id: string }) => {
   return useQuery(
-    ['userData'],
+    queryKeys.userData(),
     async () => {
       const response = await instance.get(`/users/${user_id}`);
       return response.data;

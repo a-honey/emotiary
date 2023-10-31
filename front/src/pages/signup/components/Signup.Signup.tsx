@@ -1,14 +1,8 @@
 import React, { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
-import { instance } from '../../../api/instance';
+import { usePutSignupData } from '../../../api/mutation/usePutSiginupData';
+import { QueryClient } from '@tanstack/react-query';
 import styles from './index.module.scss';
-
-const USER_INFOS = {
-  username: '',
-  email: '',
-  password: '',
-};
 
 interface UserData {
   username: string;
@@ -71,30 +65,61 @@ const Signup: React.FC<SignupProps> = () => {
     mutation.mutate(userInfo);
   };
 
-  const InputField: React.FC<InputFieldProps> = ({
-    id,
-    name,
-    type,
-    placeholder,
-    value,
-    onChange,
-    boxStyle,
-  }) => (
-    <div className={styles.formGroup}>
-      <label htmlFor={id}></label>
-      <div className={styles.inputGroup}>
-        <i className={boxStyle}></i>
-        <input
-          id={id}
-          name={name}
-          type={type}
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}
-        />
-      </div>
+const InputField: React.FC<InputFieldProps> = ({
+  id,
+  name,
+  type,
+  placeholder,
+  value,
+  onChange,
+  boxStyle,
+}) => (
+  <div className={styles.formGroup}>
+    <label htmlFor={id}></label>
+    <div className={styles.inputGroup}>
+      <i className={boxStyle}></i>
+      <input
+        id={id}
+        name={name}
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+      />
     </div>
-  );
+  </div>
+);
+
+const Signup: React.FC = () => {
+  const [userInfo, setUserInfo] = useState<UserData>({
+    username: '',
+    email: '',
+    password: '',
+  });
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const queryClient = new QueryClient();
+
+  const signupMutation = usePutSignupData(queryClient);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    if (name === 'confirmPassword') {
+      setConfirmPassword(value);
+    } else {
+      setUserInfo((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+    e.preventDefault();
+
+    if (userInfo.password !== confirmPassword) {
+      alert('패스워드가 일치하지 않습니다.');
+      return;
+    }
+
+    signupMutation.mutate(userInfo);
+  };
 
   return (
     <>
