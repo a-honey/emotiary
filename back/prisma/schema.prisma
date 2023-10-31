@@ -120,10 +120,13 @@ model Comment {
   emoji         String?
   content       String
   nestedComment String?
+  writeAi       String    @default(uuid())
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   reply         Comment?  @relation("comment", fields: [nestedComment], references: [id], onDelete: Cascade)
   reComment     Comment[] @relation("comment")
+
+  @@unique([diaryId, writeAi])
 }
 
 model Emoji {
