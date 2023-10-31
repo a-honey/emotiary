@@ -173,9 +173,15 @@ const DiaryItemShow = ({
             </div>
             <div className={styles.contentContainer}>
               {diaryBodyData.filesUpload &&
-                diaryBodyData?.filesUpload?.length !== 0 && (
+                diaryBodyData.filesUpload.length > 0 &&
+                (diaryBodyData.filesUpload.length === 1 ? (
+                  <ImageComponent
+                    src={diaryBodyData.filesUpload[0]?.url}
+                    alt="다이어리 이미지"
+                  />
+                ) : (
                   <ImagesComponent imgDatas={diaryBodyData.filesUpload} />
-                )}
+                ))}
               <p>{diaryBodyData.content}</p>
             </div>
             {getUserId === diaryBodyData.authorId && (
