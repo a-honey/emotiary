@@ -1,8 +1,6 @@
 import cron from 'node-cron';
 import { sendEmail } from './email';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '../../prisma/prismaClient';
 
 // 유저 설정에 따른 일기 작성 알림 메일 발송
 export const sendAlarm = async () => {

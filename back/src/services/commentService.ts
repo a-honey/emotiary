@@ -1,4 +1,3 @@
-import { PrismaClient } from '@prisma/client';
 import { plainToClass } from 'class-transformer';
 import { commentResponseDTO, PaginationResponseDTO } from '../dtos/commentDTO';
 import { emptyApiResponseDTO } from '../utils/emptyResult';
@@ -7,8 +6,10 @@ import { nonAuthorizedApiResponseDTO } from '../utils/nonAuthorizeResult';
 import axios from 'axios';
 import { Emoji } from '../types/emoji';
 import { calculatePageInfoForComment } from '../utils/pageInfo';
-// import { callChatGPT } from '../utils/chatGPT';
-const prisma = new PrismaClient();
+import { prisma } from '../../prisma/prismaClient';
+import { callChatGPT } from '../utils/chatGPT';
+import dotenv from 'dotenv';
+dotenv.config();
 
 //댓글 작성
 export async function createdComment(
@@ -45,12 +46,12 @@ export async function createdComment(
     const emoji = randomEmoji.emotion;
 
     const comment = await prisma.comment.create({
-      data: { diaryId: diary_id, authorId, content, nestedComment, emoji },
+      data: { diaryId: diary_id, authorId, content, nestedComment },
     });
 
-    // // openai를 이용한 chatGPT 연결
-    // const testChatGPT = await callChatGPT(comment.content);
-    // console.log(testChatGPT);
+    // openai를 이용한 chatGPT 연결
+    const testChatGPT = await callChatGPT(comment.content);
+    console.log(testChatGPT);
 
     const commentResponseData = plainToClass(commentResponseDTO, comment, {
       excludeExtraneousValues: true,
@@ -212,7 +213,7 @@ export async function deletedComment(comment_id: string, authorId: string) {
     });
 
     // 댓글 작성자가 맞다면 삭제 진행
-    if (userCheck.authorId == authorId) {
+    if (userCheck.authorId == authorId || userCheck.writeAi == authorId) {
       const comment = await prisma.comment.delete({
         where: { id: comment_id },
       });
@@ -228,6 +229,52 @@ export async function deletedComment(comment_id: string, authorId: string) {
       const response = nonAuthorizedApiResponseDTO();
 
       return response;
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+// chatGPT 활용하여 공감 한마디 댓글 추가
+export async function createdGPTComment(
+  content: string,
+  authorId: string,
+  diaryId: string,
+) {
+  try {
+    const testChatGPT = await callChatGPT(content);
+
+    await prisma.comment.create({
+      data: {
+        diaryId,
+        authorId: process.env.AI_ID,
+        content: testChatGPT,
+        writeAi: authorId,
+      },
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+// chatGPT 한마디 댓글 수정(다이어리 내용이 수정될때 한마디도 수정)
+export async function updatedGPTComment(
+  content: string,
+  authorId: string,
+  diaryId: string,
+) {
+  try {
+    const testChatGPT = await callChatGPT(content);
+
+    const comment = await prisma.comment.updateMany({
+      where: { diaryId, writeAi: authorId },
+      data: {
+        content: testChatGPT,
+      },
+    });
+
+    if (comment.count == 0) {
+      await createdGPTComment(testChatGPT, authorId, diaryId);
     }
   } catch (error) {
     throw error;
