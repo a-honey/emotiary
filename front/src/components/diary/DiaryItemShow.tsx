@@ -29,7 +29,7 @@ const INITIAL_DAIARY_DATA: DiaryItemType = {
     email: '',
     profileImage: [],
   },
-  fileUpload: [],
+  filesUpload: [],
 };
 
 // 작성자 id가 로그인 id와 같을 경우, 수정 버튼 활성화, 다를경우 비활성화
@@ -171,10 +171,10 @@ const DiaryItemShow = ({
                 <div>{diaryBodyData.author.username}</div>
               </div>
             </div>
-            <div>
-              {diaryBodyData.fileUpload &&
-                diaryBodyData?.fileUpload?.length !== 0 && (
-                  <ImagesComponent imgDatas={diaryBodyData.fileUpload} />
+            <div className={styles.contentContainer}>
+              {diaryBodyData.filesUpload &&
+                diaryBodyData?.filesUpload?.length !== 0 && (
+                  <ImagesComponent imgDatas={diaryBodyData.filesUpload} />
                 )}
               <p>{diaryBodyData.content}</p>
             </div>

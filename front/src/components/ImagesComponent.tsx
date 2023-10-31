@@ -42,7 +42,11 @@ const ImagesComponent = ({ imgDatas }: { imgDatas: { url: string }[] }) => {
     <div className={styles.container}>
       <div ref={imgWrapperRef} className={styles.imgsWrapper}>
         {imgsData.map((img) => (
-          <img key={img.url} src={img.url} alt={img.url} />
+          <img
+            key={img.url}
+            src={`${process.env.REACT_APP_BASE_URL}/${img.url}`}
+            alt={img.url}
+          />
         ))}
       </div>
     </div>

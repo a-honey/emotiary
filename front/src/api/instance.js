@@ -15,15 +15,14 @@ instance.interceptors.request.use(
 
     config.headers['Content-Type'] = 'application/json';
     config.headers['Authorization'] = `Bearer ${userToken}`;
-
-    // VM 확인필요
-    const response = axios.get('/users/tokenExpire');
+    /*
+    const response = instance.get('/users/tokenExpire');
     if (response.data.expired) {
       const response = instance.post('/users/refresh-token', getRefreshToken);
       localStorage.removeItem('token');
       localStorage.setItem('token', response.data.data);
       return;
-    }
+    } */
     return config;
   },
   (error) => {
