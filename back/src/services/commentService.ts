@@ -46,7 +46,7 @@ export async function createdComment(
     const emoji = randomEmoji.emotion;
 
     const comment = await prisma.comment.create({
-      data: { diaryId: diary_id, authorId, content, nestedComment },
+      data: { diaryId: diary_id, authorId, content, nestedComment, emoji },
     });
 
     // openai를 이용한 chatGPT 연결
