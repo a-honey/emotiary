@@ -49,10 +49,6 @@ export async function createdComment(
       data: { diaryId: diary_id, authorId, content, nestedComment, emoji },
     });
 
-    // openai를 이용한 chatGPT 연결
-    const testChatGPT = await callChatGPT(comment.content);
-    console.log(testChatGPT);
-
     const commentResponseData = plainToClass(commentResponseDTO, comment, {
       excludeExtraneousValues: true,
     });
