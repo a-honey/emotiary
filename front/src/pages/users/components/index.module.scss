@@ -61,10 +61,14 @@
   &:hover {
     background-color: map-get($colors, bg);
   }
+  .btns {
+    display: flex;
+    justify-content: end;
+  }
   .friendBtn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
+    // position: absolute;
+    // top: 10px;
+    // right: 10px;
     width: 30px;
     height: 30px;
     font-size: 20px;

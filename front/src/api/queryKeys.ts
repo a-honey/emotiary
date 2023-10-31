@@ -58,6 +58,6 @@ export const queryKeys = {
     field,
   }: {
     searchTerm: string;
-    field: 'email' | 'username';
+    field: 'email' | 'username' | 'title' | 'content';
   }) => ['searchUserData', searchTerm, field],
 };

@@ -45,17 +45,19 @@ const Header = () => {
   }, [location.pathname]);
 
   useEffect(() => {}, [userImg, token]);
- 
+
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
     if (token) {
-      socketRef.current = io('ws://kdt-ai-8-team02.elicecoding.com', {
+      socketRef.current = io('ws://localhost:5001', {
         path: '/chat',
         extraHeaders: {
           Authorization: `Bearer ${token}`,
         },
-        transports: ['websocket'],
+        query: {
+          token: `${token}`,
+        },
       });
 
       socketRef.current.on('connect', () => {
@@ -133,9 +135,9 @@ const Header = () => {
       </header>
       {messages.length !== 0 && <Toast />}
       <Outlet />
-       {token && location.pathname !== '/mypage' && (
+     {token && location.pathname !== '/mypage' && (
         <ChatButton socket={socketRef.current!} />
-      )}
+      )} 
     </>
   );
 };

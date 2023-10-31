@@ -64,7 +64,9 @@ const DiaryWriting = ({
     imgsContainer?.forEach((item) => body.append('filesUpload', item));
 
     Object.keys(formData).forEach((key) => {
-      body.append(key, formData[key]);
+      if (key !== 'createdDate') {
+        body.append(key, formData[key]);
+      }
     });
 
     body.append('createdDate', formatDatetoString(day));
@@ -157,12 +159,7 @@ const ImgInputItem = ({
 }: {
   handleAddImgsContainer: (img: File) => void;
 }) => {
-  const { handleImgChange, imgContainer, imgRef } = useImgChange();
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    handleImgChange(e);
-    handleAddImgsContainer(imgContainer!);
-  };
+  const { handleImgChange, imgRef } = useImgChange(handleAddImgsContainer);
   return (
     <div>
       <img ref={imgRef} src={post_none} alt="일기 사진 및 비디오 업로드" />
@@ -170,7 +167,7 @@ const ImgInputItem = ({
         type="file"
         accept="image/*, video/*"
         alt="일기 사진 및 비디오 업로드"
-        onChange={handleChange}
+        onChange={handleImgChange}
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleImgChange}
       />

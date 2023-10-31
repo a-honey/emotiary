@@ -9,7 +9,7 @@ export const useGetSearchUserData = ({
   field,
 }: {
   searchTerm: string;
-  field: 'email' | 'username';
+  field: 'email' | 'username' | 'title' | 'content';
 }) => {
   return useQuery(queryKeys.searchUserData({ searchTerm, field }), () => {
     const urlQueryString = new URLSearchParams({
