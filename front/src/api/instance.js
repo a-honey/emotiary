@@ -16,7 +16,14 @@ instance.interceptors.request.use(
     config.headers['Content-Type'] = 'application/json';
     config.headers['Authorization'] = `Bearer ${userToken}`;
 
-    // refreshToken 요청
+    // VM 확인필요
+    const response = axios.get('/users/tokenExpire');
+    if (response.data.expired) {
+      const response = instance.post('/users/refresh-token', getRefreshToken);
+      localStorage.removeItem('token');
+      localStorage.setItem('token', response.data.data);
+      return;
+    }
     return config;
   },
   (error) => {
@@ -38,25 +45,6 @@ formDataInstance.interceptors.request.use(
     return config;
   },
   (error) => {
-    return Promise.reject(error);
-  },
-);
-
-// 응답을 인터셉트하여 만료되었을 경우 refresh token으로 새로운 토큰을 요청
-instance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  async (error) => {
-    if (error.response.status === 403) {
-      const response = await instance.post(
-        '/users/refresh-token',
-        getRefreshToken,
-      );
-      localStorage.removeItem('token');
-      localStorage.setItem('token', response.data.data);
-      return;
-    }
     return Promise.reject(error);
   },
 );
