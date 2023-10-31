@@ -2,7 +2,7 @@ import { jwtAuthentication } from '../middlewares/authenticateJwt';
 import {
   createDiary,
   deleteDiary,
-  getDiaryByDiaryId,
+  getOneDiary,
   updateDiary,
   getDiaryByDate,
   getOtherUsersDiary,
@@ -11,7 +11,7 @@ import {
   selectEmotion,
   searchDiary,
 } from '../controllers/diaryController';
-import { Response, Router } from 'express';
+import { Router } from 'express';
 import { diaryUpload, postDiaryUpload } from '../middlewares/uploadMiddleware';
 import { wrapAsyncController } from '../utils/wrapper';
 
@@ -86,13 +86,13 @@ diaryRouter.get(
   wrapAsyncController(getAllMyDiaries),
 );
 
-diaryRouter.get('/search', wrapAsyncController(searchDiary));
+diaryRouter.get('/search', jwtAuthentication, wrapAsyncController(searchDiary));
 
 // /diary/:diaryId
 diaryRouter
   .route('/:diaryId')
   // 다이어리 하나 가져오기
-  .get(jwtAuthentication, wrapAsyncController(getDiaryByDiaryId))
+  .get(jwtAuthentication, wrapAsyncController(getOneDiary))
   .put(jwtAuthentication, diaryUpload, wrapAsyncController(updateDiary))
   .delete(jwtAuthentication, wrapAsyncController(deleteDiary));
 
