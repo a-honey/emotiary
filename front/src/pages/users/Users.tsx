@@ -1,5 +1,6 @@
 import React from 'react';
 import UserList from './components/Users.UserList';
+import withLogin from '../../components/withLogin';
 const UsersPage: React.FC = () => {
   return (
     <main style={{ height: '95vh' }}>
@@ -8,4 +9,4 @@ const UsersPage: React.FC = () => {
   );
 };
 
-export default UsersPage;
+export default withLogin(UsersPage);

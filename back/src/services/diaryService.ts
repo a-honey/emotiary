@@ -27,7 +27,6 @@ export const createDiaryService = async (
   inputData: Prisma.DiaryCreateInput,
   fileUrls: string[],
 ) => {
-  
   const responseData = await axios.post(
     'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
     {
@@ -43,7 +42,7 @@ export const createDiaryService = async (
 
   inputData.emotion = emotionString;
 
-  inputData.emoji = "❎";
+  inputData.emoji = '❎';
 
   const diaryData = {
     ...inputData,
@@ -375,7 +374,7 @@ export const updateDiaryService = async (
 
     inputData.emotion = emotionString;
 
-    inputData.emoji = "❎";
+    inputData.emoji = '❎';
   }
 
   const updatedDiary = await prisma.diary.update({
@@ -482,4 +481,22 @@ export const selectedEmoji = async (
 
   const response = successApiResponseDTO(diaryResponseData);
   return response;
+};
+
+export const searchDiaryService = async (title: string, content: string) => {
+  const words = content.split(' ');
+  const modifiedWords = words.map((word) => {
+    return `${word}*`;
+  });
+  //TODO elastic search 찾아보기
+  const queryContent: string = modifiedWords.join(' ');
+  console.log(queryContent);
+  const searchedDiary = await prisma.diary.findMany({
+    where: {
+      content: {
+        search: queryContent,
+      },
+    },
+  });
+  return searchedDiary;
 };
