@@ -23,6 +23,6 @@ const options = {
 };
 
 const outputFile = "./src/swagger/swagger-output.json";
-const endpointsFiles = ["./src/app", "./src/routes/diaryRouter.ts"];
+const endpointsFiles = ["./src/app"];
 
 swaggerAutogen(outputFile, endpointsFiles, options);

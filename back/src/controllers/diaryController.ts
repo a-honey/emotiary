@@ -9,7 +9,7 @@ import {
   updateDiaryService,
   getFriendsDiaryService,
   mailService,
-  selectedEmoji,
+  selectedEmojis,
   searchDiaryService,
   getDiaryByDateService,
   verifyDiaryAuthor,
@@ -275,11 +275,16 @@ export const selectEmotion = async (
   try {
     const { diaryId } = req.params;
     const { id: userId } = req.user;
-    const { selectedEmotion } = req.body;
+    const { selectedEmotion, selectedEmoji } = req.body;
 
     await verifyDiaryAuthor(diaryId, userId);
 
-    const updatedDiary = await selectedEmoji(selectedEmotion, diaryId, userId);
+    const updatedDiary = await selectedEmojis(
+      selectedEmotion,
+      selectedEmoji,
+      diaryId,
+      userId,
+    );
 
     return res.status(updatedDiary.status).json(updatedDiary);
   } catch (error) {

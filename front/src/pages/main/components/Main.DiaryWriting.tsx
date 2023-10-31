@@ -26,7 +26,7 @@ const DiaryWriting = ({
   const [imgsContainer, setImgsContainer] = useState<File[]>([]);
   const [emojis, setEmojis] = useState('');
 
-  const [formData, setFormData] = useState<DiaryBodyType>(
+  const [formData, setFormData] = useState<Record<string, string>>(
     DIARY_WRITING_INITIAL_DATA,
   );
   const [isEmojiSelectOpen, setIsEmojiSelectOpen] = useState(false);
@@ -39,11 +39,12 @@ const DiaryWriting = ({
     setIsEmojiSelectOpen((prev) => !prev);
   };
 
-  const handleChangeEmojis = (resEmojis: string) => {
-    setEmojis(resEmojis);
+  const handleOnSuccess = (emojis: string) => {
+    setEmojis(emojis);
+    toggleIsEmojiSelectOpen();
   };
 
-  const postMutation = usePostDiaryData(toggleIsOpenModal, handleChangeEmojis);
+  const postMutation = usePostDiaryData(handleOnSuccess);
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
@@ -62,13 +63,19 @@ const DiaryWriting = ({
 
     imgsContainer?.forEach((item) => body.append('filesUpload', item));
 
-    setIsEmojiSelectOpen(true);
-    postMutation.mutate({
-      body: {
-        ...formData,
-        createdDate: formatDatetoString(day),
-      },
+    Object.keys(formData).forEach((key) => {
+      if (key !== 'createdDate') {
+        body.append(key, formData[key]);
+      }
     });
+
+    body.append('createdDate', formatDatetoString(day));
+
+    postMutation.mutate({
+      body,
+    });
+
+    setIsEmojiSelectOpen(true);
   };
 
   return (
@@ -133,14 +140,14 @@ const DiaryWriting = ({
           <button className="doneBtn" type="submit">
             작성완료
           </button>
-          {isEmojiSelectOpen && (
-            <EmojiSelect
-              emojis={emojis}
-              toggleIsEmojiSelectOpen={toggleIsEmojiSelectOpen}
-            />
-          )}
         </div>
       </form>
+      {isEmojiSelectOpen && (
+        <EmojiSelect
+          emojis={emojis!}
+          toggleIsEmojiSelectOpen={toggleIsEmojiSelectOpen}
+        />
+      )}
     </div>
   );
 };
@@ -152,12 +159,7 @@ const ImgInputItem = ({
 }: {
   handleAddImgsContainer: (img: File) => void;
 }) => {
-  const { handleImgChange, imgContainer, imgRef } = useImgChange();
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    handleImgChange(e);
-    handleAddImgsContainer(imgContainer!);
-  };
+  const { handleImgChange, imgRef } = useImgChange(handleAddImgsContainer);
   return (
     <div>
       <img ref={imgRef} src={post_none} alt="일기 사진 및 비디오 업로드" />
@@ -165,7 +167,7 @@ const ImgInputItem = ({
         type="file"
         accept="image/*, video/*"
         alt="일기 사진 및 비디오 업로드"
-        onChange={handleChange}
+        onChange={handleImgChange}
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleImgChange}
       />

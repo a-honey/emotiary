@@ -11,7 +11,7 @@ const EmojiSelect = ({
 }) => {
   // VM 에러 확인 필요
   // emojis를 map 하여 렌더링은 유지하고, selectedEmoji에 하나의 이모지만 넣음 초기상태 ''
-  const [selectedEmoji, setSelectedEmoji] = useState('🤣,🥰,😍,😒');
+  const [selectedEmoji, setSelectedEmoji] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,12 +19,14 @@ const EmojiSelect = ({
     console.log(selectedEmoji);
   };
 
+  console.log(emojis);
+
   return (
     <div className="modal">
       <form className={styles.emojiSelect} onSubmit={handleSubmit}>
         <label>이모지 선택</label>
         <div className={styles.emojis}>
-          {selectedEmoji.split(',').map((emoji) => (
+          {emojis?.split(',').map((emoji) => (
             <div key={emoji}>
               <label>
                 <input
@@ -41,14 +43,14 @@ const EmojiSelect = ({
           ))}
         </div>
         <div className={styles.btns}>
-          <button className="cancelBtn" onClick={toggleIsEmojiSelectOpen}>
-            다시쓰기
-          </button>
           <button
-            className="doneBtn"
+            className="cancelBtn"
             type="button"
             onClick={toggleIsEmojiSelectOpen}
           >
+            다시쓰기
+          </button>
+          <button className="doneBtn" type="submit">
             선택완료
           </button>
         </div>

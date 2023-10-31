@@ -15,11 +15,17 @@ body {
 }
 
 main {
-  margin-top: $headerHeight;
-  min-height: 100vh (-$headerHeight) (-$footerHeight);
+  max-width: 1500px;
+  margin: $headerHeight auto;
   display: flex;
   justify-content: center;
-  padding: 40px;
+  align-items: center;
+  padding-top: 30px;
+  gap: 20px;
+}
+
+.column {
+  flex-direction: column;
 }
 
 main.footer {

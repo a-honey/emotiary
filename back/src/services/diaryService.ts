@@ -67,24 +67,44 @@ export const createDiaryService = async (
   inputData: Prisma.DiaryCreateInput,
   fileUrls: string[],
 ) => {
-  // const prisma = new PrismaClient();
-  // const responseData = await axios.post(
-  //   'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
-  //   {
-  //     text: inputData.content,
-  //   },
-  // );
-  // console.log(responseData.data.emotion);
-  // const labels = responseData.data.emotion.map(
-  //   (item: { label: string }) => item.label,
-  // );
+  const responseData = await axios.post(
+    'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
+    {
+      text: inputData.content,
+    },
+  );
+  const emojis: string[] = [];
+  const labels = responseData.data.emotion.map(
+    (item: { label: string }) => item.label,
+  );
 
-  // const emotionString = labels.join(',');
+  for (const item of responseData.data.emotion) {
+    const label = item.label;
+    const type = label;
+    const emotions = await prisma.emoji.findMany({
+      where: {
+        type: type,
+      },
+      select: {
+        emotion: true,
+      },
+    });
 
-  // inputData.emotion = emotionString;
+    if (emotions.length > 0) {
+      const randomEmotion =
+        emotions[Math.floor(Math.random() * emotions.length)].emotion;
+      emojis.push(randomEmotion);
+    }
+  }
 
+  const combinedEmotions = labels.map((label: string, index: number) => {
+    return `${label} : ${emojis[index]}`;
+  });
+
+  const emotionString = `${combinedEmotions.join(', ')}`;
+  inputData.emotion = emotionString;
   inputData.emoji = '❎';
-
+  console.log(fileUrls);
   const diaryData = {
     ...inputData,
     author: {
@@ -383,23 +403,45 @@ export const updateDiaryService = async (
   diaryId: string,
   inputData: Prisma.DiaryUpdateInput,
 ) => {
-  // if (inputData.content) {
-  //   const responseData = await axios.post(
-  //     'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
-  //     {
-  //       text: inputData.content,
-  //     },
-  //   );
-  //   const labels = responseData.data.emotion.map(
-  //     (item: { label: string }) => item.label,
-  //   );
+  if (inputData.content) {
+    const responseData = await axios.post(
+      'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
+      {
+        text: inputData.content,
+      },
+    );
+    const emojis: string[] = [];
+    const labels = responseData.data.emotion.map(
+      (item: { label: string }) => item.label,
+    );
 
-  //   const emotionString = labels.join(',');
+    for (const item of responseData.data.emotion) {
+      const label = item.label;
+      const type = label;
+      const emotions = await prisma.emoji.findMany({
+        where: {
+          type: type,
+        },
+        select: {
+          emotion: true,
+        },
+      });
 
-  //   inputData.emotion = emotionString;
+      if (emotions.length > 0) {
+        const randomEmotion =
+          emotions[Math.floor(Math.random() * emotions.length)].emotion;
+        emojis.push(randomEmotion);
+      }
+    }
 
-  //   inputData.emoji = '❎';
-  // }
+    const combinedEmotions = labels.map((label: string, index: number) => {
+      return `${label} : ${emojis[index]}`;
+    });
+
+    const emotionString = `${combinedEmotions.join(', ')}`;
+    inputData.emotion = emotionString;
+    inputData.emoji = '❎';
+  }
 
   const updatedDiary = await prisma.diary.update({
     where: { id: diaryId, authorId: userId },
@@ -461,34 +503,25 @@ export const mailService = async (
   return response;
 };
 
-export const selectedEmoji = async (
+export const selectedEmojis = async (
   selectedEmotion: string,
+  selectedEmoji: string,
   diaryId: string,
   userId: string,
 ) => {
-  const emojis = await prisma.emoji.findMany({
-    where: {
-      type: selectedEmotion,
-    },
-  });
-  console.log(emojis);
-  const emotionType = selectedEmotion;
-  const musicData = await searchMusic(emotionType);
+  const musicData = await searchMusic(selectedEmotion);
   const videoId = musicData.videoId;
 
   const info = await ytdl.getInfo(videoId);
   // 오디오 스트림 URL 가져오기
   const audioUrl = ytdl.chooseFormat(info.formats, { filter: 'audioonly' }).url;
-  const urlLength = audioUrl.length;
-  console.log(audioUrl);
-  console.log(`URL 길이: ${urlLength} 자`);
+
   if (!musicData) {
     const errorMessage = '음악데이터가없습니다.';
     throw errorMessage;
   }
 
-  const randomEmoji: Emoji = emojis[Math.floor(Math.random() * emojis.length)];
-  const emoji = randomEmoji.emotion;
+  const emoji = selectedEmoji;
 
   const updatedDiary = await prisma.diary.update({
     where: { id: diaryId, authorId: userId },

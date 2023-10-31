@@ -4,6 +4,8 @@ import { PrismaClient } from '@prisma/client';
 // import { successApiResponseDTO } from '../utils/successResult';
 // import { emptyApiResponseDTO } from '../utils/emptyResult';
 const prisma = new PrismaClient();
+// import { v4 as uuidv4 } from 'uuid';
+
 
 /** @description 현재 사용자 */
 export const currentUser = async (currentUserId: string) => {
@@ -19,34 +21,13 @@ export const currentUser = async (currentUserId: string) => {
   }
 }
 
-// /** @description 현재 사용자 */
-// export const currentUser = async (currentUserId: string) => {
-//   try {
-//     const user = await prisma.user.findUnique({
-//       where: {
-//         id: currentUserId,
-//       },
-//       select: {
-//         username: true,
-//         profileImage: true,
-//       },
-//     });
-//     return user;
-//   } catch (error) {
-//     throw error;
-//   }
-// }
-
 /** @description roomId 생성 */
-export const createRoomId = async (currentUserId: string, chatPartnerId: string) => {
-  try {
-    const roomId = `${currentUserId}-${chatPartnerId}`;
-    return roomId;
-  } catch (error) {
-    throw error;
-  }
-}
-
+export const createRoomId = (currentUserId: string, chatPartnerId: string) => {
+  const userIds = [currentUserId, chatPartnerId];
+  userIds.sort(); // Sort the user IDs lexicographically to ensure consistency
+  const roomId = userIds.join('_');
+  return roomId;
+};
 
 /** @description 채팅룸 생성 */
 export const createChatRoom = async (roomId: string) => {
@@ -144,6 +125,7 @@ export const getMyMessages = async (roomId: string) => {
 //     throw error;
 //   }
 // }
+
 
   /** @description 읽지 않은 메세지 */
 export const unreadMessage = async (chatPartnerId: string) => {

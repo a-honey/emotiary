@@ -23,4 +23,5 @@ export interface IRequest extends Request {
   user: IUser | null;
   token: string;
   refreshTokens: string[];
+  expiresAt : number;
 }
