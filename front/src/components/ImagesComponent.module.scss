@@ -1,0 +1,12 @@
+.container {
+  width: 300px;
+  height: 300px;
+  overflow: hidden;
+  .imgsWrapper {
+    display: flex;
+    img {
+      width: 300px;
+      height: 300px;
+    }
+  }
+}

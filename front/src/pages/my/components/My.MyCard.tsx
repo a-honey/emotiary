@@ -78,6 +78,12 @@ const MyCard = () => {
     }));
   };
 
+  useEffect(() => {
+    if (userData) {
+      setUserInfoData(userData);
+    }
+  }, [userData]);
+
   return (
     <>
       <section className={styles.myCard}>
