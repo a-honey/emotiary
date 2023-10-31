@@ -12,13 +12,14 @@ import {
   selectedEmoji,
   searchDiaryService,
   getDiaryByDateService,
-  checkAuthor,
+  verifyDiaryAuthor,
 } from '../services/diaryService';
 import { IRequest } from 'types/user';
 import { plainToClass } from 'class-transformer';
 import { DiaryValidateDTO } from '../dtos/diaryDTO';
 import { validate } from 'class-validator';
 import { generateError } from '../utils/errorGenerator';
+import { getMyWholeFriends } from '../services/friendService';
 
 /**
  * 다이어리 생성
@@ -145,15 +146,43 @@ export const getOtherUsersDiary = async (
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 8;
 
-  // diary 데이터 가져오기
+  //친구목록 가져오기
+  const friends = await getMyWholeFriends(userId);
 
+  const friendIdList = friends.map((friend) => {
+    return userId == friend.sentUserId
+      ? friend.receivedUserId
+      : friend.sentUserId;
+  });
+
+  // diary 데이터 가져오기
   const otherUsersDiary =
     select == 'friend'
-      ? await getFriendsDiaryService(userId, page, limit, emotion as string)
-      : await getAllDiaryService(userId, page, limit, emotion as string);
+      ? await getFriendsDiaryService(
+          userId,
+          page,
+          limit,
+          emotion as string,
+          friendIdList,
+        )
+      : await getAllDiaryService(
+          userId,
+          page,
+          limit,
+          emotion as string,
+          friendIdList,
+        );
+
   return res.status(otherUsersDiary.status).json(otherUsersDiary);
 };
 
+/**
+ * @description 다이어리 업데이트
+ * @param req
+ * @param res
+ * @param next
+ * @returns
+ */
 export const updateDiary = async (
   req: IRequest,
   res: Response,
@@ -164,13 +193,9 @@ export const updateDiary = async (
     params: { diaryId },
     user: { id: userId },
   } = req;
-  // const { id: userId } = req.user;
-  // const { diaryId } = req.params;
-  // const inputData = req.body;
   const { deleteData, ...updatedData } = inputData;
-  const isMatchedAuthor = await checkAuthor(diaryId, userId);
 
-  if (!isMatchedAuthor) return res.status(403).json('작성자가 아닙니다.');
+  await verifyDiaryAuthor(diaryId, userId);
 
   const diaryInput = plainToClass(DiaryValidateDTO, updatedData);
 
@@ -190,6 +215,13 @@ export const updateDiary = async (
   return res.status(updatedDiary.status).json(updatedDiary);
 };
 
+/**
+ * @description 다이어리 삭제
+ * @param req
+ * @param res
+ * @param next
+ * @returns
+ */
 export const deleteDiary = async (
   req: IRequest,
   res: Response,
@@ -200,9 +232,7 @@ export const deleteDiary = async (
     user: { id: userId },
   } = req;
 
-  const isMatchedAuthor = await checkAuthor(diaryId, userId);
-
-  if (!isMatchedAuthor) return res.status(403).json('작성자가 아닙니다.');
+  await verifyDiaryAuthor(diaryId, userId);
 
   const deletedDiary = await deleteDiaryService(userId, diaryId);
 
@@ -237,6 +267,8 @@ export const selectEmotion = async (
     const { id: userId } = req.user;
     const { selectedEmotion } = req.body;
 
+    await verifyDiaryAuthor(diaryId, userId);
+
     const updatedDiary = await selectedEmoji(selectedEmotion, diaryId, userId);
 
     return res.status(updatedDiary.status).json(updatedDiary);
@@ -245,15 +277,40 @@ export const selectEmotion = async (
   }
 };
 
+/**
+ * @description 다이어리 검색 기능
+ * @param req
+ * @param res
+ * @param next
+ * @returns
+ */
 export const searchDiary = async (
   req: IRequest,
   res: Response,
   next: NextFunction,
 ) => {
+  const {
+    user: { id: userId },
+  } = req;
+
+  const friends = await getMyWholeFriends(userId);
+
+  const friendIdList = friends.map((friend) => {
+    return userId == friend.sentUserId
+      ? friend.receivedUserId
+      : friend.sentUserId;
+  });
+
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 8;
   const { search } = req.body;
-  const searchDiary = await searchDiaryService(search, page, limit);
+  const searchDiary = await searchDiaryService(
+    userId,
+    search,
+    page,
+    limit,
+    friendIdList,
+  );
 
   return res.status(200).json(searchDiary);
 };

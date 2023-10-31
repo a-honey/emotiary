@@ -13,7 +13,6 @@ import { searchMusic } from '../utils/music';
 import ytdl from 'ytdl-core';
 import { prisma } from '../../prisma/prismaClient';
 import { generateError } from '../utils/errorGenerator';
-import { getDb } from '../utils/dbconnection';
 
 // 체크하는 용도 -----------------------------------------------
 /**
@@ -44,15 +43,16 @@ export const getDiaryByDateService = async (
  * @param userId
  * @returns
  */
-export const checkAuthor = async (diaryId: string, userId: string) => {
+export const verifyDiaryAuthor = async (diaryId: string, userId: string) => {
   const diary = await prisma.diary.findUnique({
-    where: { id: diaryId, authorId: userId },
+    where: { id: diaryId },
   });
 
-  if (diary) return true;
-  return false;
-};
+  if (!diary) throw generateError(404, '다이어리가 존재하지 않습니다.');
+  if (diary.authorId != userId) throw generateError(403, '작성자가 아닙니다.');
 
+  return true;
+};
 //-------------------------------CRUD-----------------------------------
 /**
  * 다이어리 작성
@@ -257,16 +257,8 @@ export const getFriendsDiaryService = async (
   page: number,
   limit: number,
   emotion: string | undefined,
+  friendIdList: string[],
 ) => {
-  // 친구 목록 읽어오기
-  const friends = await getMyWholeFriends(userId);
-
-  const friendIdList = friends.map((friend) => {
-    return userId == friend.sentUserId
-      ? friend.receivedUserId
-      : friend.sentUserId;
-  });
-
   const friendsDiaryQuery = {
     where: {
       // 친구 글 (비공개 제외)
@@ -326,16 +318,8 @@ export const getAllDiaryService = async (
   page: number,
   limit: number,
   emotion: string,
+  friendIdList: string[],
 ) => {
-  //TODO controller로 넘기기 refactoring
-  const friends = await getMyWholeFriends(userId);
-
-  const friendIdList = friends.map((friend) => {
-    return userId == friend.sentUserId
-      ? friend.receivedUserId
-      : friend.sentUserId;
-  });
-
   const allDiaryQuery = {
     skip: (page - 1) * limit,
     take: limit,
@@ -529,26 +513,54 @@ export const selectedEmoji = async (
  * @returns
  */
 export const searchDiaryService = async (
+  userId: string,
   search: string,
   page: number,
   limit: number,
+  friendIdList: string[],
 ) => {
   const searchList = search.split(' ');
 
   const modifiedSearch = searchList.map((search) => {
     return `*${search}*`;
   });
-  const querySearch = modifiedSearch.join(' ');
+  const fullTextQuery = modifiedSearch.join(' ');
 
-  const searchedDiary = await prisma.diary.findMany({
+  const searchDiaryQuery = {
     skip: (page - 1) * limit,
     take: limit,
     where: {
+      OR: [
+        {
+          // 전체공개 다이어리 ( 내 글 제외 )
+          is_public: 'all',
+          NOT: {
+            authorId: userId,
+          },
+        },
+        {
+          // 친구 글 (비공개 제외)
+          NOT: {
+            is_public: 'private',
+          },
+          authorId: { in: friendIdList },
+        },
+      ],
       content: {
-        search: querySearch,
+        search: fullTextQuery,
       },
       title: {
-        search: querySearch,
+        search: fullTextQuery,
+      },
+    },
+  };
+  const searchedDiary = await prisma.diary.findMany({
+    ...searchDiaryQuery,
+    orderBy: {
+      _relevance: {
+        fields: ['title', 'content'],
+        search: fullTextQuery,
+        sort: 'desc',
       },
     },
   });
@@ -558,14 +570,11 @@ export const searchDiaryService = async (
     return response;
   }
 
-  const { totalItem, totalPage } = await calculatePageInfo('diary', limit, {
-    content: {
-      search: querySearch,
-    },
-    title: {
-      search: querySearch,
-    },
-  });
+  const { totalItem, totalPage } = await calculatePageInfo(
+    'diary',
+    limit,
+    searchDiaryQuery.where,
+  );
 
   const pageInfo = { totalItem, totalPage, currentPage: page, limit };
   const diaryResponseDataList = searchedDiary.map((diary) =>
