@@ -9,7 +9,7 @@ import {
   updateDiaryService,
   getFriendsDiaryService,
   mailService,
-  selectedEmoji,
+  selectedEmojis,
   searchDiaryService,
 } from '../services/diaryService';
 import { IRequest } from 'types/user';
@@ -30,10 +30,10 @@ export const createDiary = async (
   res: Response,
   next: NextFunction,
 ) => {
-  // const fileUrls = res.locals.myData;
-  const fileUrls = ['test'];
+  const fileUrls = res.locals.myData;
 
   // const { emoji,...inputData } = req.body;
+
   const inputData = req.body;
 
   const diaryInput = plainToClass(DiaryValidateDTO, inputData);
@@ -198,9 +198,9 @@ export const selectEmotion = async (
   try {
     const { diaryId } = req.params;
     const { id: userId } = req.user;
-    const { selectedEmotion } = req.body;
+    const { selectedEmotion, selectedEmoji } = req.body;
 
-    const updatedDiary = await selectedEmoji(selectedEmotion, diaryId, userId);
+    const updatedDiary = await selectedEmojis(selectedEmotion, selectedEmoji, diaryId, userId);
 
     return res.status(updatedDiary.status).json(updatedDiary);
   } catch (error) {

@@ -1,5 +1,4 @@
 import { PrismaClient, Prisma } from '@prisma/client';
-import { sendEmail } from '../utils/email';
 import { generateRandomPassowrd } from '../utils/password';
 import bcrypt from 'bcrypt';
 import { plainToClass } from 'class-transformer';
@@ -7,7 +6,7 @@ import { userResponseDTO } from '../dtos/userDTO';
 import { successApiResponseDTO } from '../utils/successResult';
 import { userCalculatePageInfo } from '../utils/pageInfo';
 import { PaginationResponseDTO } from '../dtos/diaryDTO';
-import { usersList } from '../utils/userList';
+import { emailToken, sendEmail } from '../utils/email';
 
 const prisma = new PrismaClient();
 
@@ -360,3 +359,95 @@ export const getUsers = async (
 
   return response;
 };
+
+export const emailLinked = async(email : string) => {
+  const user = await prisma.user.create({
+    data: {
+      email,
+      isVerified: false,
+    },
+  });
+
+  const result = emailToken();
+
+  await prisma.user.update({
+    where: {
+      id: user.id,
+    },
+    data: {
+      verificationToken: result.token,
+      verificationTokenExpires: result.expires,
+    },
+  });
+
+  let baseUrl;
+  if (process.env.NODE_ENV === 'development') {
+    baseUrl = 'http://localhost:5001';
+  } else {
+    baseUrl = 'https://kdt-ai-8-team02.elicecoding.com';
+  }
+  const verifyUrl = `${baseUrl}/api/users/verifyEmail/${result.token}`;
+
+  await sendEmail(
+    email,
+    '이메일 인증',
+    '',
+    `<p>눌러 주세요</p>
+        <p><a href = "${verifyUrl}">Verify Email</a></p>
+        <p>${result.expires}</p>`,
+  );
+}
+
+export const verifyToken = async (token : string) => {
+  const user = await prisma.user.findFirst({
+    where: {
+      verificationToken: token,
+      verificationTokenExpires: {
+        gte: new Date(),
+      },
+    },
+  });
+
+  if (!user) {
+    throw ({ message: '토큰이 유효하지 않습니다.' });
+  }
+
+  await prisma.user.update({
+    where: {
+      id: user.id,
+    },
+    data: {
+      isVerified: true,
+      verificationToken: null,
+      verificationTokenExpires: null,
+    },
+  });
+}
+
+export const registerUser = async(email : string, username : string, password : string) => {
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  if (!user || !user.isVerified) {
+    throw ({ message: '이메일 인증이 필요합니다.' });
+  }
+
+  // 비밀번호를 해시하여 저장 (안전한 비밀번호 저장)
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      username,
+      password : hashedPassword,
+    },
+  });
+
+  const UserResponseDTO = plainToClass(userResponseDTO, user, {
+    excludeExtraneousValues: true,
+  });
+
+  const response = successApiResponseDTO(UserResponseDTO);
+  return response;
+}

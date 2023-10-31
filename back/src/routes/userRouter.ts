@@ -18,6 +18,7 @@ import {
   emailLink,
   testEmail,
   searchKeyword,
+  expire,
 } from "../controllers/userController";
 import { localAuthentication } from "../middlewares/authenticateLocal";
 import { jwtAuthentication } from "../middlewares/authenticateJwt";
@@ -49,6 +50,8 @@ userAuthRouter.get('/allUser', jwtAuthentication, wrapAsyncController(getAllUser
 userAuthRouter.get('/myfriend', jwtAuthentication, wrapAsyncController(getMyFriend));
 
 userAuthRouter.get("/logout", jwtAuthentication, wrapAsyncController(userLogout));
+
+userAuthRouter.get("/tokenExpire", jwtAuthentication, wrapAsyncController(expire));
 
 userAuthRouter
   .route("/:userId")
