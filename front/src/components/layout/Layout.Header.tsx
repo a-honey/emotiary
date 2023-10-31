@@ -6,12 +6,13 @@ import FriendReqList from './Layout.FriendReqList';
 import { GrLogout, GrNotification } from 'react-icons/gr';
 import ImageComponent from '../ImageComponent';
 import Toast from './Layout.Toast';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { toastState } from '../../atoms/toastState';
 import logo from '../../assets/logo.gif';
 import { logout } from '../../utils/localStorageHandlers';
 import { io, Socket } from 'socket.io-client';
 import ChatButton from '../chat/Chat.ChatButton';
+import { audioState } from '../../atoms/audioState';
 
 const locations = [
   { name: 'MY CALENDAR', to: '/main' },
@@ -23,6 +24,7 @@ const Header = () => {
   // 로컬 스토리지에서 토큰을 가져와서 로그인 상태 확인
   const token = localStorage.getItem('token');
   const userImg = localStorage.getItem('userImg');
+  const [audio, setAudio] = useRecoilState(audioState);
 
   const isLogin = token !== null;
 
@@ -103,27 +105,34 @@ const Header = () => {
           ))}
         </nav>
         {isLogin ? (
-          <div className={styles.right}>
-            <div
-              className={styles.userInfo}
-              onClick={() => {
-                navigator('/mypage');
-              }}
-            >
-              <ImageComponent
-                src={localStorage.getItem('userImg')}
-                alt={`${localStorage.getItem('username')}의 프로필사진`}
+          <>
+            {audio && (
+              <video controls width="300" height="30" autoPlay>
+                <source src={audio} type="video/webm" />
+              </video>
+            )}
+            <div className={styles.right}>
+              <div
+                className={styles.userInfo}
+                onClick={() => {
+                  navigator('/mypage');
+                }}
+              >
+                <ImageComponent
+                  src={localStorage.getItem('userImg')}
+                  alt={`${localStorage.getItem('username')}의 프로필사진`}
+                />
+                <div>{localStorage.getItem('username')}</div>
+              </div>
+              <GrNotification
+                onClick={() => {
+                  setIsOpenFriendReqList((prev) => !prev);
+                }}
               />
-              <div>{localStorage.getItem('username')}</div>
+              {isOpenFriendReqList && <FriendReqList />}
+              <GrLogout onClick={handleLogout} />
             </div>
-            <GrNotification
-              onClick={() => {
-                setIsOpenFriendReqList((prev) => !prev);
-              }}
-            />
-            {isOpenFriendReqList && <FriendReqList />}
-            <GrLogout onClick={handleLogout} />
-          </div>
+          </>
         ) : (
           <div>
             <Link to="/signin">LOGIN</Link>
