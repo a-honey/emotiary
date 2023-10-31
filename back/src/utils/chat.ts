@@ -50,8 +50,6 @@ export const chat =  (io: SocketIoServer) => {
   const connectedUsers: { [key: string]: ConnectedUsers } = {};
 
   io.on('connection', async (socket: Socket) => {
-    // const currentUserId = (socket.data.decodedToken as any).id;
-    // const currentUserId = socket.data.decoded;
     const currentUserId = socket.data.decodedToken.id.toString();
     const user = await currentUser(currentUserId); // Replace with your user retrieval logic
 
