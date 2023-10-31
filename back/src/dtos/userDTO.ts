@@ -42,6 +42,9 @@ export class userResponseDTO {
 
   @Expose()
   isFriend: boolean;
+
+  @Expose()
+  latestEmoji : string;
 }
 
 export class userValidateDTO {
