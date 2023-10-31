@@ -11,9 +11,49 @@ import { diaryUpload } from '../middlewares/uploadMiddleware';
 import { sendEmail } from '../utils/email';
 import { searchMusic } from '../utils/music';
 import ytdl from 'ytdl-core';
-
+import { prisma } from '../../prisma/prismaClient';
 import { generateError } from '../utils/errorGenerator';
-const prisma = new PrismaClient();
+
+// 체크하는 용도 -----------------------------------------------
+/**
+ * @description 다이어리 작성 전 해당 날짜에 이미 다이어리가 존재하는지 체크
+ * @param createdDate
+ * @returns
+ */
+export const getDiaryByDateService = async (
+  userId: string,
+  createdDate: Date,
+) => {
+  const diary = await prisma.diary.findFirst({
+    where: {
+      authorId: userId,
+      createdDate: {
+        gte: new Date(`${createdDate}`),
+        lte: new Date(`${createdDate}`),
+      },
+    },
+  });
+
+  return diary;
+};
+
+/**
+ * @description delete,update해주기 전에 작성자 일치하는지 체크
+ * @param diaryId
+ * @param userId
+ * @returns
+ */
+export const verifyDiaryAuthor = async (diaryId: string, userId: string) => {
+  const diary = await prisma.diary.findUnique({
+    where: { id: diaryId },
+  });
+
+  if (!diary) throw generateError(404, '다이어리가 존재하지 않습니다.');
+  if (diary.authorId != userId) throw generateError(403, '작성자가 아닙니다.');
+
+  return true;
+};
+//-------------------------------CRUD-----------------------------------
 /**
  * 다이어리 작성
  * @param title
@@ -27,20 +67,21 @@ export const createDiaryService = async (
   inputData: Prisma.DiaryCreateInput,
   fileUrls: string[],
 ) => {
-  const responseData = await axios.post(
-    'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
-    {
-      text: inputData.content,
-    },
-  );
-  console.log(responseData.data.emotion);
-  const labels = responseData.data.emotion.map(
-    (item: { label: string }) => item.label,
-  );
+  // const prisma = new PrismaClient();
+  // const responseData = await axios.post(
+  //   'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
+  //   {
+  //     text: inputData.content,
+  //   },
+  // );
+  // console.log(responseData.data.emotion);
+  // const labels = responseData.data.emotion.map(
+  //   (item: { label: string }) => item.label,
+  // );
 
-  const emotionString = labels.join(',');
+  // const emotionString = labels.join(',');
 
-  inputData.emotion = emotionString;
+  // inputData.emotion = emotionString;
 
   inputData.emoji = '❎';
 
@@ -79,7 +120,7 @@ export const createDiaryService = async (
 };
 
 /**
- * 내 글 가져오기
+ * 내 글 모두 가져오기
  * @param userId
  * @param page
  * @param limit
@@ -106,7 +147,7 @@ export const getAllMyDiariesService = async (
     return response;
   }
 
-  const { totalItem, totalPage } = await calculatePageInfo(limit, {
+  const { totalItem, totalPage } = await calculatePageInfo('diary', limit, {
     authorId: userId,
   });
 
@@ -172,10 +213,7 @@ export const getDiaryByMonthService = async (
  * @param diaryId
  * @returns
  */
-export const getDiaryByDiaryIdService = async (
-  userId: string,
-  diaryId: string,
-) => {
+export const getOneDiaryService = async (userId: string, diaryId: string) => {
   const diary = await prisma.diary.findUnique({
     where: { id: diaryId },
     include: { author: true, filesUpload: true },
@@ -219,16 +257,8 @@ export const getFriendsDiaryService = async (
   page: number,
   limit: number,
   emotion: string | undefined,
+  friendIdList: string[],
 ) => {
-  // 친구 목록 읽어오기
-  const friends = await getMyWholeFriends(userId);
-
-  const friendIdList = friends.map((friend) => {
-    return userId == friend.sentUserId
-      ? friend.receivedUserId
-      : friend.sentUserId;
-  });
-
   const friendsDiaryQuery = {
     where: {
       // 친구 글 (비공개 제외)
@@ -265,6 +295,7 @@ export const getFriendsDiaryService = async (
 
   // 총 글 개수, 페이지 수
   const { totalItem, totalPage } = await calculatePageInfo(
+    'diary',
     limit,
     friendsDiaryQuery.where,
   );
@@ -287,16 +318,8 @@ export const getAllDiaryService = async (
   page: number,
   limit: number,
   emotion: string,
+  friendIdList: string[],
 ) => {
-  //TODO controller로 넘기기 refactoring
-  const friends = await getMyWholeFriends(userId);
-
-  const friendIdList = friends.map((friend) => {
-    return userId == friend.sentUserId
-      ? friend.receivedUserId
-      : friend.sentUserId;
-  });
-
   const allDiaryQuery = {
     skip: (page - 1) * limit,
     take: limit,
@@ -339,6 +362,7 @@ export const getAllDiaryService = async (
   );
 
   const { totalItem, totalPage } = await calculatePageInfo(
+    'diary',
     limit,
     allDiaryQuery.where,
   );
@@ -359,23 +383,23 @@ export const updateDiaryService = async (
   diaryId: string,
   inputData: Prisma.DiaryUpdateInput,
 ) => {
-  if (inputData.content) {
-    const responseData = await axios.post(
-      'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
-      {
-        text: inputData.content,
-      },
-    );
-    const labels = responseData.data.emotion.map(
-      (item: { label: string }) => item.label,
-    );
+  // if (inputData.content) {
+  //   const responseData = await axios.post(
+  //     'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
+  //     {
+  //       text: inputData.content,
+  //     },
+  //   );
+  //   const labels = responseData.data.emotion.map(
+  //     (item: { label: string }) => item.label,
+  //   );
 
-    const emotionString = labels.join(',');
+  //   const emotionString = labels.join(',');
 
-    inputData.emotion = emotionString;
+  //   inputData.emotion = emotionString;
 
-    inputData.emoji = '❎';
-  }
+  //   inputData.emoji = '❎';
+  // }
 
   const updatedDiary = await prisma.diary.update({
     where: { id: diaryId, authorId: userId },
@@ -483,20 +507,85 @@ export const selectedEmoji = async (
   return response;
 };
 
-export const searchDiaryService = async (title: string, content: string) => {
-  const words = content.split(' ');
-  const modifiedWords = words.map((word) => {
-    return `${word}*`;
+/**
+ * @description 다이어리 검색
+ * @param search
+ * @returns
+ */
+export const searchDiaryService = async (
+  userId: string,
+  search: string,
+  page: number,
+  limit: number,
+  friendIdList: string[],
+) => {
+  const searchList = search.split(' ');
+
+  const modifiedSearch = searchList.map((search) => {
+    return `*${search}*`;
   });
-  //TODO elastic search 찾아보기
-  const queryContent: string = modifiedWords.join(' ');
-  console.log(queryContent);
-  const searchedDiary = await prisma.diary.findMany({
+  const fullTextQuery = modifiedSearch.join(' ');
+
+  const searchDiaryQuery = {
+    skip: (page - 1) * limit,
+    take: limit,
     where: {
+      OR: [
+        {
+          // 전체공개 다이어리 ( 내 글 제외 )
+          is_public: 'all',
+          NOT: {
+            authorId: userId,
+          },
+        },
+        {
+          // 친구 글 (비공개 제외)
+          NOT: {
+            is_public: 'private',
+          },
+          authorId: { in: friendIdList },
+        },
+      ],
       content: {
-        search: queryContent,
+        search: fullTextQuery,
+      },
+      title: {
+        search: fullTextQuery,
+      },
+    },
+  };
+  const searchedDiary = await prisma.diary.findMany({
+    ...searchDiaryQuery,
+    orderBy: {
+      _relevance: {
+        fields: ['title', 'content'],
+        search: fullTextQuery,
+        sort: 'desc',
       },
     },
   });
-  return searchedDiary;
+
+  if (searchedDiary.length == 0) {
+    const response = emptyApiResponseDTO();
+    return response;
+  }
+
+  const { totalItem, totalPage } = await calculatePageInfo(
+    'diary',
+    limit,
+    searchDiaryQuery.where,
+  );
+
+  const pageInfo = { totalItem, totalPage, currentPage: page, limit };
+  const diaryResponseDataList = searchedDiary.map((diary) =>
+    plainToClass(DiaryResponseDTO, diary, { excludeExtraneousValues: true }),
+  );
+
+  const response = new PaginationResponseDTO(
+    200,
+    diaryResponseDataList,
+    pageInfo,
+    '성공',
+  );
+  return response;
 };

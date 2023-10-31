@@ -1,20 +1,13 @@
 import { prisma } from '../../prisma/prismaClient';
 import { PrismaClient } from '@prisma/client';
 
-// export const calculatePageInfo = async (
-//   tableName: string,
-//   limit: number,
-//   where: any,
-// ) => {
-//   const totalItem = await prisma.diary.count({
-//     where,
-//   });
-
-//   const totalPage = Math.ceil(totalItem / limit);
-
-//   return { totalItem, totalPage };
-// };
-
+/**
+ *
+ * @param tableName
+ * @param limit
+ * @param where
+ * @returns
+ */
 export const calculatePageInfo = async (
   tableName: keyof PrismaClient,
   limit: number,

@@ -1,10 +1,14 @@
 import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+import { prisma } from '../../prisma/prismaClient';
+// const prisma = new PrismaClient();
 import { FriendResponseDTO, PaginationResponseDTO } from '../dtos/friendDTO';
-import { userResponseDTO} from '../dtos/userDTO';
+import { userResponseDTO } from '../dtos/userDTO';
 import { emptyApiResponseDTO } from '../utils/emptyResult';
 import { successApiResponseDTO } from '../utils/successResult';
-import {calculatePageInfoForFriend, userCalculatePageInfo} from '../utils/pageInfo';
+import {
+  calculatePageInfoForFriend,
+  userCalculatePageInfo,
+} from '../utils/pageInfo';
 import { plainToClass } from 'class-transformer';
 
 export const checkFriend = async (userId: string, requestId: string) => {
@@ -64,7 +68,11 @@ export const createFriends = async (
 };
 
 /** @description 보낸 친구 요청 목록 */
-export const listRequestsSent = async (userId: string, page: number, limit: number,) => {
+export const listRequestsSent = async (
+  userId: string,
+  page: number,
+  limit: number,
+) => {
   try {
     const friend = await prisma.friend.findMany({
       skip: (page - 1) * limit,
@@ -91,22 +99,24 @@ export const listRequestsSent = async (userId: string, page: number, limit: numb
     }
 
     const { totalItem, totalPage } = await calculatePageInfoForFriend(limit, {
-    sentUserId: userId,
+      sentUserId: userId,
     });
 
     const pageInfo = { totalItem, totalPage, currentPage: page, limit };
 
     const friendResponseDataList = friend.map((friend) =>
-    plainToClass(FriendResponseDTO, friend, { excludeExtraneousValues: true }),
+      plainToClass(FriendResponseDTO, friend, {
+        excludeExtraneousValues: true,
+      }),
     );
     const response = new PaginationResponseDTO(
-    200,
-    friendResponseDataList,
-    pageInfo,
-    '성공',
-  );
+      200,
+      friendResponseDataList,
+      pageInfo,
+      '성공',
+    );
 
-  return response;
+    return response;
   } catch (error) {
     throw error;
   }
@@ -132,7 +142,11 @@ export const cancelRequest = async (userId: string, requestId: string) => {
 };
 
 /** @description 받은 친구 요청 목록 */
-export const listRequestsReceived = async (userId: string, page: number, limit: number, ) => {
+export const listRequestsReceived = async (
+  userId: string,
+  page: number,
+  limit: number,
+) => {
   try {
     const friend = await prisma.friend.findMany({
       skip: (page - 1) * limit,
@@ -159,19 +173,21 @@ export const listRequestsReceived = async (userId: string, page: number, limit: 
     }
 
     const { totalItem, totalPage } = await calculatePageInfoForFriend(limit, {
-    receivedUserId: userId,
+      receivedUserId: userId,
     });
 
     const pageInfo = { totalItem, totalPage, currentPage: page, limit };
 
     const friendResponseDataList = friend.map((friend) =>
-    plainToClass(FriendResponseDTO, friend, { excludeExtraneousValues: true }),
-  );
+      plainToClass(FriendResponseDTO, friend, {
+        excludeExtraneousValues: true,
+      }),
+    );
     const response = new PaginationResponseDTO(
-    200,
-    friendResponseDataList,
-    pageInfo,
-    '성공',
+      200,
+      friendResponseDataList,
+      pageInfo,
+      '성공',
     );
     return response;
   } catch (error) {
@@ -231,7 +247,6 @@ export const getMyWholeFriends = async (userId: string) => {
   return friendList;
 };
 
-
 /** @description 친구 목록 */
 export const getMyFriends = async (
   userId: string,
@@ -278,27 +293,27 @@ export const getMyFriends = async (
       },
       orderBy: { id: 'asc' },
     });
-      if (users.length == 0) {
+    if (users.length == 0) {
       const response = emptyApiResponseDTO();
       return response;
     }
 
     const { totalItem, totalPage } = await userCalculatePageInfo(limit, {
       id: {
-          in: uniqueFriendIds,
-        },
+        in: uniqueFriendIds,
+      },
     });
 
     const pageInfo = { totalItem, totalPage, currentPage: page, limit };
 
     const userResponseDataList = users.map((user) =>
-    plainToClass(userResponseDTO, user, { excludeExtraneousValues: true }),
-  );
+      plainToClass(userResponseDTO, user, { excludeExtraneousValues: true }),
+    );
     const response = new PaginationResponseDTO(
-    200,
-    userResponseDataList,
-    pageInfo,
-    '성공',
+      200,
+      userResponseDataList,
+      pageInfo,
+      '성공',
     );
     return response;
   } catch (error) {
@@ -326,12 +341,6 @@ export const deleteFriend = async (userId: string, friendId: string) => {
     throw error;
   }
 };
-
-
-
-
-
-
 
 // using 키워드
 
@@ -697,4 +706,3 @@ export const deleteFriend = async (userId: string, friendId: string) => {
 //
 //   return response;
 // };
-

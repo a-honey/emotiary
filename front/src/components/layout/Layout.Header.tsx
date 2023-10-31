@@ -50,11 +50,12 @@ const Header = () => {
 
   useEffect(() => {
     if (token) {
-      socketRef.current = io('ws://localhost:5001', {
+      socketRef.current = io('ws://kdt-ai-8-team02.elicecoding.com', {
         path: '/chat',
         extraHeaders: {
           Authorization: `Bearer ${token}`,
         },
+        transports: ['websocket'],
       });
 
       socketRef.current.on('connect', () => {
@@ -132,7 +133,9 @@ const Header = () => {
       </header>
       {messages.length !== 0 && <Toast />}
       <Outlet />
-      {token && <ChatButton socket={socketRef.current!} />}
+      {token && location.pathname !== '/mypage' && (
+        <ChatButton socket={socketRef.current!} />
+      )}
     </>
   );
 };
