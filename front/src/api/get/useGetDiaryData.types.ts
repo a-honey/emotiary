@@ -13,4 +13,5 @@ export interface DiaryItemType {
     email: string;
     profileImage: { url: string }[];
   };
+  filesUpload: { url: string }[];
 }

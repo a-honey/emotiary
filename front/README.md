@@ -1,46 +1,75 @@
-# my-boilarplate
+# **Emotiary - FE**
 
-## Stacks
+**Emotiary**는 사용자에게 일기의 내용을 분석해서 그 날의 감정을 분류하고, 그 감정을 이모지로 표현해주는 프로젝트입니다.
 
-react, react-dom, react-router-dom
-axios
-recoil, react-query
-sass
-date-fns
+## **프로젝트 실행방법**
+### **프론트엔드 실행방법**
+프론트엔드 애플리케이션을 실행하려면 다음 단계를 따라 진행하세요:
 
-## 디렉토리 구조
-
+1. `front/` 폴더로 이동합니다.
+2. .env 파일을 설정합니다.
 ```
-┠─ node_modules
-┠─ public
-┠─ src
-│    ├ assets  // 기타 이미지 등을 보관합니다
-│    ├ api  // axios, interceptor 등 api 요청관련 함수를 보관합니다
-│    ├ components  // 공통 컴포넌트를 보관합니다
-│    ├ hooks  // 기타 hook을 보관합니다
-│    ├ pages  // 페이지 및 컴포넌트를 보관합니다
-│    |   └ intro
-│    │        ├ Intro.tsx
-│    │        └ components  // 페이지별 컴포넌트를 보관합니다
-│    │              └Intro.FirstBox.tsx
-│    ├ states  // 전역 상태를 보관합니다
-│    ├ styles  // global.css, 변수 등을 보관합니다
-│    └ utils  // 기타 함수를 보관합니다
-│
-├ .eslintrc.json
-├ .gitignore
-├ next-env.d.ts
-├ next.config.js
-├ package.json
-├ postcss.config.js
-├ README.md
-├ tailwind.config.js
-├ tsconfig.json
-└ yarn.lock
+REACT_APP_BASE_URL="http://localhost:5001/api"
+```
+3. 프론트엔드 애플리케이션 의존성 모듈을 설치합니다:
+
+```bash
+yarn install
+```
+4. 프론트엔드 애플리케이션을 실행합니다:
+```bash
+yarn start
 ```
 
+## 프론트엔드 디렉토리 구조
+
+```
+┣ node_modules
+┣ public
+┗ src
+   ┣ api
+   ┃  ┣ get
+   ┃  ┃  ┣ useGetDiaryData.ts 
+   ┃  ┃  ┗ useGetDiaryData.types.ts
+   ┃  ┣ post
+   ┃  ┃  ┣ usePostDiaryData.ts 
+   ┃  ┃  ┗ usePostDiaryData.types.ts
+   ┃  ┣ put
+   ┃  ┃  ┣ usePutDiaryData.ts 
+   ┃  ┃  ┗ usePutDiaryData.types.ts
+   ┃  ┣ delete
+   ┃  ┃  ┣ useDeleteDiaryData.ts 
+   ┃  ┃  ┗ useDeleteDiaryData.types.ts
+   ┃  ┣ instance.ts
+   ┃  ┣ queryKeys.ts
+   ┃  ┗ types.ts
+   ┣ assets
+   ┣ atoms
+   ┣ commonponents
+   ┣ hooks
+   ┣ mock
+   ┣ pages
+   ┣ commonponents
+   ┃  ┣ intro
+   ┃  ┃  ┣ components
+   ┃  ┃  ┃  ┗ Intro.FirstBox.tsx
+   ┃  ┃  ┗ Intro.tsx
+   ┃  ┣ main
+   ┃  ┃  ┣ assets
+   ┃  ┃  ┣ components
+   ┃  ┃  ┣ styles
+   ┃  ┃  ┗ Main.tsx
+   ┃  ┣ my
+   ┃  ┣ network
+   ┃  ┣ signin
+   ┃  ┣ signup
+   ┃  ┣ userId
+   ┃  ┗ users
+   ┣ styles
+   ┣ types
+   ┗ utils
+
+```
 <br>
 
 ---
-
-All rights reserved.
