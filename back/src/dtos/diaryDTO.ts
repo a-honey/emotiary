@@ -10,6 +10,7 @@ import {
 import { Exclude, Expose, Type } from 'class-transformer';
 import { diaryFileUpload } from '../types/diary';
 import 'reflect-metadata';
+import { fileUpload } from 'types/user';
 
 export class ApiResponseDTO {
   data: any;
@@ -42,7 +43,7 @@ export class AuthorInDiaryDTO {
   email: string;
 
   @Expose()
-  filesUpload: diaryFileUpload[];
+  profileImage: fileUpload[];
 }
 
 // exclude 사용해주기
