@@ -29,11 +29,13 @@ import {
   deleteRoom
 } from './services/chatService';
 import { PrismaClient } from '@prisma/client';
-import * as socketIoJwt from 'socketio-jwt';
+// import * as socketIoJwt from 'socketio-jwt';
 const prisma = new PrismaClient();
 import path = require("path");
+import * as jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 // import axios, { AxiosResponse } from "axios";
-
+// import {authSocket} from '../controllers/chatController';
 // const app: Express & { io?: SocketIoServer } = express();
 // const app: Express = express();
 const app: Express & { io?: any } = express();
@@ -110,21 +112,104 @@ interface ConnectedUsers {
 
   });
 
-  io.use(
-    socketIoJwt.authorize({
-      secret: process.env.JWT_SECRET_KEY,
-      handshake: true,
-      auth_header_required: true,
-    }),
-  );
+  // io.use(
+  //   socketIoJwt.authorize({
+  //     secret: process.env.JWT_SECRET_KEY,
+  //     handshake: true,
+  //     auth_header_required: true,
+  //   }),
+  // );
 
-  const connectedUsers: { [key: string]: ConnectedUsers } = {};
+  // io.use((socket: Socket, next) => {
+  //   const token = socket.handshake.auth.token as string;
+  
+  //   if (!token) {
+  //     console.error('No token provided');
+  //     return next(new Error('Authentication error'));
+  //   }
+  
+  //   try {
+  //     const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY as string);
+  //     socket.data.decodedToken = decodedToken;
+  //     next();
+  //   } catch (err) {
+  //     console.error('JWT verification failed:', err);
+  //     next(new Error('Authentication error'));
+  //   }
+  // });
+//   const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
+
+//   io.use((socket: Socket, next) => {
+//     const token = socket.handshake.auth.token as string;
+  
+//     if (!token) {
+//       console.error('No token provided');
+//       return next(new Error('No token provided'));
+//     }
+  
+//     try {
+//       const decodedToken = jwt.verify(token, JWT_SECRET_KEY);
+//       socket.data.decodedToken = decodedToken;
+//       next();
+//     } catch (error) {
+//       console.error('JWT verification failed:', error);
+//       next(new Error('Authentication error'));
+//     }
+//   });
+
+//   const connectedUsers: { [key: string]: ConnectedUsers } = {};
+
+// // io.on('connection', async (socket: Socket) => {
+// //   // const currentUserId = (socket as any).decoded_token.id;
+// //   // const decodedToken = socket.data.decodedToken;
+// //   // const currentUserId = (socket as any).decodedToken.id;
+// //   const currentUserId = socket.decoded;
+// io.on('connection', async (socket: Socket) => {
+//   const currentUserId = (socket.data.decodedToken).id;
+
+//   const user = await currentUser(currentUserId);
+//   if (user) {
+//     connectedUsers[currentUserId] = {
+//       socketId: socket.id,
+//       roomId: null,
+//       user,
+//     };
+//     console.log(`[${user.username}] connected`);
+//   }
+
+
+//TODO 토큰없음! 
+
+io.use((socket: Socket, next) => {
+  const token = socket.handshake.query.token as string;
+
+  console.log(token);
+  if (!token) {
+    console.error('No token provided');
+    return next(new Error('No token provided'));
+  }
+
+  try {
+    console.log('ㅌ')
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    console.log(decodedToken)
+    socket.data.decodedToken = decodedToken;
+    console.log(socket.data.decodedToken.id)
+    next();
+  } catch (error) {
+    console.error('JWT verification failed:', error);
+    next(new Error('Authentication error'));
+  }
+});
+
+const connectedUsers: { [key: string]: ConnectedUsers } = {};
 
 io.on('connection', async (socket: Socket) => {
-  const currentUserId = (socket as any).decoded_token.id;
+  console.log(socket)
+  // const currentUserId = (socket.data.decodedToken as any).id;
+  const currentUserId = socket.data.decodedToken.id.toString();
+  const user = await currentUser(currentUserId); // Replace with your user retrieval logic
 
-
-  const user = await currentUser(currentUserId);
   if (user) {
     connectedUsers[currentUserId] = {
       socketId: socket.id,
@@ -133,6 +218,11 @@ io.on('connection', async (socket: Socket) => {
     };
     console.log(`[${user.username}] connected`);
   }
+
+
+// 여기까지 완료 
+
+
 
   socket.onAny((eventName: string, ...args: any[]) => {
     console.log(`이벤트 발생: ${eventName}, 데이터: ${args}`);
@@ -178,12 +268,16 @@ io.on('connection', async (socket: Socket) => {
 
   socket.on('sendMessage', async (chatPartnerId: string, message: string) => {
     if (user) {
+      console.log('시작')
       const roomId = await createRoomId(currentUserId, chatPartnerId);
+      console.log(roomId);
       let room = await getMyRoom(roomId);
-
+      console.log(roomId, 'd')
       if (!room) {
         await createChatRoom(roomId);
       }
+
+      console.log('방아이디', roomId);
 
       const createdMessage = await prisma.chatMessage.create({
         data: {
@@ -193,9 +287,12 @@ io.on('connection', async (socket: Socket) => {
         },
       });
 
+      console.log('createMessage', createdMessage);
+
       if (connectedUsers[chatPartnerId]) {
         const chatPartnerSocketId = connectedUsers[chatPartnerId].socketId;
 
+        console.log('파트너아이디', chatPartnerId);
         if (connectedUsers[chatPartnerId].roomId === roomId) {
           socket.to(roomId).emit('message', {
             sendUserId: currentUserId,
@@ -213,6 +310,7 @@ io.on('connection', async (socket: Socket) => {
             username: user.username,
             messageId: createdMessage.id,
           });
+          console.log('새로운메시지', message);
         }
       }
     }

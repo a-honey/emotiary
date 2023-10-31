@@ -20,11 +20,11 @@ const ChatRoom = ({
     // 빈값이면 if문 종료
     if (!message.trim()) return;
 
-    console.log('메시지내용:', message);
     try {
       // 메시지를 socket에 전송
-      await socket?.emit('sendMessage', userId, message);
       // input value 초기화
+      await socket?.emit('sendMessage', userId, message);
+      console.log('메시지보내기 성공:', message);
       setMessage('');
     } catch (err) {
       console.log('에러');
@@ -37,7 +37,12 @@ const ChatRoom = ({
     socket?.emit('join', userId);
     // 채팅방에 들어가면 messages 이벤트에서 이전 내역을 가져옴
     socket?.on('messages', (msgs: string[]) => {
+      console.log('이전 메시지가 도착', msgs)
       setMessages(msgs);
+    });
+    socket?.on('newMessage', (msgs: string) => {
+      console.log('새로운 메시지가 도착', msgs)
+      setMessages(prev=>[...prev, msgs]);
     });
   }, [userId, socket]);
 
@@ -53,7 +58,7 @@ const ChatRoom = ({
         {messages?.map((item) => (
           <div>{item}</div>
         ))}
-        <div>보낸 메시지</div>
+        <div>여기 위까지가 받은 메시지</div>
         <div>보낸 메시지</div>
         <div>보낸 메시지</div>
         <div>받은 메시지</div>
