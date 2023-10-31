@@ -1,9 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './ImagesComponent.module.scss';
 
-// VM 확인필요, 일단 로컬 스토리북으로 확인은 함
 const ImagesComponent = ({ imgDatas }: { imgDatas: { url: string }[] }) => {
-  const imgWrapperRef = useRef<HTMLDivElement | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const imgsData = [...imgDatas, imgDatas[0]];
@@ -22,25 +20,21 @@ const ImagesComponent = ({ imgDatas }: { imgDatas: { url: string }[] }) => {
     };
   }, [currentIndex, imgsData.length]);
 
-  useEffect(() => {
-    const imgWrapper = imgWrapperRef.current;
-    if (imgWrapper) {
-      // 마지막 요소가 아닌 경우 해당 크기만큼 오른쪽으로 이동
-      if (currentIndex !== currentIndex * imgsData.length) {
-        imgWrapper.style.transition = imgWrapper.style.transition =
-          'transform 1s ease';
-        imgWrapper.style.transform = `translateX(${currentIndex * -100}%)`;
-      } else {
-        // 마지막 요소인경우(추가한 첫번째이미지) 애니메이션 없이 5초만에 지나감
-        imgWrapper.style.transition = 'none';
-        imgWrapper.style.transform = 'translateX(0%)';
-        setCurrentIndex(0);
-      }
-    }
-  }, [currentIndex, imgsData.length]);
   return (
     <div className={styles.container}>
-      <div ref={imgWrapperRef} className={styles.imgsWrapper}>
+      <div
+        style={{
+          transform:
+            currentIndex === currentIndex * imgsData.length
+              ? 'translateX(0%)'
+              : `translateX(-${currentIndex * 100}%)`,
+          transition:
+            currentIndex === currentIndex * imgsData.length
+              ? 'transform 0s ease'
+              : 'transform 1s ease',
+        }}
+        className={styles.imgsWrapper}
+      >
         {imgsData.map((img) => (
           <img
             key={img.url}
