@@ -21,51 +21,6 @@ interface InputFieldProps {
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
 }
 
-interface SignupProps {}
-
-const Signup: React.FC<SignupProps> = () => {
-  const [userInfo, setUserInfo] = useState<UserData>({
-    username: '',
-    email: '',
-    password: '',
-  });
-  const [confirmPassword, setConfirmPassword] = useState<string>('');
-  const navigate = useNavigate();
-
-  const mutation = useMutation(
-    (newUserInfo: UserData) => instance.post('http://localhost:5001/users/register', newUserInfo),
-    {
-      onSuccess: (data: any) => {
-        console.log('회원가입 성공', data);
-        navigate('/signin');
-      },
-      onError: (error: any) => {
-        alert(`${error} 에러 발생.`);
-        console.log('회원가입 실패', error);
-      },
-    },
-  );
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    if (name === 'confirmPassword') {
-      setConfirmPassword(value);
-    } else {
-      setUserInfo((prev) => ({ ...prev, [name]: value }));
-    }
-  };
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
-    e.preventDefault();
-
-    if (userInfo.password !== confirmPassword) {
-      alert('패스워드가 일치하지 않습니다.');
-      return;
-    }
-
-    mutation.mutate(userInfo);
-  };
-
 const InputField: React.FC<InputFieldProps> = ({
   id,
   name,
