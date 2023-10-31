@@ -86,7 +86,7 @@ diaryRouter.get(
   wrapAsyncController(getAllMyDiaries),
 );
 
-diaryRouter.get('/search', wrapAsyncController(searchDiary));
+diaryRouter.get('/search', jwtAuthentication, wrapAsyncController(searchDiary));
 
 // /diary/:diaryId
 diaryRouter
