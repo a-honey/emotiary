@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import styles from './index.module.scss';
 import { useGetFriendData } from '../../api/get/useGetFriendData';
-import {
-  ReceivedUserDataType,
-  sentUserDataType,
-} from '../../api/get/useGetFriendData.types';
 import ImageComponent from '../ImageComponent';
 import {
   useAcceptFriendReqMutation,
   useCancelFriendReqMutation,
   useRejectFriendReqMutation,
 } from '../../api/post/usePostFriendData';
+import {
+  FriendReqCommonResponseType,
+  GetFriendReqDataType,
+} from '../../api/get/useGetFriendData.types';
 
 const FriendReqList = () => {
   const [isReqList, setIsReqList] = useState(true);
@@ -38,27 +38,12 @@ const FriendReqList = () => {
       <div className={styles.itemList}>
         {data?.data?.map((item) => {
           if (isReqList) {
-            if ('sentUser' in item) {
-              const sentUserItem = item as sentUserDataType;
-              return (
-                <ResItem
-                  item={sentUserItem.sentUser}
-                  key={sentUserItem.sentUser.id}
-                />
-              );
-            }
+            return <ResItem item={item.sentUser} key={item.sentUser.id} />;
           } else {
-            if ('receivedUser' in item) {
-              const receivedUserItem = item as ReceivedUserDataType;
-              return (
-                <ReqItem
-                  item={receivedUserItem.receivedUser}
-                  key={receivedUserItem.receivedUser.id}
-                />
-              );
-            }
+            return (
+              <ReqItem item={item.receivedUser} key={item.receivedUser.id} />
+            );
           }
-          return null;
         })}
       </div>
     </div>
@@ -67,7 +52,7 @@ const FriendReqList = () => {
 
 export default FriendReqList;
 
-const ResItem = ({ item }: { item: sentUserDataType['sentUser'] }) => {
+const ResItem = ({ item }: { item: FriendReqCommonResponseType }) => {
   const postAcceptMutation = useAcceptFriendReqMutation();
   const postRejectMutation = useRejectFriendReqMutation();
 
@@ -97,7 +82,7 @@ const ResItem = ({ item }: { item: sentUserDataType['sentUser'] }) => {
   );
 };
 
-const ReqItem = ({ item }: { item: ReceivedUserDataType['receivedUser'] }) => {
+const ReqItem = ({ item }: { item: FriendReqCommonResponseType }) => {
   const postCancelMutation = useCancelFriendReqMutation();
 
   const handleCancelClick = () => {
