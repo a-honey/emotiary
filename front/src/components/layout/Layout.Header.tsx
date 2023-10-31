@@ -55,6 +55,9 @@ const Header = () => {
         extraHeaders: {
           Authorization: `Bearer ${token}`,
         },
+        query: {
+          token: `${token}`,
+        },
       });
 
       socketRef.current.on('connect', () => {
