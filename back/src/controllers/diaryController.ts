@@ -141,8 +141,7 @@ export const updateDiary = async (
   const { id: userId } = req.user;
   const { diaryId } = req.params;
   const inputData = req.body;
-  const { deleteData, ...updatedData } = inputData;
-  const diaryInput = plainToClass(DiaryValidateDTO, updatedData);
+  const diaryInput = plainToClass(DiaryValidateDTO, inputData);
 
   // TODO 밸리데이터 수정 필요
   const errors = await validate(diaryInput);
@@ -155,7 +154,7 @@ export const updateDiary = async (
   }
   // throw generateError(400, errors[0].constraints?.isString);
   // return res.status(400).json(errors);
-  const updatedDiary = await updateDiaryService(userId, diaryId, updatedData);
+  const updatedDiary = await updateDiaryService(userId, diaryId, inputData);
 
   return res.status(updatedDiary.status).json(updatedDiary);
 };

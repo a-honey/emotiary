@@ -52,14 +52,15 @@ const handleFileUpload = async (
           const filePaths = files.map((file) => `fileUpload/${file.filename}`);
 
           if (type === 'profile') {
-            const { userId } = req.params;
+            if(req.files){
+              const { userId } = req.params;
             const fileUploadCount = await prisma.fileUpload.count({
               where: {
                 userId,
               },
             });
 
-            if (fileUploadCount >= 1) {
+            if (fileUploadCount >= 2) {
               throw new Error('최대 1개의 파일만 허용됩니다.');
             }
             const foundUser = await prisma.user.findUnique({
@@ -107,6 +108,7 @@ const handleFileUpload = async (
             await prisma.fileUpload.createMany({
               data: profileImage,
             });
+            }
           } else if (type === 'diary') {
             const { diaryId } = req.params;
 

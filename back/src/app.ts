@@ -15,7 +15,6 @@ import testAuthRouter from './routes/testRouter';
 import { errorMiddleware } from './middlewares/errorMiddleware';
 import { sendAlarm } from './utils/alarm';
 import http from 'http';
-// import { chat } from './utils/chat';
 import { Server as SocketIoServer, Socket } from 'socket.io';
 import {
   currentUser,
@@ -32,13 +31,10 @@ import { PrismaClient } from '@prisma/client';
 import * as socketIoJwt from 'socketio-jwt';
 const prisma = new PrismaClient();
 import path = require("path");
-// import axios, { AxiosResponse } from "axios";
-
-// const app: Express & { io?: SocketIoServer } = express();
-// const app: Express = express();
+import { CronJob } from 'cron';
+import { updateAudioUrlsPeriodically } from './utils/music';
 const app: Express & { io?: any } = express();
 const server = http.createServer(app);
-// export const io = chat(server);
 app.use(cors());
 app.use(bodyParser.json());
 app.use(Logger);
@@ -58,6 +54,14 @@ passport.use('google', googleStrategyInstance);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+const job = new CronJob('0 */6 * * *', () => {
+  updateAudioUrlsPeriodically();
+  console.log(1);
+});
+
+// CronJob 시작
+job.start();
 
 app.use(
   '/api-docs',

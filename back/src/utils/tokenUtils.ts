@@ -36,7 +36,7 @@ export const generateRefreshToken = (user: {
 export const storeRefreshTokenInDatabase = async (
   userId: string,
   refreshToken: string,
-): Promise<void> => {
+) => {
   try {
     // 기존 Refresh Token을 삭제
     await prisma.refreshToken.deleteMany({
@@ -60,7 +60,7 @@ export const storeRefreshTokenInDatabase = async (
 // Refresh Token의 유효성을 확인하고 사용자 ID 반환하는 함수
 export const verifyRefreshToken = async (
   refreshToken: string,
-): Promise<string> => {
+) => {
   try {
     // 데이터베이스에서 해당 Refresh Token을 찾기
     const refreshTokenData = await prisma.refreshToken.findUnique({
