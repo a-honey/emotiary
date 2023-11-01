@@ -4,9 +4,11 @@ import { useState } from 'react';
 import styles from './index.module.scss';
 import useImgChange from '../../../hooks/useImgChange';
 import EmojiSelect from './Main.EmojiSelect';
-import { usePostDiaryData } from '../../../api/post/usePostDiaryData';
+import {
+  ResEmojiType,
+  usePostDiaryData,
+} from '../../../api/post/usePostDiaryData';
 import { formatDatetoString } from '../../../utils/formatHandlers';
-import { DiaryBodyType } from '../../../api/post/usePostDiaryData.types';
 import post_none from '../../../assets/post_none.png';
 
 const DIARY_WRITING_INITIAL_DATA = {
@@ -24,7 +26,8 @@ const DiaryWriting = ({
   toggleIsOpenModal: () => void;
 }) => {
   const [imgsContainer, setImgsContainer] = useState<File[]>([]);
-  const [emojis, setEmojis] = useState('');
+  const [emojis, setEmojis] = useState<ResEmojiType[]>([]);
+  const [diaryId, setDiaryId] = useState('');
 
   const [formData, setFormData] = useState<Record<string, string>>(
     DIARY_WRITING_INITIAL_DATA,
@@ -39,9 +42,9 @@ const DiaryWriting = ({
     setIsEmojiSelectOpen((prev) => !prev);
   };
 
-  const handleOnSuccess = (emojis: string) => {
+  const handleOnSuccess = (emojis: ResEmojiType[], id: string) => {
     setEmojis(emojis);
-    toggleIsEmojiSelectOpen();
+    setDiaryId(id);
   };
 
   const postMutation = usePostDiaryData(handleOnSuccess);
@@ -142,9 +145,10 @@ const DiaryWriting = ({
           </button>
         </div>
       </form>
-      {isEmojiSelectOpen && (
+      {emojis.length !== 0 && (
         <EmojiSelect
-          emojis={emojis!}
+          id={diaryId}
+          emojis={emojis}
           toggleIsEmojiSelectOpen={toggleIsEmojiSelectOpen}
         />
       )}

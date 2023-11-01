@@ -8,15 +8,31 @@ import { queryKeys } from '../queryKeys';
 import { CommentBodyType, DiaryBodyType } from './usePostDiaryData.types';
 import { Error } from '../types';
 
-export const usePostDiaryData = (fn?: (emojis: string) => void) => {
+export interface ResEmojiType {
+  emotion: string;
+  emoji: string;
+}
+
+export const usePostDiaryData = (
+  fn?: (emojis: ResEmojiType[], id: string) => void,
+) => {
   const postMutation = useMutation(
     async ({ body }: { body: FormData }) => {
       return await formDataInstance.post(`/diary`, body);
     },
     {
       onSuccess: (res) => {
-        fn?.(res.data.data.emoji);
-        return res.data.data.emoji;
+        const resEmotions = res.data.data.emotion;
+        const parts = resEmotions.split(', ');
+        const setEmojis: { emotion: string; emoji: string }[] = [];
+
+        parts.forEach((part: string) => {
+          const [emotion, emoji] = part.split(' : ');
+          setEmojis.push({ emotion: emotion.trim(), emoji: emoji.trim() });
+        });
+
+        fn?.(setEmojis, res.data.data.id);
+        return setEmojis;
       },
       onError: (error: Error) => {
         console.error('useMutation api 요청 에러', error);
