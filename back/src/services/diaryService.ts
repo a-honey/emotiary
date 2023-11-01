@@ -14,6 +14,7 @@ import ytdl from 'ytdl-core';
 import { prisma } from '../../prisma/prismaClient';
 import { generateError } from '../utils/errorGenerator';
 import { response } from 'express';
+import { findMode } from '../utils/modeEmotion';
 
 // 체크하는 용도 -----------------------------------------------
 /**
@@ -668,14 +669,49 @@ export const getEmotionOftheMonthService = async (
     },
   });
 
+  // 작성한 다이어리가 없을 땐 204 No content반환
   if (emotionsAndEmojis.length == 0) {
     const response = emptyApiResponseDTO();
     return response;
   }
-  console.log(emotionsAndEmojis);
   const emotions = emotionsAndEmojis.map((emotion) => {
     return emotion.emotion;
   });
-  console.log(emotions);
+
+  const testArray = [
+    '중립 : undefined, 혐오 : undefined, 불안 : undefined',
+    '중립 : undefined, 혐오 : undefined, 불안 : undefined',
+    '분노 : �, 행복 : �, 중립 : �',
+    '분노 : �, 혐오 : �, 중립 : �',
+    '행복 : �, 중립 : �, 혐오 : �',
+    '분노 : undefined, 혐오 : undefined, 중립 : undefined',
+    '분노 : undefined, 혐오 : undefined, 중립 : undefined',
+    '중립 : undefined, 행복 : undefined, 혐오 : undefined',
+    '슬픔 : �, 불안 : �, 분노 : �',
+    '행복 : �, 중립 : �, 슬픔 : �',
+    '행복 : �, 중립 : �, 슬픔 : �',
+    '행복',
+    '행복',
+    '행복',
+    '행복',
+    '슬픔',
+    '슬픔',
+    '슬픔',
+    '중립',
+  ];
+  const modeEmotion = findMode(testArray);
+
+  if (modeEmotion == null) {
+    const response = emptyApiResponseDTO();
+    return response;
+  }
+
+  const emoji = await prisma.emoji.findFirst({
+    select: { emotion: true },
+    where: {
+      type: modeEmotion,
+    },
+  });
+  const response = { emotion: modeEmotion, emoji: emoji.emotion };
   return response;
 };
