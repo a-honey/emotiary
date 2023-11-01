@@ -17,12 +17,6 @@ import { sendAlarm } from './utils/alarm';
 import http from 'http';
 import { chat } from './utils/chat';
 import { Server as SocketIoServer, Socket } from 'socket.io';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
-
-
-// import axios, { AxiosResponse } from "axios";
 
 const app: Express & { io?: any } = express();
 const server = http.createServer(app);
@@ -30,8 +24,6 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(Logger);
 sendAlarm();
-
-
 
 app.use(passport.initialize());
 
@@ -56,16 +48,7 @@ app.get('/', (req: Request, res: Response) => {
   res.send('기본 페이지');
 });
 
-//TODO api 붙여주기
-//TODO node 부하테스트
-
-// app.all('/api/*', (req: Request, res: Response, next: NextFunction) => {
-//   console.log('api통신 테스트');
-//   next();
-// });
-
 const apiRouter = express.Router();
-const router = express.Router();
 
 apiRouter.use('/users', userAuthRouter);
 apiRouter.use('/test', testAuthRouter);
@@ -76,20 +59,17 @@ apiRouter.use('/comments', commentRouter);
 
 app.use('/api', apiRouter);
 
-
 // // 정적 파일 제공을 위한 미들웨어 설정
 // app.use(express.static("public"));
 app.use('/api/fileUpload', express.static('fileUpload'));
 app.use(errorMiddleware);
-
-
 
 // 웹소켓을 이용한 1:1 채팅
 const io = new SocketIoServer(server, {
   path: '/chat',
   cors: {
     origin: 'http://localhost:3000', // Replace with your actual frontend URL
-    methods: ['GET', 'POST',  'WEBSOCKET'],
+    methods: ['GET', 'POST', 'WEBSOCKET'],
   },
 });
 
