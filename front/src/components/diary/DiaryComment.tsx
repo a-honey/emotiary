@@ -92,7 +92,7 @@ const CommentItem = ({
       <div className={styles.commentItemContainer}>
         <div>
           {isReply && parentUsername && <span>{`L @${parentUsername}`}</span>}
-          {`${data.content} ${data.emoji}`}
+          {`${data.content} ${data.emoji ?? ''}`}
         </div>
         <div
           className={styles.userInfo}
