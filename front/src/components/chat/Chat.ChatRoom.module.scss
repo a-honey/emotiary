@@ -29,6 +29,9 @@
     background-color: white;
     border-radius: 5px;
     padding: 10px;
+    .other {
+      background-color:  map-get($colors, bg);
+    }
     &::-webkit-scrollbar {
       width: 10px;
       background-color: transparent;

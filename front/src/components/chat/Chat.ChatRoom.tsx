@@ -12,7 +12,7 @@ const ChatRoom = ({
   userId: string;
 }) => {
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<{ id: string; message: string }[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,24 +24,27 @@ const ChatRoom = ({
       // 메시지를 socket에 전송
       // input value 초기화
       await socket?.emit('sendMessage', userId, message);
-      console.log('메시지보내기 성공:', message);
+
+      setMessages(prev=>[...prev, { id: userId, message }]);
       setMessage('');
     } catch (err) {
-      console.log('에러');
+   
       console.log('메시지 전송 실패', err);
     }
   };
 
+  console.log('받은 메시지',messages)
   useEffect(() => {
     // 채팅방이 마운트되면 채팅방에 들어감
+    console.log('join', userId);
     socket?.emit('join', userId);
     // 채팅방에 들어가면 messages 이벤트에서 이전 내역을 가져옴
-    socket?.on('messages', (msgs: string[]) => {
-      console.log('이전 메시지가 도착', msgs)
-      setMessages(msgs);
+    socket?.on('messages', (msgs: { id: string; message: string }[]) => {
+ 
+      setMessages((prev) => msgs.map((item) => item));
     });
-    socket?.on('newMessage', (msgs: string) => {
-      console.log('새로운 메시지가 도착', msgs)
+    socket?.on('newMessage', (msgs: { id: string; message: string }) => {
+    
       setMessages(prev=>[...prev, msgs]);
     });
   }, [userId, socket]);
@@ -56,14 +59,8 @@ const ChatRoom = ({
       </div>
       <div className={styles.messageContainer}>
         {messages?.map((item) => (
-          <div>{item}</div>
+          <div key={item.message} className={item.id === userId ? styles.other: styles.my}>{item.message}</div>
         ))}
-        <div>여기 위까지가 받은 메시지</div>
-        <div>보낸 메시지</div>
-        <div>보낸 메시지</div>
-        <div>받은 메시지</div>
-        <div>보낸 메시지</div>
-        <div>보낸 메시지</div>
       </div>
       <form onSubmit={handleSubmit}>
         <input
