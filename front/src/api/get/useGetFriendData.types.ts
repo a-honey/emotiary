@@ -7,5 +7,5 @@ export type GetFriendReqDataType = {
 export interface FriendReqCommonResponseType {
   id: string;
   username: string;
-  filesUpload: { url: string }[];
+  profileImage: { url: string }[];
 }
