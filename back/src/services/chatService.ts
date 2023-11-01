@@ -135,7 +135,7 @@ export const unreadMessage = async (chatPartnerId: string) => {
           sendUserId: chatPartnerId,
           isRead: false,
         },
-        orderBy: {createdAt: 'desc'},
+        // orderBy: {createdAt: 'desc'},
     })
     return message;
   } catch (error) {
