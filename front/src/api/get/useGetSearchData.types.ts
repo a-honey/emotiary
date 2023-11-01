@@ -3,5 +3,6 @@ export interface SearchUserType {
   username: string;
   email: string;
   description: string;
+  profileImage: { url: string }[];
   isFriend: false;
 }
