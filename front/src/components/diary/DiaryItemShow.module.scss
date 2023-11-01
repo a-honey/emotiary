@@ -15,14 +15,13 @@
   .titles {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     h2 {
       font-size: 25px;
       font-weight: 700;
-      position: relative;
       span {
         padding-left: 20px;
-        font-size: 60px;
-        position: absolute;
+        font-size: 40px;
       }
     }
     .like {
