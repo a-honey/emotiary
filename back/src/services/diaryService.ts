@@ -1,15 +1,14 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 import { checkFriend, getMyWholeFriends, weAreFriends } from './friendService';
 import axios from 'axios';
-import { Emoji } from '../types/emoji';
 import { calculatePageInfo } from '../utils/pageInfo';
 import { DiaryResponseDTO, PaginationResponseDTO } from '../dtos/diaryDTO';
 import { plainToClass } from 'class-transformer';
 import { successApiResponseDTO } from '../utils/successResult';
 import { emptyApiResponseDTO } from '../utils/emptyResult';
-import { diaryUpload } from '../middlewares/uploadMiddleware';
 import { sendEmail } from '../utils/email';
 import { searchMusic } from '../utils/music';
+import { generateEmotionString } from '../utils/emotionFlask';
 import ytdl from 'ytdl-core';
 import { prisma } from '../../prisma/prismaClient';
 import { generateError } from '../utils/errorGenerator';
@@ -69,43 +68,8 @@ export const createDiaryService = async (
   inputData: Prisma.DiaryCreateInput,
   fileUrls: string[],
 ) => {
-  const responseData = await axios.post(
-    'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
-    {
-      text: inputData.content,
-    },
-  );
-  const emojis: string[] = [];
-  const labels = responseData.data.emotion.map(
-    (item: { label: string }) => item.label,
-  );
-
-  for (const item of responseData.data.emotion) {
-    const label = item.label;
-    const type = label;
-    const emotions = await prisma.emoji.findMany({
-      where: {
-        type: type,
-      },
-      select: {
-        emotion: true,
-      },
-    });
-
-    if (emotions.length > 0) {
-      const randomEmotion =
-        emotions[Math.floor(Math.random() * emotions.length)].emotion;
-      emojis.push(randomEmotion);
-    }
-  }
-
-  const combinedEmotions = labels.map((label: string, index: number) => {
-    return `${label} : ${emojis[index]}`;
-  });
-
-  const emotionString = `${combinedEmotions.join(', ')}`;
-
-  inputData.emotion = emotionString;
+  
+  inputData.emotion = await generateEmotionString(inputData.content);
   inputData.emoji = '❎';
 
   const diaryData = {
@@ -423,42 +387,7 @@ export const updateDiaryService = async (
   inputData: Prisma.DiaryUpdateInput,
 ) => {
   if (inputData.content) {
-    const responseData = await axios.post(
-      'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
-      {
-        text: inputData.content,
-      },
-    );
-    const emojis: string[] = [];
-    const labels = responseData.data.emotion.map(
-      (item: { label: string }) => item.label,
-    );
-
-    for (const item of responseData.data.emotion) {
-      const label = item.label;
-      const type = label;
-      const emotions = await prisma.emoji.findMany({
-        where: {
-          type: type,
-        },
-        select: {
-          emotion: true,
-        },
-      });
-
-      if (emotions.length > 0) {
-        const randomEmotion =
-          emotions[Math.floor(Math.random() * emotions.length)].emotion;
-        emojis.push(randomEmotion);
-      }
-    }
-
-    const combinedEmotions = labels.map((label: string, index: number) => {
-      return `${label} : ${emojis[index]}`;
-    });
-
-    const emotionString = `${combinedEmotions.join(', ')}`;
-    inputData.emotion = emotionString;
+    inputData.emotion = await generateEmotionString(inputData.content as string);
     inputData.emoji = '❎';
   }
 
@@ -538,10 +467,11 @@ export const selectedEmojis = async (
   }
 
   const emoji = selectedEmoji;
+  const emotion = selectedEmotion;
 
   const updatedDiary = await prisma.diary.update({
     where: { id: diaryId, authorId: userId },
-    data: { emoji, audioUrl },
+    data: { emoji, audioUrl, emotion },
   });
 
   if (updatedDiary == null) {

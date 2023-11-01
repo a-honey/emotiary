@@ -1,13 +1,20 @@
 import axios, { AxiosResponse } from 'axios';
+import { PrismaClient } from '@prisma/client';
+import ytdl from 'ytdl-core';
+
+const prisma = new PrismaClient();
 
 const youtubeApiKey = process.env.youtubeApiKey;
+const subKey = process.env.subYoutubeApiKey;
+
+let currentApiKey = youtubeApiKey;
 
 export async function searchMusic(emotion: string): Promise<any | null> {
   try {
     const searchQuery = `${emotion} music music music`;
     const videoDuration = 'long';
     const response: AxiosResponse = await axios.get(
-      `https://www.googleapis.com/youtube/v3/search?key=${youtubeApiKey}&part=snippet&type=video&q=${searchQuery}&videoDuration=${videoDuration}`,
+      `https://www.googleapis.com/youtube/v3/search?key=${youtubeApiKey}&part=snippet&type=video&q=${searchQuery}`,
     );
 
     const videoIds = response.data.items.map(
@@ -29,7 +36,7 @@ export async function searchMusic(emotion: string): Promise<any | null> {
         const durationInseconds = getDurationInSeconds(duration);
         const durationInMinutes = durationInseconds / 60;
 
-        return ((durationInMinutes >= 40) && (durationInMinutes <= 60));
+        return (durationInMinutes >= 20);
       },
     );
 
@@ -44,6 +51,12 @@ export async function searchMusic(emotion: string): Promise<any | null> {
       title: randomVideo.snippet.title,
       videoId: randomVideo.id,
     };
+
+    if (currentApiKey === youtubeApiKey) {
+      currentApiKey = subKey;
+    } else {
+      currentApiKey = youtubeApiKey;
+    }
 
     return musicData;
   } catch (error) {
@@ -60,4 +73,31 @@ function getDurationInSeconds(isoDuration: string): number {
   const seconds = parseInt(match[3], 10) || 0;
 
   return hours * 3600 + minutes * 60 + seconds;
+}
+
+export async function updateAudioUrlsPeriodically() {
+  try {
+    const diariesWithEmoji = (await prisma.diary.findMany()).filter(
+      (diary) => diary.emotion && diary.emotion.length === 2
+  );
+
+    for (const diary of diariesWithEmoji) {
+      const musicData = await searchMusic(diary.emoji);
+      const videoId = musicData.videoId;
+
+      const info = await ytdl.getInfo(videoId);
+      // 오디오 스트림 URL 가져오기
+      const audioUrl = ytdl.chooseFormat(info.formats, { filter: 'audioonly' }).url;
+
+      // 데이터베이스에 스트림 URL 업데이트
+      await prisma.diary.update({
+        where: { id: diary.id },
+        data: { audioUrl },
+      });
+
+      console.log(`다이어리 ${diary.id}의 오디오 URL이 갱신되었습니다.`);
+    }
+  } catch (error) {
+    console.error('오디오 URL을 갱신하는 중에 오류 발생:', error);
+  }
 }

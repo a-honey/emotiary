@@ -38,7 +38,6 @@ export const sendEmail = async (
     };
 
     // 설정한 이메일 옵션을 사용하여 이메일을 전송합니다.
-    // await transporter.sendMail(mailOptions);
     await transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
         console.log(error);
@@ -51,6 +50,7 @@ export const sendEmail = async (
   }
 };
 
+// 이메일 인증 검증하기위한 토큰 생성
 export const emailToken = () => {
   const token = crypto.randomBytes(20).toString('hex');
   const expires = new Date();

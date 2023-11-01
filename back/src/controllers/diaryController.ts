@@ -218,7 +218,7 @@ export const updateDiary = async (
   }
   // throw generateError(400, errors[0].constraints?.isString);
   // return res.status(400).json(errors);
-  const updatedDiary = await updateDiaryService(userId, diaryId, updatedData);
+  const updatedDiary = await updateDiaryService(userId, diaryId, inputData);
 
   updatedGPTComment(inputData.content, userId, diaryId);
 

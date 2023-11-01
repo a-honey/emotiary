@@ -28,7 +28,7 @@ export async function createdComment(
     const responseData = await axios.post(
       'http://kdt-ai-8-team02.elicecoding.com:5000/predict',
       {
-        text: content,
+        text: inputData.content,
       },
     );
 
@@ -85,6 +85,7 @@ export async function getCommentByDiaryId(
         },
         diaryId: true,
         content: true,
+        emoji : true,
         createdAt: true,
         updatedAt: true,
         // 대댓글은 reComment에 배열로 포함하여 응답
@@ -100,6 +101,7 @@ export async function getCommentByDiaryId(
             },
             diaryId: true,
             content: true,
+            emoji : true,
             createdAt: true,
             updatedAt: true,
           },

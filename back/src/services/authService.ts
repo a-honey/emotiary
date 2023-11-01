@@ -7,14 +7,12 @@ import { successApiResponseDTO } from '../utils/successResult';
 import { userCalculatePageInfo } from '../utils/pageInfo';
 import { PaginationResponseDTO } from '../dtos/diaryDTO';
 import { emailToken, sendEmail } from '../utils/email';
+import { emptyApiResponseDTO } from '../utils/emptyResult';
+import { getMyWholeFriends } from './friendService';
 
 const prisma = new PrismaClient();
 
-export const createUser = async (inputData: {
-  username: string;
-  password: string;
-  email: string;
-}) => {
+export const createUser = async (inputData: Prisma.UserCreateInput) => {
   const { username, password, email } = inputData;
 
   // 비밀번호를 해시하여 저장 (안전한 비밀번호 저장)
@@ -56,12 +54,9 @@ export const getAllUsers = async (
   page: number,
   limit: number,
 ) => {
-  //TODO pageSize가 limit 아닌가요?
-  const pageSize = 10;
-
   const userList = await prisma.user.findMany({
-    take: pageSize,
-    skip: (page - 1) * pageSize,
+    take: limit,
+    skip: (page - 1) * limit,
     orderBy: {
       createdAt: 'asc',
     },
@@ -83,7 +78,7 @@ export const getAllUsers = async (
       },
     },
   });
-
+  console.log(userList);
   userList.forEach((user) => {
     user.isFriend = user.friendS.length > 0 || user.friendR.length > 0;
 
@@ -117,63 +112,32 @@ export const getMyFriends = async (
   page: number,
   limit: number,
 ) => {
-  const pageSize = 10;
+  const startTime = new Date().getTime();
 
-  const userList = await prisma.user.findMany({
-    take: pageSize,
-    skip: (page - 1) * pageSize,
-    orderBy: {
-      createdAt: 'asc',
-    },
-    include: {
-      friendS: {
-        where: {
-          status: true,
-        },
-      },
-      friendR: {
-        where: {
-          status: true,
-        },
-      },
-      Diary: {
-        where: {
-          authorId: userId,
-        },
-        orderBy: {
-          createdAt: 'desc',
-        },
-        take: 1,
+  const friendList = await getMyWholeFriends(userId);
+  console.log(friendList);
+  const friendIds = friendList.map((friend) => friend.sentUserId);
+  console.log(friendIds);
+  const friendsInfo = await prisma.user.findMany({
+    take: limit,
+    skip: (page - 1) * limit,
+    where: {
+      id: {
+        in: friendIds, // 친구의 ID 목록
       },
     },
   });
+  console.log(friendsInfo) 
 
-  const filteredUsers = userList.filter((user) => {
-    const areFriends = user.friendS.length > 0 || user.friendR.length > 0;
-
-    if (user.id !== userId && areFriends) {
-      // 자기 자신이 아니면서 친구인 경우만 결과에 포함
-      return true;
-    }
-
-    return false;
-  });
-
-  filteredUsers.forEach((user) => {
-    user.isFriend = user.friendS.length > 0 || user.friendR.length > 0;
-
-    if (user.Diary.length > 0) {
-      user.latestEmoji = user.Diary[0].emoji;
-    } else {
-      user.latestEmoji = '❎';
-    }
-  });
-  const totalItem = filteredUsers.length;
+  const endTime = new Date().getTime();
+  const responseTime = endTime - startTime;
+  console.log(responseTime);
+  const totalItem = friendsInfo.length;
   const totalPage = Math.ceil(totalItem / limit);
 
   const pageInfo = { totalItem, totalPage, currentPage: page, limit };
 
-  const userResponseDataList = filteredUsers.map((user) =>
+  const userResponseDataList = friendsInfo.map((user) =>
     plainToClass(userResponseDTO, user, { excludeExtraneousValues: true }),
   );
 
@@ -201,6 +165,14 @@ export const getUserInfo = async (userId: string) => {
   return response;
 };
 
+export const logout = async(userId : string) => {
+  await prisma.refreshToken.deleteMany({
+    where: {
+      userId: userId,
+    },
+  });
+}
+
 export const updateUserService = async (
   userId: string,
   inputData: Prisma.UserUpdateInput,
@@ -222,12 +194,24 @@ export const updateUserService = async (
       },
     },
   });
-  const response = successApiResponseDTO(updatedUser);
+  const UserResponseDTO = plainToClass(userResponseDTO, updatedUser, {
+    excludeExtraneousValues: true,
+  });
+  const response = successApiResponseDTO(UserResponseDTO);
   return response;
 };
 
 export const deleteUserService = async (userId: string) => {
-  //TODO delete를 하기 전에 유저가 존재하는지 체크해주면 좋을 것 같아요
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user) {
+    // 사용자를 찾을 수 없는 경우 적절한 오류 처리를 수행
+    const response = emptyApiResponseDTO();
+    return response;
+  }
+
   // 사용자의 refreshTokens 먼저 삭제
   await prisma.refreshToken.deleteMany({
     where: {
@@ -255,11 +239,17 @@ export const deleteUserService = async (userId: string) => {
       id: userId,
     },
   });
-
-  return '사용자가 삭제되었습니다.';
 };
 
 export const forgotUserPassword = async (email: string) => {
+  // 데이터베이스에서 사용자 이메일로 사용자 조회
+  const user = await prisma.user.findUnique({ where: { email } });
+
+  if (!user) {
+    const response = emptyApiResponseDTO();
+    return response;
+  }
+
   // 임시 비밀번호 생성
   const tempPassword = generateRandomPassowrd();
   const saltRounds = 10;
@@ -283,6 +273,14 @@ export const forgotUserPassword = async (email: string) => {
 };
 
 export const resetUserPassword = async (email: string, password: string) => {
+    // 데이터베이스에서 사용자 이메일로 사용자 조회
+    const user = await prisma.user.findUnique({ where: { email } });
+
+    if (!user) {
+      const response = emptyApiResponseDTO();
+      return response;
+    }
+
   const saltRounds = 10;
 
   // 새로운 비밀번호를 해시하여 저장
