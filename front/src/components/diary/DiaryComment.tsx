@@ -39,7 +39,12 @@ const DiaryComment = ({
     <>
       <div className={styles.comments}>
         {data?.map((item, index) => (
-          <CommentItem data={item} index={index} isReply={false} />
+          <CommentItem
+            data={item}
+            key={item.id}
+            index={index}
+            isReply={false}
+          />
         ))}
       </div>
       <form className={styles.commentAddcontainer} onSubmit={handleSubmit}>
