@@ -9,7 +9,18 @@ interface CommentDataType {
   diaryId: string;
   content: string;
   createdAt: string;
-  reComment: [];
+  reComment?: {
+    id: string;
+    emoji: string;
+    diaryId: string;
+    content: string;
+    createdAt: string;
+    author: {
+      id: string;
+      username: string;
+      profileImage: { id: number; url: string }[];
+    };
+  }[];
   emoji: string;
   author: {
     id: string;
@@ -39,13 +50,8 @@ const DiaryComment = ({
   return (
     <>
       <div className={styles.comments}>
-        {data?.map((item, index) => (
-          <CommentItem
-            data={item}
-            key={item.id}
-            index={index}
-            isReply={false}
-          />
+        {data?.map((item) => (
+          <CommentItem data={item} key={item.id} isReply={false} />
         ))}
       </div>
       <form className={styles.commentAddcontainer} onSubmit={handleSubmit}>
@@ -67,13 +73,13 @@ export default DiaryComment;
 
 //** 댓글을 보여주는 컴포넌트 */
 const CommentItem = ({
-  index,
   data,
   isReply,
+  parentUsername,
 }: {
-  index: number;
   data: CommentDataType;
   isReply: boolean;
+  parentUsername?: string;
 }) => {
   const navigator = useNavigate();
   const [isAdding, setIsAdding] = useState(false);
@@ -84,9 +90,10 @@ const CommentItem = ({
   return (
     <>
       <div className={styles.commentItemContainer}>
-        <div>{index + 1}</div>
-        {isReply && <div>L</div>}
-        <div>{`${data.content} ${data.emoji}`}</div>
+        <div>
+          {isReply && parentUsername && <span>{`L @${parentUsername}`}</span>}
+          {`${data.content} ${data.emoji}`}
+        </div>
         <div
           className={styles.userInfo}
           onClick={() => {
@@ -99,7 +106,7 @@ const CommentItem = ({
           />
           <div>{data.author.username}</div>
         </div>
-        {!isAdding && (
+        {!isReply && !isAdding && (
           <button onClick={handleIsAdding} className="doneBtn">
             +
           </button>
@@ -108,10 +115,18 @@ const CommentItem = ({
       {isAdding && (
         <DiaryReplyAdd
           handleIsAdding={handleIsAdding}
+          diaryId={data.diaryId}
           id={data.id}
           username={data.author.username}
         />
       )}
+      {data.reComment?.map((item) => (
+        <CommentItem
+          data={item}
+          isReply={true}
+          parentUsername={data.author.username}
+        />
+      ))}
     </>
   );
 };
@@ -121,14 +136,16 @@ const DiaryReplyAdd = ({
   handleIsAdding,
   id,
   username,
+  diaryId,
 }: {
+  diaryId?: string;
   username: string;
   id: string;
   handleIsAdding: () => void;
 }) => {
   const [comment, setComment] = useState('');
 
-  const postMutation = usePostCommentData(id as string, handleIsAdding);
+  const postMutation = usePostCommentData(diaryId!, handleIsAdding);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
