@@ -29,6 +29,8 @@ app.use(bodyParser.json());
 app.use(Logger);
 sendAlarm();
 
+
+
 app.use(passport.initialize());
 
 const localStrategyInstance = localStrategy;
@@ -61,6 +63,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 const apiRouter = express.Router();
+const router = express.Router();
 
 apiRouter.use('/users', userAuthRouter);
 apiRouter.use('/test', testAuthRouter);
@@ -71,22 +74,14 @@ apiRouter.use('/comments', commentRouter);
 
 app.use('/api', apiRouter);
 
-// // 정적 파일 제공을 위한 미들웨어 설정
-// app.use(express.static("public"));
 app.use('/api/fileUpload', express.static('fileUpload'));
 app.use(errorMiddleware);
 
-// 웹소켓을 이용한 1:1 채팅
 const io = new SocketIoServer(server, {
   path: '/chat',
   cors: {
-<<<<<<< HEAD
-    origin: 'http://localhost:3000', // Replace with your actual frontend URL
+    origin: allowedOrigins,
     methods: ['GET', 'POST', 'WEBSOCKET'],
-=======
-    origin: 'https://kdt-ai-8-team02.elicecoding.com', // Replace with your actual frontend URL
-    methods: ['GET', 'POST',  'WEBSOCKET'],
->>>>>>> ac5fe1e (Fix: 채팅 메시지)
   },
 });
 
