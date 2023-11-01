@@ -11,6 +11,7 @@ import Tab, { TapType } from './Network.Tab';
 import search from '../../../assets/search.png';
 import SearchList from '../../../components/search/Search.SearchList';
 import { DiaryItemType } from '../../../api/get/useGetDiaryData.types';
+import { usePostLikeDiaryData } from '../../../api/post/usePostDiaryData';
 
 const DiaryList = () => {
   const [select, setSelect] = useState('all');
@@ -23,9 +24,7 @@ const DiaryList = () => {
     setIsOpenSearchList((prev) => !prev);
   };
 
-  const userId = localStorage.getItem('userId');
-  const navigator = useNavigate();
-  const { data, isFetching, refetch } = useGetDiarysData({
+  const { data, isFetching } = useGetDiarysData({
     emotion: tapEmotion,
     select,
     page: currentPage,
@@ -95,15 +94,15 @@ const DairyItem = ({ data }: { data: DiaryItemType }) => {
     setIsOpenDiary((prev) => !prev);
   };
 
+  const postLikeMutation = usePostLikeDiaryData({
+    id: data.id,
+    isNetwork: true,
+  });
+
   const handleDiaryLikeClick = async (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
 
-    try {
-      await instance.post(`/favorites/${data.id}`);
-      data.favoriteCount += 1;
-    } catch {
-      console.error('좋아요 누르기 실패');
-    }
+    postLikeMutation.mutate();
   };
 
   return (

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import styles from './Search.SearchList.module.scss';
 import { ca } from 'date-fns/locale';
+import { useGetSearchUserData } from '../../api/get/useGetSearchData';
 
 const SearchList = ({
   toggleIsOpenSearchList,
@@ -9,19 +10,23 @@ const SearchList = ({
   toggleIsOpenSearchList: () => void;
   targetName: string;
 }) => {
-  const [fieldName, setFieldName] = useState<
+  const [field, setField] = useState<
     'email' | 'username' | 'title' | 'content'
   >(targetName === '유저' ? 'username' : 'title');
   const [searchTerm, setSearchTerm] = useState('');
+  const [inputValue, setInputValue] = useState('');
+  const { data } = useGetSearchUserData({ searchTerm, field });
 
   useEffect(() => {
+    // 타이머를 설정함
     const timer = setTimeout(() => {
-      console.log('검색어 제출', searchTerm);
+      setSearchTerm(inputValue);
     }, 500);
+    // dependency array 요소 바뀌면 타이머를 삭제하고 새로운 타이머를 삭제
     return () => {
       clearTimeout(timer);
     };
-  }, [searchTerm]);
+  }, [searchTerm, inputValue]);
 
   return (
     <div className="modal">
@@ -29,11 +34,16 @@ const SearchList = ({
         <h2>{targetName} 검색하기</h2>
         <form>
           <input
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
           />
         </form>
         <div>
+          {data?.data ? (
+            data?.data?.map((item) => <SearchItem />)
+          ) : (
+            <div>검색결과가 없습니다.</div>
+          )}
           <SearchItem />
           <SearchItem />
           <SearchItem />

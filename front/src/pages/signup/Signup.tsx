@@ -4,7 +4,7 @@ import { withLoginSoNot } from '../../components/withLogin';
 
 const SignupPage: React.FC = () => {
   return (
-    <main style={{ height: '74.5vh' }}>
+    <main style={{ height: '69vh' }}>
       <Signup></Signup>
     </main>
   );

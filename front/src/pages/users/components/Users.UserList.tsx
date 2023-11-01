@@ -101,14 +101,16 @@ const UserItem = ({ data }: { data: UserItemType }) => {
         navigator(`/user/${id}`);
       }}
     >
-      {!isFriend && (
-        <button
-          className={`doneBtn ${styles.friendBtn}`}
-          onClick={handleFriendReqBtnClick}
-        >
-          +
-        </button>
-      )}
+      <div className={styles.btns}>
+        {!isFriend && (
+          <button
+            className={`doneBtn ${styles.friendBtn}`}
+            onClick={handleFriendReqBtnClick}
+          >
+            +
+          </button>
+        )}
+      </div>
       <div>
         <ImageComponent
           src={

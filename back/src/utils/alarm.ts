@@ -1,8 +1,6 @@
 import cron from 'node-cron';
 import { sendEmail } from './email';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '../../prisma/prismaClient';
 
 // 유저 설정에 따른 일기 작성 알림 메일 발송
 export const sendAlarm = async () => {
@@ -56,9 +54,9 @@ export const sendAlarm = async () => {
               <p>오늘 하루를 되짚어보며 일기로 기록해 보는건 어떨까요?</p><br />
               <a href="${process.env.SERVER_URL}" style="
               display: inline-block;
-              margin-top: 20px;
+              margin-top: 10px;
               padding: 10px 20px;
-              background-color: #007BFF;
+              background-color: #FFA2AD;
               color: white;
               text-decoration: none;
               border-radius: 5px;">오늘 하루 기록하러 가기</a>

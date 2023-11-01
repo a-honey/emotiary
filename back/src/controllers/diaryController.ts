@@ -21,6 +21,10 @@ import { DiaryValidateDTO } from '../dtos/diaryDTO';
 import { validate } from 'class-validator';
 import { generateError } from '../utils/errorGenerator';
 import { getMyWholeFriends } from '../services/friendService';
+import {
+  createdGPTComment,
+  updatedGPTComment,
+} from '../services/commentService';
 
 /**
  * 다이어리 생성
@@ -63,6 +67,10 @@ export const createDiary = async (
 
   const createdDiary = await createDiaryService(userId, inputData, fileUrls);
   console.log(createDiary);
+
+  // 일기 작성시 chatGPT를 활용한 댓글 한마디 추가
+  createdGPTComment(inputData.content, userId, createdDiary.data.id);
+
   return res.status(createdDiary.status).json(createdDiary);
 };
 
@@ -211,6 +219,8 @@ export const updateDiary = async (
   // throw generateError(400, errors[0].constraints?.isString);
   // return res.status(400).json(errors);
   const updatedDiary = await updateDiaryService(userId, diaryId, updatedData);
+
+  updatedGPTComment(inputData.content, userId, diaryId);
 
   return res.status(updatedDiary.status).json(updatedDiary);
 };

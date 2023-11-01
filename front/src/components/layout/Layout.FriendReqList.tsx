@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styles from './index.module.scss';
 import { useGetFriendData } from '../../api/get/useGetFriendData';
 import {
@@ -6,12 +6,16 @@ import {
   sentUserDataType,
 } from '../../api/get/useGetFriendData.types';
 import ImageComponent from '../ImageComponent';
-import { useAcceptFriendReqMutation } from '../../api/post/usePostFriendData';
+import {
+  useAcceptFriendReqMutation,
+  useCancelFriendReqMutation,
+  useRejectFriendReqMutation,
+} from '../../api/post/usePostFriendData';
 
 const FriendReqList = () => {
   const [isReqList, setIsReqList] = useState(true);
 
-  const { data, isFetching } = useGetFriendData({
+  const { data } = useGetFriendData({
     userReqListType: isReqList ? 'received' : 'sent',
   });
 
@@ -64,9 +68,15 @@ const FriendReqList = () => {
 export default FriendReqList;
 
 const ResItem = ({ item }: { item: sentUserDataType['sentUser'] }) => {
-  const postMutation = useAcceptFriendReqMutation();
+  const postAcceptMutation = useAcceptFriendReqMutation();
+  const postRejectMutation = useRejectFriendReqMutation();
+
   const handleAcceptClick = () => {
-    postMutation.mutate({ id: item.id });
+    postAcceptMutation.mutate({ id: item.id });
+  };
+
+  const handleRejectClick = () => {
+    postRejectMutation.mutate({ id: item.id });
   };
 
   return (
@@ -79,13 +89,21 @@ const ResItem = ({ item }: { item: sentUserDataType['sentUser'] }) => {
         <button className="doneBtn" onClick={handleAcceptClick}>
           수락
         </button>
-        <button className="cancelBtn">거절</button>
+        <button className="cancelBtn" onClick={handleRejectClick}>
+          거절
+        </button>
       </div>
     </div>
   );
 };
 
 const ReqItem = ({ item }: { item: ReceivedUserDataType['receivedUser'] }) => {
+  const postCancelMutation = useCancelFriendReqMutation();
+
+  const handleCancelClick = () => {
+    postCancelMutation.mutate({ id: item.id });
+  };
+
   return (
     <div className={styles.reqItemContainer}>
       <div>
@@ -100,7 +118,9 @@ const ReqItem = ({ item }: { item: ReceivedUserDataType['receivedUser'] }) => {
         {item.username}
       </div>
       <div className={styles.btns}>
-        <button className="cancelBtn">취소</button>
+        <button className="cancelBtn" onClick={handleCancelClick}>
+          취소
+        </button>
       </div>
     </div>
   );
