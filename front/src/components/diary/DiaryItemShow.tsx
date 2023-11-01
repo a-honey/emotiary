@@ -94,7 +94,7 @@ const DiaryItemShow = ({
           page: null,
         }),
       );
-      queryClient.invalidateQueries(queryKeys.myAllDiarysData());
+      queryClient.invalidateQueries(queryKeys.myAllDiarysData({}));
     };
   }, [queryClient]);
 

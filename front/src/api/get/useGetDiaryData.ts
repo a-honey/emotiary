@@ -79,7 +79,7 @@ export const useGetMyAllDiarysData = ({
   limit: number;
 }) => {
   return useQuery(
-    queryKeys.myAllDiarysData(),
+    queryKeys.myAllDiarysData({ page }),
     () => {
       const urlQueryString = new URLSearchParams({
         page: page.toString(),
