@@ -52,7 +52,8 @@ export const usePostCommentData = (id: string, done?: () => void) => {
     {
       onSuccess: (res) => {
         if (res.data.data.emoji) {
-          queryClient.invalidateQueries(queryKeys.diaryData({ id }));
+          queryClient.invalidateQueries(queryKeys.diaryCommentData({ id }));
+
           done?.();
         }
       },
