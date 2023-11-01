@@ -8,11 +8,13 @@ import { usePutSelectedEmoji } from '../../../api/put/usePutDiaryData';
 const EmojiSelect = ({
   id,
   emojis,
-  toggleIsEmojiSelectOpen,
+  toggleIsOpenModal,
+  handleDeleteEmojis,
 }: {
   id: string;
   emojis: ResEmojiType[];
-  toggleIsEmojiSelectOpen: () => void;
+  toggleIsOpenModal: () => void;
+  handleDeleteEmojis: () => void;
 }) => {
   const putMutation = usePutSelectedEmoji();
 
@@ -27,7 +29,6 @@ const EmojiSelect = ({
     putMutation.mutate({ id, body });
   };
 
-  console.log(emojis);
   useEffect(() => {}, [emojis]);
 
   return (
@@ -59,7 +60,7 @@ const EmojiSelect = ({
           <button
             className="cancelBtn"
             type="button"
-            onClick={toggleIsEmojiSelectOpen}
+            onClick={handleDeleteEmojis}
           >
             다시쓰기
           </button>

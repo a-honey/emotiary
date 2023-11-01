@@ -1,11 +1,7 @@
-import {
-  QueryClient,
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { formDataInstance, instance } from '../instance';
 import { queryKeys } from '../queryKeys';
-import { CommentBodyType, DiaryBodyType } from './usePostDiaryData.types';
+import { CommentBodyType } from './usePostDiaryData.types';
 import { Error } from '../types';
 
 export interface ResEmojiType {

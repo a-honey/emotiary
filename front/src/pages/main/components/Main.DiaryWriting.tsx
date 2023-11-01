@@ -32,19 +32,18 @@ const DiaryWriting = ({
   const [formData, setFormData] = useState<Record<string, string>>(
     DIARY_WRITING_INITIAL_DATA,
   );
-  const [isEmojiSelectOpen, setIsEmojiSelectOpen] = useState(false);
 
   const handleAddImgsContainer = (img: File) => {
     setImgsContainer((prev) => [...prev, img]);
   };
 
-  const toggleIsEmojiSelectOpen = () => {
-    setIsEmojiSelectOpen((prev) => !prev);
-  };
-
   const handleOnSuccess = (emojis: ResEmojiType[], id: string) => {
     setEmojis(emojis);
     setDiaryId(id);
+  };
+
+  const handleDeleteEmojis = () => {
+    setEmojis([]);
   };
 
   const postMutation = usePostDiaryData(handleOnSuccess);
@@ -77,8 +76,6 @@ const DiaryWriting = ({
     postMutation.mutate({
       body,
     });
-
-    setIsEmojiSelectOpen(true);
   };
 
   return (
@@ -149,7 +146,8 @@ const DiaryWriting = ({
         <EmojiSelect
           id={diaryId}
           emojis={emojis}
-          toggleIsEmojiSelectOpen={toggleIsEmojiSelectOpen}
+          handleDeleteEmojis={handleDeleteEmojis}
+          toggleIsOpenModal={toggleIsOpenModal}
         />
       )}
     </div>
