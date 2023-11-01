@@ -78,7 +78,7 @@ const CommentItem = ({
   return (
     <>
       <div className={styles.commentItemContainer}>
-        <div>{index + 1} |</div>
+        <div>{index + 1}</div>
         {isReply && <div>L</div>}
         <div>{data.content}</div>
         <div
