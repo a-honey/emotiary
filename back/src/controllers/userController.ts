@@ -1,21 +1,27 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, RequestHandler } from "express";
 import { 
     createUser,
     myInfo,
+    getAllUsers,
+    getMyFriends,
     getUserInfo,
     updateUserService,
     deleteUserService,
     forgotUserPassword,
     resetUserPassword,
     getUserFromDatabase,
-    areUsersFriends,
+    getUsers,
 } from '../services/authService';
 import {
     generateAccessToken,
     verifyRefreshToken,
 } from '../utils/tokenUtils'
-import { IRequest } from "types/user";
+import { IRequest, IUser } from "types/user";
 import { PrismaClient } from '@prisma/client';
+import { userValidateDTO } from "../dtos/userDTO";
+import { plainToClass } from "class-transformer";
+import { emptyApiResponseDTO } from "../utils/emptyResult";
+import { emailToken, sendEmail } from "../utils/email";
 
 const prisma = new PrismaClient();
 
@@ -24,11 +30,12 @@ export const userRegister = async (req : Request, res : Response, next : NextFun
         // swagger 데이터전용
         // #swagger.tags = ['Users']
         const {username, email, password} = req.body;
+        const inputData = plainToClass(userValidateDTO, req.body);
 
         // createUser 함수를 사용하여 새 사용자 생성
-        const user = await createUser(req.body);
+        const user = await createUser(inputData);
 
-        res.status(200).json({ data: user, message: '성공' });
+        return res.status(user.status).json(user);
     }catch(error){
         next(error);
     }
@@ -39,7 +46,6 @@ export const userLogin = async (req : IRequest, res : Response, next : NextFunct
         // swagger 데이터전용
         // #swagger.tags = ['Users']
         const { email, password } = req.body;
-
         // 사용자 정보와 토큰 데이터를 사용하여 user 객체 생성
         const user = {
             token: req.token,
@@ -47,7 +53,6 @@ export const userLogin = async (req : IRequest, res : Response, next : NextFunct
             id: req.user.id,
             name: req.user.username,
             email: req.user.email,
-            uploadFile: req.user.profileImage,
         };
 
         return res.status(200).json({ data: user, message: '성공' });
@@ -72,7 +77,7 @@ export const getMyInfo = async(
         // myInfo 함수를 사용하여 현재 사용자의 정보 가져오기
         const currentUserInfo = await myInfo(userId);
         
-        res.status(200).json({ data: currentUserInfo, message: '성공' });
+        res.status(currentUserInfo.status).json(currentUserInfo);
     }catch(error){
         next(error);
     }
@@ -86,37 +91,31 @@ export const getAllUser = async(
     try{
         // #swagger.tags = ['Users']
 
-        
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
         const userId = req.user.id;
 
-        // 모든 사용자 정보를 데이터베이스에서 가져오기
-        const allUsers = await prisma.user.findMany();
+        const allUsers = await getAllUsers(userId, page, limit);
 
+        return res.status(allUsers.status).json(allUsers);
+    }catch(error){
+        next(error);
+    }
+}
 
+export const getMyFriend = async(
+    req : IRequest,
+    res : Response,
+    next : NextFunction
+) => {
+    try{
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+        const userId = req.user.id;
 
-        console.log(userId);
-        for (const user of allUsers) {
+        const allUsers = await getMyFriends(userId, page, limit);
 
-            const areFriends = await areUsersFriends(userId, user.id);
-            user.isFriend = areFriends;
-
-
-            const latestDiary = await prisma.diary.findFirst({
-                where : {
-                    authorId : user.id
-                },
-                orderBy : {
-                    createdAt : 'desc'
-                }
-            });
-            if(latestDiary) {
-                user.latestEmoji = latestDiary.emoji;
-            }
-        }
-
-        const totalUsers = allUsers.length;
-
-        res.status(200).json({ data: allUsers, message: '성공', totalUsers });
+        return res.status(allUsers.status).json(allUsers);
     }catch(error){
         next(error);
     }
@@ -138,7 +137,7 @@ export const getUserId = async(
         // getUserInfo 함수를 사용하여 특정 사용자의 정보 가져오기
         const userInfo = await getUserInfo(userId);
 
-        res.status(200).json({ data: userInfo, message: '성공' });
+        res.status(userInfo.status).json(userInfo);
     }catch(error){
         next(error);
     }
@@ -173,21 +172,18 @@ export const updateUser = async(
 ) => {
     try{
         const userId = req.params.userId;
-        console.log(req.body);
 
         // swagger 데이터전용
         /* #swagger.tags = ['Users']
          #swagger.security = [{
                "bearerAuth": []
         }] */
-        const { email, username, description, profileImage } = req.body;
-
+        const { email, username, description } = req.body;
+        const inputData = plainToClass(userValidateDTO, req.body);
         // updateUserService 함수를 사용하여 사용자 정보 업데이트
-        const updatedUser = await updateUserService(userId,{
-            toUpdate : { ...req.body },
-        });
+        const updatedUser = await updateUserService(userId, req.body);
         
-        res.status(200).json({ data: updatedUser, message: '성공' });
+        res.status(updatedUser.status).json(updatedUser);
     }catch(error){
         next(error);
     }
@@ -205,6 +201,15 @@ export const deleteUser = async(
         }] */
 
         const userId = req.params.userId;
+
+        const user = await prisma.user.findUnique({
+            where: { id: userId }, // userId를 적절한 값으로 대체
+        });
+        
+        if (!user) {
+            // 사용자를 찾을 수 없는 경우 적절한 오류 처리를 수행
+            return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+        }
 
         // deleteUserService 함수를 사용하여 사용자 삭제
         const message = await deleteUserService(userId);
@@ -225,7 +230,8 @@ export const forgotPassword = async (req : IRequest, res : Response, next : Next
         const user = await prisma.user.findUnique({where : { email }});
 
         if(!user){
-            return res.status(404).json({ data : [], message : '사용자를 찾을 수 없습니다.' });
+            const response = emptyApiResponseDTO();
+            return response;
         }
 
         // forgotUserPassword 함수를 사용하여 임시 비밀번호 생성 및 이메일로 전송
@@ -250,7 +256,8 @@ export const resetPassword = async(req : IRequest, res : Response, next : NextFu
         const user = await prisma.user.findUnique({where : { email }});
 
         if(!user){
-            return res.status(404).json({data : [], message : '사용자를 찾을 수 없습니다.'});
+            const response = emptyApiResponseDTO();
+            return response;
         }
         
         // resetUserPassword 함수를 사용하여 비밀번호 재설정
@@ -268,7 +275,8 @@ export const refresh = async (req : IRequest, res : Response, next : NextFunctio
     const refreshToken = req.body.token;
 
     if (!refreshToken) {
-        return res.status(401).json({ data : [], message: 'Refresh Token 없음' });
+        const response = emptyApiResponseDTO();
+        return response;
     }
 
     // Refresh Token을 사용하여 사용자 ID 확인
@@ -299,7 +307,8 @@ export const profile = async (req : IRequest, res : Response, next : NextFunctio
         });
 
         if(!user){
-            return res.status(404).json({data : [], message : '사용자를 찾을 수 없습니다.'});
+            const response = emptyApiResponseDTO();
+            return response;
         }
         // 현재 사용자의 프로필 정보를 응답으로 반환
         return res.json({data : user, message : "성공"});
@@ -311,4 +320,119 @@ export const profile = async (req : IRequest, res : Response, next : NextFunctio
 export const loginCallback = (req : IRequest, res :Response) => {
     // 소셜 로그인 성공 시 홈 페이지로 리다이렉션
     res.redirect('/');
+}
+
+export const searchKeyword = async(req : IRequest, res : Response, next : NextFunction) => {
+    try{
+        const searchTerm = req.query.searchTerm as string;
+        const field = req.query.field as string;
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+
+        const searchKeyword = await getUsers(searchTerm, field, page, limit);
+
+        res.json(searchKeyword);
+    }catch(error){
+        next(error);
+    }
+}
+
+//1111111111
+export const emailLink = async (req : IRequest, res : Response) => {
+    const { email } = req.body;
+
+    const user = await prisma.user.create({
+        data : {
+            email,
+            isVerified : false,
+        },
+    });
+
+    const result = emailToken();
+
+    await prisma.user.update({
+        where : {
+            id : user.id
+        },
+        data : {
+            verificationToken : result.token,
+            verificationTokenExpires : result.expires,
+        },
+    });
+
+    let baseUrl;
+    if (process.env.NODE_ENV === 'development') {
+        baseUrl = 'http://localhost:5001';
+    } else {
+        baseUrl = 'https://kdt-ai-8-team02.elicecoding.com';
+    }
+    const verifyUrl = `${baseUrl}/api/users/verifyEmail/${result.token}`;
+    
+    await sendEmail(
+        email,
+        "이메일 인증",
+        "",
+        `<p>눌러 주세요</p>
+        <p><a href = "${verifyUrl}">Verify Email</a></p>
+        <p>${result.expires}</p>`
+    );
+
+    res.json({ message: '이메일을 확인해주세요' });
+}
+
+//2222222222222
+export const verifyEmail = async (req : IRequest, res : Response) => {
+    const { token } = req.params;
+
+    const user = await prisma.user.findFirst({
+        where : {
+            verificationToken : token,
+            verificationTokenExpires : {
+                gte : new Date(),
+            },
+        },
+    });
+
+    if(!user){
+        return res.status(400).json({message : '토큰이 유효하지 않습니다.'});
+    }
+
+    await prisma.user.update({
+        where : {
+            id : user.id,
+        },
+        data : {
+            isVerified : true,
+            verificationToken : null,
+            verificationTokenExpires : null,
+        },
+    })
+    res.redirect('/api/users/verified');
+}
+
+export const emailVerified = (req : IRequest, res : Response) => {
+    res.send('이메일이 성공적으로 인증되었습니다.');
+}
+//3333333333333
+
+export const testEmail = async (req : IRequest, res : Response) => {
+    const { email, username, password } = req.body;
+
+    const user = await prisma.user.findUnique({
+        where: { email },
+    });
+
+    if (!user || !user.isVerified) {
+        return res.status(400).json({ message: '이메일 인증이 필요합니다.' });
+    }
+
+    await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          username,
+          password,
+        },
+    });
+    
+    res.json({ message: '회원가입이 완료되었습니다.' });
 }

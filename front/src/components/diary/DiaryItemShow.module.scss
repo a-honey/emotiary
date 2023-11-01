@@ -11,19 +11,33 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  border-bottom: solid 1px black;
+  border-bottom: solid 1px #ededed;
   .titles {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     h2 {
       font-size: 25px;
       font-weight: 700;
+      span {
+        padding-left: 20px;
+        font-size: 40px;
+      }
     }
     .like {
       display: flex;
       gap: 10px;
     }
   }
+  .contentContainer {
+    display: flex;
+    padding: 20px;
+    img {
+      width: 200px;
+      border-radius: 5px;
+    }
+  }
+
   .diaryInfo {
     display: flex;
     gap: 20px;
@@ -37,7 +51,9 @@
         font-weight: 700;
       }
       img {
-        width: 30px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
       }
     }
   }

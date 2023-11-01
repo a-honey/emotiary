@@ -21,8 +21,8 @@ const DiaryList = () => {
         {isFetching ? (
           <div>로딩중</div>
         ) : (
-          data.data.map((item: MyDairyItemType, index: number) => (
-            <DiaryItem data={item} key={item.id} index={index} />
+          data?.data?.map((item: MyDairyItemType) => (
+            <DiaryItem data={item} key={item.id} />
           ))
         )}
       </div>
@@ -39,13 +39,7 @@ const DiaryList = () => {
 
 export default DiaryList;
 
-const DiaryItem = ({
-  data,
-  index,
-}: {
-  data: MyDairyItemType;
-  index: number;
-}) => {
+const DiaryItem = ({ data }: { data: MyDairyItemType }) => {
   const [isOpenModal, setIsOpenModal] = useState(false);
 
   const toggleIsOpenModal = () => {
@@ -58,7 +52,6 @@ const DiaryItem = ({
         <DiaryItemShow id={data.id} toggleIsOpenModal={toggleIsOpenModal} />
       )}
       <div className={styles.diaryItem} onClick={toggleIsOpenModal}>
-        <div className={styles.index}>{index + 1} |</div>
         <div className={styles.title}>{data.title}</div>
         <div className={styles.date}>{data.createdDate.split('T')[0]}</div>
       </div>

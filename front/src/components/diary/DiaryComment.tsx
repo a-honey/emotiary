@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import styles from './DiaryComment.module.scss';
-import { useQueryClient } from '@tanstack/react-query';
-import { usePostCommentData } from '../../api/mutation/usePostDiaryData';
+import { usePostCommentData } from '../../api/post/usePostDiaryData';
 import { useNavigate } from 'react-router-dom';
 import ImageComponent from '../ImageComponent';
 
@@ -10,10 +9,23 @@ interface CommentDataType {
   diaryId: string;
   content: string;
   createdAt: string;
+  reComment?: {
+    id: string;
+    emoji: string;
+    diaryId: string;
+    content: string;
+    createdAt: string;
+    author: {
+      id: string;
+      username: string;
+      profileImage: { id: number; url: string }[];
+    };
+  }[];
+  emoji: string;
   author: {
     id: string;
     username: string;
-    profileImage: string;
+    profileImage: { id: number; url: string }[];
   };
 }
 
@@ -27,9 +39,7 @@ const DiaryComment = ({
 }) => {
   const [comment, setComment] = useState('');
 
-  const queryClient = useQueryClient();
-
-  const postMutation = usePostCommentData(queryClient, id as string);
+  const postMutation = usePostCommentData(id as string);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,8 +50,8 @@ const DiaryComment = ({
   return (
     <>
       <div className={styles.comments}>
-        {data?.map((item, index) => (
-          <CommentItem data={item} index={index} isReply={false} />
+        {data?.map((item) => (
+          <CommentItem data={item} key={item.id} isReply={false} />
         ))}
       </div>
       <form className={styles.commentAddcontainer} onSubmit={handleSubmit}>
@@ -63,13 +73,13 @@ export default DiaryComment;
 
 //** 댓글을 보여주는 컴포넌트 */
 const CommentItem = ({
-  index,
   data,
   isReply,
+  parentUsername,
 }: {
-  index: number;
   data: CommentDataType;
   isReply: boolean;
+  parentUsername?: string;
 }) => {
   const navigator = useNavigate();
   const [isAdding, setIsAdding] = useState(false);
@@ -80,9 +90,10 @@ const CommentItem = ({
   return (
     <>
       <div className={styles.commentItemContainer}>
-        <div>{index + 1} |</div>
-        {isReply && <div>L</div>}
-        <div>{data.content}</div>
+        <div>
+          {isReply && parentUsername && <span>{`L @${parentUsername}`}</span>}
+          {`${data.content} ${data.emoji ?? ''}`}
+        </div>
         <div
           className={styles.userInfo}
           onClick={() => {
@@ -90,12 +101,12 @@ const CommentItem = ({
           }}
         >
           <ImageComponent
-            src={data.author.profileImage}
+            src={data.author.profileImage.at(-1)?.url ?? null}
             alt={`${data.author.username}의 프로필사진`}
           />
           <div>{data.author.username}</div>
         </div>
-        {!isAdding && (
+        {!isReply && !isAdding && (
           <button onClick={handleIsAdding} className="doneBtn">
             +
           </button>
@@ -104,10 +115,18 @@ const CommentItem = ({
       {isAdding && (
         <DiaryReplyAdd
           handleIsAdding={handleIsAdding}
+          diaryId={data.diaryId}
           id={data.id}
           username={data.author.username}
         />
       )}
+      {data.reComment?.map((item) => (
+        <CommentItem
+          data={item}
+          isReply={true}
+          parentUsername={data.author.username}
+        />
+      ))}
     </>
   );
 };
@@ -117,20 +136,16 @@ const DiaryReplyAdd = ({
   handleIsAdding,
   id,
   username,
+  diaryId,
 }: {
+  diaryId?: string;
   username: string;
   id: string;
   handleIsAdding: () => void;
 }) => {
   const [comment, setComment] = useState('');
 
-  const queryClient = useQueryClient();
-
-  const postMutation = usePostCommentData(
-    queryClient,
-    id as string,
-    handleIsAdding,
-  );
+  const postMutation = usePostCommentData(diaryId!, handleIsAdding);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

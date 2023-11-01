@@ -2,14 +2,18 @@ import React from 'react';
 import styles from './Pagination.module.scss';
 
 const Pagination = ({
-  totalPage = 1,
-  currentPage = 1,
+  totalPage,
+  currentPage,
   handlePage,
 }: {
-  totalPage: number;
-  currentPage: number;
+  totalPage: number | undefined;
+  currentPage: number | undefined;
   handlePage: (arg: number) => void;
 }) => {
+  if (!totalPage || !currentPage) {
+    return null;
+  }
+
   const handleLeftClick: React.MouseEventHandler<HTMLLIElement> = () => {
     if (currentPage === 1) {
       return;

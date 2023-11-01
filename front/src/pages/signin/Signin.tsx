@@ -1,12 +1,13 @@
 import React, { ReactNode } from 'react';
 import Signin from './components/Signin.Signin';
+import { withLoginSoNot } from '../../components/withLogin';
 
 const SigninPage: React.FC = () => {
   return (
-    <main>
+    <main style={{ height: '69vh' }}>
       <Signin></Signin>
     </main>
   );
 };
 
-export default SigninPage;
+export default withLoginSoNot(SigninPage);

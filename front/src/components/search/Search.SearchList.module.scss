@@ -1,0 +1,46 @@
+@import '../../styles/variables.scss';
+
+.container {
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  border-radius: 5px;
+  width: 50vw;
+  h2 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  form {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    button {
+      width: 70px;
+    }
+  }
+}
+
+.itemList {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.itemContainer {
+  border: 1px solid #ccc;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  cursor: pointer;
+  &:hover {
+    background-color: map-get($colors, bg);
+  }
+  img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+  }
+}

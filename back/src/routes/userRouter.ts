@@ -1,9 +1,12 @@
 import { Router } from "express";
 import {
   userLogin,
+  verifyEmail,
+  emailVerified,
   userRegister,
   getMyInfo,
   getAllUser,
+  getMyFriend,
   getUserId,
   updateUser,
   deleteUser,
@@ -12,33 +15,45 @@ import {
   refresh,
   loginCallback,
   userLogout,
+  emailLink,
+  testEmail,
+  searchKeyword,
 } from "../controllers/userController";
 import { localAuthentication } from "../middlewares/authenticateLocal";
 import { jwtAuthentication } from "../middlewares/authenticateJwt";
 import { fileUpload } from "../middlewares/uploadMiddleware";
-import {
-  RegisterValidator,
-  updateValidator,
-} from "../utils/validators/userValidator";
 import passport from "passport";
 const userAuthRouter = Router();
 
 // 회원가입
-userAuthRouter.post("/register", RegisterValidator, userRegister);
+userAuthRouter.post("/register", userRegister);
 
 userAuthRouter.post('/login', localAuthentication, userLogin);
+
+//test4
+userAuthRouter.post("/testregister", testEmail);
+//1
+userAuthRouter.post('/email', emailLink);
+//2
+userAuthRouter.get('/verifyEmail/:token', verifyEmail);
+//3
+userAuthRouter.get('/verified', emailVerified);
+
+userAuthRouter.get('/search', jwtAuthentication, searchKeyword);
 
 userAuthRouter.get('/current', jwtAuthentication, getMyInfo);
 
 userAuthRouter.get('/allUser', jwtAuthentication, getAllUser);
 
+userAuthRouter.get('/myfriend', jwtAuthentication, getMyFriend);
+
 userAuthRouter.get("/logout", jwtAuthentication, userLogout);
 
 userAuthRouter
   .route("/:userId")
-  .get(getUserId)
-  .put(jwtAuthentication, fileUpload, updateValidator, updateUser)
-  .delete(jwtAuthentication, deleteUser);
+  .get(jwtAuthentication, getUserId)
+  .put(jwtAuthentication, fileUpload, updateUser)
+  .delete( deleteUser);
 
 // 비밀번호 재설정 이메일 보내기
 userAuthRouter.post("/forgot-password", forgotPassword);
@@ -74,7 +89,7 @@ userAuthRouter.post('/add-emoji', async (req, res) => {
     const { type, emotion } = req.body; // 클라이언트에서 전송한 데이터
     const emojiData = {
       type,
-      ...emotion, // 감정에 따른 이모지 데이터
+      emotion, // 감정에 따른 이모지 데이터
     };
     
     await prisma.emoji.create({

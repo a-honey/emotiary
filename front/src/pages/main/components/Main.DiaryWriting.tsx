@@ -2,39 +2,51 @@ import React, { ChangeEvent } from 'react';
 
 import { useState } from 'react';
 import styles from './index.module.scss';
-import { useQueryClient } from '@tanstack/react-query';
-import getUserId from '../../../utils/localStorageHandlers';
 import useImgChange from '../../../hooks/useImgChange';
 import EmojiSelect from './Main.EmojiSelect';
-import { usePostDiaryData } from '../../../api/mutation/usePostDiaryData';
-import { formatDate } from '../../../utils/formatHandlers';
+import {
+  ResEmojiType,
+  usePostDiaryData,
+} from '../../../api/post/usePostDiaryData';
+import { formatDatetoString } from '../../../utils/formatHandlers';
+import post_none from '../../../assets/post_none.png';
 
 const DIARY_WRITING_INITIAL_DATA = {
   title: '',
   content: '',
   is_public: 'all',
-  emoji: '🥰',
+  createdDate: '2023-10-31',
 };
 
 const DiaryWriting = ({
   day,
-  handleIsOpenDiaryWriting,
+  toggleIsOpenModal,
 }: {
   day: Date;
-  handleIsOpenDiaryWriting: () => void;
+  toggleIsOpenModal: () => void;
 }) => {
-  const [formData, setFormData] = useState(DIARY_WRITING_INITIAL_DATA);
-  const [isEmojiSelectOpen, setIsEmojiSelectOpen] = useState(false);
+  const [imgsContainer, setImgsContainer] = useState<File[]>([]);
+  const [emojis, setEmojis] = useState<ResEmojiType[]>([]);
+  const [diaryId, setDiaryId] = useState('');
 
-  const toogleIsEmojiSelectOpen = () => {
-    setIsEmojiSelectOpen((prev) => !prev);
+  const [formData, setFormData] = useState<Record<string, string>>(
+    DIARY_WRITING_INITIAL_DATA,
+  );
+
+  const handleAddImgsContainer = (img: File) => {
+    setImgsContainer((prev) => [...prev, img]);
   };
 
-  const queryClient = useQueryClient();
+  const handleOnSuccess = (emojis: ResEmojiType[], id: string) => {
+    setEmojis(emojis);
+    setDiaryId(id);
+  };
 
-  const postMutation = usePostDiaryData(queryClient, handleIsOpenDiaryWriting);
+  const handleDeleteEmojis = () => {
+    setEmojis([]);
+  };
 
-  const { handleImgChange, imgContainer, imgRef } = useImgChange();
+  const postMutation = usePostDiaryData(handleOnSuccess);
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
@@ -49,9 +61,20 @@ const DiaryWriting = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    setIsEmojiSelectOpen(true);
+    const body = new FormData();
+
+    imgsContainer?.forEach((item) => body.append('filesUpload', item));
+
+    Object.keys(formData).forEach((key) => {
+      if (key !== 'createdDate') {
+        body.append(key, formData[key]);
+      }
+    });
+
+    body.append('createdDate', formatDatetoString(day));
+
     postMutation.mutate({
-      body: { ...formData, createdDate: formatDate(day), emotion: 'happiness' },
+      body,
     });
   };
 
@@ -64,15 +87,11 @@ const DiaryWriting = ({
         </div>
         <div className={styles.contentContainer}>
           <div className={styles.imgContainer}>
-            <img ref={imgRef} src="/post_none.png" alt="사진 업로드" />
-            <input
-              type="file"
-              accept="image/*"
-              alt="프로필 사진 업로드"
-              onChange={handleImgChange}
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={handleImgChange}
-            />
+            <ImgInputItem handleAddImgsContainer={handleAddImgsContainer} />
+            <ImgInputItem handleAddImgsContainer={handleAddImgsContainer} />
+            <ImgInputItem handleAddImgsContainer={handleAddImgsContainer} />
+            <ImgInputItem handleAddImgsContainer={handleAddImgsContainer} />
+            <ImgInputItem handleAddImgsContainer={handleAddImgsContainer} />
           </div>
           <div className={styles.content}>
             <label>제목</label>
@@ -114,20 +133,46 @@ const DiaryWriting = ({
           <button
             className="cancelBtn"
             type="button"
-            onClick={handleIsOpenDiaryWriting}
+            onClick={toggleIsOpenModal}
           >
             작성취소
           </button>
           <button className="doneBtn" type="submit">
             작성완료
           </button>
-          {isEmojiSelectOpen && (
-            <EmojiSelect toogleIsEmojiSelectOpen={toogleIsEmojiSelectOpen} />
-          )}
         </div>
       </form>
+      {emojis.length !== 0 && (
+        <EmojiSelect
+          id={diaryId}
+          emojis={emojis}
+          handleDeleteEmojis={handleDeleteEmojis}
+          toggleIsOpenModal={toggleIsOpenModal}
+        />
+      )}
     </div>
   );
 };
 
 export default DiaryWriting;
+
+const ImgInputItem = ({
+  handleAddImgsContainer,
+}: {
+  handleAddImgsContainer: (img: File) => void;
+}) => {
+  const { handleImgChange, imgRef } = useImgChange(handleAddImgsContainer);
+  return (
+    <div>
+      <img ref={imgRef} src={post_none} alt="일기 사진 및 비디오 업로드" />
+      <input
+        type="file"
+        accept="image/*, video/*"
+        alt="일기 사진 및 비디오 업로드"
+        onChange={handleImgChange}
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={handleImgChange}
+      />
+    </div>
+  );
+};

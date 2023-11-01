@@ -1,15 +1,19 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { checkFriend, getMyWholeFriends, weAreFriends } from './friendService';
 import axios from 'axios';
-import { Emoji, emojiMapping, Emotion } from '../types/emoji';
+import { Emoji } from '../types/emoji';
 import { calculatePageInfo } from '../utils/pageInfo';
 import { DiaryResponseDTO, PaginationResponseDTO } from '../dtos/diaryDTO';
 import { plainToClass } from 'class-transformer';
 import { successApiResponseDTO } from '../utils/successResult';
 import { emptyApiResponseDTO } from '../utils/emptyResult';
+import { diaryUpload } from '../middlewares/uploadMiddleware';
+import { sendEmail } from '../utils/email';
+import { searchMusic } from '../utils/music';
+import ytdl from 'ytdl-core';
 
+import { generateError } from '../utils/errorGenerator';
 const prisma = new PrismaClient();
-
 /**
  * 다이어리 작성
  * @param title
@@ -17,48 +21,52 @@ const prisma = new PrismaClient();
  * @param authorId
  * @returns diary (새롭게 생성된 diary Object)
  */
+
 export const createDiaryService = async (
   authorId: string,
   inputData: Prisma.DiaryCreateInput,
+  fileUrls: string[],
 ) => {
-  // flask 테스트용
-  // const content = inputData.content;
+  const responseData = await axios.post(
+    'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
+    {
+      text: inputData.content,
+    },
+  );
+  console.log(responseData.data.emotion);
+  const labels = responseData.data.emotion.map(
+    (item: { label: string }) => item.label,
+  );
 
-  // const response = await axios.post('http://127.0.0.1:5000/predict', {
-  //   text: content,
-  // });
+  const emotionString = labels.join(',');
 
-  // // const emotion = response.data.emoji;
-  // const emotion = response.data;
+  inputData.emotion = emotionString;
 
-  // const emotionType = emotion.emoji;
-  // let emojiProperty: keyof Emoji = emojiMapping[emotion];
+  inputData.emoji = '❎';
 
-  // const emojis = await prisma.emoji.findMany({
-  //   where: {
-  //     type: emotionType, // 이모지 테이블의 감정 유형 필드에 따라 변경
-  //   },
-  // });
-
-  // const randomEmoji: Emoji = emojis[Math.floor(Math.random() * emojis.length)];
-
-  // emojiProperty = emojiMapping[emotionType] as keyof Emoji;
-
-  // // inputData에 emoji 추가
-  // inputData.emoji = String(randomEmoji[emojiProperty]);
-  // // 여기까지 flask 테스트용용용
-
-  const diary = await prisma.diary.create({
-    data: {
-      ...inputData,
-      author: {
-        connect: {
-          id: authorId,
-        },
+  const diaryData = {
+    ...inputData,
+    author: {
+      connect: {
+        id: authorId,
       },
     },
+  };
+
+  // fileUrls 배열에 데이터가 있는 경우에만 filesUpload를 추가
+  if (fileUrls && fileUrls.length > 0) {
+    diaryData.filesUpload = {
+      create: fileUrls.map((url) => ({
+        url,
+      })),
+    };
+  }
+
+  const diary = await prisma.diary.create({
+    data: diaryData,
     include: {
       author: true,
+      filesUpload: true,
     },
   });
 
@@ -87,6 +95,9 @@ export const getAllMyDiariesService = async (
     take: limit,
     where: { authorId: userId },
     orderBy: { createdDate: 'desc' },
+    include: {
+      filesUpload: true,
+    },
   });
 
   // 다이어리 결과 없을 때 빈 배열 값 반환
@@ -167,7 +178,7 @@ export const getDiaryByDiaryIdService = async (
 ) => {
   const diary = await prisma.diary.findUnique({
     where: { id: diaryId },
-    include: { author: true },
+    include: { author: true, filesUpload: true },
   });
 
   if (diary == null) {
@@ -176,17 +187,11 @@ export const getDiaryByDiaryIdService = async (
   }
 
   const friend = await checkFriend(userId, diary.authorId);
-  // //내 글 일 경우
-  // const isMyDiary = diary.authorId == userId;
-  // // 친구 글이면서 공개범위 priavate아닌 것
-  // const isFriendDiaryToLook = friend && diary.is_public != 'private';
-  // // 공개 범위 all인것 (친구 비친구)
-  // const isPublicDiary = diary.is_public == 'all';
 
   const isAccessible =
-    diary.authorId == userId ||
-    (friend && diary.is_public != 'private') ||
-    diary.is_public == 'all';
+    diary.authorId == userId || // 내글인 경우
+    (friend && diary.is_public != 'private') || // 친구 글 (비공개 제외)
+    diary.is_public == 'all'; // 모르는 사람 글 (전체공개만)
 
   if (isAccessible) {
     const diaryResponseData = plainToClass(DiaryResponseDTO, diary, {
@@ -196,11 +201,9 @@ export const getDiaryByDiaryIdService = async (
 
     return response;
   }
-  // private 일 경우
+  //내 글이 아닌데 private일 경우
   const response = emptyApiResponseDTO();
   return response;
-
-  // 모르는 사람 글 일 경우
 };
 
 /**
@@ -211,29 +214,43 @@ export const getDiaryByDiaryIdService = async (
  * @param select
  * @returns
  */
-export const getFriendsDiaryServcie = async (
+export const getFriendsDiaryService = async (
   userId: string,
   page: number,
   limit: number,
+  emotion: string | undefined,
 ) => {
   // 친구 목록 읽어오기
   const friends = await getMyWholeFriends(userId);
 
   const friendIdList = friends.map((friend) => {
-    return friend.receivedUserId;
+    return userId == friend.sentUserId
+      ? friend.receivedUserId
+      : friend.sentUserId;
   });
+
+  const friendsDiaryQuery = {
+    where: {
+      // 친구 글 (비공개 제외)
+      authorId: { in: friendIdList },
+      NOT: [
+        {
+          is_public: 'private',
+        },
+      ],
+    },
+    skip: (page - 1) * limit,
+    take: limit,
+    include: { author: true },
+  };
+
+  if (emotion != 'all') {
+    (friendsDiaryQuery.where as any).emotion = emotion;
+  }
 
   // 친구들의 다이어리 가져오기 (최신순)
   const friendsDiary = await prisma.diary.findMany({
-    skip: (page - 1) * limit,
-    take: limit,
-    where: {
-      NOT: {
-        is_public: { contains: 'private' },
-      },
-      authorId: { in: friendIdList },
-    },
-    include: { author: true },
+    ...friendsDiaryQuery,
     orderBy: { createdDate: 'desc' },
   });
 
@@ -247,12 +264,10 @@ export const getFriendsDiaryServcie = async (
   );
 
   // 총 글 개수, 페이지 수
-  const { totalItem, totalPage } = await calculatePageInfo(limit, {
-    NOT: {
-      is_public: { contains: 'private' },
-    },
-    authorId: { in: friendIdList },
-  });
+  const { totalItem, totalPage } = await calculatePageInfo(
+    limit,
+    friendsDiaryQuery.where,
+  );
 
   const pageInfo = { totalItem, totalPage, currentPage: page, limit };
 
@@ -271,35 +286,46 @@ export const getAllDiaryService = async (
   userId: string,
   page: number,
   limit: number,
-  select: string,
+  emotion: string,
 ) => {
+  //TODO controller로 넘기기 refactoring
   const friends = await getMyWholeFriends(userId);
 
   const friendIdList = friends.map((friend) => {
-    return friend.receivedUserId;
+    return userId == friend.sentUserId
+      ? friend.receivedUserId
+      : friend.sentUserId;
   });
 
-  // 친구 글 + 모르는 사람의 all 글 포함
-  const allDiary = await prisma.diary.findMany({
+  const allDiaryQuery = {
     skip: (page - 1) * limit,
     take: limit,
     where: {
       OR: [
         {
-          is_public: select,
+          // 전체공개 다이어리 ( 내 글 제외 )
+          is_public: 'all',
           NOT: {
             authorId: userId,
           },
         },
         {
+          // 친구 글 (비공개 제외)
           NOT: {
-            is_public: { contains: 'private' },
+            is_public: 'private',
           },
           authorId: { in: friendIdList },
         },
       ],
     },
     include: { author: true },
+  };
+
+  if (emotion != 'all') (allDiaryQuery.where as any).emotion = emotion;
+
+  // 친구 글 + 모르는 사람의 all 글 포함
+  const allDiary = await prisma.diary.findMany({
+    ...allDiaryQuery,
     orderBy: { createdDate: 'desc' },
   });
 
@@ -312,17 +338,10 @@ export const getAllDiaryService = async (
     plainToClass(DiaryResponseDTO, diary, { excludeExtraneousValues: true }),
   );
 
-  const { totalItem, totalPage } = await calculatePageInfo(limit, {
-    OR: [
-      { is_public: select },
-      {
-        NOT: {
-          is_public: { contains: 'private' },
-        },
-        authorId: { in: friendIdList },
-      },
-    ],
-  });
+  const { totalItem, totalPage } = await calculatePageInfo(
+    limit,
+    allDiaryQuery.where,
+  );
 
   const pageInfo = { totalItem, totalPage, currentPage: page, limit };
   const response = new PaginationResponseDTO(
@@ -340,9 +359,30 @@ export const updateDiaryService = async (
   diaryId: string,
   inputData: Prisma.DiaryUpdateInput,
 ) => {
+  if (inputData.content) {
+    const responseData = await axios.post(
+      'http://kdt-ai-8-team02.elicecoding.com:5000/predict/diary',
+      {
+        text: inputData.content,
+      },
+    );
+    const labels = responseData.data.emotion.map(
+      (item: { label: string }) => item.label,
+    );
+
+    const emotionString = labels.join(',');
+
+    inputData.emotion = emotionString;
+
+    inputData.emoji = '❎';
+  }
+
   const updatedDiary = await prisma.diary.update({
     where: { id: diaryId, authorId: userId },
     data: inputData,
+    include: {
+      filesUpload: true,
+    },
   });
 
   if (updatedDiary == null) {
@@ -370,4 +410,93 @@ export const deleteDiaryService = async (userId: string, diaryId: string) => {
   return response;
 };
 
-//TODO 같은 감정의 일기 보여주기
+export const mailService = async (
+  friendEmail: string,
+  diaryId: string,
+  username: string,
+) => {
+  const diary = await prisma.diary.findUnique({
+    where: {
+      id: diaryId, // diaryId를 사용하여 다이어리를 식별
+    },
+  });
+
+  if (!diary) {
+    // 다이어리를 찾을 수 없을 때의 처리
+    console.error('다이어리를 찾을 수 없습니다.');
+    return;
+  }
+  const currentUrl = `http://localhost:5001`;
+  await sendEmail(
+    friendEmail,
+    `추천 유저: ${username}`,
+    `다음 다이어리를 추천드립니다: ${currentUrl}`,
+    ``,
+  );
+  const response = successApiResponseDTO(null);
+  return response;
+};
+
+export const selectedEmoji = async (
+  selectedEmotion: string,
+  diaryId: string,
+  userId: string,
+) => {
+  const emojis = await prisma.emoji.findMany({
+    where: {
+      type: selectedEmotion,
+    },
+  });
+  console.log(emojis);
+  const emotionType = selectedEmotion;
+  const musicData = await searchMusic(emotionType);
+  const videoId = musicData.videoId;
+
+  const info = await ytdl.getInfo(videoId);
+  // 오디오 스트림 URL 가져오기
+  const audioUrl = ytdl.chooseFormat(info.formats, { filter: 'audioonly' }).url;
+  const urlLength = audioUrl.length;
+  console.log(audioUrl);
+  console.log(`URL 길이: ${urlLength} 자`);
+  if (!musicData) {
+    const errorMessage = '음악데이터가없습니다.';
+    throw errorMessage;
+  }
+
+  const randomEmoji: Emoji = emojis[Math.floor(Math.random() * emojis.length)];
+  const emoji = randomEmoji.emotion;
+
+  const updatedDiary = await prisma.diary.update({
+    where: { id: diaryId, authorId: userId },
+    data: { emoji, audioUrl },
+  });
+
+  if (updatedDiary == null) {
+    const response = emptyApiResponseDTO();
+    return response;
+  }
+  const diaryResponseData = plainToClass(DiaryResponseDTO, updatedDiary, {
+    excludeExtraneousValues: true,
+  });
+
+  const response = successApiResponseDTO(diaryResponseData);
+  return response;
+};
+
+export const searchDiaryService = async (title: string, content: string) => {
+  const words = content.split(' ');
+  const modifiedWords = words.map((word) => {
+    return `${word}*`;
+  });
+  //TODO elastic search 찾아보기
+  const queryContent: string = modifiedWords.join(' ');
+  console.log(queryContent);
+  const searchedDiary = await prisma.diary.findMany({
+    where: {
+      content: {
+        search: queryContent,
+      },
+    },
+  });
+  return searchedDiary;
+};

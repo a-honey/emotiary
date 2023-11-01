@@ -1,9 +1,10 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import passport from 'passport';
+import ytdl from 'ytdl-core';
 
 const testAuthRouter = Router();
 
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
 testAuthRouter.post('/predict', async(req : Request, res :Response, next : NextFunction) => {
   try{
@@ -11,20 +12,69 @@ testAuthRouter.post('/predict', async(req : Request, res :Response, next : NextF
 
     const response = await axios.post('http://127.0.0.1:5000/predict', { text });
 
-    const result : any = response.data.result;
     if (response.status === 200) {
       // 성공적으로 처리됐을 때
       console.log(response.data); // 이것이 Python Flask 서버에서 반환한 JSON 데이터
+
+      const emotion = response.data;
+
+      const emotionType = emotion.emotion;
+
+      const musicData = await searchMusic(emotionType);
+      const videoId = musicData.videoId;
+
+      const info = await ytdl.getInfo(videoId);
+      // 오디오 스트림 URL 가져오기
+      const audioUrl = ytdl.chooseFormat(info.formats, { filter: 'audioonly' }).url;
+
+
+      if (!musicData) {
+        res.status(404).json({ message: "No songs found." });
+    } else {
+        res.status(200).json(audioUrl);
+    }
   } else {
       // 서버에서 오류 응답을 반환했을 때
       console.error('에러:', response.data);
   }
-    res.json({result});
+    res.json(response.data);
   }catch(error){
-    console.log('에러 : ',error);
+
     next(error);
   }
 });
+
+const youtubeApiKey: string = "AIzaSyB1d787FFm4D9Qw8keqyrj0fCqkTE94hhg";
+
+async function searchMusic(emotion: string): Promise<any | null> {
+  try {
+      const searchQuery = `${emotion} music`;
+
+      console.log(`https://www.googleapis.com/youtube/v3/search?key=${youtubeApiKey}&part=snippet&type=video&q=${searchQuery}`);
+
+      const response: AxiosResponse = await axios.get(
+          `https://www.googleapis.com/youtube/v3/search?key=${youtubeApiKey}&part=snippet&type=video&q=${searchQuery}`
+      );
+
+      // API 응답 중에서 첫 번째 비디오 정보를 추출
+      const firstVideo = response.data.items[0];
+
+      if (!firstVideo) {
+          return null; // 검색 결과가 없는 경우 null을 반환하거나 다른 처리를 할 수 있습니다.
+      }
+
+      // 노래 정보를 객체로 반환
+      const musicData = {
+          title: firstVideo.snippet.title,
+          videoId: firstVideo.id.videoId,
+      };
+
+      return musicData;
+  } catch (error) {
+      console.error(error);
+      throw error;
+  }
+}
 
 
 
