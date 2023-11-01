@@ -118,7 +118,7 @@ model Comment {
   diary         Diary     @relation(fields: [diaryId], references: [id], onDelete: Cascade)
   diaryId       String
   emoji         String?
-  content       String
+  content       String    
   nestedComment String?
   writeAi       String    @default(uuid())
   createdAt     DateTime  @default(now())
