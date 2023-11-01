@@ -67,7 +67,14 @@ const ResItem = ({ item }: { item: FriendReqCommonResponseType }) => {
   return (
     <div className={styles.reqItemContainer}>
       <div>
-        <ImageComponent src={null} alt={`${item.username}의 프로필 사진`} />
+        <ImageComponent
+          src={
+            item?.profileImage?.length > 0
+              ? item.profileImage[item.profileImage.length - 1].url
+              : null
+          }
+          alt={`${item.username}의 프로필 사진`}
+        />
         {item.username}
       </div>
       <div className={styles.btns}>
@@ -94,8 +101,8 @@ const ReqItem = ({ item }: { item: FriendReqCommonResponseType }) => {
       <div>
         <ImageComponent
           src={
-            item?.filesUpload?.length > 0
-              ? item.filesUpload[item.filesUpload.length - 1].url
+            item?.profileImage?.length > 0
+              ? item.profileImage[item.profileImage.length - 1].url
               : null
           }
           alt={`${item.username}의 프로필 사진`}

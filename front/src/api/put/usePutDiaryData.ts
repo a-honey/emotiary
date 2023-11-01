@@ -1,11 +1,10 @@
-import {
-  QueryClient,
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { instance } from '../instance';
 import { queryKeys } from '../queryKeys';
 import { DiaryItemType } from '../get/useGetDiaryData.types';
+import { SelectedEmojiType } from './usePutDiaryData.types';
+import { audioState } from '../../atoms/audioState';
+import { useSetRecoilState } from 'recoil';
 
 export const usePutDiaryData = (id: string) => {
   const postMutation = useMutation(
@@ -33,6 +32,28 @@ export const usePutCommentData = (id: string, done?: () => void) => {
       onSuccess: () => {
         queryClient.invalidateQueries(['diaryData', id]);
         done?.();
+      },
+      onError: (error) => {
+        console.error('useMutation api 요청 에러', error);
+      },
+    },
+  );
+
+  return postMutation;
+};
+
+export const usePutSelectedEmoji = () => {
+  const setAudioState = useSetRecoilState(audioState);
+  const queryClient = useQueryClient();
+  const postMutation = useMutation(
+    async ({ id, body }: { id: string; body: SelectedEmojiType }) => {
+      return await instance.put(`/diary/selectEmotion/${id}`, body);
+    },
+    {
+      onSuccess: (res) => {
+        setAudioState(res.data.data.audioUrl);
+        queryClient.invalidateQueries(['diarysData']);
+        queryClient.invalidateQueries(['calendarDiaryData']);
       },
       onError: (error) => {
         console.error('useMutation api 요청 에러', error);

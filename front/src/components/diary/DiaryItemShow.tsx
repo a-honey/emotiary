@@ -13,6 +13,7 @@ import ImagesComponent from '../ImagesComponent';
 import { DiaryItemType } from '../../api/get/useGetDiaryData.types';
 import getUserId from '../../utils/localStorageHandlers';
 import { usePutDiaryData } from '../../api/put/usePutDiaryData';
+import { useDeleteDiaryData } from '../../api/delete/useDeleteDiaryData';
 
 const INITIAL_DAIARY_DATA: DiaryItemType = {
   id: '',
@@ -56,6 +57,7 @@ const DiaryItemShow = ({
     useGetCommentData({ id });
 
   const mutation = usePostLikeDiaryData({ id, isNetwork: false });
+  const deleteMutation = useDeleteDiaryData({ id });
 
   const handleLikeClick = () => {
     mutation.mutate();
@@ -75,9 +77,12 @@ const DiaryItemShow = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    console.log(diaryBodyData);
     putMutation.mutate({ body: diaryBodyData });
+  };
+
+  const handleDeleteClick = () => {
+    deleteMutation.mutate();
+    toggleIsOpenModal();
   };
 
   useEffect(() => {
@@ -89,7 +94,7 @@ const DiaryItemShow = ({
           page: null,
         }),
       );
-      queryClient.invalidateQueries(queryKeys.myAllDiarysData());
+      queryClient.invalidateQueries(queryKeys.myAllDiarysData({}));
     };
   }, [queryClient]);
 
@@ -141,7 +146,11 @@ const DiaryItemShow = ({
         ) : (
           <div className={styles.diaryContent}>
             <div className={styles.titles}>
-              <h2>{diaryBodyData.title}</h2>
+              <h2>
+                {diaryBodyData.title}
+                <span>{diaryBodyData.emoji}</span>
+              </h2>
+
               <div className={styles.like} onClick={handleLikeClick}>
                 {diaryBodyData.favoriteCount === 0 ? (
                   <GoHeart />
@@ -184,10 +193,15 @@ const DiaryItemShow = ({
                 ))}
               <p>{diaryBodyData.content}</p>
             </div>
-            {getUserId === diaryBodyData.authorId && (
-              <button className="doneBtn" onClick={() => setIsEditing(true)}>
-                수정
-              </button>
+            {localStorage.getItem('userId') === diaryBodyData.authorId && (
+              <>
+                <button className="doneBtn" onClick={() => setIsEditing(true)}>
+                  수정
+                </button>
+                <button className="cancelBtn" onClick={handleDeleteClick}>
+                  삭제
+                </button>
+              </>
             )}
           </div>
         )}

@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { instance } from '../../../api/instance';
 import styles from './index.module.scss';
 
-const Anaysis: React.FC = () => {
+const Analysis: React.FC = () => {
   const [currentImage, setCurrentImage] = useState<string | null>(null);
   const [nextImage, setNextImage] = useState<string | null>(null);
 
@@ -38,7 +38,6 @@ const Anaysis: React.FC = () => {
     setTimeout(transition, 2000);
   };
 
-  // 통신 결과에 따라 targetImage를 설정하는 함수
   const startSequenceWithTarget = (target: number) => {
     let targetImage = '';
 
@@ -53,30 +52,48 @@ const Anaysis: React.FC = () => {
     startSequence(targetImage);
   };
 
-  useEffect(() => {
-    startSequence('/cherry3.png');
-  }, [nextImage]);
-
-  // 통신 함수
   const mutation = useMutation(
     async () => {
-      const response = await instance.post('http://localhost:5001/anaysis');
+      const response = await instance.post('/diary/emotions?year=2023&month=1');
       return response.data;
     },
     {
-      // 로그인 성공
       onSuccess: (data: any) => {
-        console.log('성공', data);
+        let target = 0;
 
-        // data의 결과값으로 startSequenceWithTarget 함수를 호출
-        startSequenceWithTarget(data.result);
+        if (data.emotion === "행복") {
+          target = 3;
+        } else if (data.emotion === "중립") {
+          target = 2;
+        } else if (data.emotion === "분노") {
+          target = 1;
+        } else if (data.emotion === "불안") {
+          target = 1;
+        } else if (data.emotion === "혐오") {
+          target = 1;
+        } else if (data.emotion === "당황") {
+          target = 1;
+        } else if (data.emotion === "슬픔") {
+          target = 1;
+        }
+  
+        startSequenceWithTarget(target);
       },
-      // 로그인 실패
       onError: (error: any) => {
         console.log('실패', error);
       },
     },
   );
+
+  useEffect(() => {
+    mutation.mutate();
+  }, []);
+
+  useEffect(() => {
+    if (nextImage) {
+      startSequence(nextImage);
+    }
+  }, [nextImage]);
 
   return (
     <div>
@@ -85,8 +102,8 @@ const Anaysis: React.FC = () => {
           src={currentImage}
           alt="current"
           className="image fadeOut"
-          width={300}
-          height={100}
+          width={1300}
+          height={200}
         />
       )}
       {nextImage && (
@@ -94,12 +111,12 @@ const Anaysis: React.FC = () => {
           src={nextImage}
           alt="next"
           className="image fadeIn"
-          width={300}
-          height={100}
+          width={1300}
+          height={200}
         />
       )}
     </div>
   );
 };
 
-export default Anaysis;
+export default Analysis;

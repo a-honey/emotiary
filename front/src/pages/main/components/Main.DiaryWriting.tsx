@@ -4,9 +4,11 @@ import { useState } from 'react';
 import styles from './index.module.scss';
 import useImgChange from '../../../hooks/useImgChange';
 import EmojiSelect from './Main.EmojiSelect';
-import { usePostDiaryData } from '../../../api/post/usePostDiaryData';
+import {
+  ResEmojiType,
+  usePostDiaryData,
+} from '../../../api/post/usePostDiaryData';
 import { formatDatetoString } from '../../../utils/formatHandlers';
-import { DiaryBodyType } from '../../../api/post/usePostDiaryData.types';
 import post_none from '../../../assets/post_none.png';
 
 const DIARY_WRITING_INITIAL_DATA = {
@@ -24,24 +26,24 @@ const DiaryWriting = ({
   toggleIsOpenModal: () => void;
 }) => {
   const [imgsContainer, setImgsContainer] = useState<File[]>([]);
-  const [emojis, setEmojis] = useState('');
+  const [emojis, setEmojis] = useState<ResEmojiType[]>([]);
+  const [diaryId, setDiaryId] = useState('');
 
   const [formData, setFormData] = useState<Record<string, string>>(
     DIARY_WRITING_INITIAL_DATA,
   );
-  const [isEmojiSelectOpen, setIsEmojiSelectOpen] = useState(false);
 
   const handleAddImgsContainer = (img: File) => {
     setImgsContainer((prev) => [...prev, img]);
   };
 
-  const toggleIsEmojiSelectOpen = () => {
-    setIsEmojiSelectOpen((prev) => !prev);
+  const handleOnSuccess = (emojis: ResEmojiType[], id: string) => {
+    setEmojis(emojis);
+    setDiaryId(id);
   };
 
-  const handleOnSuccess = (emojis: string) => {
-    setEmojis(emojis);
-    toggleIsEmojiSelectOpen();
+  const handleDeleteEmojis = () => {
+    setEmojis([]);
   };
 
   const postMutation = usePostDiaryData(handleOnSuccess);
@@ -74,8 +76,6 @@ const DiaryWriting = ({
     postMutation.mutate({
       body,
     });
-
-    setIsEmojiSelectOpen(true);
   };
 
   return (
@@ -142,10 +142,12 @@ const DiaryWriting = ({
           </button>
         </div>
       </form>
-      {isEmojiSelectOpen && (
+      {emojis.length !== 0 && (
         <EmojiSelect
-          emojis={emojis!}
-          toggleIsEmojiSelectOpen={toggleIsEmojiSelectOpen}
+          id={diaryId}
+          emojis={emojis}
+          handleDeleteEmojis={handleDeleteEmojis}
+          toggleIsOpenModal={toggleIsOpenModal}
         />
       )}
     </div>

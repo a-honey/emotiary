@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './index.module.scss';
 import Month from './Month';
 import Day from './Day';
-import { CalendarDiaryItemType } from '../../types/diaryType';
+
 import { DiaryItemType } from '../../api/get/useGetDiaryData.types';
 
 const Calendar = ({
@@ -12,7 +12,9 @@ const Calendar = ({
   currentDate,
   handleNextMonth,
   handleBeforeMonth,
+  handleCurrentDate,
 }: {
+  handleCurrentDate: ({ year, month }: { year: number; month: number }) => void;
   currentDate: { year: number; month: number };
   handleNextMonth: () => void;
   handleBeforeMonth: () => void;
@@ -24,6 +26,7 @@ const Calendar = ({
     <div className={styles.calendarBlock}>
       {/* 렌더링 Month 상태를 변경하는 컴포넌트*/}
       <Month
+        handleCurrentDate={handleCurrentDate}
         currentDate={currentDate}
         handleBeforeMonth={handleBeforeMonth}
         handleNextMonth={handleNextMonth}

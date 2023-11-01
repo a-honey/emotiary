@@ -1,43 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import styles from './index.module.scss';
+import { ResEmojiType } from '../../../api/post/usePostDiaryData';
+import { SelectedEmojiType } from '../../../api/put/usePutDiaryData.types';
+import { usePutSelectedEmoji } from '../../../api/put/usePutDiaryData';
 
 const EmojiSelect = ({
+  id,
   emojis,
-  toggleIsEmojiSelectOpen,
+  toggleIsOpenModal,
+  handleDeleteEmojis,
 }: {
-  emojis: string;
-  toggleIsEmojiSelectOpen: () => void;
+  id: string;
+  emojis: ResEmojiType[];
+  toggleIsOpenModal: () => void;
+  handleDeleteEmojis: () => void;
 }) => {
-  // VM 에러 확인 필요
-  // emojis를 map 하여 렌더링은 유지하고, selectedEmoji에 하나의 이모지만 넣음 초기상태 ''
-  const [selectedEmoji, setSelectedEmoji] = useState('');
+  const putMutation = usePutSelectedEmoji();
+
+  const [body, setBody] = useState<SelectedEmojiType>({
+    selectedEmoji: '',
+    selectedEmotion: '중립',
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log(selectedEmoji);
+    putMutation.mutate({ id, body });
   };
 
-  console.log(emojis);
+  useEffect(() => {}, [emojis]);
 
   return (
     <div className="modal">
       <form className={styles.emojiSelect} onSubmit={handleSubmit}>
         <label>이모지 선택</label>
         <div className={styles.emojis}>
-          {emojis?.split(',').map((emoji) => (
-            <div key={emoji}>
+          {emojis?.map((emoji) => (
+            <div key={emoji.emotion}>
               <label>
                 <input
                   type="radio"
-                  name={emoji}
-                  value={emoji}
-                  checked={selectedEmoji === emoji}
-                  onChange={() => setSelectedEmoji(emoji)}
+                  name={emoji.emotion}
+                  value={emoji.emoji}
+                  checked={body.selectedEmoji === emoji.emoji}
+                  onChange={() =>
+                    setBody({
+                      selectedEmoji: emoji.emoji,
+                      selectedEmotion: emoji.emotion,
+                    })
+                  }
                 />
-                <span>{emoji}</span>
-                <div>85%</div>
+                <span>{emoji.emoji}</span>
               </label>
             </div>
           ))}
@@ -46,7 +60,7 @@ const EmojiSelect = ({
           <button
             className="cancelBtn"
             type="button"
-            onClick={toggleIsEmojiSelectOpen}
+            onClick={handleDeleteEmojis}
           >
             다시쓰기
           </button>

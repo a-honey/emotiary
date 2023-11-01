@@ -1,3 +1,5 @@
+@import '../../styles/variables.scss';
+
 .container {
   background-color: white;
   display: flex;
@@ -18,5 +20,27 @@
     button {
       width: 70px;
     }
+  }
+}
+
+.itemList {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.itemContainer {
+  border: 1px solid #ccc;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  cursor: pointer;
+  &:hover {
+    background-color: map-get($colors, bg);
+  }
+  img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
   }
 }

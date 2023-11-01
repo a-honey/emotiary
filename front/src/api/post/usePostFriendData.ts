@@ -1,8 +1,4 @@
-import {
-  QueryClient,
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { instance } from '../instance';
 import { useSetRecoilState } from 'recoil';
 import { toastState } from '../../atoms/toastState';
@@ -25,8 +21,15 @@ export const usePostFriendReqMutation = () => {
           },
         ]);
       },
-      onError: (error) => {
-        console.error('useMutation api 요청 에러', error);
+      onError: (error: any) => {
+        if (error.response?.data?.message) {
+          setToastState((oldToastState) => [
+            ...oldToastState,
+            {
+              message: `이미 친구요청을 신청했습니다.`,
+            },
+          ]);
+        }
       },
     },
   );

@@ -28,7 +28,12 @@ export const queryKeys = {
     month: number;
   }) => ['calendarDiaryData', user_id, year, month],
   //** 마이페이지 모든  다이어리 조회 */
-  myAllDiarysData: () => ['myAllDiarysData'],
+  myAllDiarysData: ({ page }: { page?: number }) => {
+    if (!page) {
+      return ['myAllDiarysData'];
+    }
+    return ['myAllDiarysData', page];
+  },
   //** 다이어리 모달 id로 조회
   diaryData: ({ id }: { id: string }) => ['diaryData', id],
 

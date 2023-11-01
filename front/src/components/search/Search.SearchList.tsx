@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import styles from './Search.SearchList.module.scss';
-import { ca } from 'date-fns/locale';
 import { useGetSearchUserData } from '../../api/get/useGetSearchData';
+import { SearchUserType } from '../../api/get/useGetSearchData.types';
+import ImageComponent from '../ImageComponent';
+import { useNavigate } from 'react-router-dom';
 
 const SearchList = ({
   toggleIsOpenSearchList,
@@ -38,16 +40,12 @@ const SearchList = ({
             onChange={(e) => setInputValue(e.target.value)}
           />
         </form>
-        <div>
-          {data?.data ? (
-            data?.data?.map((item) => <SearchItem />)
+        <div className={styles.itemList}>
+          {inputValue && data?.data ? (
+            data?.data?.map((item) => <SearchItem key={item.id} item={item} />)
           ) : (
             <div>검색결과가 없습니다.</div>
           )}
-          <SearchItem />
-          <SearchItem />
-          <SearchItem />
-          <SearchItem />
         </div>
         <button onClick={toggleIsOpenSearchList} className="cancelBtn">
           닫기
@@ -59,6 +57,23 @@ const SearchList = ({
 
 export default SearchList;
 
-const SearchItem = () => {
-  return <div>검색해서 나온거</div>;
+const SearchItem = ({ item }: { item: SearchUserType }) => {
+  const navigator = useNavigate();
+
+  const { id, username, profileImage, description } = item;
+  return (
+    <div
+      className={styles.itemContainer}
+      onClick={() => {
+        navigator(`/user/${id}`);
+      }}
+    >
+      <ImageComponent
+        src={profileImage.at(-1)?.url ?? null}
+        alt={`${username}의 프로필이미지`}
+      />
+      <div>{username}</div>
+      <div>{description}</div>
+    </div>
+  );
 };
