@@ -5,6 +5,7 @@
   justify-content: space-between;
   align-items: center;
   margin: 10px 0;
+  position: relative;
   > div {
     display: flex;
     div {
@@ -92,4 +93,27 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
+}
+
+.dateWrapper {
+  position: absolute;
+  right: 100px;
+  div {
+    button {
+      width: 25px;
+      height: 25px;
+      background-color: #5e5e5e;
+    }
+    div {
+      color: black;
+      font-size: 12px;
+      color: black;
+    }
+  }
+}
+
+.customDatePicker {
+  position: 'absolute';
+  right: '100px';
+  top: '-250px';
 }

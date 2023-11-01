@@ -7,7 +7,8 @@ import Analysis from './components/Main.Analysis';
 
 // Data 객체를 만들어서 해당 날짜 + 쿼리키 공통 캘린더 컴포넌트에 전달 필요
 const MainPage: React.FC = () => {
-  const { currentDate, handleBeforeMonth, handleNextMonth } = useCalendar();
+  const { currentDate, handleBeforeMonth, handleNextMonth, handleCurrentDate } =
+    useCalendar();
 
   const { data: myDiaryData, isFetching } = useGetMyDiaryData({
     user_id: localStorage.getItem('userId')!,
@@ -22,6 +23,7 @@ const MainPage: React.FC = () => {
         style={{ width: '1300px', height: '200px', backgroundColor: 'pink' }}
       />
       <Calendar
+        handleCurrentDate={handleCurrentDate}
         currentDate={currentDate}
         handleBeforeMonth={handleBeforeMonth}
         handleNextMonth={handleNextMonth}

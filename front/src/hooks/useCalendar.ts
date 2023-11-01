@@ -38,7 +38,17 @@ const useCalendar = () => {
       });
     }
   };
-  return { currentDate, handleBeforeMonth, handleNextMonth };
+
+  const handleCurrentDate = ({
+    year,
+    month,
+  }: {
+    year: number;
+    month: number;
+  }) => {
+    setCurrentDate({ year, month });
+  };
+  return { currentDate, handleBeforeMonth, handleNextMonth, handleCurrentDate };
 };
 
 export default useCalendar;

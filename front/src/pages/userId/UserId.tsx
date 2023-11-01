@@ -10,7 +10,8 @@ const UserIdPage: React.FC = () => {
   const location = useLocation();
   const navigator = useNavigate();
 
-  const { currentDate, handleBeforeMonth, handleNextMonth } = useCalendar();
+  const { currentDate, handleBeforeMonth, handleNextMonth, handleCurrentDate } =
+    useCalendar();
 
   const { data: diaryData, isFetching } = useGetMyDiaryData({
     user_id: `${location.pathname.split('/')[2]}`,
@@ -28,6 +29,7 @@ const UserIdPage: React.FC = () => {
     <main style={{ height: '95vh' }}>
       <UserCard />
       <Calendar
+        handleCurrentDate={handleCurrentDate}
         currentDate={currentDate}
         handleBeforeMonth={handleBeforeMonth}
         handleNextMonth={handleNextMonth}
