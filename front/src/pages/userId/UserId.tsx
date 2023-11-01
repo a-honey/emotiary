@@ -25,7 +25,7 @@ const UserIdPage: React.FC = () => {
   }, [navigator, location]);
 
   return (
-    <main>
+    <main style={{ height: '95vh' }}>
       <UserCard />
       <Calendar
         currentDate={currentDate}

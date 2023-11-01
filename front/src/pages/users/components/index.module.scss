@@ -7,7 +7,7 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 20px;
-  height: 88vh;
+  height: 85.9vh;
   .head {
     width: 100%;
     display: flex;
@@ -44,7 +44,7 @@
     height: 100%;
     display: grid;
     grid-template-columns: repeat(4, 350px);
-    grid-template-rows: repeat(2, 310px);
+    grid-template-rows: repeat(2, 300px);
     gap: 20px;
   }
 }
@@ -85,9 +85,9 @@
     justify-content: center;
     .emoji {
       position: absolute;
-      font-size: 100px;
-      right: 0px;
-      bottom: 0px;
+      font-size: 80px;
+      right: 20px;
+      bottom: 80px;
     }
   }
   img {
