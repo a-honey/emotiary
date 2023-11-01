@@ -12,6 +12,7 @@ import search from '../../../assets/search.png';
 import SearchList from '../../../components/search/Search.SearchList';
 import { DiaryItemType } from '../../../api/get/useGetDiaryData.types';
 import { usePostLikeDiaryData } from '../../../api/post/usePostDiaryData';
+import ImageComponent from '../../../components/ImageComponent';
 
 const DiaryList = () => {
   const [select, setSelect] = useState('all');
@@ -131,10 +132,9 @@ const DairyItem = ({ data }: { data: DiaryItemType }) => {
             navigator(`/user/${data.authorId}`);
           }}
         >
-          <img
-            src={data.author.profileImage?.at(-1)?.url ?? '/user_none.png'}
+          <ImageComponent
+            src={data.author.profileImage?.at(-1)?.url ?? null}
             alt={`${data.author.username}의 프로필사진`}
-            onError={handleImgError}
           />
           <div>{data.author.username}</div>
         </div>
