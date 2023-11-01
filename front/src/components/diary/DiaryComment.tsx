@@ -9,10 +9,11 @@ interface CommentDataType {
   diaryId: string;
   content: string;
   createdAt: string;
+  reComment: [];
   author: {
     id: string;
     username: string;
-    profileImage: string;
+    profileImage: { id: number; url: string }[];
   };
 }
 
@@ -87,7 +88,7 @@ const CommentItem = ({
           }}
         >
           <ImageComponent
-            src={data.author.profileImage}
+            src={data.author.profileImage.at(-1)?.url ?? null}
             alt={`${data.author.username}의 프로필사진`}
           />
           <div>{data.author.username}</div>

@@ -114,7 +114,7 @@ const UserItem = ({ data }: { data: UserItemType }) => {
       <div>
         <ImageComponent
           src={
-            profileImage?.length !== 0
+            profileImage && profileImage?.length !== 0
               ? profileImage[profileImage?.length - 1]?.url
               : null
           }
