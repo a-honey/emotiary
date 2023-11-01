@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 import {
   weAreFriends,
   createFriends,
@@ -8,18 +8,22 @@ import {
   acceptFriend,
   rejectFriend,
   getMyFriends,
-  deleteFriend
+  deleteFriend,
 } from '../services/friendService';
-import { IRequest } from "types/user";
+import { IRequest } from 'types/user';
 // import { plainToClass } from 'class-transformer';
 // import { FriendValidateDTO } from '../dtos/friendDTO';
 // import { validate } from 'class-validator';
-
-
+//TODO 안 쓰는 import 빼기
+//TODO try catch 빼기
 
 /** @description 친구 요청 */
 /** @Tag(name = "book service", description = "the book API with description tag annotation") */
-export const friendRequest = async (req : IRequest, res : Response, next : NextFunction) => {
+export const friendRequest = async (
+  req: IRequest,
+  res: Response,
+  next: NextFunction,
+) => {
   /**
    * #swagger.tags = ['Friend']
    * #swagger.summary = '친구 요청'
@@ -29,39 +33,19 @@ export const friendRequest = async (req : IRequest, res : Response, next : NextF
     const requestId = req.params.userId;
 
     if (userId === requestId) {
-      return res
-        .status(400)
-        .json({ message: "셀프 친구 불가!" });
+      //TODO  throw generateError(400,message) 로 바꿔주기
+      return res.status(400).json({ message: '셀프 친구 불가!' });
     }
     const alreadyFriends = await weAreFriends(userId, requestId);
     if (alreadyFriends) {
-      return res.status(400).json({ message: "이미 요청 했거나 우린 친구!" });
+      return res.status(400).json({ message: '이미 요청 했거나 우린 친구!' });
     }
     const existingFriendRequest = await weAreFriends(requestId, userId);
     if (existingFriendRequest) {
-      return res.status(400).json({ message: "이미 요청 했거나 우린 친구!" });
+      return res.status(400).json({ message: '이미 요청 했거나 우린 친구!' });
     }
     const request = await createFriends(userId, requestId);
     res.status(200).json(request);
-} catch (error) {
-    console.error(error);
-    error.status = 500;
-    next(error);
-  }
-};
-
-/** @description 보낸 친구 요청 목록 */
-export const sentList = async (req : IRequest, res : Response, next : NextFunction) => {
-  /**
-   * #swagger.tags = ['Friend']
-   * #swagger.summary = '보낸 친구 요청 목록'
-   */
-  try {
-    const userId = req.user.id;
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 8;
-    const friendRequest = await listRequestsSent(userId, page, limit);
-    res.status(200).json(friendRequest);
   } catch (error) {
     console.error(error);
     error.status = 500;
@@ -69,32 +53,66 @@ export const sentList = async (req : IRequest, res : Response, next : NextFuncti
   }
 };
 
-/** @description 요청 취소 */
-export const requestCancel = async (req : IRequest, res : Response, next : NextFunction) => {
+/** @description 보낸 친구 요청 목록 */
+export const sentList = async (
+  req: IRequest,
+  res: Response,
+  next: NextFunction,
+) => {
   /**
    * #swagger.tags = ['Friend']
-   * #swagger.summary = '친구 요청 취소'
+   * #swagger.summary = '보낸 친구 요청 목록'
    */
+
+  //TODO try catch 뺴기
   try {
     const userId = req.user.id;
-    const requestId = req.params.userId;
-    const cancel = await cancelRequest(userId, requestId);
-    res.status(200).json(cancel);
-} catch (error) {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 8;
+    const friendRequest = await listRequestsSent(userId, page, limit);
+    res.status(200).json(friendRequest);
+  } catch (error) {
+    //error 코드 안 넣어줄 경우엔 기본 500으로 넣어지게 만들어두었습니다!
     console.error(error);
     error.status = 500;
     next(error);
   }
 };
 
-
+/** @description 요청 취소 */
+export const requestCancel = async (
+  req: IRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  /**
+   * #swagger.tags = ['Friend']
+   * #swagger.summary = '친구 요청 취소'
+   */
+  //TODO try catch 뺴기
+  try {
+    const userId = req.user.id;
+    const requestId = req.params.userId;
+    const cancel = await cancelRequest(userId, requestId);
+    res.status(200).json(cancel);
+  } catch (error) {
+    console.error(error);
+    error.status = 500;
+    next(error);
+  }
+};
 
 /** @description 받은 친구 요청 목록 */
-export const receivedList = async (req : IRequest, res : Response, next : NextFunction) => {
+export const receivedList = async (
+  req: IRequest,
+  res: Response,
+  next: NextFunction,
+) => {
   /**
    * #swagger.tags = ['Friend']
    * #swagger.summary = '받은 친구 요청 목록'
    */
+  //TODO try catch 뺴기
   try {
     const userId = req.user.id;
     const page = Number(req.query.page) || 1;
@@ -109,11 +127,16 @@ export const receivedList = async (req : IRequest, res : Response, next : NextFu
 };
 
 /** @description 친구 수락 */
-export const friendAccept = async (req : IRequest, res : Response, next : NextFunction) => {
+export const friendAccept = async (
+  req: IRequest,
+  res: Response,
+  next: NextFunction,
+) => {
   /**
    * #swagger.tags = ['Friend']
    * #swagger.summary = '친구 수락'
    */
+  //TODO try catch 뺴기
   try {
     const userId = req.user.id;
     const requestId = req.params.userId;
@@ -127,17 +150,22 @@ export const friendAccept = async (req : IRequest, res : Response, next : NextFu
 };
 
 /** @description 친구 거절 */
-export const friendReject = async (req : IRequest, res : Response, next : NextFunction) => {
+export const friendReject = async (
+  req: IRequest,
+  res: Response,
+  next: NextFunction,
+) => {
   /**
    * #swagger.tags = ['Friend']
    * #swagger.summary = '친구 거절'
    */
+  //TODO try catch 뺴기
   try {
     const userId = req.user.id;
     const requestId = req.params.userId;
     const reject = await rejectFriend(userId, requestId);
     res.status(200).json(reject);
-} catch (error) {
+  } catch (error) {
     console.error(error);
     error.status = 500;
     next(error);
@@ -145,18 +173,24 @@ export const friendReject = async (req : IRequest, res : Response, next : NextFu
 };
 
 /** @description 친구 목록 */
-export const getFriends = async (req : IRequest, res : Response, next : NextFunction) => {
+export const getFriends = async (
+  req: IRequest,
+  res: Response,
+  next: NextFunction,
+) => {
   /**
    * #swagger.tags = ['Friend']
    * #swagger.summary = '친구 목록'
    */
+
+  //TODO try catch 뺴기
   try {
     const userId = req.user.id;
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 8;
     const friendsList = await getMyFriends(userId, page, limit);
     res.status(200).json(friendsList);
-} catch (error) {
+  } catch (error) {
     console.error(error);
     error.status = 500;
     next(error);
@@ -164,17 +198,23 @@ export const getFriends = async (req : IRequest, res : Response, next : NextFunc
 };
 
 /** @description 친구 삭제 */
-export const friendDelete = async (req : IRequest, res : Response, next : NextFunction) => {
+export const friendDelete = async (
+  req: IRequest,
+  res: Response,
+  next: NextFunction,
+) => {
   /**
    * #swagger.tags = ['Friend']
    * #swagger.summary = '친구 삭제'
    */
+
+  //TODO try catch 뺴기
   try {
     const userId = req.user.id;
     const friendId = req.params.userId;
     const dropFriend = await deleteFriend(userId, friendId);
     res.status(200).json(dropFriend);
-} catch (error) {
+  } catch (error) {
     console.error(error);
     error.status = 500;
     next(error);

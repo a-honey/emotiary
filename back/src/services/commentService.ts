@@ -20,6 +20,7 @@ export async function createdComment(
   authorId: string,
   diary_id: string,
 ) {
+  //TODO controller에서 try catch 해주면 service단에서 try catch 안해줘도 돼요
   try {
     const { content, nestedComment } = inputData;
 
@@ -65,6 +66,8 @@ export async function getCommentByDiaryId(
   page: number,
   limit: number,
 ) {
+  //TODO controller에서 try catch 해주면 service단에서 try catch 안해줘도 돼요
+
   try {
     const comment = await prisma.comment.findMany({
       skip: (page - 1) * limit,
@@ -146,6 +149,8 @@ export async function updatedComment(
   comment_id: string,
   authorId: string,
 ) {
+  //TODO controller에서 try catch 해주면 service단에서 try catch 안해줘도 돼요
+
   try {
     // 댓글 이모지 넣는 코드
     const responseData = await axios.post(
@@ -196,6 +201,7 @@ export async function updatedComment(
       return response;
     }
   } catch (error) {
+    // error가 발생하면서 catch에 잡힌 거라서 throw를 다시 해줄 필요 없이 next 해주시면 돼요!
     throw error;
   }
 }
@@ -227,6 +233,7 @@ export async function deletedComment(comment_id: string, authorId: string) {
       return response;
     }
   } catch (error) {
+    // error가 발생하면서 catch에 잡힌 거라서 throw를 다시 해줄 필요 없이 next 해주시면 돼요!
     throw error;
   }
 }
@@ -237,6 +244,8 @@ export async function createdGPTComment(
   authorId: string,
   diaryId: string,
 ) {
+  //TODO controller에서 try catch 해주면 service단에서 try catch 안해줘도 돼요
+
   try {
     const testChatGPT = await callChatGPT(content);
 
@@ -249,6 +258,7 @@ export async function createdGPTComment(
       },
     });
   } catch (error) {
+    // error가 발생하면서 catch에 잡힌 거라서 throw를 다시 해줄 필요 없이 next 해주시면 돼요!
     throw error;
   }
 }
@@ -259,6 +269,8 @@ export async function updatedGPTComment(
   authorId: string,
   diaryId: string,
 ) {
+  //TODO controller에서 try catch 해주면 service단에서 try catch 안해줘도 돼요
+
   try {
     const testChatGPT = await callChatGPT(content);
 
@@ -273,6 +285,7 @@ export async function updatedGPTComment(
       await createdGPTComment(testChatGPT, authorId, diaryId);
     }
   } catch (error) {
+    // error가 발생하면서 catch에 잡힌 거라서 throw를 다시 해줄 필요 없이 next 해주시면 돼요!
     throw error;
   }
 }

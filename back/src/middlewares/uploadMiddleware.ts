@@ -21,6 +21,7 @@ const handleFileUpload = async (
       fileUploadMiddleware(req, res, async (err: any) => {
         try {
           if (err instanceof multer.MulterError) {
+            //TODO error 처리 generateError
             return res
               .status(400)
               .json({ message: 'upload error', error: err.message });
@@ -68,7 +69,8 @@ const handleFileUpload = async (
                 profileImage: true,
               },
             });
-
+            
+            //TODO 유저를 위에서 먼저 찾아서 없다면 얼리리턴 해주는 방식으로 바꾸는게 좋을 것 같아요 
             if (!foundUser) {
               const response = emptyApiResponseDTO();
               return response;

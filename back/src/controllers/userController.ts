@@ -27,7 +27,7 @@ import { storeRefreshTokenInDatabase } from '../utils/tokenUtils';
 const prisma = new PrismaClient();
 
 export const userRegister = async (req: Request, res: Response) => {
-    /* #swagger.tags = ['Users']
+  /* #swagger.tags = ['Users']
          #swagger.security = [{
                "bearerAuth": []
     }] */
@@ -54,13 +54,14 @@ export const userLogin = async (req: IRequest, res: Response) => {
     },
   });
   if (!myInfo) {
+    //TODO 에러 보내줄 때는 generateError(404, message) 로 보내주기
     return res.status(404).json({ message: '사용자 정보를 찾을 수 없습니다.' });
   }
   // 사용자 정보와 토큰 데이터를 사용하여 user 객체 생성
   const user = {
     token: req.token,
     refreshToken: req.refreshTokens,
-    expires : req.expiresAt,
+    expires: req.expiresAt,
     id: req.user.id,
     name: req.user.username,
     email: req.user.email,
@@ -153,6 +154,8 @@ export const updateUser = async (req: IRequest, res: Response) => {
          #swagger.security = [{
                "bearerAuth": []
         }] */
+
+  //TODO 안쓰는 변수 지우기
   const { email, username, description } = req.body;
   const inputData = plainToClass(userValidateDTO, req.body);
   // updateUserService 함수를 사용하여 사용자 정보 업데이트
@@ -179,6 +182,7 @@ export const deleteUser = async (req: IRequest, res: Response) => {
 
   if (!user) {
     // 사용자를 찾을 수 없는 경우 적절한 오류 처리를 수행
+    //TODO 에러 보내줄 때는 generateError(404, message) 로 보내주기
     return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
   }
 
@@ -245,9 +249,12 @@ export const refresh = async (req: IRequest, res: Response) => {
   const userId = await verifyRefreshToken(refreshToken);
 
   if (!userId) {
-    return res
-      .status(403)
-      .json({ message: 'Refresh Token 만료 또는 유효하지 않음' });
+    return (
+      res
+        //TODO 에러 보내줄 때는 generateError(STATUSCODE, message) 로 보내주기
+        .status(403)
+        .json({ message: 'Refresh Token 만료 또는 유효하지 않음' })
+    );
   }
 
   // 데이터베이스에서 사용자 정보 가져오고 재발급
@@ -325,6 +332,6 @@ export const testEmail = async (req: IRequest, res: Response) => {
   return res.status(userRegister.status).json(userRegister);
 };
 
-export const expire = async (req : IRequest, res : Response) => {
-    res.status(200).json({ message: 'Token is valid' });
-}
+export const expire = async (req: IRequest, res: Response) => {
+  res.status(200).json({ message: 'Token is valid' });
+};

@@ -1,20 +1,24 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 import { FriendResponseDTO, PaginationResponseDTO } from '../dtos/friendDTO';
-import { userResponseDTO} from '../dtos/userDTO';
+import { userResponseDTO } from '../dtos/userDTO';
 import { emptyApiResponseDTO } from '../utils/emptyResult';
 import { successApiResponseDTO } from '../utils/successResult';
-import {calculatePageInfoForFriend, userCalculatePageInfo} from '../utils/pageInfo';
+import {
+  calculatePageInfoForFriend,
+  userCalculatePageInfo,
+} from '../utils/pageInfo';
 import { plainToClass } from 'class-transformer';
 
 export const checkFriend = async (userId: string, requestId: string) => {
+  //TODO try catch 뺴기 => 혜빈
   try {
-    const friend = await prisma.friend.findUnique({
+    const friend = await prisma.friend.findFirst({
       where: {
-        sentUserId_receivedUserId: {
-          sentUserId: userId,
-          receivedUserId: requestId,
-        },
+        OR: [
+          { sentUserId: userId, receivedUserId: requestId },
+          { receivedUserId: userId, sentUserId: requestId },
+        ],
         status: true,
       },
     });
@@ -26,6 +30,7 @@ export const checkFriend = async (userId: string, requestId: string) => {
 
 /** @description 친구 여부 */
 export const weAreFriends = async (userId: string, requestId: string) => {
+  //TODO try catch 뺴기
   try {
     const friend = await prisma.friend.findUnique({
       where: {
@@ -46,6 +51,7 @@ export const createFriends = async (
   sentUserId: string,
   receivedUserId: string,
 ) => {
+  //TODO try catch 뺴기
   try {
     const friend = await prisma.friend.create({
       data: {
@@ -69,6 +75,7 @@ export const listRequestsSent = async (
   page: number,
   limit: number,
 ) => {
+  //TODO try catch 뺴기
   try {
     const friend = await prisma.friend.findMany({
       skip: (page - 1) * limit,
@@ -121,6 +128,7 @@ export const listRequestsSent = async (
 /** @description 요청 취소 */
 export const cancelRequest = async (userId: string, requestId: string) => {
   try {
+    //TODO try catch 뺴기
     const friend = await prisma.friend.deleteMany({
       where: {
         sentUserId: userId,
@@ -143,6 +151,7 @@ export const listRequestsReceived = async (
   page: number,
   limit: number,
 ) => {
+  //TODO try catch 뺴기
   try {
     const friend = await prisma.friend.findMany({
       skip: (page - 1) * limit,
@@ -193,6 +202,7 @@ export const listRequestsReceived = async (
 
 /** @description 친구 수락 */
 export const acceptFriend = async (userId: string, requestId: string) => {
+  //TODO try catch 뺴기
   try {
     const friend = await prisma.friend.updateMany({
       where: {
@@ -215,6 +225,7 @@ export const acceptFriend = async (userId: string, requestId: string) => {
 
 /** @description 친구 거절 */
 export const rejectFriend = async (userId: string, requestId: string) => {
+  //TODO try catch 뺴기
   try {
     const friend = await prisma.friend.deleteMany({
       where: {
@@ -232,6 +243,11 @@ export const rejectFriend = async (userId: string, requestId: string) => {
   }
 };
 
+/**
+ * @description 나의 모든 친구 가져오기
+ * @param userId
+ * @returns
+ */
 export const getMyWholeFriends = async (userId: string) => {
   const friendList = await prisma.friend.findMany({
     where: {
@@ -243,13 +259,13 @@ export const getMyWholeFriends = async (userId: string) => {
   return friendList;
 };
 
-
 /** @description 친구 목록 */
 export const getMyFriends = async (
   userId: string,
   page: number,
   limit: number,
 ) => {
+  //TODO try catch 뺴기
   try {
     const myFriendsSent = await prisma.friend.findMany({
       where: {
@@ -320,6 +336,7 @@ export const getMyFriends = async (
 
 /** @description 친구 삭제 */
 export const deleteFriend = async (userId: string, friendId: string) => {
+  //TODO try catch 뺴기
   try {
     const friend = await prisma.friend.deleteMany({
       where: {
@@ -338,5 +355,3 @@ export const deleteFriend = async (userId: string, friendId: string) => {
     throw error;
   }
 };
-
-

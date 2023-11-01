@@ -56,6 +56,7 @@ export const getAllUsers = async (
   page: number,
   limit: number,
 ) => {
+  //TODO pageSize가 limit 아닌가요?
   const pageSize = 10;
 
   const userList = await prisma.user.findMany({
@@ -226,6 +227,7 @@ export const updateUserService = async (
 };
 
 export const deleteUserService = async (userId: string) => {
+  //TODO delete를 하기 전에 유저가 존재하는지 체크해주면 좋을 것 같아요
   // 사용자의 refreshTokens 먼저 삭제
   await prisma.refreshToken.deleteMany({
     where: {
