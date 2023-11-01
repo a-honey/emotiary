@@ -13,6 +13,7 @@ import { searchMusic } from '../utils/music';
 import ytdl from 'ytdl-core';
 import { prisma } from '../../prisma/prismaClient';
 import { generateError } from '../utils/errorGenerator';
+import { response } from 'express';
 
 // 체크하는 용도 -----------------------------------------------
 /**
@@ -102,9 +103,10 @@ export const createDiaryService = async (
   });
 
   const emotionString = `${combinedEmotions.join(', ')}`;
+
   inputData.emotion = emotionString;
   inputData.emoji = '❎';
-  console.log(fileUrls);
+
   const diaryData = {
     ...inputData,
     author: {
@@ -125,10 +127,6 @@ export const createDiaryService = async (
 
   const diary = await prisma.diary.create({
     data: diaryData,
-    include: {
-      author: true,
-      filesUpload: true,
-    },
   });
 
   const diaryResponseData = plainToClass(DiaryResponseDTO, diary, {
@@ -151,25 +149,28 @@ export const getAllMyDiariesService = async (
   page: number,
   limit: number,
 ) => {
-  const diaries = await prisma.diary.findMany({
+  const diaryQuery = {
     skip: (page - 1) * limit,
     take: limit,
     where: { authorId: userId },
+  };
+  const diaries = await prisma.diary.findMany({
+    ...diaryQuery,
     orderBy: { createdDate: 'desc' },
-    include: {
-      filesUpload: true,
-    },
   });
 
-  // 다이어리 결과 없을 때 빈 배열 값 반환
+  // 다이어리 결과 없을 때 204, 빈 배열 반환
   if (diaries.length == 0) {
     const response = emptyApiResponseDTO();
     return response;
   }
 
-  const { totalItem, totalPage } = await calculatePageInfo('diary', limit, {
-    authorId: userId,
-  });
+  //페이지네이션 시 페이지 수 계산
+  const { totalItem, totalPage } = await calculatePageInfo(
+    'diary',
+    limit,
+    diaryQuery.where,
+  );
 
   const pageInfo = { totalItem, totalPage, currentPage: page, limit };
 
@@ -209,7 +210,6 @@ export const getDiaryByMonthService = async (
         lt: new Date(`${ltYear}-${ltMonth}`),
       },
     },
-    include: { author: true },
     orderBy: { createdDate: 'asc' },
   });
 
@@ -236,7 +236,14 @@ export const getDiaryByMonthService = async (
 export const getOneDiaryService = async (userId: string, diaryId: string) => {
   const diary = await prisma.diary.findUnique({
     where: { id: diaryId },
-    include: { author: true, filesUpload: true },
+    include: {
+      author: {
+        include: {
+          profileImage: true,
+        },
+      },
+      filesUpload: true,
+    },
   });
 
   if (diary == null) {
@@ -273,7 +280,6 @@ export const getOneDiaryService = async (userId: string, diaryId: string) => {
  * @returns
  */
 export const getFriendsDiaryService = async (
-  userId: string,
   page: number,
   limit: number,
   emotion: string | undefined,
@@ -291,7 +297,13 @@ export const getFriendsDiaryService = async (
     },
     skip: (page - 1) * limit,
     take: limit,
-    include: { author: true },
+    include: {
+      author: {
+        include: {
+          profileImage: true,
+        },
+      },
+    },
   };
 
   if (emotion != 'all') {
@@ -361,7 +373,13 @@ export const getAllDiaryService = async (
         },
       ],
     },
-    include: { author: true },
+    include: {
+      author: {
+        include: {
+          profileImage: true,
+        },
+      },
+    },
   };
 
   if (emotion != 'all') (allDiaryQuery.where as any).emotion = emotion;
@@ -446,9 +464,6 @@ export const updateDiaryService = async (
   const updatedDiary = await prisma.diary.update({
     where: { id: diaryId, authorId: userId },
     data: inputData,
-    include: {
-      filesUpload: true,
-    },
   });
 
   if (updatedDiary == null) {
@@ -562,6 +577,13 @@ export const searchDiaryService = async (
   const searchDiaryQuery = {
     skip: (page - 1) * limit,
     take: limit,
+    include: {
+      author: {
+        include: {
+          profileImage: true,
+        },
+      },
+    },
     where: {
       OR: [
         {
@@ -620,5 +642,40 @@ export const searchDiaryService = async (
     pageInfo,
     '성공',
   );
+  return response;
+};
+
+export const getEmotionOftheMonthService = async (
+  userId: string,
+  year: number,
+  month: number,
+) => {
+  const ltMonth = month == 12 ? 1 : month + 1;
+  const ltYear = month == 12 ? year + 1 : year;
+
+  // 작성자의 한 달 다이어리 가져오기
+  const emotionsAndEmojis = await prisma.diary.findMany({
+    select: {
+      emotion: true,
+      emoji: true,
+    },
+    where: {
+      authorId: userId,
+      createdDate: {
+        gte: new Date(`${year}-${month}`),
+        lt: new Date(`${ltYear}-${ltMonth}`),
+      },
+    },
+  });
+
+  if (emotionsAndEmojis.length == 0) {
+    const response = emptyApiResponseDTO();
+    return response;
+  }
+  console.log(emotionsAndEmojis);
+  const emotions = emotionsAndEmojis.map((emotion) => {
+    return emotion.emotion;
+  });
+  console.log(emotions);
   return response;
 };

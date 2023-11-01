@@ -13,6 +13,7 @@ import {
   searchDiaryService,
   getDiaryByDateService,
   verifyDiaryAuthor,
+  getEmotionOftheMonthService,
 } from '../services/diaryService';
 import { IRequest } from 'types/user';
 import { plainToClass } from 'class-transformer';
@@ -159,7 +160,6 @@ export const getOtherUsersDiary = async (
   const otherUsersDiary =
     select == 'friend'
       ? await getFriendsDiaryService(
-          userId,
           page,
           limit,
           emotion as string,
@@ -318,4 +318,19 @@ export const searchDiary = async (
   );
 
   return res.status(200).json(searchDiary);
+};
+
+export const getEmotionOftheMonth = async (
+  req: IRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  const {
+    user: { id: userId },
+  } = req;
+  const year = parseInt(req.query.year as string);
+  const month = parseInt(req.query.month as string);
+  const emotion = await getEmotionOftheMonthService(userId, year, month);
+
+  return res.status(200).json(emotion);
 };

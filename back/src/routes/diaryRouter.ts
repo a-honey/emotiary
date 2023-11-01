@@ -10,6 +10,7 @@ import {
   sendRecommendationEmail,
   selectEmotion,
   searchDiary,
+  getEmotionOftheMonth,
 } from '../controllers/diaryController';
 import { Router } from 'express';
 import { diaryUpload, postDiaryUpload } from '../middlewares/uploadMiddleware';
@@ -45,6 +46,7 @@ const diaryRouter = Router();
  */
 
 // 다이어리 생성
+// api/diary/
 diaryRouter.post(
   '/',
   jwtAuthentication,
@@ -63,7 +65,7 @@ diaryRouter.post(
 diaryRouter.put('/selectEmotion/:diaryId', jwtAuthentication, selectEmotion);
 
 // 네트워크 페이지 (Done)
-// /diary/views/users?select&page&limit&emotion
+// api/diary/views/users?select&page&limit&emotion
 diaryRouter.get(
   '/views/users',
   jwtAuthentication,
@@ -71,7 +73,7 @@ diaryRouter.get(
 );
 
 // 캘린더 페이지 (Done)
-// /diary/views/date/:userId?year&month
+// api/diary/views/date/:userId?year&month
 diaryRouter.get(
   '/views/date/:userId',
   jwtAuthentication,
@@ -79,16 +81,26 @@ diaryRouter.get(
 );
 
 // 내 글 전체 가져오기 (Done)
-// /diary/views?page&limit
+// api/diary/views?page&limit
 diaryRouter.get(
   '/views',
   jwtAuthentication,
   wrapAsyncController(getAllMyDiaries),
 );
 
+// 해당 월의 다이어리 1순위 감정 반환하기
+// api/diary/emotions?year&month
+diaryRouter.get(
+  '/emotions',
+  jwtAuthentication,
+  wrapAsyncController(getEmotionOftheMonth),
+);
+
+// 다이어리 검색하기 (Done)
+// api/diary/search?page&limit
 diaryRouter.get('/search', jwtAuthentication, wrapAsyncController(searchDiary));
 
-// /diary/:diaryId
+// api/diary/:diaryId
 diaryRouter
   .route('/:diaryId')
   // 다이어리 하나 가져오기
