@@ -10,6 +10,7 @@ interface CommentDataType {
   content: string;
   createdAt: string;
   reComment: [];
+  emoji: string;
   author: {
     id: string;
     username: string;
@@ -85,7 +86,7 @@ const CommentItem = ({
       <div className={styles.commentItemContainer}>
         <div>{index + 1}</div>
         {isReply && <div>L</div>}
-        <div>{data.content}</div>
+        <div>{`${data.content} ${data.emoji}`}</div>
         <div
           className={styles.userInfo}
           onClick={() => {

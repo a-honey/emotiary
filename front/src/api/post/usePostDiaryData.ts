@@ -50,9 +50,11 @@ export const usePostCommentData = (id: string, done?: () => void) => {
       return await instance.post(`/comments/${id}`, body);
     },
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries(queryKeys.diaryData({ id }));
-        done?.();
+      onSuccess: (res) => {
+        if (res.data.data.emoji) {
+          queryClient.invalidateQueries(queryKeys.diaryData({ id }));
+          done?.();
+        }
       },
       onError: (error: Error) => {
         console.error('useMutation api 요청 에러', error);
