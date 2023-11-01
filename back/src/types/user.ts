@@ -9,12 +9,12 @@ export interface IUser {
   profileImage: fileUpload[];
   updatedAt: Date;
   createdAt: Date;
-  isFriend : Boolean;
+  isFriend: Boolean;
 }
 
 export interface fileUpload {
+  id?: number;
   url?: string;
-  user?: string;
   userId?: string;
   createdAt?: Date;
 }
@@ -23,5 +23,5 @@ export interface IRequest extends Request {
   user: IUser | null;
   token: string;
   refreshTokens: string[];
-  expiresAt : number;
+  expiresAt: number;
 }
