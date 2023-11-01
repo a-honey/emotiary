@@ -13,6 +13,7 @@ export const useDeleteDiaryData = ({ id }: { id: string }) => {
         queryClient.invalidateQueries(
           queryKeys.diarysData({ emotion: null, select: null, page: null }),
         );
+        queryClient.invalidateQueries(['calendarDiaryData']);
       },
       onError: (error: Error) => {
         console.error('useMutation api 요청 에러', error);

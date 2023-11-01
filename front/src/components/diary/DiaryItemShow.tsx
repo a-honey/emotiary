@@ -77,13 +77,12 @@ const DiaryItemShow = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    console.log(diaryBodyData);
     putMutation.mutate({ body: diaryBodyData });
   };
 
   const handleDeleteClick = () => {
     deleteMutation.mutate();
+    toggleIsOpenModal();
   };
 
   useEffect(() => {
