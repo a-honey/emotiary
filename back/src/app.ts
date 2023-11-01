@@ -9,23 +9,29 @@ import diaryRouter from './routes/diaryRouter';
 import favoriteRouter from './routes/favoriteRouter';
 import friendRouter from './routes/friendRouter';
 import commentRouter from './routes/commentRouter';
-import {
-  jwtStrategy,
-  localStrategy,
-  googleStrategy,
-} from './config/passport';
+import { jwtStrategy, localStrategy, googleStrategy } from './config/passport';
 import { Logger } from './config/logger';
 import testAuthRouter from './routes/testRouter';
 import { errorMiddleware } from './middlewares/errorMiddleware';
 import { sendAlarm } from './utils/alarm';
+import http from 'http';
+import { chat } from './utils/chat';
+import { Server as SocketIoServer, Socket } from 'socket.io';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
 
 // import axios, { AxiosResponse } from "axios";
 
-const app: Express = express();
+const app: Express & { io?: any } = express();
+const server = http.createServer(app);
 app.use(cors());
 app.use(bodyParser.json());
 app.use(Logger);
 sendAlarm();
+
+
 
 app.use(passport.initialize());
 
@@ -70,7 +76,24 @@ apiRouter.use('/comments', commentRouter);
 
 app.use('/api', apiRouter);
 
-app.use(express.static('fileUpload'));
+
+// // 정적 파일 제공을 위한 미들웨어 설정
+// app.use(express.static("public"));
+app.use('/api/fileUpload', express.static('fileUpload'));
 app.use(errorMiddleware);
+
+
+
+// 웹소켓을 이용한 1:1 채팅
+const io = new SocketIoServer(server, {
+  path: '/chat',
+  cors: {
+    origin: 'http://localhost:3000', // Replace with your actual frontend URL
+    methods: ['GET', 'POST',  'WEBSOCKET'],
+  },
+});
+
+chat(io);
+app.io = io;
 
 export { app };

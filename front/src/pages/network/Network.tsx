@@ -4,7 +4,7 @@ import withLogin from '../../components/withLogin';
 
 const NetworkPage: React.FC = () => {
   return (
-    <main style={{ height: '95vh' }}>
+    <main>
       <DiaryList />
     </main>
   );

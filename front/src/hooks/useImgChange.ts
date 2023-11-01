@@ -1,6 +1,6 @@
 import { useState, useRef, ChangeEvent, DragEvent } from 'react';
 
-const useImgChange = () => {
+const useImgChange = (handleAddImgsContainer?: (img: File) => void) => {
   const [imgContainer, setImgContainer] = useState<File | null>(null);
   // src를 변경할 요소(useRef 객체)
   const imgRef = useRef<HTMLImageElement | null>(null);
@@ -16,7 +16,7 @@ const useImgChange = () => {
       e.dataTransfer.files.length > 0
     ) {
       // 드래그 앤 드롭 이벤트에서 파일 가져오기
-      if (e.dataTransfer && e.dataTransfer.files.length > 0) {
+      if (e.dataTransfer && e.dataTransfer.files) {
         img = e.dataTransfer.files[0];
       }
     } else if (e.target instanceof HTMLInputElement && e.target.files) {
@@ -40,6 +40,7 @@ const useImgChange = () => {
 
         reader.readAsDataURL(img);
         setImgContainer(img);
+        handleAddImgsContainer?.(img);
       } catch (e) {
         alert(e);
       }

@@ -11,7 +11,6 @@
   left: 0;
   right: 0;
   padding: map-get($spacing, large);
-  z-index: 9999;
   div,
   a {
     font-weight: 700;
@@ -26,22 +25,35 @@
   .logoContainer {
     width: 10%;
     display: flex;
-    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
     font-size: 25px;
+    img {
+      width: 40px;
+    }
   }
   .navContainer {
-    width: 25%;
+    width: 30%;
     display: flex;
     justify-content: space-between;
-    .active {
-      background-color: #ededed;
-    }
     a {
-      width: 140px;
+      width: 200px;
       text-align: center;
       padding: 10px;
       border-radius: 30px;
+      &:hover {
+        font-size: 17px;
+        background-color: #ededed;
+      }
+      &.active {
+        background-color: map-get($colors, bg);
+        font-size: 17px;
+      }
     }
+  }
+  video {
+    position: absolute;
+    right: 300px;
   }
   .userInfo {
     display: flex;
@@ -51,10 +63,11 @@
     img {
       width: 30px;
       height: 30px;
+      border-radius: 50%;
     }
     div {
-      font-size: 13px;
-      font-weight: 500;
+      font-size: 17px;
+      font-weight: 400;
     }
   }
 }
@@ -65,8 +78,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #ffffff;
-  color: #686868;
+  background-color: #ededed;
+  color: black;
   .textContainer {
     width: 30%;
     display: flex;
@@ -82,7 +95,6 @@
   right: 0;
   display: flex;
   flex-direction: column;
-  min-height: 300px;
   width: 300px;
   display: flex;
   flex-direction: column;
@@ -91,16 +103,36 @@
     button {
       width: 100%;
       height: 30px;
+      font-weight: 700;
+      background-color: map-get($colors, point);
     }
     .ban {
-      background-color: map-get($colors, point);
-      cursor: not-allowed;
+      background-color: white;
     }
   }
-}
-
-.reqItemContainer {
-  display: flex;
+  .itemList {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    .reqItemContainer {
+      display: flex;
+      justify-content: space-between;
+      border: 1px solid map-get($colors, point);
+      padding: 10px 15px;
+      border-radius: 5px;
+      align-items: center;
+      img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+      }
+      div {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+    }
+  }
 }
 
 .right {

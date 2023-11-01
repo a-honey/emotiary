@@ -1,27 +1,31 @@
 @import './variables.scss';
 
+::-webkit-scrollbar {
+  display: none;
+}
+
 body {
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Noto Sans KR', sans-serif, 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: map-get($colors, bg);
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
-
 main {
-  margin-top: $headerHeight;
-  min-height: 100vh (-$headerHeight) (-$footerHeight);
+  max-width: 1500px;
+  margin: $headerHeight auto;
   display: flex;
   justify-content: center;
-  padding: 40px;
+  align-items: center;
+  padding-top: 30px;
+  gap: 20px;
+}
+
+.column {
+  flex-direction: column;
 }
 
 main.footer {

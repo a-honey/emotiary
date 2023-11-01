@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import styles from '../styles/My.ChangePW.module.scss';
-import { getEmail } from '../../../utils/localStorageHandlers';
+import { getEmail, logout } from '../../../utils/localStorageHandlers';
 import { instance } from '../../../api/instance';
+import { useNavigate } from 'react-router-dom';
 
 interface ChangeDataType {
   email: string;
@@ -20,6 +21,7 @@ const ChangePW = ({
 }: {
   toggleIsOpenChangePW: () => void;
 }) => {
+  const navigator = useNavigate();
   const [changeData, setChangeData] = useState(CHANGE_DATA_INITIAL_DATA);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -44,6 +46,9 @@ const ChangePW = ({
         email: changeData.email,
         password: changeData.password,
       });
+      alert('비밀번호가 변경되었습니다. 다시 로그인 해주세요.');
+      navigator('/');
+      logout();
     } catch {
       console.error('비밀번호 변경 실패');
     }

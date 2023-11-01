@@ -12,7 +12,6 @@ import UsersPage from './pages/users/Users';
 import Header from './components/layout/Layout.Header';
 import Footer from './components/layout/Layout.Footer';
 import ErrorPage from './pages/ErrorPage';
-import withLogin from './components/withLogin';
 
 const queryClient = new QueryClient();
 
@@ -21,13 +20,13 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <Routes>
         <Route path="/" element={<Header />}>
-          <Route path="/" element={<MainPage />} />
+          <Route path="main" element={<MainPage />} />
           <Route path="network" element={<NetworkPage />} />
           <Route path="users" element={<UsersPage />} />
           <Route path="user/:id" element={<UserIdPage />} />
           <Route path="mypage" element={<MyPage />} />
           <Route element={<Footer />}>
-            <Route path="intro" element={<IntroPage />} />
+            <Route path="/" element={<IntroPage />} />
             <Route path="signin" element={<SigninPage />} />
             <Route path="signup" element={<SignupPage />} />
             <Route path="*" element={<ErrorPage />} />

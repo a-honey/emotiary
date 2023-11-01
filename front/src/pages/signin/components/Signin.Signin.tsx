@@ -1,6 +1,6 @@
 import React, { FormEvent, useState } from 'react';
 import { usePutSigninData } from '../../../api/mutation/usePutSigininData';
-import { QueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query'; // 여기 변경
 import GoogleLogin from 'react-google-login';
 import styles from './index.module.scss';
 
@@ -42,7 +42,8 @@ const InputField: React.FC<InputFieldProps> = ({
 const Signin: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const queryClient = new QueryClient();
+  
+  const queryClient = useQueryClient();
   
   const signinMutation = usePutSigninData(queryClient);
 

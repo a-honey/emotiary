@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import UserCard from './components/UserId.UserCard';
 import Calendar from '../../components/calendar/Calendar';
 import { useGetMyDiaryData } from '../../api/get/useGetDiaryData';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import useCalendar from '../../hooks/useCalendar';
 import withLogin from '../../components/withLogin';
 
 const UserIdPage: React.FC = () => {
   const location = useLocation();
+  const navigator = useNavigate();
 
   const { currentDate, handleBeforeMonth, handleNextMonth } = useCalendar();
 
@@ -17,8 +18,14 @@ const UserIdPage: React.FC = () => {
     month: currentDate.month,
   });
 
+  useEffect(() => {
+    if (location.pathname.split('/')[2] === localStorage.getItem('userId')) {
+      navigator('/mypage');
+    }
+  }, [navigator, location]);
+
   return (
-    <main style={{ gap: '40px' }}>
+    <main>
       <UserCard />
       <Calendar
         currentDate={currentDate}

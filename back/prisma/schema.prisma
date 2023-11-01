@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -9,11 +10,11 @@ datasource db {
 
 model User {
   id           String   @id @default(uuid())
-  username     String   @unique
+  username     String?
   email        String   @unique
-  password     String
+  password     String?
   description  String?
-  filesUpload fileUpload[]
+  profileImage fileUpload[]
   updatedAt    DateTime @default(now()) // 기본값 추가
   createdAt    DateTime @default(now())
   friendS      Friend[] @relation("UserFriendS")
@@ -23,11 +24,18 @@ model User {
   // 사용자와 Refresh Token 간의 일대다 관계 설정
   refreshTokens RefreshToken[]
 
-  favorites    Favorite[]
-  comments     Comment[]
-  latestEmoji  String?
-  isFriend     Boolean   @default(false)
-  alarmSetting String    @default("1")
+  favorites   Favorite[]
+  comments    Comment[]
+  latestEmoji String?
+  isFriend    Boolean   @default(false)
+  alarmSetting String      @default("1")
+  chatMessage  ChatMessage[]
+
+  // 이메일인증
+  verificationToken String?
+  verificationTokenExpires DateTime?
+  isVerified Boolean?
+
 }
 
 model fileUpload{
@@ -75,17 +83,23 @@ model Diary {
   authorId      String
   createdDate   DateTime
   title         String
-  content       String
+  content       String  @db.VarChar(1000)
   is_public     String
-  emoji         String
-  emotion       String
+  emoji         String?
+  emotion       String?
   filesUpload   diaryFileUpload[]
+  audioUrl      String?  @db.VarChar(1200)
   favoriteCount Int      @default(value: 0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   favorites Favorite[]
   comments  Comment[]
+
+  @@fulltext([title])  
+  @@fulltext([content])
+  @@fulltext([content, title])
+
 }
 
 model Favorite {
@@ -104,16 +118,36 @@ model Comment {
   diary         Diary     @relation(fields: [diaryId], references: [id], onDelete: Cascade)
   diaryId       String
   emoji         String?
-  content       String
+  content       String    
   nestedComment String?
+  writeAi       String    @default(uuid())
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   reply         Comment?  @relation("comment", fields: [nestedComment], references: [id], onDelete: Cascade)
   reComment     Comment[] @relation("comment")
+
+  @@unique([diaryId, writeAi])
 }
 
 model Emoji {
-  id         Int     @id @default(autoincrement())
-  type       String
-  emotion    String?
+  id      Int     @id @default(autoincrement())
+  type    String
+  emotion String?
+}
+
+model ChatRoom {
+  id        String        @id @default(uuid())
+  message   ChatMessage[]
+  createdAt DateTime      @default(now())
+}
+
+model ChatMessage {
+  id         String   @id @default(uuid())
+  room       ChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId     String
+  sendUser   User     @relation(fields: [sendUserId], references: [id], onDelete: Cascade)
+  sendUserId String
+  message    String
+  createdAt  DateTime @default(now())
+  isRead     Boolean  @default(false)
 }

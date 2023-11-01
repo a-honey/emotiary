@@ -1,19 +1,27 @@
-import { QueryClient, useMutation } from '@tanstack/react-query';
+import {
+  QueryClient,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { formDataInstance } from '../instance';
 import { queryKeys } from '../queryKeys';
+import { UserItemType } from '../get/useGetUserData.types';
 
-export const usePutUserData = (
-  queryClient: QueryClient,
-  id: string,
-  handleIsAdding?: () => void,
-) => {
+export const usePutUserData = (id: string, fn?: () => void) => {
+  const queryClient = useQueryClient();
   const putMutation = useMutation(
     async ({ body }: { body: any }) => {
-      return await formDataInstance.put(`/users/${id}`, body);
+      const response = await formDataInstance.put(`/users/${id}`, body);
+      return response.data;
     },
     {
-      onSuccess: () => {
-        handleIsAdding?.();
+      onSuccess: (data: { data: UserItemType }) => {
+        fn?.();
+        localStorage.removeItem('userImg');
+        localStorage.setItem(
+          'userImg',
+          data.data.profileImage[data.data.profileImage.length - 1].url,
+        );
         queryClient.invalidateQueries(queryKeys.myUserData());
       },
       onError: (error) => {

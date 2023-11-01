@@ -11,10 +11,19 @@ import {
   deleteFriend
 } from '../services/friendService';
 import { IRequest } from "types/user";
+// import { plainToClass } from 'class-transformer';
+// import { FriendValidateDTO } from '../dtos/friendDTO';
+// import { validate } from 'class-validator';
+
+
 
 /** @description 친구 요청 */
 /** @Tag(name = "book service", description = "the book API with description tag annotation") */
 export const friendRequest = async (req : IRequest, res : Response, next : NextFunction) => {
+  /**
+   * #swagger.tags = ['Friend']
+   * #swagger.summary = '친구 요청'
+   */
   try {
     const userId = req.user.id;
     const requestId = req.params.userId;
@@ -22,7 +31,7 @@ export const friendRequest = async (req : IRequest, res : Response, next : NextF
     if (userId === requestId) {
       return res
         .status(400)
-        .json({ message: "나 자신과는 친구가 될 수 없어!" });
+        .json({ message: "셀프 친구 불가!" });
     }
     const alreadyFriends = await weAreFriends(userId, requestId);
     if (alreadyFriends) {
@@ -33,7 +42,7 @@ export const friendRequest = async (req : IRequest, res : Response, next : NextF
       return res.status(400).json({ message: "이미 요청 했거나 우린 친구!" });
     }
     const request = await createFriends(userId, requestId);
-    res.status(200).json({ data: request, message: "친구 요청 완료" });
+    res.status(200).json(request);
 } catch (error) {
     console.error(error);
     error.status = 500;
@@ -43,10 +52,16 @@ export const friendRequest = async (req : IRequest, res : Response, next : NextF
 
 /** @description 보낸 친구 요청 목록 */
 export const sentList = async (req : IRequest, res : Response, next : NextFunction) => {
+  /**
+   * #swagger.tags = ['Friend']
+   * #swagger.summary = '보낸 친구 요청 목록'
+   */
   try {
     const userId = req.user.id;
-    const friendRequest = await listRequestsSent(userId);
-    res.status(200).json({ data: friendRequest, message: '보낸 친구 요청 리스트' });
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 8;
+    const friendRequest = await listRequestsSent(userId, page, limit);
+    res.status(200).json(friendRequest);
   } catch (error) {
     console.error(error);
     error.status = 500;
@@ -56,11 +71,15 @@ export const sentList = async (req : IRequest, res : Response, next : NextFuncti
 
 /** @description 요청 취소 */
 export const requestCancel = async (req : IRequest, res : Response, next : NextFunction) => {
+  /**
+   * #swagger.tags = ['Friend']
+   * #swagger.summary = '친구 요청 취소'
+   */
   try {
     const userId = req.user.id;
     const requestId = req.params.userId;
     const cancel = await cancelRequest(userId, requestId);
-    res.status(200).json({ data: cancel, message: '요청 취소' });
+    res.status(200).json(cancel);
 } catch (error) {
     console.error(error);
     error.status = 500;
@@ -72,10 +91,16 @@ export const requestCancel = async (req : IRequest, res : Response, next : NextF
 
 /** @description 받은 친구 요청 목록 */
 export const receivedList = async (req : IRequest, res : Response, next : NextFunction) => {
+  /**
+   * #swagger.tags = ['Friend']
+   * #swagger.summary = '받은 친구 요청 목록'
+   */
   try {
     const userId = req.user.id;
-    const friendRequest = await listRequestsReceived(userId);
-    res.status(200).json({ data: friendRequest, message: '받은 친구 요청 리스트' });
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 8;
+    const friendRequest = await listRequestsReceived(userId, page, limit);
+    res.status(200).json(friendRequest);
   } catch (error) {
     console.error(error);
     error.status = 500;
@@ -85,11 +110,15 @@ export const receivedList = async (req : IRequest, res : Response, next : NextFu
 
 /** @description 친구 수락 */
 export const friendAccept = async (req : IRequest, res : Response, next : NextFunction) => {
+  /**
+   * #swagger.tags = ['Friend']
+   * #swagger.summary = '친구 수락'
+   */
   try {
     const userId = req.user.id;
     const requestId = req.params.userId;
     const accept = await acceptFriend(userId, requestId);
-    res.status(200).json({ data: accept, message: '친구 수락' });
+    res.status(200).json(accept);
   } catch (error) {
     console.error(error);
     error.status = 500;
@@ -99,11 +128,15 @@ export const friendAccept = async (req : IRequest, res : Response, next : NextFu
 
 /** @description 친구 거절 */
 export const friendReject = async (req : IRequest, res : Response, next : NextFunction) => {
+  /**
+   * #swagger.tags = ['Friend']
+   * #swagger.summary = '친구 거절'
+   */
   try {
     const userId = req.user.id;
     const requestId = req.params.userId;
     const reject = await rejectFriend(userId, requestId);
-    res.status(200).json({ data: reject, message: '친구 거절' });
+    res.status(200).json(reject);
 } catch (error) {
     console.error(error);
     error.status = 500;
@@ -113,13 +146,16 @@ export const friendReject = async (req : IRequest, res : Response, next : NextFu
 
 /** @description 친구 목록 */
 export const getFriends = async (req : IRequest, res : Response, next : NextFunction) => {
+  /**
+   * #swagger.tags = ['Friend']
+   * #swagger.summary = '친구 목록'
+   */
   try {
-    const page: number | null = req.query.page !== undefined ? Number(req.query.page) : null;
-    const limit: number | null = req.query.limit !== undefined ? Number(req.query.limit) : null;
-
     const userId = req.user.id;
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 8;
     const friendsList = await getMyFriends(userId, page, limit);
-    res.status(200).json({ data: friendsList, message: '친구 목록' });
+    res.status(200).json(friendsList);
 } catch (error) {
     console.error(error);
     error.status = 500;
@@ -129,11 +165,15 @@ export const getFriends = async (req : IRequest, res : Response, next : NextFunc
 
 /** @description 친구 삭제 */
 export const friendDelete = async (req : IRequest, res : Response, next : NextFunction) => {
+  /**
+   * #swagger.tags = ['Friend']
+   * #swagger.summary = '친구 삭제'
+   */
   try {
     const userId = req.user.id;
     const friendId = req.params.userId;
     const dropFriend = await deleteFriend(userId, friendId);
-    res.status(200).json({ data: dropFriend, message: '친구 삭제' });
+    res.status(200).json(dropFriend);
 } catch (error) {
     console.error(error);
     error.status = 500;

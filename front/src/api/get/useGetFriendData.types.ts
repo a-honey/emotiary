@@ -1,11 +1,11 @@
-export interface ResponseFriendType {
-  data: ReceivedUserDataType[];
-  message: string;
-  status: number;
-}
+type UserDataType = 'receivedUser' | 'sentUser';
 
-export interface ReceivedUserDataType {
+export type GetFriendReqDataType = {
+  [x in UserDataType]: FriendReqCommonResponseType;
+};
+
+export interface FriendReqCommonResponseType {
   id: string;
   username: string;
-  profileImage: string | null;
+  filesUpload: { url: string }[];
 }

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import styles from './DiaryComment.module.scss';
-import { useQueryClient } from '@tanstack/react-query';
 import { usePostCommentData } from '../../api/post/usePostDiaryData';
 import { useNavigate } from 'react-router-dom';
 import ImageComponent from '../ImageComponent';
@@ -10,10 +9,11 @@ interface CommentDataType {
   diaryId: string;
   content: string;
   createdAt: string;
+  reComment: [];
   author: {
     id: string;
     username: string;
-    profileImage: string;
+    profileImage: { id: number; url: string }[];
   };
 }
 
@@ -27,9 +27,7 @@ const DiaryComment = ({
 }) => {
   const [comment, setComment] = useState('');
 
-  const queryClient = useQueryClient();
-
-  const postMutation = usePostCommentData(queryClient, id as string);
+  const postMutation = usePostCommentData(id as string);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,7 +88,7 @@ const CommentItem = ({
           }}
         >
           <ImageComponent
-            src={data.author.profileImage}
+            src={data.author.profileImage.at(-1)?.url ?? null}
             alt={`${data.author.username}의 프로필사진`}
           />
           <div>{data.author.username}</div>
@@ -124,13 +122,7 @@ const DiaryReplyAdd = ({
 }) => {
   const [comment, setComment] = useState('');
 
-  const queryClient = useQueryClient();
-
-  const postMutation = usePostCommentData(
-    queryClient,
-    id as string,
-    handleIsAdding,
-  );
+  const postMutation = usePostCommentData(id as string, handleIsAdding);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

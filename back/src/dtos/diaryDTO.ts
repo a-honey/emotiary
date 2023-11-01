@@ -10,6 +10,7 @@ import {
 import { Exclude, Expose, Type } from 'class-transformer';
 import { diaryFileUpload } from '../types/diary';
 import 'reflect-metadata';
+import { fileUpload } from 'types/user';
 
 export class ApiResponseDTO {
   data: any;
@@ -41,6 +42,8 @@ export class AuthorInDiaryDTO {
   @Expose()
   email: string;
 
+  @Expose()
+  profileImage: fileUpload[];
 }
 
 // exclude 사용해주기
@@ -73,11 +76,14 @@ export class DiaryResponseDTO {
   favoriteCount: number;
 
   @Expose()
+  audioUrl: string;
+
+  @Expose()
   @Type(() => AuthorInDiaryDTO)
   author: AuthorInDiaryDTO;
 
   @Expose()
-  filesUpload : diaryFileUpload[];
+  filesUpload: diaryFileUpload[];
 }
 
 export class DiaryValidateDTO {
@@ -91,11 +97,9 @@ export class DiaryValidateDTO {
   title: string;
 
   @IsOptional()
-  @IsString()
   content: string;
 
   @IsOptional()
-  @IsString({ message: '문자 입력 해주세요' })
   is_public: string;
 
   @IsOptional()

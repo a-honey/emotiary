@@ -1,0 +1,22 @@
+.container {
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  border-radius: 5px;
+  width: 50vw;
+  h2 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  form {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    button {
+      width: 70px;
+    }
+  }
+}

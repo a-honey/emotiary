@@ -3,16 +3,28 @@ import {
   createDiaryService,
   deleteDiaryService,
   getAllDiaryService,
-  getDiaryByDiaryIdService,
+  getOneDiaryService,
   getDiaryByMonthService,
   getAllMyDiariesService,
   updateDiaryService,
   getFriendsDiaryService,
+  mailService,
+  selectedEmojis,
+  searchDiaryService,
+  getDiaryByDateService,
+  verifyDiaryAuthor,
+  getEmotionOftheMonthService,
 } from '../services/diaryService';
 import { IRequest } from 'types/user';
 import { plainToClass } from 'class-transformer';
 import { DiaryValidateDTO } from '../dtos/diaryDTO';
 import { validate } from 'class-validator';
+import { generateError } from '../utils/errorGenerator';
+import { getMyWholeFriends } from '../services/friendService';
+import {
+  createdGPTComment,
+  updatedGPTComment,
+} from '../services/commentService';
 
 /**
  * 다이어리 생성
@@ -26,32 +38,40 @@ export const createDiary = async (
   res: Response,
   next: NextFunction,
 ) => {
-  try {
-    const fileUrls = res.locals.myData;
-    // const { emoji,...inputData } = req.body;
-    const inputData = req.body;
-    inputData.createdDate = '2023-03-29T00:00:00Z';
-    inputData.title = 'aaaaaa';
-    inputData.content = '2ssssssssss';
-    inputData.is_public = 'friend';
-    const diaryInput = plainToClass(DiaryValidateDTO, inputData);
+  const fileUrls = res.locals.myData;
+  const {
+    body: inputData,
+    user: { id: userId },
+  } = req;
 
-    // TODO 밸리데이터 수정 필요
-    const errors = await validate(diaryInput);
+  const { createdDate } = inputData;
 
-    //TODO 추루 수정
-    if (errors.length > 0)
-      //throw generateError(400, errors[0].constraints);
-      console.log('!!!!!!!!!!!!', errors[0].constraints);
+  // 해당 날짜에 다이어리 존재하는지 체크
+  const checkExistedDiary = await getDiaryByDateService(userId, createdDate);
 
-    const { id: userId } = req.user;
-
-    const createdDiary = await createDiaryService(userId, inputData, fileUrls);
-    console.log(createDiary);
-    return res.status(createdDiary.status).json(createdDiary);
-  } catch (error) {
-    next(error);
+  if (checkExistedDiary) {
+    console.log('이미 존재하지롱');
+    return res.json('이미 존재하는 다이어리가 있어용 메롱 ');
   }
+  const diaryInput = plainToClass(DiaryValidateDTO, inputData);
+
+  // TODO 밸리데이터 수정 필요
+  const errors = await validate(diaryInput);
+
+  //TODO 추루 수정
+  if (errors.length > 0) {
+    const errorMessages = errors.map((error) => {
+      return error.constraints;
+    });
+  }
+
+  const createdDiary = await createDiaryService(userId, inputData, fileUrls);
+  console.log(createDiary);
+
+  // 일기 작성시 chatGPT를 활용한 댓글 한마디 추가
+  createdGPTComment(inputData.content, userId, createdDiary.data.id);
+
+  return res.status(createdDiary.status).json(createdDiary);
 };
 
 /**
@@ -66,18 +86,14 @@ export const getAllMyDiaries = async (
   res: Response,
   next: NextFunction,
 ) => {
-  try {
-    //authorId
-    const { id: userId } = req.user;
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 8;
+  //authorId
+  const { id: userId } = req.user;
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 8;
 
-    const myDiaries = await getAllMyDiariesService(userId, page, limit);
+  const myDiaries = await getAllMyDiariesService(userId, page, limit);
 
-    return res.status(myDiaries.status).json(myDiaries);
-  } catch (error) {
-    next(error);
-  }
+  return res.status(myDiaries.status).json(myDiaries);
 };
 
 export const getDiaryByDate = async (
@@ -85,17 +101,14 @@ export const getDiaryByDate = async (
   res: Response,
   next: NextFunction,
 ) => {
-  try {
-    //authorId
-    const { userId } = req.params;
-    const year = Number(req.query.year);
-    const month = Number(req.query.month);
-    const MonthlyDiary = await getDiaryByMonthService(userId, year, month);
+  //authorId
 
-    return res.status(MonthlyDiary.status).json(MonthlyDiary);
-  } catch (error) {
-    next(error);
-  }
+  const { userId } = req.params;
+  const year = parseInt(req.query.year as string);
+  const month = parseInt(req.query.month as string);
+  const MonthlyDiary = await getDiaryByMonthService(userId, year, month);
+
+  return res.status(MonthlyDiary.status).json(MonthlyDiary);
 };
 /**
  * 다이어리 하나 가져오기 (diaryId)
@@ -104,20 +117,19 @@ export const getDiaryByDate = async (
  * @param next
  * @returns
  */
-export const getDiaryByDiaryId = async (
+export const getOneDiary = async (
   req: IRequest,
   res: Response,
   next: NextFunction,
 ) => {
-  try {
-    const { diaryId } = req.params;
-    const { id: userId } = req.user;
-    const diary = await getDiaryByDiaryIdService(userId, diaryId);
+  const {
+    params: { diaryId },
+    user: { id: userId },
+  } = req;
 
-    return res.status(diary.status).json(diary);
-  } catch (error) {
-    next(error);
-  }
+  const diary = await getOneDiaryService(userId, diaryId);
+
+  return res.status(diary.status).json(diary);
 };
 
 /**
@@ -132,42 +144,147 @@ export const getOtherUsersDiary = async (
   res: Response,
   next: NextFunction,
 ) => {
-  try {
-    const { id: userId } = req.user;
-    const { select } = req.query; // friend or all
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 8;
-    const { emotion } = req.query;
+  /**
+   * #swagger.tags = ['Diary']
+   * #swagger.summary = '친구 요청'
+   */
+  const {
+    query: { select, emotion },
+    user: { id: userId },
+  } = req;
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 8;
 
-    // diary 데이터 가져오기
-    const otherUsersDiary =
-      select == 'friend'
-        ? await getFriendsDiaryService(userId, page, limit, emotion as string)
-        : await getAllDiaryService(userId, page, limit, emotion as string);
+  //친구목록 가져오기
+  const friends = await getMyWholeFriends(userId);
 
-    return res.status(otherUsersDiary.status).json(otherUsersDiary);
-  } catch (error) {
-    next(error);
-  }
+  const friendIdList = friends.map((friend) => {
+    return userId == friend.sentUserId
+      ? friend.receivedUserId
+      : friend.sentUserId;
+  });
+
+  // diary 데이터 가져오기
+  const otherUsersDiary =
+    select == 'friend'
+      ? await getFriendsDiaryService(
+          page,
+          limit,
+          emotion as string,
+          friendIdList,
+        )
+      : await getAllDiaryService(
+          userId,
+          page,
+          limit,
+          emotion as string,
+          friendIdList,
+        );
+
+  return res.status(otherUsersDiary.status).json(otherUsersDiary);
 };
 
+/**
+ * @description 다이어리 업데이트
+ * @param req
+ * @param res
+ * @param next
+ * @returns
+ */
 export const updateDiary = async (
   req: IRequest,
   res: Response,
   next: NextFunction,
 ) => {
-  try {
-    const { id: userId } = req.user;
-    const { diaryId } = req.params;
-    const inputData = req.body;
-    const { deleteData, ...updatedData } = inputData;
-    const diaryInput = plainToClass(DiaryValidateDTO, updatedData);
+  const {
+    body: inputData,
+    params: { diaryId },
+    user: { id: userId },
+  } = req;
+  const { deleteData, ...updatedData } = inputData;
 
-    // TODO 밸리데이터 수정 필요
-    const errors = await validate(diaryInput);
-    if (errors.length > 0) return res.status(400).json(errors);
-    console.log('!!!!!!!!!!!!', errors);
-    const updatedDiary = await updateDiaryService(userId, diaryId, updatedData);
+  await verifyDiaryAuthor(diaryId, userId);
+
+  const diaryInput = plainToClass(DiaryValidateDTO, updatedData);
+
+  // TODO 밸리데이터 수정 필요
+  const errors = await validate(diaryInput);
+  // const errorMessages = [];
+  if (errors.length > 0) {
+    console.log('!!!!!!!!!!!!', errors[0].constraints);
+    // errorMessages = errors.map((error) => {
+    //   return error.constraints;
+    // });
+  }
+  // throw generateError(400, errors[0].constraints?.isString);
+  // return res.status(400).json(errors);
+  const updatedDiary = await updateDiaryService(userId, diaryId, updatedData);
+
+  updatedGPTComment(inputData.content, userId, diaryId);
+
+  return res.status(updatedDiary.status).json(updatedDiary);
+};
+
+/**
+ * @description 다이어리 삭제
+ * @param req
+ * @param res
+ * @param next
+ * @returns
+ */
+export const deleteDiary = async (
+  req: IRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  const {
+    params: { diaryId },
+    user: { id: userId },
+  } = req;
+
+  await verifyDiaryAuthor(diaryId, userId);
+
+  const deletedDiary = await deleteDiaryService(userId, diaryId);
+
+  return res.status(deletedDiary.status).json(deletedDiary);
+};
+
+export const sendRecommendationEmail = async (
+  req: IRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { diaryId } = req.params;
+    const { username } = req.user;
+    const { friendEmail } = req.body;
+
+    const sendMail = await mailService(friendEmail, diaryId, username);
+
+    return res.status(sendMail.status).json(sendMail);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const selectEmotion = async (
+  req: IRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { diaryId } = req.params;
+    const { id: userId } = req.user;
+    const { selectedEmotion, selectedEmoji } = req.body;
+
+    await verifyDiaryAuthor(diaryId, userId);
+
+    const updatedDiary = await selectedEmojis(
+      selectedEmotion,
+      selectedEmoji,
+      diaryId,
+      userId,
+    );
 
     return res.status(updatedDiary.status).json(updatedDiary);
   } catch (error) {
@@ -175,20 +292,55 @@ export const updateDiary = async (
   }
 };
 
-export const deleteDiary = async (
+/**
+ * @description 다이어리 검색 기능
+ * @param req
+ * @param res
+ * @param next
+ * @returns
+ */
+export const searchDiary = async (
   req: IRequest,
   res: Response,
   next: NextFunction,
 ) => {
-  try {
-    const { diaryId } = req.params;
-    const { id: userId } = req.user;
-    const deletedDiary = await deleteDiaryService(userId, diaryId);
+  const {
+    user: { id: userId },
+  } = req;
 
-    return res.status(deletedDiary.status).json(deletedDiary);
-  } catch (error) {
-    //TODO ErrorGenerator 생성 후 status code랑 error.meta 동적으로 할당해주기
-    console.log('!!!!!!!!!!!!!!!!!!!!!', error.meta);
-    next(error);
-  }
+  const friends = await getMyWholeFriends(userId);
+
+  const friendIdList = friends.map((friend) => {
+    return userId == friend.sentUserId
+      ? friend.receivedUserId
+      : friend.sentUserId;
+  });
+
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 8;
+  const { search } = req.body;
+  const searchDiary = await searchDiaryService(
+    userId,
+    search,
+    page,
+    limit,
+    friendIdList,
+  );
+
+  return res.status(200).json(searchDiary);
+};
+
+export const getEmotionOftheMonth = async (
+  req: IRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  const {
+    user: { id: userId },
+  } = req;
+  const year = parseInt(req.query.year as string);
+  const month = parseInt(req.query.month as string);
+  const emotion = await getEmotionOftheMonthService(userId, year, month);
+
+  return res.status(200).json(emotion);
 };

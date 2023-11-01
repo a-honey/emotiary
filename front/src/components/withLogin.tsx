@@ -1,18 +1,15 @@
 import React, { useEffect } from 'react';
-import getUserId from '../utils/localStorageHandlers';
 import { useNavigate } from 'react-router-dom';
 
 const withLogin = (InnerComponent: React.FC) => {
   return () => {
     const navigator = useNavigate();
-
-    const userId = getUserId;
+    const userId = localStorage.getItem('userId');
 
     useEffect(() => {
       if (!userId) {
         alert('로그인이 필요합니다.');
-        navigator('/intro');
-        return;
+        navigator('/signin');
       }
     }, [userId, navigator]);
 
@@ -21,3 +18,19 @@ const withLogin = (InnerComponent: React.FC) => {
 };
 
 export default withLogin;
+
+/** 로그인이 된 상태라서 접근 불가능하게 하는 HOC */
+export const withLoginSoNot = (InnerComponent: React.FC) => {
+  return () => {
+    const navigator = useNavigate();
+    const userId = localStorage.getItem('userId');
+
+    useEffect(() => {
+      if (userId) {
+        navigator('/main');
+      }
+    }, [userId, navigator]);
+
+    return <InnerComponent />;
+  };
+};
