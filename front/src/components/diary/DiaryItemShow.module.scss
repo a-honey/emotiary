@@ -18,6 +18,12 @@
     h2 {
       font-size: 25px;
       font-weight: 700;
+      position: relative;
+      span {
+        padding-left: 20px;
+        font-size: 60px;
+        position: absolute;
+      }
     }
     .like {
       display: flex;

@@ -146,7 +146,11 @@ const DiaryItemShow = ({
         ) : (
           <div className={styles.diaryContent}>
             <div className={styles.titles}>
-              <h2>{diaryBodyData.title}</h2>
+              <h2>
+                {diaryBodyData.title}
+                <span>{diaryBodyData.emoji}</span>
+              </h2>
+
               <div className={styles.like} onClick={handleLikeClick}>
                 {diaryBodyData.favoriteCount === 0 ? (
                   <GoHeart />
