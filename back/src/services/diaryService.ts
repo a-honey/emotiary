@@ -646,11 +646,19 @@ export const searchDiaryService = async (
   return response;
 };
 
+/**
+ * @description 이 달의 이모지 가져오기
+ * @param userId
+ * @param year
+ * @param month
+ * @returns
+ */
 export const getEmotionOftheMonthService = async (
   userId: string,
   year: number,
   month: number,
 ) => {
+  let emoji = ''; // 이 달의 이모지
   const ltMonth = month == 12 ? 1 : month + 1;
   const ltYear = month == 12 ? year + 1 : year;
 
@@ -678,40 +686,20 @@ export const getEmotionOftheMonthService = async (
     return emotion.emotion;
   });
 
-  const testArray = [
-    '중립 : undefined, 혐오 : undefined, 불안 : undefined',
-    '중립 : undefined, 혐오 : undefined, 불안 : undefined',
-    '분노 : �, 행복 : �, 중립 : �',
-    '분노 : �, 혐오 : �, 중립 : �',
-    '행복 : �, 중립 : �, 혐오 : �',
-    '분노 : undefined, 혐오 : undefined, 중립 : undefined',
-    '분노 : undefined, 혐오 : undefined, 중립 : undefined',
-    '중립 : undefined, 행복 : undefined, 혐오 : undefined',
-    '슬픔 : �, 불안 : �, 분노 : �',
-    '행복 : �, 중립 : �, 슬픔 : �',
-    '행복 : �, 중립 : �, 슬픔 : �',
-    '행복',
-    '행복',
-    '행복',
-    '행복',
-    '슬픔',
-    '슬픔',
-    '슬픔',
-    '중립',
-  ];
-  const modeEmotion = findMode(testArray);
+  const modeEmotion = findMode(emotions);
 
   if (modeEmotion == null) {
     const response = emptyApiResponseDTO();
     return response;
   }
 
-  const emoji = await prisma.emoji.findFirst({
-    select: { emotion: true },
-    where: {
-      type: modeEmotion,
-    },
-  });
-  const response = { emotion: modeEmotion, emoji: emoji.emotion };
+  for (let i = 0; i < emotionsAndEmojis.length; i++) {
+    if (emotionsAndEmojis[i].emotion == modeEmotion) {
+      emoji = emotionsAndEmojis[i].emoji;
+      break;
+    }
+  }
+
+  const response = { emotion: modeEmotion, emoji };
   return response;
 };
