@@ -3,6 +3,7 @@ import {
   createRoomId,
   createChatRoom,
   getMyRoom,
+  getAllMyRoom,
   getMyMessages,
   unreadMessage,
   changeReadStatus,
@@ -40,6 +41,7 @@ export const chat =  (io: SocketIoServer) => {
       const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
       console.log(decodedToken)
       socket.data.decodedToken = decodedToken;
+      console.log(socket.data.decodedToken.id)
       next();
     } catch (error) {
       console.error('JWT verification failed:', error);
@@ -61,7 +63,7 @@ export const chat =  (io: SocketIoServer) => {
       };
       console.log(`[${user.username}] connected`);
     }
-  
+
 
 
 
@@ -137,7 +139,7 @@ export const chat =  (io: SocketIoServer) => {
 
         console.log('파트너아이디', chatPartnerId);
         if (connectedUsers[chatPartnerId].roomId === roomId) {
-          socket.to(roomId).emit('message', {
+          socket.broadcast.to(roomId).emit('newMessage', {
             sendUserId: currentUserId,
             username: user.username,
             message,
@@ -148,7 +150,7 @@ export const chat =  (io: SocketIoServer) => {
         }
 
         if (connectedUsers[chatPartnerId].roomId === null) {
-          io.to(chatPartnerSocketId).emit('newMessage', {
+          io.to(chatPartnerSocketId).emit('message', {
             sendUserId: currentUserId,
             username: user.username,
             messageId: createdMessage.id,

@@ -80,8 +80,13 @@ app.use(errorMiddleware);
 const io = new SocketIoServer(server, {
   path: '/chat',
   cors: {
+<<<<<<< HEAD
     origin: 'http://localhost:3000', // Replace with your actual frontend URL
     methods: ['GET', 'POST', 'WEBSOCKET'],
+=======
+    origin: 'https://kdt-ai-8-team02.elicecoding.com', // Replace with your actual frontend URL
+    methods: ['GET', 'POST',  'WEBSOCKET'],
+>>>>>>> ac5fe1e (Fix: 채팅 메시지)
   },
 });
 
