@@ -239,9 +239,9 @@ export const getOneDiaryService = async (userId: string, diaryId: string) => {
     where: { id: diaryId },
     include: {
       author: {
-        include: {
-          profileImage: true,
-        },
+       select:{
+        id:true, username:true, email:true, profileImage:true
+       }
       },
       filesUpload: true,
     },
@@ -300,10 +300,10 @@ export const getFriendsDiaryService = async (
     take: limit,
     include: {
       author: {
-        include: {
-          profileImage: true,
-        },
-      },
+        select:{
+         id:true, username:true, email:true, profileImage:true
+        }
+       },
     },
   };
 
@@ -376,10 +376,10 @@ export const getAllDiaryService = async (
     },
     include: {
       author: {
-        include: {
-          profileImage: true,
-        },
-      },
+        select:{
+         id:true, username:true, email:true, profileImage:true
+        }
+       },
     },
   };
 
@@ -580,10 +580,10 @@ export const searchDiaryService = async (
     take: limit,
     include: {
       author: {
-        include: {
-          profileImage: true,
-        },
-      },
+        select:{
+         id:true, username:true, email:true, profileImage:true
+        }
+       },
     },
     where: {
       OR: [
