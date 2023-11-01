@@ -13,6 +13,7 @@ import ImagesComponent from '../ImagesComponent';
 import { DiaryItemType } from '../../api/get/useGetDiaryData.types';
 import getUserId from '../../utils/localStorageHandlers';
 import { usePutDiaryData } from '../../api/put/usePutDiaryData';
+import { useDeleteDiaryData } from '../../api/delete/useDeleteDiaryData';
 
 const INITIAL_DAIARY_DATA: DiaryItemType = {
   id: '',
@@ -56,6 +57,7 @@ const DiaryItemShow = ({
     useGetCommentData({ id });
 
   const mutation = usePostLikeDiaryData({ id, isNetwork: false });
+  const deleteMutation = useDeleteDiaryData({ id });
 
   const handleLikeClick = () => {
     mutation.mutate();
@@ -78,6 +80,10 @@ const DiaryItemShow = ({
 
     console.log(diaryBodyData);
     putMutation.mutate({ body: diaryBodyData });
+  };
+
+  const handleDeleteClick = () => {
+    deleteMutation.mutate();
   };
 
   useEffect(() => {
@@ -184,10 +190,15 @@ const DiaryItemShow = ({
                 ))}
               <p>{diaryBodyData.content}</p>
             </div>
-            {getUserId === diaryBodyData.authorId && (
-              <button className="doneBtn" onClick={() => setIsEditing(true)}>
-                수정
-              </button>
+            {localStorage.getItem('userId') === diaryBodyData.authorId && (
+              <>
+                <button className="doneBtn" onClick={() => setIsEditing(true)}>
+                  수정
+                </button>
+                <button className="cancelBtn" onClick={handleDeleteClick}>
+                  삭제
+                </button>
+              </>
             )}
           </div>
         )}
