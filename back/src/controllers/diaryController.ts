@@ -254,17 +254,13 @@ export const sendRecommendationEmail = async (
   res: Response,
   next: NextFunction,
 ) => {
-  try {
-    const { diaryId } = req.params;
-    const { username } = req.user;
-    const { friendEmail } = req.body;
+  const { diaryId } = req.params;
+  const { username } = req.user;
+  const { friendEmail } = req.body;
 
-    const sendMail = await mailService(friendEmail, diaryId, username);
+  const sendMail = await mailService(friendEmail, diaryId, username);
 
-    return res.status(sendMail.status).json(sendMail);
-  } catch (error) {
-    next(error);
-  }
+  return res.status(sendMail.status).json(sendMail);
 };
 
 export const selectEmotion = async (
@@ -272,24 +268,20 @@ export const selectEmotion = async (
   res: Response,
   next: NextFunction,
 ) => {
-  try {
-    const { diaryId } = req.params;
-    const { id: userId } = req.user;
-    const { selectedEmotion, selectedEmoji } = req.body;
+  const { diaryId } = req.params;
+  const { id: userId } = req.user;
+  const { selectedEmotion, selectedEmoji } = req.body;
 
-    await verifyDiaryAuthor(diaryId, userId);
+  await verifyDiaryAuthor(diaryId, userId);
 
-    const updatedDiary = await selectedEmojis(
-      selectedEmotion,
-      selectedEmoji,
-      diaryId,
-      userId,
-    );
+  const updatedDiary = await selectedEmojis(
+    selectedEmotion,
+    selectedEmoji,
+    diaryId,
+    userId,
+  );
 
-    return res.status(updatedDiary.status).json(updatedDiary);
-  } catch (error) {
-    next(error);
-  }
+  return res.status(updatedDiary.status).json(updatedDiary);
 };
 
 /**

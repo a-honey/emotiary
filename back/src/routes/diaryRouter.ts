@@ -58,11 +58,15 @@ diaryRouter.post(
 diaryRouter.post(
   '/recommendation/:diaryId',
   jwtAuthentication,
-  sendRecommendationEmail,
+  wrapAsyncController(sendRecommendationEmail),
 );
 
 // 감정 선택?
-diaryRouter.put('/selectEmotion/:diaryId', jwtAuthentication, selectEmotion);
+diaryRouter.put(
+  '/selectEmotion/:diaryId',
+  jwtAuthentication,
+  wrapAsyncController(selectEmotion),
+);
 
 // 네트워크 페이지 (Done)
 // api/diary/views/users?select&page&limit&emotion
