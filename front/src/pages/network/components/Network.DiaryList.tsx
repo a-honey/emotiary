@@ -16,7 +16,7 @@ import ImageComponent from '../../../components/ImageComponent';
 
 const DiaryList = () => {
   const [select, setSelect] = useState('all');
-  const [tapEmotion, setTapEmotion] = useState('전체');
+  const [tapEmotion, setTapEmotion] = useState('all');
 
   const [currentPage, setCurrentPage] = useState(1);
   const [isOpenSearchList, setIsOpenSearchList] = useState(false);
