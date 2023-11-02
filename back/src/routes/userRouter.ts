@@ -26,7 +26,8 @@ import { fileUpload } from "../middlewares/uploadMiddleware";
 import { wrapAsyncController } from "../utils/wrapper";
 import passport from "passport";
 const userAuthRouter = Router();
-
+// TODO 스웨거 양식 추가
+// TODO VALIDATE 좀더 찾아보기
 // 회원가입
 userAuthRouter.post("/register", wrapAsyncController(userRegister));
 
@@ -99,14 +100,28 @@ userAuthRouter.get(
 
 // TODO :이모지 추가용 나중에 코드 없앨 것
 import { PrismaClient } from "@prisma/client";
+import { searchMusic } from "../utils/music";
+import ytdl from 'ytdl-core';
 const prisma = new PrismaClient();
 userAuthRouter.post('/add-emoji', async (req, res) => {
   try {
     const { type, emotion } = req.body; // 클라이언트에서 전송한 데이터
+    const musicData = await searchMusic(type);
+    const videoId = musicData.videoId;
+  
+    const info = await ytdl.getInfo(videoId);
+    // 오디오 스트림 URL 가져오기
+    const audioUrl = ytdl.chooseFormat(info.formats, { filter: 'audioonly' }).url;
+  
     const emojiData = {
       type,
       emotion, // 감정에 따른 이모지 데이터
+      audioUrl,
     };
+    if (!musicData) {
+      const errorMessage = '음악데이터가없습니다.';
+      throw errorMessage;
+    }
     
     await prisma.emoji.create({
       data: emojiData,

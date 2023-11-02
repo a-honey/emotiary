@@ -77,25 +77,41 @@ function getDurationInSeconds(isoDuration: string): number {
 
 export async function updateAudioUrlsPeriodically() {
   try {
-    const diariesWithEmoji = (await prisma.diary.findMany()).filter(
-      (diary) => diary.emotion && diary.emotion.length === 2
-  );
+    const emojiTypes = await prisma.emoji.findMany({
+      distinct: ['type'],
+      select: {
+        type: true,
+      },
+    });
 
-    for (const diary of diariesWithEmoji) {
-      const musicData = await searchMusic(diary.emotion);
+    for (const emojiType of emojiTypes) {
+      const emojisWithAudio = await prisma.emoji.findMany({
+        where: {
+          type: emojiType.type,
+        },
+      });
+
+      if (emojisWithAudio.length === 0) {
+        continue; // Skip if there are no emojis of this type
+      }
+
+      const musicData = await searchMusic(emojiType.type);
       const videoId = musicData.videoId;
 
       const info = await ytdl.getInfo(videoId);
-      // 오디오 스트림 URL 가져오기
       const audioUrl = ytdl.chooseFormat(info.formats, { filter: 'audioonly' }).url;
 
-      // 데이터베이스에 스트림 URL 업데이트
-      await prisma.diary.update({
-        where: { id: diary.id },
-        data: { audioUrl },
+      // Update audio URL for all emojis of this type
+      await prisma.emoji.updateMany({
+        where: {
+          type: emojiType.type,
+        },
+        data: {
+          audioUrl,
+        },
       });
 
-      console.log(`다이어리 ${diary.id}의 오디오 URL이 갱신되었습니다.`);
+      console.log(`오디오 URL이 갱신되었습니다.`);
     }
   } catch (error) {
     console.error('오디오 URL을 갱신하는 중에 오류 발생:', error);
