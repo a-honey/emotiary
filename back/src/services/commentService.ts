@@ -5,10 +5,9 @@ import { successApiResponseDTO } from '../utils/successResult';
 import { nonAuthorizedApiResponseDTO } from '../utils/nonAuthorizeResult';
 import axios from 'axios';
 import { Emoji } from '../types/emoji';
-import { calculatePageInfoForComment } from '../utils/pageInfo';
+import { calculatePageInfo } from '../utils/pageInfo';
 import { prisma } from '../../prisma/prismaClient';
 import { callChatGPT } from '../utils/chatGPT';
-import { getOneDiaryService } from './diaryService';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -108,12 +107,12 @@ export async function getCommentByDiaryId(
     return response;
   }
 
-  const { totalComment, totalPage } = await calculatePageInfoForComment(
-    limit,
-    diary_id,
-  );
+  const { totalItem, totalPage } = await calculatePageInfo('comment', limit, {
+    diaryId: diary_id,
+    nestedComment: null,
+  });
 
-  const pageInfo = { totalComment, totalPage, currentPage: page, limit };
+  const pageInfo = { totalItem, totalPage, currentPage: page, limit };
 
   const commentResponseDataList = comment.map((comment) =>
     plainToClass(commentResponseDTO, comment, {
@@ -224,9 +223,11 @@ export async function createdGPTComment(
 ) {
   const testChatGPT = await callChatGPT(content);
 
-  const checkDiary = await getOneDiaryService(authorId, diaryId);
+  const checkDiary = await prisma.diary.findUnique({
+    where: { id: diaryId },
+  });
 
-  if (checkDiary.data.length != 0) {
+  if (checkDiary != null) {
     await prisma.comment.create({
       data: {
         diaryId,
