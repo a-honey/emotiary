@@ -37,39 +37,36 @@
 ## **기술 스택 및 도구**
 
 ### AI
-[![Python](https://img.shields.io/badge/Python-3.9.6-blue)](https://www.python.org/)
-[![Flask](https://img.shields.io/badge/Flask-2.1.0-blue)](https://flask.palletsprojects.com/)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=ffffff)
+![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=ffffff)
 
 ### 프론트엔드
-![React](https://img.shields.io/badge/-React-222222?style=for-the-badge&logo=react)
-![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=ffffff)
-![Axios](https://img.shields.io/badge/-Axios-007ACC?style=for-the-badge&logo=axios&logoColor=ffffff)
-![Recoil](https://img.shields.io/badge/-Recoil-764ABC?style=for-the-badge&logo=recoil&logoColor=ffffff)
-![React Query](https://img.shields.io/badge/-React_Query-FF4154?style=for-the-badge&logo=react-query&logoColor=ffffff)
-![date-fns](https://img.shields.io/badge/-date--fns-EA4AAA?style=for-the-badge)
-![react-datepicker](https://img.shields.io/badge/-react--datepicker-61DAFB?style=for-the-badge)
-![Storybook](https://img.shields.io/badge/-Storybook-FF4785?style=for-the-badge&logo=storybook&logoColor=ffffff)
-![socket.io](https://img.shields.io/badge/-socket.io-010101?style=for-the-badge&logo=socket.io&logoColor=ffffff)
+![React](https://img.shields.io/badge/React-222222?style=for-the-badge&logo=react&logoColor=ffffff)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=ffffff)
+![Axios](https://img.shields.io/badge/Axios-007ACC?style=for-the-badge&logo=axios&logoColor=ffffff)
+![Recoil](https://img.shields.io/badge/Recoil-764ABC?style=for-the-badge&logo=recoil&logoColor=ffffff)
+![React Query](https://img.shields.io/badge/React_Query-FF4154?style=for-the-badge&logo=react-query&logoColor=ffffff)
+![date-fns](https://img.shields.io/badge/date--fns-EA4AAA?style=for-the-badge)
+![react-datepicker](https://img.shields.io/badge/react--datepicker-61DAFB?style=for-the-badge)
+![Storybook](https://img.shields.io/badge/Storybook-FF4785?style=for-the-badge&logo=storybook&logoColor=ffffff)
+![socket.io](https://img.shields.io/badge/socket.io-010101?style=for-the-badge&logo=socket.io&logoColor=ffffff)
 
 ### 백엔드
-
-[![Express](https://img.shields.io/badge/Express-4.17.1-blue)](https://expressjs.com/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-4.0.3-blue)](https://www.typescriptlang.org/)
-[![Swagger](https://img.shields.io/badge/Swagger-3.0.0-blue)](https://swagger.io/)
-[![Google APIs](https://img.shields.io/badge/Google%20APIs-Latest-blue)](https://developers.google.com/apis-explorer)
-[![JWT](https://img.shields.io/badge/JWT-Latest-blue)](https://jwt.io/)
-[![Morgan](https://img.shields.io/badge/Morgan-1.10.0-blue)](https://www.npmjs.com/package/morgan)
-[![Node-cron](https://img.shields.io/badge/Node--cron-2.0.3-blue)](https://www.npmjs.com/package/node-cron)
-[![Nodemailer](https://img.shields.io/badge/Nodemailer-6.6.4-blue)](https://nodemailer.com/)
-[![Passport](https://img.shields.io/badge/Passport-0.4.1-blue)](http://www.passportjs.org/)
+![Express](https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=ffffff)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=ffffff)
+![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=000000)
+![Google APIs](https://img.shields.io/badge/Google%20APIs-4285F4?style=for-the-badge&logo=google&logoColor=ffffff)
+![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=json-web-tokens&logoColor=ffffff)
+![Morgan](https://img.shields.io/badge/Morgan-82B41C?style=for-the-badge)
+![Node-cron](https://img.shields.io/badge/Node--cron-00B289?style=for-the-badge)
+![Nodemailer](https://img.shields.io/badge/Nodemailer-009688?style=for-the-badge)
+![Passport](https://img.shields.io/badge/Passport-34E27C?style=for-the-badge)
 
 ### 기획 및 배포
-
-[![Docker](https://img.shields.io/badge/Docker-Latest-blue)](https://www.docker.com/)
-[![Nginx](https://img.shields.io/badge/Nginx-Latest-blue)](https://www.nginx.com/)
-[![Figma](https://img.shields.io/badge/Figma-Latest-blue)](https://www.figma.com/)
-[![GitLab](https://img.shields.io/badge/GitLab-Latest-blue)](https://about.gitlab.com/)
-
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=ffffff)
+![Nginx](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=ffffff)
+![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=ffffff)
+![GitLab](https://img.shields.io/badge/GitLab-FCA121?style=for-the-badge&logo=gitlab&logoColor=ffffff)
 
 ## **프로젝트 팀원 및 역할 분담**
 
