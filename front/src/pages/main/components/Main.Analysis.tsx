@@ -4,6 +4,7 @@ import cherry2 from '../assets/cherry2.png'
 import cherry3 from '../assets/cherry3.png'
 import { useMutation } from '@tanstack/react-query';
 import { instance } from '../../../api/instance';
+import styles from './analysis.module.scss';
 
 interface AnalysisProps {
   year: number;
@@ -103,25 +104,26 @@ const Analysis: React.FC<AnalysisProps> = ({ year, month }) => {
   }, [nextImage, startSequence]);
 
   return (
-    <div>
+    <div style={{ position: 'relative', width: '1300px', height: '200px' }}>
       {currentImage && (
         <img
           src={currentImage}
           alt="current"
-          className="image fadeOut"
-          style={{ width: '1300px', height: '200px', zIndex: 2 }}
+          className={`${styles.image} ${styles.fadeOut}`}
+          style={{ position: 'absolute', top: 0, left: 0, width: '1300px', height: '200px', zIndex: 2 }}
         />
       )}
       {nextImage && (
         <img
           src={nextImage}
           alt="next"
-          className="image fadeIn"
-          style={{ width: '1300px', height: '200px', zIndex: 1 }}
+          className={`${styles.image} ${styles.fadeIn}`}
+          style={{ position: 'absolute', top: 0, left: 0, width: '1300px', height: '200px', zIndex: 1 }}
         />
       )}
     </div>
   );
+  
 };
 
 export default Analysis;
