@@ -22,7 +22,11 @@ export const usePutDiaryData = (id: string) => {
   return postMutation;
 };
 
-export const usePutCommentData = (id: string, done?: () => void) => {
+export const usePutCommentData = (
+  id: string,
+  done?: () => void,
+  diaryId?: string,
+) => {
   const queryClient = useQueryClient();
   const postMutation = useMutation(
     async ({ body }: { body: any }) => {
@@ -30,7 +34,7 @@ export const usePutCommentData = (id: string, done?: () => void) => {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(['diaryData', id]);
+        queryClient.invalidateQueries(['diaryData', diaryId]);
         done?.();
       },
       onError: (error) => {
