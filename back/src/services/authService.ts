@@ -54,46 +54,43 @@ export const getAllUsers = async (
   page: number,
   limit: number,
 ) => {
+  const friendList = await getMyWholeFriends(userId);
+
+  const friendIds = friendList.map((friend) => {
+    return userId == friend.sentUserId ? friend.receivedUserId : friend.sentUserId;
+  });
+
   const userList = await prisma.user.findMany({
     take: limit,
     skip: (page - 1) * limit,
-    orderBy: {
-      createdAt: 'asc',
-    },
-    include: {
-      friendS: {
-        where: { status: true },
-      },
-      friendR: {
-        where: { status: true },
-      },
-      Diary: {
-        where: {
-          authorId: userId,
-        },
-        orderBy: {
-          createdAt: 'desc',
-        },
-        take: 1,
-      },
-    },
-  });
-  console.log(userList);
-  userList.forEach((user) => {
-    user.isFriend = user.friendS.length > 0 || user.friendR.length > 0;
-
-    if (user.Diary.length > 0) {
-      user.latestEmoji = user.Diary[0].emoji;
-    } else {
-      user.latestEmoji = '❎';
+    include : {
+      profileImage : true,
     }
+  });
+  for (const user of userList) {
+    const firstDiary = await prisma.diary.findFirst({
+      where: {
+        authorId: user.id,
+      },
+      orderBy: {
+        createdDate: 'asc',
+      },
+    });
+    if (firstDiary) {
+      user.latestEmoji = firstDiary.emoji;
+    }
+  }
+  friendIds.push(userId);
+  const friendsWithIsFriend = userList.map((friend) => {
+    friend.isFriend = friendIds.includes(friend.id);
+    return friend;
   });
 
   const { totalItem, totalPage } = await userCalculatePageInfo(limit, {});
 
   const pageInfo = { totalItem, totalPage, currentPage: page, limit };
 
-  const userResponseDataList = userList.map((user) =>
+  const userResponseDataList = friendsWithIsFriend.map((user) =>
     plainToClass(userResponseDTO, user, { excludeExtraneousValues: true }),
   );
 
@@ -112,12 +109,13 @@ export const getMyFriends = async (
   page: number,
   limit: number,
 ) => {
-  const startTime = new Date().getTime();
 
   const friendList = await getMyWholeFriends(userId);
-  console.log(friendList);
-  const friendIds = friendList.map((friend) => friend.sentUserId);
-  console.log(friendIds);
+
+  const friendIds = friendList.map((friend) => {
+    return userId == friend.sentUserId ? friend.receivedUserId : friend.sentUserId;
+  });
+
   const friendsInfo = await prisma.user.findMany({
     take: limit,
     skip: (page - 1) * limit,
@@ -126,18 +124,34 @@ export const getMyFriends = async (
         in: friendIds, // 친구의 ID 목록
       },
     },
+    include : {
+      profileImage : true,
+    }
   });
-  console.log(friendsInfo) 
-
-  const endTime = new Date().getTime();
-  const responseTime = endTime - startTime;
-  console.log(responseTime);
-  const totalItem = friendsInfo.length;
+  for (const friend of friendsInfo) {
+    const firstDiary = await prisma.diary.findFirst({
+      where: {
+        authorId: friend.id,
+      },
+      orderBy: {
+        createdDate: 'asc',
+      },
+    });
+    if (firstDiary) {
+      friend.latestEmoji = firstDiary.emoji;
+    }
+  }
+  const friendsWithIsFriend = friendsInfo.map((friend) => {
+    friend.isFriend = true; // 또는 false
+    return friend;
+  });
+  
+  const totalItem = friendsWithIsFriend.length;
   const totalPage = Math.ceil(totalItem / limit);
 
   const pageInfo = { totalItem, totalPage, currentPage: page, limit };
 
-  const userResponseDataList = friendsInfo.map((user) =>
+  const userResponseDataList = friendsWithIsFriend.map((user) =>
     plainToClass(userResponseDTO, user, { excludeExtraneousValues: true }),
   );
 
