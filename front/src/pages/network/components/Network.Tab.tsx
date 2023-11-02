@@ -3,7 +3,7 @@ import React from 'react';
 import styles from '../styles/Network.Tab.module.scss';
 
 const TAPLIST = [
-  { en: 'all', ko: '전체' },
+  { en: 'all', ko: 'all' },
   { en: 'sadness', ko: '슬픔' },
   { en: 'surprise', ko: '당황' },
   { en: 'happiness', ko: '행복' },
