@@ -7,10 +7,31 @@
     grid-template-columns: 10fr 1.7fr 1fr;
     align-items: center;
     gap: 10px;
-    span {
-      margin: 0 10px;
-      font-weight: 700;
+    .contentText {
+      position: relative;
+      padding: 5px 0;
+      height: 30px;
+      span {
+        margin: 0 10px;
+        font-weight: 700;
+      }
+      input {
+        width: 90%;
+        height: 30px;
+      }
+      .ownerBtns {
+        position: absolute;
+        top: 0;
+        right: 0;
+        display: flex;
+        gap: 10px;
+        button {
+          padding: 7px;
+          border-radius: 5px;
+        }
+      }
     }
+
     .userInfo {
       display: flex;
       align-items: center;

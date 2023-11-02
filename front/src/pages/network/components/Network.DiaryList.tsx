@@ -7,7 +7,7 @@ import { useGetDiarysData } from '../../../api/get/useGetDiaryData';
 import { instance } from '../../../api/instance';
 import { GoHeartFill, GoHeart } from 'react-icons/go';
 import Pagination from '../../../components/Pagination';
-import Tab, { TapType } from './Network.Tab';
+import Tab from './Network.Tab';
 import search from '../../../assets/search.png';
 import SearchList from '../../../components/search/Search.SearchList';
 import { DiaryItemType } from '../../../api/get/useGetDiaryData.types';
@@ -16,7 +16,7 @@ import ImageComponent from '../../../components/ImageComponent';
 
 const DiaryList = () => {
   const [select, setSelect] = useState('all');
-  const [tapEmotion, setTapEmotion] = useState<TapType['resource']>('all');
+  const [tapEmotion, setTapEmotion] = useState('all');
 
   const [currentPage, setCurrentPage] = useState(1);
   const [isOpenSearchList, setIsOpenSearchList] = useState(false);
@@ -32,7 +32,7 @@ const DiaryList = () => {
     limit: 8,
   });
 
-  const handleTapEmotion = (tapName: TapType['resource']) => {
+  const handleTapEmotion = (tapName: string) => {
     setTapEmotion(tapName);
   };
 
