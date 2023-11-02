@@ -9,7 +9,7 @@ const SearchDiaryList = ({
 }: {
   toggleIsOpenSearchList: () => void;
 }) => {
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState<string>('');
   const [inputValue, setInputValue] = useState('');
   const { data } = useGetSearchDiaryData({ search });
 
@@ -63,10 +63,12 @@ const SearchItem = ({ item }: { item: SearchDiaryType }) => {
       {isOpenDiary && (
         <DiaryItemShow id={id} toggleIsOpenModal={toggleIsOpenDiary} />
       )}
-      <div className={styles.itemContainer} onClick={toggleIsOpenDiary}>
+      <div className={styles.diaryItem} onClick={toggleIsOpenDiary}>
         <div>{emoji}</div>
-        <div>{title}</div>
-        <div>{createdDate}</div>
+        <div className={styles.infoWrapper}>
+          <div className={styles.title}>{title}</div>
+          <div className={styles.date}>{createdDate.split('T')[0]}</div>
+        </div>
       </div>
     </>
   );
