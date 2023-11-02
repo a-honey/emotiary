@@ -63,6 +63,9 @@ export const getAllUsers = async (
   const userList = await prisma.user.findMany({
     take: limit,
     skip: (page - 1) * limit,
+    include : {
+      profileImage : true,
+    }
   });
   for (const user of userList) {
     const firstDiary = await prisma.diary.findFirst({
@@ -121,6 +124,9 @@ export const getMyFriends = async (
         in: friendIds, // 친구의 ID 목록
       },
     },
+    include : {
+      profileImage : true,
+    }
   });
   for (const friend of friendsInfo) {
     const firstDiary = await prisma.diary.findFirst({
