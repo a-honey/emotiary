@@ -44,8 +44,8 @@
     height: 100%;
     display: grid;
     grid-template-columns: repeat(4, 350px);
-    grid-template-rows: repeat(2, 300px);
-    gap: 20px;
+    grid-template-rows: repeat(2, 270px);
+    gap: 10px;
   }
 }
 
@@ -55,7 +55,7 @@
   padding: 10px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px;
   position: relative;
   cursor: pointer;
   &:hover {
@@ -91,8 +91,8 @@
     }
   }
   img {
-    width: 200px;
-    height: 200px;
+    width: 180px;
+    height: 180px;
     border-radius: 50%;
   }
   .content {
