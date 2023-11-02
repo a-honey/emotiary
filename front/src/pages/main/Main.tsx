@@ -18,7 +18,11 @@ const MainPage: React.FC = () => {
 
   return (
     <main className="column">
-      <Analysis year={currentDate.year} month={currentDate.month} />
+      <Analysis 
+        key={`${currentDate.year}-${currentDate.month}`}
+        year={currentDate.year} 
+        month={currentDate.month} 
+      />
       <Calendar
         handleCurrentDate={handleCurrentDate}
         currentDate={currentDate}
