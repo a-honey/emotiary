@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useState, useEffect } from 'react';
 import styles from './index.module.scss';
 import { handleImgError } from '../../../utils/imgHandlers';
 import { useNavigate } from 'react-router-dom';
@@ -43,6 +43,9 @@ const DiaryList = () => {
     setSelect(newSelect);
   };
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [tapEmotion]);
   return (
     <>
       {isOpenSearchList && (
