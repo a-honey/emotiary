@@ -11,7 +11,7 @@ const SearchDiaryList = ({
 }) => {
   const [search, setSearch] = useState('');
   const [inputValue, setInputValue] = useState('');
-  const { data } = useGetSearchDiaryData();
+  const { data } = useGetSearchDiaryData({ search });
 
   useEffect(() => {
     // 타이머를 설정함

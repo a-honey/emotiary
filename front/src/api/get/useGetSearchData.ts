@@ -18,16 +18,18 @@ export const useGetSearchUserData = ({
     }).toString();
     return instance
       .get<{ data: SearchUserType[] & PaginationType }>(
-        `/users/search?${urlQueryString}`
+        `/users/search?${urlQueryString}`,
       )
       .then((res) => res.data);
   });
 };
 
-export const useGetSearchDiaryData = () => {
+export const useGetSearchDiaryData = ({ search }: { search: string }) => {
   return useQuery(['searchData'], () => {
     return instance
-      .get<{ data: SearchDiaryType[] & PaginationType }>(`/diary/search`)
+      .get<{ data: SearchDiaryType[] & PaginationType }>(
+        `/diary/search?search=${search}`,
+      )
       .then((res) => res.data);
   });
 };
