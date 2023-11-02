@@ -18,51 +18,55 @@ import {
   emailLink,
   testEmail,
   searchKeyword,
+  expire,
 } from "../controllers/userController";
 import { localAuthentication } from "../middlewares/authenticateLocal";
 import { jwtAuthentication } from "../middlewares/authenticateJwt";
 import { fileUpload } from "../middlewares/uploadMiddleware";
+import { wrapAsyncController } from "../utils/wrapper";
 import passport from "passport";
 const userAuthRouter = Router();
 
 // 회원가입
-userAuthRouter.post("/register", userRegister);
+userAuthRouter.post("/register", wrapAsyncController(userRegister));
 
-userAuthRouter.post('/login', localAuthentication, userLogin);
+userAuthRouter.post('/login', localAuthentication, wrapAsyncController(userLogin));
 
 //test4
-userAuthRouter.post("/testregister", testEmail);
+userAuthRouter.post("/testregister", wrapAsyncController(testEmail));
 //1
-userAuthRouter.post('/email', emailLink);
+userAuthRouter.post('/email', wrapAsyncController(emailLink));
 //2
-userAuthRouter.get('/verifyEmail/:token', verifyEmail);
+userAuthRouter.get('/verifyEmail/:token', wrapAsyncController(verifyEmail));
 //3
-userAuthRouter.get('/verified', emailVerified);
+userAuthRouter.get('/verified', wrapAsyncController(emailVerified));
 
-userAuthRouter.get('/search', jwtAuthentication, searchKeyword);
+userAuthRouter.get('/search', jwtAuthentication, wrapAsyncController(searchKeyword));
 
-userAuthRouter.get('/current', jwtAuthentication, getMyInfo);
+userAuthRouter.get('/current', jwtAuthentication, wrapAsyncController(getMyInfo));
 
-userAuthRouter.get('/allUser', jwtAuthentication, getAllUser);
+userAuthRouter.get('/allUser', jwtAuthentication, wrapAsyncController(getAllUser));
 
-userAuthRouter.get('/myfriend', jwtAuthentication, getMyFriend);
+userAuthRouter.get('/myfriend', jwtAuthentication, wrapAsyncController(getMyFriend));
 
-userAuthRouter.get("/logout", jwtAuthentication, userLogout);
+userAuthRouter.get("/logout", jwtAuthentication, wrapAsyncController(userLogout));
+
+userAuthRouter.get("/tokenExpire", jwtAuthentication, wrapAsyncController(expire));
 
 userAuthRouter
   .route("/:userId")
-  .get(jwtAuthentication, getUserId)
-  .put(jwtAuthentication, fileUpload, updateUser)
-  .delete( deleteUser);
+  .get(jwtAuthentication, wrapAsyncController(getUserId))
+  .put(jwtAuthentication, fileUpload, wrapAsyncController(updateUser))
+  .delete( jwtAuthentication, wrapAsyncController(deleteUser));
 
 // 비밀번호 재설정 이메일 보내기
-userAuthRouter.post("/forgot-password", forgotPassword);
+userAuthRouter.post("/forgot-password", wrapAsyncController(forgotPassword));
 
 // 비밀번호 재설정
-userAuthRouter.post("/reset-password", jwtAuthentication, resetPassword);
+userAuthRouter.post("/reset-password", jwtAuthentication, wrapAsyncController(resetPassword));
 
 // refresh token사용
-userAuthRouter.post('/refresh-token', refresh);
+userAuthRouter.post('/refresh-token', wrapAsyncController(refresh));
 
 userAuthRouter.get(
   "/google",

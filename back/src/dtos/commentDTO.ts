@@ -62,7 +62,10 @@ export class commentResponseDTO {
   reComment: string;
 
   @Expose()
-  emoji : string;
+  emoji: string;
+
+  @Expose()
+  writeAi: string;
 
   @Expose()
   @Type(() => AuthorInCommentDTO)

@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '../../prisma/prismaClient';
 
 // 좋아요 눌렀는지 조회
 export async function searchFavorite(diary_id: string, user_id: string) {
