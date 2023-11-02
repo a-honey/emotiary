@@ -11,7 +11,7 @@ const DiaryList = () => {
 
   const { data, isFetching } = useGetMyAllDiarysData({
     page: currentPage,
-    limit: 15,
+    limit: 10,
   });
 
   return (

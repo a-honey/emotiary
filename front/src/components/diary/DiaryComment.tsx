@@ -46,6 +46,7 @@ const DiaryComment = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    setComment('');
     postMutation.mutate({ body: { content: comment } });
   };
 
@@ -58,6 +59,7 @@ const DiaryComment = ({
       </div>
       <form className={styles.commentAddcontainer} onSubmit={handleSubmit}>
         <input
+          value={comment}
           placeholder="댓글을 입력해주세요."
           onChange={(e) => {
             setComment(e.target.value);
@@ -109,6 +111,7 @@ const CommentItem = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     putMutation.mutate({ body: { content } });
+    setContent('');
   };
 
   return (
@@ -207,6 +210,7 @@ const DiaryReplyAdd = ({
     e.preventDefault();
 
     handleIsAdding();
+    setComment('');
   };
 
   return (

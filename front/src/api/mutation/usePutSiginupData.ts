@@ -16,6 +16,7 @@ export const usePutSignupData = (queryClient: QueryClient) => {
       },
       onError: (error: any) => {
         console.log('회원가입 실패', error);
+        alert("회원가입에 실패했습니다! 다시 시도해주세요!");
       },
     }
   );

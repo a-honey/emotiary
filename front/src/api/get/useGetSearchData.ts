@@ -25,7 +25,7 @@ export const useGetSearchUserData = ({
 };
 
 export const useGetSearchDiaryData = ({ search }: { search: string }) => {
-  return useQuery(['searchData'], () => {
+  return useQuery(['searchData', search], () => {
     return instance
       .get<{ data: SearchDiaryType[] & PaginationType }>(
         `/diary/search?search=${search}`,

@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 import Signin from './components/Signin.Signin';
 import { withLoginSoNot } from '../../components/withLogin';
 

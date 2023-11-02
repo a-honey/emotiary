@@ -58,3 +58,22 @@
     border-radius: 50%;
   }
 }
+
+.diaryItem {
+  border: 1px solid #ccc;
+  padding: 10px 0 20px 0;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  > :first-child {
+    font-size: 100px;
+  }
+  .infoWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    .title {
+      font-weight: 700;
+    }
+  }
+}
