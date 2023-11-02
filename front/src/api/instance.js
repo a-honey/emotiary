@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { getRefreshToken } from '../utils/localStorageHandlers';
 
-// const baseURL = process.env.REACT_APP_BASE_URL;
-const baseURL = "http://localhost:5001/api"
+const baseURL = process.env.REACT_APP_BASE_URL;
+//const baseURL = "http://localhost:5001/api"
 
 export const instance = axios.create({
   baseURL,
@@ -27,7 +27,7 @@ instance.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  },
+  }
 );
 
 export const formDataInstance = axios.create({
@@ -45,5 +45,5 @@ formDataInstance.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  },
+  }
 );
