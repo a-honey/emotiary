@@ -12,7 +12,7 @@ export const callChatGPT = async (comment: string) => {
       messages: [
         {
           role: 'user',
-          content: `아래 일기에 대해 공감 한마디 해줘 \n \"${comment}\"`,
+          content: `80글자 미만으로 아래 일기에 대해 공감 한마디 해줘 \n \"${comment}\"`,
         },
       ],
       model: 'gpt-3.5-turbo',

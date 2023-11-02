@@ -6,7 +6,6 @@ import {
   updatedComment,
   deletedComment,
 } from '../services/commentService';
-import { validate } from 'class-validator';
 
 // 댓글 작성
 export const createComment = async (
@@ -15,9 +14,11 @@ export const createComment = async (
   next: NextFunction,
 ) => {
   /* #swagger.tags = ['Comment']
-      #swagger.security = [{
-          "bearerAuth": []
-  }] */
+    #swagger.security = [{
+      "bearerAuth": []
+    }] 
+    #swagger.summary = '댓글 작성'
+  */
   const authorId = req.user.id;
   const inputData = req.body;
   const diary_id: string = req.params.diaryId;
@@ -32,7 +33,9 @@ export const getComment = async (
   res: Response,
   next: NextFunction,
 ) => {
-  // #swagger.tags = ['Comment']
+  /* #swagger.tags = ['Comment']
+    #swagger.summary = '댓글 조회'
+  */
   const diary_id: string = req.params.diaryId;
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 8;
@@ -48,9 +51,11 @@ export const updateComment = async (
   next: NextFunction,
 ) => {
   /* #swagger.tags = ['Comment']
-      #swagger.security = [{
-          "bearerAuth": []
-  }] */
+    #swagger.security = [{
+      "bearerAuth": []
+    }] 
+    #swagger.summary = '댓글 수정'
+  */
   const comment_id: string = req.params.commentId;
   const inputData = req.body;
   const authorId = req.user.id;
@@ -67,9 +72,11 @@ export const deleteComment = async (
   next: NextFunction,
 ) => {
   /* #swagger.tags = ['Comment']
-      #swagger.security = [{
-          "bearerAuth": []
-  }] */
+    #swagger.security = [{
+      "bearerAuth": []
+    }] 
+    #swagger.summary = '댓글 삭제'
+  */
   const comment_id: string = req.params.commentId;
   const authorId = req.user.id;
 
