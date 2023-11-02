@@ -65,11 +65,10 @@
 
 ### 기획 및 배포
 
-![Figma](https://img.shields.io/badge/-Figma-A259FF?style=for-the-badge&logo=figma&logoColor=white)
-![GitLab](https://img.shields.io/badge/-GitLab-FCA121?style=for-the-badge&logo=gitlab&logoColor=white)
-![Vercel](https://img.shields.io/badge/-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
-![VM](https://img.shields.io/badge/-VM-00B0FF?style=for-the-badge&logo=virtualbox&logoColor=white)
-![PM2](https://img.shields.io/badge/-PM2-2B037A?style=for-the-badge&logo=pm2&logoColor=white)
+[![Docker](https://img.shields.io/badge/Docker-Latest-blue)](https://www.docker.com/)
+[![Nginx](https://img.shields.io/badge/Nginx-Latest-blue)](https://www.nginx.com/)
+[![Figma](https://img.shields.io/badge/Figma-Latest-blue)](https://www.figma.com/)
+[![GitLab](https://img.shields.io/badge/GitLab-Latest-blue)](https://about.gitlab.com/)
 
 
 ## **프로젝트 팀원 및 역할 분담**
