@@ -8,6 +8,7 @@ import { Emoji } from '../types/emoji';
 import { calculatePageInfoForComment } from '../utils/pageInfo';
 import { prisma } from '../../prisma/prismaClient';
 import { callChatGPT } from '../utils/chatGPT';
+import { getOneDiaryService } from './diaryService';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -20,44 +21,38 @@ export async function createdComment(
   authorId: string,
   diary_id: string,
 ) {
-  //TODO controller에서 try catch 해주면 service단에서 try catch 안해줘도 돼요
-  try {
-    const { content, nestedComment } = inputData;
+  const { content, nestedComment } = inputData;
 
-    // 댓글 이모지 넣는 코드
-    const responseData = await axios.post(
-      'http://kdt-ai-8-team02.elicecoding.com:5000/predict',
-      {
-        text: inputData.content,
-      },
-    );
+  // 댓글 이모지 넣는 코드
+  const responseData = await axios.post(
+    'http://kdt-ai-8-team02.elicecoding.com:5000/predict',
+    {
+      text: inputData.content,
+    },
+  );
 
-    const emotion = responseData.data;
+  const emotion = responseData.data;
 
-    const emotionType = emotion.emotion;
+  const emotionType = emotion.emotion;
 
-    const emojis = await prisma.emoji.findMany({
-      where: {
-        type: emotionType,
-      },
-    });
+  const emojis = await prisma.emoji.findMany({
+    where: {
+      type: emotionType,
+    },
+  });
 
-    const randomEmoji: Emoji =
-      emojis[Math.floor(Math.random() * emojis.length)];
-    const emoji = randomEmoji.emotion;
+  const randomEmoji: Emoji = emojis[Math.floor(Math.random() * emojis.length)];
+  const emoji = randomEmoji.emotion;
 
-    const comment = await prisma.comment.create({
-      data: { diaryId: diary_id, authorId, content, nestedComment, emoji },
-    });
+  const comment = await prisma.comment.create({
+    data: { diaryId: diary_id, authorId, content, nestedComment, emoji },
+  });
 
-    const commentResponseData = plainToClass(commentResponseDTO, comment, {
-      excludeExtraneousValues: true,
-    });
-    const response = successApiResponseDTO(commentResponseData);
-    return response;
-  } catch (error) {
-    throw error;
-  }
+  const commentResponseData = plainToClass(commentResponseDTO, comment, {
+    excludeExtraneousValues: true,
+  });
+  const response = successApiResponseDTO(commentResponseData);
+  return response;
 }
 
 // 댓글 조회
@@ -66,80 +61,74 @@ export async function getCommentByDiaryId(
   page: number,
   limit: number,
 ) {
-  //TODO controller에서 try catch 해주면 service단에서 try catch 안해줘도 돼요
-
-  try {
-    const comment = await prisma.comment.findMany({
-      skip: (page - 1) * limit,
-      take: limit,
-      where: { diaryId: diary_id, nestedComment: null },
-      select: {
-        id: true,
-        // 댓글 작성자의 id, username, porfileImage를 함께 응답
-        author: {
-          select: {
-            id: true,
-            username: true,
-            profileImage: true,
-          },
-        },
-        diaryId: true,
-        content: true,
-        emoji: true,
-        createdAt: true,
-        updatedAt: true,
-        // 대댓글은 reComment에 배열로 포함하여 응답
-        reComment: {
-          select: {
-            id: true,
-            author: {
-              select: {
-                id: true,
-                username: true,
-                profileImage: true,
-              },
-            },
-            diaryId: true,
-            content: true,
-            emoji: true,
-            createdAt: true,
-            updatedAt: true,
-          },
+  const comment = await prisma.comment.findMany({
+    skip: (page - 1) * limit,
+    take: limit,
+    where: { diaryId: diary_id, nestedComment: null },
+    select: {
+      id: true,
+      // 댓글 작성자의 id, username, porfileImage를 함께 응답
+      author: {
+        select: {
+          id: true,
+          username: true,
+          profileImage: true,
         },
       },
-      orderBy: { createdAt: 'asc' },
-    });
+      diaryId: true,
+      content: true,
+      emoji: true,
+      createdAt: true,
+      updatedAt: true,
+      // 대댓글은 reComment에 배열로 포함하여 응답
+      reComment: {
+        select: {
+          id: true,
+          author: {
+            select: {
+              id: true,
+              username: true,
+              profileImage: true,
+            },
+          },
+          diaryId: true,
+          content: true,
+          emoji: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      },
+    },
+    orderBy: { createdAt: 'asc' },
+  });
 
-    // 댓글이 없을 경우 응답
-    if (comment.length == 0) {
-      const response = emptyApiResponseDTO();
-      return response;
-    }
-
-    const { totalComment, totalPage } = await calculatePageInfoForComment(
-      limit,
-      diary_id,
-    );
-
-    const pageInfo = { totalComment, totalPage, currentPage: page, limit };
-
-    const commentResponseDataList = comment.map((comment) =>
-      plainToClass(commentResponseDTO, comment, {
-        excludeExtraneousValues: true,
-      }),
-    );
-
-    const response = new PaginationResponseDTO(
-      200,
-      commentResponseDataList,
-      pageInfo,
-      '성공',
-    );
-
+  // 댓글이 없을 경우 응답
+  if (comment.length == 0) {
+    const response = emptyApiResponseDTO();
     return response;
-  } catch (error) {
-    throw error;
   }
+
+  const { totalComment, totalPage } = await calculatePageInfoForComment(
+    limit,
+    diary_id,
+  );
+
+  const pageInfo = { totalComment, totalPage, currentPage: page, limit };
+
+  const commentResponseDataList = comment.map((comment) =>
+    plainToClass(commentResponseDTO, comment, {
+      excludeExtraneousValues: true,
+    }),
+  );
+
+  const response = new PaginationResponseDTO(
+    200,
+    commentResponseDataList,
+    pageInfo,
+    '성공',
+  );
+
+  return response;
 }
 
 // 댓글 수정
@@ -151,92 +140,79 @@ export async function updatedComment(
   comment_id: string,
   authorId: string,
 ) {
-  //TODO controller에서 try catch 해주면 service단에서 try catch 안해줘도 돼요
+  // 댓글 이모지 넣는 코드
+  const responseData = await axios.post(
+    'http://kdt-ai-8-team02.elicecoding.com:5000/predict',
+    {
+      text: inputData.content,
+    },
+  );
+  const emotion = responseData.data;
 
-  try {
-    // 댓글 이모지 넣는 코드
-    const responseData = await axios.post(
-      'http://kdt-ai-8-team02.elicecoding.com:5000/predict',
-      {
-        text: inputData.content,
-      },
-    );
-    const emotion = responseData.data;
+  const emotionType = emotion.emoji;
 
-    const emotionType = emotion.emoji;
+  const emojis = await prisma.emoji.findMany({
+    where: {
+      type: emotionType,
+    },
+  });
 
-    const emojis = await prisma.emoji.findMany({
-      where: {
-        type: emotionType,
-      },
-    });
+  const randomEmoji: Emoji = emojis[Math.floor(Math.random() * emojis.length)];
+  const emoji = randomEmoji.emotion;
 
-    const randomEmoji: Emoji =
-      emojis[Math.floor(Math.random() * emojis.length)];
-    const emoji = randomEmoji.emotion;
+  // 댓글 작성자 본인인지 확인을 위한 조회
+  const userCheck = await prisma.comment.findUnique({
+    where: { id: comment_id },
+  });
 
-    // 댓글 작성자 본인인지 확인을 위한 조회
-    const userCheck = await prisma.comment.findUnique({
+  // 댓글 작성자가 맞다면 수정 진행
+  if (userCheck.authorId == authorId) {
+    const comment = await prisma.comment.update({
       where: { id: comment_id },
+      data: {
+        content: inputData.content,
+        emoji: emoji,
+      },
     });
 
-    // 댓글 작성자가 맞다면 수정 진행
-    if (userCheck.authorId == authorId) {
-      const comment = await prisma.comment.update({
-        where: { id: comment_id },
-        data: {
-          content: inputData.content,
-          emoji: emoji,
-        },
-      });
+    const commentResponseData = plainToClass(commentResponseDTO, comment, {
+      excludeExtraneousValues: true,
+    });
 
-      const commentResponseData = plainToClass(commentResponseDTO, comment, {
-        excludeExtraneousValues: true,
-      });
+    const response = successApiResponseDTO(commentResponseData);
 
-      const response = successApiResponseDTO(commentResponseData);
+    return response;
+  } else {
+    const response = nonAuthorizedApiResponseDTO();
 
-      return response;
-    } else {
-      const response = nonAuthorizedApiResponseDTO();
-
-      return response;
-    }
-  } catch (error) {
-    // error가 발생하면서 catch에 잡힌 거라서 throw를 다시 해줄 필요 없이 next 해주시면 돼요!
-    throw error;
+    return response;
   }
 }
 
 // 댓글 삭제
 export async function deletedComment(comment_id: string, authorId: string) {
-  try {
-    // 댓글 작성자 본인인지 확인을 위한 조회
-    const userCheck = await prisma.comment.findUnique({
+  // 댓글 작성자 본인인지 확인을 위한 조회
+  const userCheck = await prisma.comment.findUnique({
+    where: { id: comment_id },
+  });
+
+  // 댓글 작성자가 맞다면 삭제 진행
+  if (userCheck.authorId == authorId || userCheck.writeAi == authorId) {
+    const comment = await prisma.comment.delete({
       where: { id: comment_id },
     });
 
-    // 댓글 작성자가 맞다면 삭제 진행
-    if (userCheck.authorId == authorId || userCheck.writeAi == authorId) {
-      const comment = await prisma.comment.delete({
-        where: { id: comment_id },
-      });
+    const commentResponseData = plainToClass(commentResponseDTO, comment, {
+      excludeExtraneousValues: true,
+    });
 
-      const commentResponseData = plainToClass(commentResponseDTO, comment, {
-        excludeExtraneousValues: true,
-      });
+    const response = successApiResponseDTO(commentResponseData);
 
-      const response = successApiResponseDTO(commentResponseData);
+    return response;
+  } else {
+    const response = nonAuthorizedApiResponseDTO();
 
-      return response;
-    } else {
-      const response = nonAuthorizedApiResponseDTO();
-
-      return response;
-    }
-  } catch (error) {
-    // error가 발생하면서 catch에 잡힌 거라서 throw를 다시 해줄 필요 없이 next 해주시면 돼요!
-    throw error;
+    return response;
   }
 }
 
@@ -246,11 +222,11 @@ export async function createdGPTComment(
   authorId: string,
   diaryId: string,
 ) {
-  //TODO controller에서 try catch 해주면 service단에서 try catch 안해줘도 돼요
+  const testChatGPT = await callChatGPT(content);
 
-  try {
-    const testChatGPT = await callChatGPT(content);
+  const checkDiary = await getOneDiaryService(authorId, diaryId);
 
+  if (checkDiary.data.length != 0) {
     await prisma.comment.create({
       data: {
         diaryId,
@@ -259,9 +235,6 @@ export async function createdGPTComment(
         writeAi: authorId,
       },
     });
-  } catch (error) {
-    // error가 발생하면서 catch에 잡힌 거라서 throw를 다시 해줄 필요 없이 next 해주시면 돼요!
-    throw error;
   }
 }
 
@@ -271,23 +244,16 @@ export async function updatedGPTComment(
   authorId: string,
   diaryId: string,
 ) {
-  //TODO controller에서 try catch 해주면 service단에서 try catch 안해줘도 돼요
+  const testChatGPT = await callChatGPT(content);
 
-  try {
-    const testChatGPT = await callChatGPT(content);
+  const comment = await prisma.comment.updateMany({
+    where: { diaryId, writeAi: authorId },
+    data: {
+      content: testChatGPT,
+    },
+  });
 
-    const comment = await prisma.comment.updateMany({
-      where: { diaryId, writeAi: authorId },
-      data: {
-        content: testChatGPT,
-      },
-    });
-
-    if (comment.count == 0) {
-      await createdGPTComment(testChatGPT, authorId, diaryId);
-    }
-  } catch (error) {
-    // error가 발생하면서 catch에 잡힌 거라서 throw를 다시 해줄 필요 없이 next 해주시면 돼요!
-    throw error;
+  if (comment.count == 0) {
+    await createdGPTComment(testChatGPT, authorId, diaryId);
   }
 }

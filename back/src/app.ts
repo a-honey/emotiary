@@ -17,7 +17,7 @@ import { sendAlarm } from './utils/alarm';
 import http from 'http';
 import { chat } from './utils/chat';
 import { Server as SocketIoServer, Socket } from 'socket.io';
-import path = require("path");
+import path = require('path');
 import { CronJob } from 'cron';
 import { updateAudioUrlsPeriodically } from './utils/music';
 
@@ -78,7 +78,7 @@ const io = new SocketIoServer(server, {
   path: '/chat',
   cors: {
     origin: 'http://localhost:3000', // Replace with your actual frontend URL
-    methods: ['GET', 'POST',  'WEBSOCKET'],
+    methods: ['GET', 'POST', 'WEBSOCKET'],
   },
 });
 
