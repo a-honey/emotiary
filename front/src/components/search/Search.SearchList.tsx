@@ -12,9 +12,7 @@ const SearchList = ({
   toggleIsOpenSearchList: () => void;
   targetName: string;
 }) => {
-  const [field, setField] = useState<
-    'email' | 'username' | 'title' | 'content'
-  >(targetName === '유저' ? 'username' : 'title');
+  const [field, setField] = useState<'email' | 'username'>('username');
   const [searchTerm, setSearchTerm] = useState('');
   const [inputValue, setInputValue] = useState('');
   const { data } = useGetSearchUserData({ searchTerm, field });
@@ -30,10 +28,20 @@ const SearchList = ({
     };
   }, [searchTerm, inputValue]);
 
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Update the 'select' state based on the checkbox value.
+    const newSelect = e.target.checked ? 'email' : 'username';
+    setField(newSelect);
+  };
+
   return (
     <div className="modal">
       <div className={styles.container}>
         <h2>{targetName} 검색하기</h2>
+        <div className={styles.checkBox}>
+          <input type="checkbox" onChange={handleCheckboxChange} />
+          <div>이메일로 검색하기</div>
+        </div>
         <form>
           <input
             value={inputValue}

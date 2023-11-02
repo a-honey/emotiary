@@ -6,3 +6,10 @@ export interface SearchUserType {
   profileImage: { url: string }[];
   isFriend: false;
 }
+
+export interface SearchDiaryType {
+  id: string;
+  title: string;
+  emoji: string;
+  createdDate: string;
+}
