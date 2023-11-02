@@ -68,22 +68,24 @@ const Analysis: React.FC<AnalysisProps> = ({ year, month }) => {
     {
       onSuccess: (data: any) => {
         let target = 0;
-        // if (data.emotion === "행복") {
-        //   target = 3;
-        // } else if (data.emotion === "중립") {
-        //   target = 2;
-        // } else if (data.emotion === "분노") {
-        //   target = 1;
-        // } else if (data.emotion === "불안") {
-        //   target = 1;
-        // } else if (data.emotion === "혐오") {
-        //   target = 1;
-        // } else if (data.emotion === "당황") {
-        //   target = 1;
-        // } else if (data.emotion === "슬픔") {
-        //   target = 1;
-        // }
-        target = 3;
+        if (data.emotion === "행복") {
+          target = 3;
+        } else if (data.emotion === "중립") {
+          target = 2;
+        } else if (data.emotion === "분노") {
+          target = 1;
+        } else if (data.emotion === "불안") {
+          target = 1;
+        } else if (data.emotion === "혐오") {
+          target = 1;
+        } else if (data.emotion === "당황") {
+          target = 1;
+        } else if (data.emotion === "슬픔") {
+          target = 1;
+        } else {
+          // 빈배열 등 예외처리시
+          target = 3;
+        }
   
         startSequenceWithTarget(target);
       },
@@ -110,7 +112,15 @@ const Analysis: React.FC<AnalysisProps> = ({ year, month }) => {
           src={currentImage}
           alt="current"
           className={`${styles.image} ${styles.fadeOut}`}
-          style={{ position: 'absolute', top: 0, left: 0, width: '1300px', height: '200px', zIndex: 2 }}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '1300px',
+            height: '200px',
+            zIndex: 2,
+            borderRadius: '5px'
+          }}
         />
       )}
       {nextImage && (
@@ -118,7 +128,15 @@ const Analysis: React.FC<AnalysisProps> = ({ year, month }) => {
           src={nextImage}
           alt="next"
           className={`${styles.image} ${styles.fadeIn}`}
-          style={{ position: 'absolute', top: 0, left: 0, width: '1300px', height: '200px', zIndex: 1 }}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '1300px',
+            height: '200px',
+            zIndex: 1,
+            borderRadius: '5px'
+          }}
         />
       )}
     </div>
