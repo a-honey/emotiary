@@ -11,13 +11,14 @@ import {
   deleteRoom,
 } from '../services/chatService';
 import { PrismaClient } from '@prisma/client';
-import { Server as HttpServer } from 'http';
 import { Server as SocketIoServer, Socket } from 'socket.io';
 //TODO prismaClient.ts에서 import해와서 사용하기
 const prisma = new PrismaClient();
+<<<<<<< HEAD
 import path = require('path');
+=======
+>>>>>>> d96f08c (Refactor: wrapper 감싸기)
 import * as jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
 
 // 웹소켓을 이용한 1:1 채팅
 interface ConnectedUsers {
@@ -81,6 +82,7 @@ export const chat = (io: SocketIoServer) => {
         const roomId = await createRoomId(currentUserId, chatPartnerId);
         const existingRoom = await getMyRoom(roomId);
 
+<<<<<<< HEAD
         if (existingRoom) {
           connectedUsers[currentUserId].roomId = roomId;
           console.log(
@@ -96,6 +98,40 @@ export const chat = (io: SocketIoServer) => {
               if (!message.isRead) {
                 await changeReadStatus(message.id);
               }
+=======
+
+
+
+  socket.onAny((eventName: string, ...args: any[]) => {
+    console.log(`이벤트 발생: ${eventName}, 데이터: ${args}`);
+  });
+
+  socket.on('initialize', async (userId: string) => {
+    if (user) {
+      const messages = await unreadMessage(userId);
+      socket.emit('messages', messages);
+      console.log(messages, 'New messages');
+    }
+  });
+
+  socket.on('join', async (chatPartnerId: string) => {
+    if (user) {
+      const roomId = await createRoomId(currentUserId, chatPartnerId);
+      console.log('roomId:' , roomId);
+      const existingRoom = await getMyRoom(roomId);
+      console.log('existingRoom', existingRoom);
+      if (existingRoom) {
+        connectedUsers[currentUserId].roomId = roomId;
+        console.log(connectedUsers[currentUserId].roomId, 'Currently joined room');
+        socket.join(roomId);
+        console.log(`${user.username} joined [${roomId}] room`);
+        const messages = await getMyMessages(roomId);
+        console.log(messages);
+        for (let message of messages) {
+          if (message.sendUserId !== currentUserId) {
+            if (!message.isRead) {
+              await changeReadStatus(message.id);
+>>>>>>> d96f08c (Refactor: wrapper 감싸기)
             }
           }
           socket.emit('messages', messages);
