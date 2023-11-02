@@ -64,7 +64,7 @@ const Signup: React.FC = () => {
       console.log('로그인 성공', response);
     } else {
       console.log('로그인 실패', response);
-      alert("로그인에 실패했습니다! 다시 시도해주세요!")
+      alert("회원가입에 실패했습니다! 다시 시도해주세요!")
     }
   };
 
