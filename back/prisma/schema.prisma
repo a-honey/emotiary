@@ -130,9 +130,10 @@ model Comment {
 }
 
 model Emoji {
-  id      Int     @id @default(autoincrement())
-  type    String
-  emotion String?
+  id            Int     @id @default(autoincrement())
+  type          String
+  emotion       String?
+  audioUrl      String?  @db.VarChar(1200)
 }
 
 model ChatRoom {

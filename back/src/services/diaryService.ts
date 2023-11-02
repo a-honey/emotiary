@@ -1,15 +1,12 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 import { checkFriend, getMyWholeFriends, weAreFriends } from './friendService';
-import axios from 'axios';
 import { calculatePageInfo } from '../utils/pageInfo';
 import { DiaryResponseDTO, PaginationResponseDTO } from '../dtos/diaryDTO';
 import { plainToClass } from 'class-transformer';
 import { successApiResponseDTO } from '../utils/successResult';
 import { emptyApiResponseDTO } from '../utils/emptyResult';
 import { sendEmail } from '../utils/email';
-import { searchMusic } from '../utils/music';
 import { generateEmotionString } from '../utils/emotionFlask';
-import ytdl from 'ytdl-core';
 import { prisma } from '../../prisma/prismaClient';
 import { generateError } from '../utils/errorGenerator';
 import { response } from 'express';
@@ -68,9 +65,8 @@ export const createDiaryService = async (
   inputData: Prisma.DiaryCreateInput,
   fileUrls: string[],
 ) => {
-  
-  inputData.emotion = await generateEmotionString(inputData.content);
-  inputData.emoji = '❎';
+  // inputData.emotion = await generateEmotionString(inputData.content);
+  // inputData.emoji = '❎';
 
   const diaryData = {
     ...inputData,
@@ -203,9 +199,12 @@ export const getOneDiaryService = async (userId: string, diaryId: string) => {
     where: { id: diaryId },
     include: {
       author: {
-       select:{
-        id:true, username:true, email:true, profileImage:true
-       }
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          profileImage: true,
+        },
       },
       filesUpload: true,
     },
@@ -264,10 +263,13 @@ export const getFriendsDiaryService = async (
     take: limit,
     include: {
       author: {
-        select:{
-         id:true, username:true, email:true, profileImage:true
-        }
-       },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          profileImage: true,
+        },
+      },
     },
   };
 
@@ -340,10 +342,13 @@ export const getAllDiaryService = async (
     },
     include: {
       author: {
-        select:{
-         id:true, username:true, email:true, profileImage:true
-        }
-       },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          profileImage: true,
+        },
+      },
     },
   };
 
@@ -387,7 +392,9 @@ export const updateDiaryService = async (
   inputData: Prisma.DiaryUpdateInput,
 ) => {
   if (inputData.content) {
-    inputData.emotion = await generateEmotionString(inputData.content as string);
+    inputData.emotion = await generateEmotionString(
+      inputData.content as string,
+    );
     inputData.emoji = '❎';
   }
 
@@ -454,18 +461,27 @@ export const selectedEmojis = async (
   diaryId: string,
   userId: string,
 ) => {
-  const musicData = await searchMusic(selectedEmotion);
-  const videoId = musicData.videoId;
+  // const musicData = await searchMusic(selectedEmotion);
+  // const videoId = musicData.videoId;
 
-  const info = await ytdl.getInfo(videoId);
-  // 오디오 스트림 URL 가져오기
-  const audioUrl = ytdl.chooseFormat(info.formats, { filter: 'audioonly' }).url;
+  // const info = await ytdl.getInfo(videoId);
+  // // 오디오 스트림 URL 가져오기
+  // const audioUrl = ytdl.chooseFormat(info.formats, { filter: 'audioonly' }).url;
 
-  if (!musicData) {
-    const errorMessage = '음악데이터가없습니다.';
-    throw errorMessage;
-  }
-
+  // if (!musicData) {
+  //   const errorMessage = '음악데이터가없습니다.';
+  //   throw errorMessage;
+  // }
+  const emojiRecord = await prisma.emoji.findFirst({
+    where: {
+      type: selectedEmotion,
+    },
+    select: {
+      audioUrl: true,
+    },
+  });
+  
+  const audioUrl = emojiRecord.audioUrl;
   const emoji = selectedEmoji;
   const emotion = selectedEmotion;
 
@@ -510,10 +526,13 @@ export const searchDiaryService = async (
     take: limit,
     include: {
       author: {
-        select:{
-         id:true, username:true, email:true, profileImage:true
-        }
-       },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          profileImage: true,
+        },
+      },
     },
     where: {
       OR: [

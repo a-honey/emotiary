@@ -9,6 +9,7 @@ import { storeRefreshTokenInDatabase } from '../../utils/tokenUtils';
 
 import { PrismaClient } from '@prisma/client';
 
+//TODO prismaClient.ts에서 import해와서 사용하기
 const prisma = new PrismaClient();
 
 const googleStrategy = new GoogleStrategy(

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { queryKeys } from '../queryKeys';
 import { instance } from '../instance';
-import { SearchUserType } from './useGetSearchData.types';
+import { SearchDiaryType, SearchUserType } from './useGetSearchData.types';
 import { PaginationType } from '../types';
 
 export const useGetSearchUserData = ({
@@ -19,6 +19,16 @@ export const useGetSearchUserData = ({
     return instance
       .get<{ data: SearchUserType[] & PaginationType }>(
         `/users/search?${urlQueryString}`,
+      )
+      .then((res) => res.data);
+  });
+};
+
+export const useGetSearchDiaryData = ({ search }: { search: string }) => {
+  return useQuery(['searchData'], () => {
+    return instance
+      .get<{ data: SearchDiaryType[] & PaginationType }>(
+        `/diary/search?search=${search}`,
       )
       .then((res) => res.data);
   });

@@ -13,6 +13,7 @@ import SearchList from '../../../components/search/Search.SearchList';
 import { DiaryItemType } from '../../../api/get/useGetDiaryData.types';
 import { usePostLikeDiaryData } from '../../../api/post/usePostDiaryData';
 import ImageComponent from '../../../components/ImageComponent';
+import SearchDiaryList from '../../../components/search/Search.SearchDiary';
 
 const DiaryList = () => {
   const [select, setSelect] = useState('all');
@@ -45,10 +46,7 @@ const DiaryList = () => {
   return (
     <>
       {isOpenSearchList && (
-        <SearchList
-          toggleIsOpenSearchList={toggleIsOpenList}
-          targetName="일기"
-        />
+        <SearchDiaryList toggleIsOpenSearchList={toggleIsOpenList} />
       )}
       <div className={styles.diaryBlock}>
         <div className={styles.nav}>
