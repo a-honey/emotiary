@@ -55,6 +55,9 @@ const Header = () => {
         extraHeaders: {
           Authorization: `Bearer ${token}`,
         },
+        query: {
+          token: `${token}`,
+        },
       });
 
       socketRef.current.on('connect', () => {
@@ -132,7 +135,9 @@ const Header = () => {
       </header>
       {messages.length !== 0 && <Toast />}
       <Outlet />
-      {token && <ChatButton socket={socketRef.current!} />}
+     {token && location.pathname !== '/mypage' && (
+        <ChatButton socket={socketRef.current!} />
+      )} 
     </>
   );
 };

@@ -2,6 +2,7 @@ import { instance } from '../instance';
 import { queryKeys } from '../queryKeys';
 import { useQuery } from '@tanstack/react-query';
 import { DiaryItemType } from './useGetDiaryData.types';
+import { PaginationType } from '../types';
 
 //** NETWORKPAGE 모든 다이어리 조회 */
 export const useGetDiarysData = ({
@@ -24,7 +25,13 @@ export const useGetDiarysData = ({
     }).toString();
 
     return instance
-      .get(`/diary/views/users?${urlQueryString}`)
+      .get<
+        {
+          data: DiaryItemType[];
+          message: string;
+          status: number;
+        } & PaginationType
+      >(`/diary/views/users?${urlQueryString}`)
       .then((res) => res.data);
   });
 };

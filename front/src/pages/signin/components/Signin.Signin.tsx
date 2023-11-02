@@ -1,7 +1,7 @@
 import React, { FormEvent, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { usePutSigninData } from '../../../api/mutation/usePutSigininData';
 import { QueryClient } from '@tanstack/react-query';
+import GoogleLogin from 'react-google-login';
 import styles from './index.module.scss';
 
 interface InputFieldProps {
@@ -46,18 +46,18 @@ const Signin: React.FC = () => {
   
   const signinMutation = usePutSigninData(queryClient);
 
+  const responseGoogle = (response: any) => {
+    if (response?.tokenId) {
+      console.log('로그인 성공', response);
+    } else {
+      console.log('로그인 실패', response);
+    }
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     const userSigninInfos = { email, password };
     signinMutation.mutate(userSigninInfos);
-  };
-
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
-
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
   };
 
   return (
@@ -70,7 +70,7 @@ const Signin: React.FC = () => {
             type="email"
             placeholder="이메일을 입력하세요"
             value={email}
-            onChange={handleEmailChange}
+            onChange={(e) => setEmail(e.target.value)}
             boxStyle={styles.box1}
           />
           <InputField
@@ -79,12 +79,18 @@ const Signin: React.FC = () => {
             type="password"
             placeholder="패스워드를 입력하세요"
             value={password}
-            onChange={handlePasswordChange}
+            onChange={(e) => setPassword(e.target.value)}
             boxStyle={styles.box2}
           />
           <button type="submit" className={styles.submitButton}>
             SIGN IN
           </button>
+          <GoogleLogin
+            clientId="594577452303-n7paj5690d9l35dg3sskk755prrmv389.apps.googleusercontent.com"
+            buttonText="Sign in with Google"
+            onSuccess={responseGoogle}
+            onFailure={responseGoogle}
+          />
         </form>
       </div>
     </>

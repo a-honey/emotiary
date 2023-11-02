@@ -83,7 +83,7 @@ model Diary {
   authorId      String
   createdDate   DateTime
   title         String
-  content       String
+  content       String  @db.VarChar(1000)
   is_public     String
   emoji         String?
   emotion       String?
@@ -120,10 +120,13 @@ model Comment {
   emoji         String?
   content       String
   nestedComment String?
+  writeAi       String    @default(uuid())
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   reply         Comment?  @relation("comment", fields: [nestedComment], references: [id], onDelete: Cascade)
   reComment     Comment[] @relation("comment")
+
+  @@unique([diaryId, writeAi])
 }
 
 model Emoji {
