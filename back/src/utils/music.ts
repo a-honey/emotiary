@@ -14,7 +14,7 @@ export async function searchMusic(emotion: string): Promise<any | null> {
     const searchQuery = `${emotion} music music music`;
     const videoDuration = 'long';
     const response: AxiosResponse = await axios.get(
-      `https://www.googleapis.com/youtube/v3/search?key=${youtubeApiKey}&part=snippet&type=video&q=${searchQuery}`,
+      `https://www.googleapis.com/youtube/v3/search?key=${youtubeApiKey}&part=snippet&type=video&q=${searchQuery}&videoDuration=${videoDuration}`,
     );
 
     const videoIds = response.data.items.map(
@@ -82,7 +82,7 @@ export async function updateAudioUrlsPeriodically() {
   );
 
     for (const diary of diariesWithEmoji) {
-      const musicData = await searchMusic(diary.emoji);
+      const musicData = await searchMusic(diary.emotion);
       const videoId = musicData.videoId;
 
       const info = await ytdl.getInfo(videoId);
