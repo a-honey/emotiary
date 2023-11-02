@@ -10,6 +10,7 @@ import { emailToken, sendEmail } from '../utils/email';
 import { emptyApiResponseDTO } from '../utils/emptyResult';
 import { getMyWholeFriends } from './friendService';
 
+//TODO prismaClient.ts에서 import해와서 사용하기
 const prisma = new PrismaClient();
 
 export const createUser = async (inputData: Prisma.UserCreateInput) => {
@@ -57,15 +58,17 @@ export const getAllUsers = async (
   const friendList = await getMyWholeFriends(userId);
 
   const friendIds = friendList.map((friend) => {
-    return userId == friend.sentUserId ? friend.receivedUserId : friend.sentUserId;
+    return userId == friend.sentUserId
+      ? friend.receivedUserId
+      : friend.sentUserId;
   });
 
   const userList = await prisma.user.findMany({
     take: limit,
     skip: (page - 1) * limit,
-    include : {
-      profileImage : true,
-    }
+    include: {
+      profileImage: true,
+    },
   });
   for (const user of userList) {
     const firstDiary = await prisma.diary.findFirst({
@@ -109,11 +112,12 @@ export const getMyFriends = async (
   page: number,
   limit: number,
 ) => {
-
   const friendList = await getMyWholeFriends(userId);
 
   const friendIds = friendList.map((friend) => {
-    return userId == friend.sentUserId ? friend.receivedUserId : friend.sentUserId;
+    return userId == friend.sentUserId
+      ? friend.receivedUserId
+      : friend.sentUserId;
   });
 
   const friendsInfo = await prisma.user.findMany({
@@ -124,9 +128,9 @@ export const getMyFriends = async (
         in: friendIds, // 친구의 ID 목록
       },
     },
-    include : {
-      profileImage : true,
-    }
+    include: {
+      profileImage: true,
+    },
   });
   for (const friend of friendsInfo) {
     const firstDiary = await prisma.diary.findFirst({
@@ -145,7 +149,7 @@ export const getMyFriends = async (
     friend.isFriend = true; // 또는 false
     return friend;
   });
-  
+
   const totalItem = friendsWithIsFriend.length;
   const totalPage = Math.ceil(totalItem / limit);
 
@@ -179,13 +183,13 @@ export const getUserInfo = async (userId: string) => {
   return response;
 };
 
-export const logout = async(userId : string) => {
+export const logout = async (userId: string) => {
   await prisma.refreshToken.deleteMany({
     where: {
       userId: userId,
     },
   });
-}
+};
 
 export const updateUserService = async (
   userId: string,
@@ -287,13 +291,13 @@ export const forgotUserPassword = async (email: string) => {
 };
 
 export const resetUserPassword = async (email: string, password: string) => {
-    // 데이터베이스에서 사용자 이메일로 사용자 조회
-    const user = await prisma.user.findUnique({ where: { email } });
+  // 데이터베이스에서 사용자 이메일로 사용자 조회
+  const user = await prisma.user.findUnique({ where: { email } });
 
-    if (!user) {
-      const response = emptyApiResponseDTO();
-      return response;
-    }
+  if (!user) {
+    const response = emptyApiResponseDTO();
+    return response;
+  }
 
   const saltRounds = 10;
 

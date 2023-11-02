@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
 
+//TODO prismaClient.ts에서 import해와서 사용하기
 const prisma = new PrismaClient();
 import jwtSecret from '../config/jwtSecret';
 
@@ -58,9 +59,7 @@ export const storeRefreshTokenInDatabase = async (
 };
 
 // Refresh Token의 유효성을 확인하고 사용자 ID 반환하는 함수
-export const verifyRefreshToken = async (
-  refreshToken: string,
-) => {
+export const verifyRefreshToken = async (refreshToken: string) => {
   try {
     // 데이터베이스에서 해당 Refresh Token을 찾기
     const refreshTokenData = await prisma.refreshToken.findUnique({

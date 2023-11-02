@@ -8,6 +8,7 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 
+//TODO prismaClient.ts에서 import해와서 사용하기
 const prisma = new PrismaClient();
 
 const handleFileUpload = async (
@@ -53,63 +54,63 @@ const handleFileUpload = async (
           const filePaths = files.map((file) => `fileUpload/${file.filename}`);
 
           if (type === 'profile') {
-            if(req.files){
+            if (req.files) {
               const { userId } = req.params;
-            const fileUploadCount = await prisma.fileUpload.count({
-              where: {
-                userId,
-              },
-            });
-
-            if (fileUploadCount >= 2) {
-              throw new Error('최대 1개의 파일만 허용됩니다.');
-            }
-            const foundUser = await prisma.user.findUnique({
-              where: { id: userId },
-              include: {
-                profileImage: true,
-              },
-            });
-            
-            //TODO 유저를 위에서 먼저 찾아서 없다면 얼리리턴 해주는 방식으로 바꾸는게 좋을 것 같아요 
-            if (!foundUser) {
-              const response = emptyApiResponseDTO();
-              return response;
-            }
-
-            const oldFiles = foundUser.profileImage;
-
-            if (oldFiles) {
-              oldFiles.forEach(async (file) => {
-                const filenameToDelete = file.url.replace('fileUpload/', '');
-                const filePathToDelete = path.join(
-                  './fileUpload',
-                  filenameToDelete,
-                );
-
-                fs.unlink(filePathToDelete, async (err) => {
-                  if (err) {
-                    console.error('Error deleting old file:', err);
-                    next(err);
-                  }
-                });
+              const fileUploadCount = await prisma.fileUpload.count({
+                where: {
+                  userId,
+                },
               });
-            }
 
-            const profileImage = filePaths.map((filename) => ({
-              url: filename,
-              userId: userId,
-            }));
+              if (fileUploadCount >= 2) {
+                throw new Error('최대 1개의 파일만 허용됩니다.');
+              }
+              const foundUser = await prisma.user.findUnique({
+                where: { id: userId },
+                include: {
+                  profileImage: true,
+                },
+              });
 
-            await prisma.fileUpload.deleteMany({
-              where: {
+              //TODO 유저를 위에서 먼저 찾아서 없다면 얼리리턴 해주는 방식으로 바꾸는게 좋을 것 같아요
+              if (!foundUser) {
+                const response = emptyApiResponseDTO();
+                return response;
+              }
+
+              const oldFiles = foundUser.profileImage;
+
+              if (oldFiles) {
+                oldFiles.forEach(async (file) => {
+                  const filenameToDelete = file.url.replace('fileUpload/', '');
+                  const filePathToDelete = path.join(
+                    './fileUpload',
+                    filenameToDelete,
+                  );
+                  //db에서 완전히 변경이 되고나서 삭제해야하지 않을까요?
+                  fs.unlink(filePathToDelete, async (err) => {
+                    if (err) {
+                      console.error('Error deleting old file:', err);
+                      next(err);
+                    }
+                  });
+                });
+              }
+
+              const profileImage = filePaths.map((filename) => ({
+                url: filename,
                 userId: userId,
-              },
-            });
+              }));
 
-            await prisma.fileUpload.createMany({
-              data: profileImage,
-            });
+              await prisma.fileUpload.deleteMany({
+                where: {
+                  userId: userId,
+                },
+              });
+
+              await prisma.fileUpload.createMany({
+                data: profileImage,
+              });
             }
           } else if (type === 'diary') {
             const { diaryId } = req.params;
