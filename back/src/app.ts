@@ -21,8 +21,6 @@ import path = require("path");
 import { CronJob } from 'cron';
 import { updateAudioUrlsPeriodically } from './utils/music';
 
-const prisma = new PrismaClient();
-
 const app: Express & { io?: any } = express();
 const server = http.createServer(app);
 app.use(cors());
