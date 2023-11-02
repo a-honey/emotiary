@@ -153,9 +153,7 @@ export const getOtherUsersDiary = async (
     user: { id: userId },
   } = req;
 
-  console.log(emotion);
   const decodedEmotion = decodeURIComponent(emotion as string);
-  console.log(decodedEmotion);
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 8;
 
@@ -171,17 +169,12 @@ export const getOtherUsersDiary = async (
   // diary 데이터 가져오기
   const otherUsersDiary =
     select == 'friend'
-      ? await getFriendsDiaryService(
-          page,
-          limit,
-          emotion as string,
-          friendIdList,
-        )
+      ? await getFriendsDiaryService(page, limit, decodedEmotion, friendIdList)
       : await getAllDiaryService(
           userId,
           page,
           limit,
-          emotion as string,
+          decodedEmotion,
           friendIdList,
         );
 
@@ -314,16 +307,16 @@ export const searchDiary = async (
 
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 8;
-  const { search } = req.body;
+  const { search } = req.query;
   const searchDiary = await searchDiaryService(
     userId,
-    search,
+    search as string,
     page,
     limit,
     friendIdList,
   );
 
-  return res.status(200).json(searchDiary);
+  return res.status(searchDiary.status).json(searchDiary);
 };
 
 export const getEmotionOftheMonth = async (
