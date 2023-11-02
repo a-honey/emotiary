@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useGetMyDiaryData } from '../../api/get/useGetDiaryData';
 import Calendar from '../../components/calendar/Calendar';
-import Anaysis from './components/Main.Analysis';
 import useCalendar from '../../hooks/useCalendar';
 import withLogin from '../../components/withLogin';
 import Analysis from './components/Main.Analysis';
@@ -19,10 +18,7 @@ const MainPage: React.FC = () => {
 
   return (
     <main className="column">
-      <Analysis />
-      <div
-        style={{ width: '1300px', height: '200px', backgroundColor: 'pink' }}
-      />
+      <Analysis year={currentDate.year} month={currentDate.month} />
       <Calendar
         handleCurrentDate={handleCurrentDate}
         currentDate={currentDate}
