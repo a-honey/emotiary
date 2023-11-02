@@ -1,6 +1,6 @@
 import React from 'react';
 import useIsScrollAnimation from '../../../hooks/useIsScrollAnimation';
-import writing from '../assets/writing.jpeg.png';
+import writing from '../assets/writing.png';
 import styles from './index.module.scss';
 
 const SecondBox = () => {
