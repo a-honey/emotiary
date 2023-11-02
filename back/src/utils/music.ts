@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 import { PrismaClient } from '@prisma/client';
 import ytdl from 'ytdl-core';
 
+//TODO prismaClient.ts에서 import해와서 사용하기
 const prisma = new PrismaClient();
 
 const youtubeApiKey = process.env.youtubeApiKey;
@@ -28,15 +29,13 @@ export async function searchMusic(emotion: string): Promise<any | null> {
     );
 
     const filteredVideos = videoDetailsResponse.data.items.filter(
-      (video: {
-        contentDetails: { duration: string };
-      }) => {
+      (video: { contentDetails: { duration: string } }) => {
         const duration = video.contentDetails?.duration;
         if (!duration) return false;
         const durationInseconds = getDurationInSeconds(duration);
         const durationInMinutes = durationInseconds / 60;
 
-        return (durationInMinutes >= 20);
+        return durationInMinutes >= 20;
       },
     );
 
@@ -78,8 +77,8 @@ function getDurationInSeconds(isoDuration: string): number {
 export async function updateAudioUrlsPeriodically() {
   try {
     const diariesWithEmoji = (await prisma.diary.findMany()).filter(
-      (diary) => diary.emotion && diary.emotion.length === 2
-  );
+      (diary) => diary.emotion && diary.emotion.length === 2,
+    );
 
     for (const diary of diariesWithEmoji) {
       const musicData = await searchMusic(diary.emotion);
@@ -87,7 +86,9 @@ export async function updateAudioUrlsPeriodically() {
 
       const info = await ytdl.getInfo(videoId);
       // 오디오 스트림 URL 가져오기
-      const audioUrl = ytdl.chooseFormat(info.formats, { filter: 'audioonly' }).url;
+      const audioUrl = ytdl.chooseFormat(info.formats, {
+        filter: 'audioonly',
+      }).url;
 
       // 데이터베이스에 스트림 URL 업데이트
       await prisma.diary.update({

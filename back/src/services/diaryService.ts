@@ -68,9 +68,8 @@ export const createDiaryService = async (
   inputData: Prisma.DiaryCreateInput,
   fileUrls: string[],
 ) => {
-  
-  inputData.emotion = await generateEmotionString(inputData.content);
-  inputData.emoji = '❎';
+  // inputData.emotion = await generateEmotionString(inputData.content);
+  // inputData.emoji = '❎';
 
   const diaryData = {
     ...inputData,
@@ -203,9 +202,12 @@ export const getOneDiaryService = async (userId: string, diaryId: string) => {
     where: { id: diaryId },
     include: {
       author: {
-       select:{
-        id:true, username:true, email:true, profileImage:true
-       }
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          profileImage: true,
+        },
       },
       filesUpload: true,
     },
@@ -264,10 +266,13 @@ export const getFriendsDiaryService = async (
     take: limit,
     include: {
       author: {
-        select:{
-         id:true, username:true, email:true, profileImage:true
-        }
-       },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          profileImage: true,
+        },
+      },
     },
   };
 
@@ -340,10 +345,13 @@ export const getAllDiaryService = async (
     },
     include: {
       author: {
-        select:{
-         id:true, username:true, email:true, profileImage:true
-        }
-       },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          profileImage: true,
+        },
+      },
     },
   };
 
@@ -387,7 +395,9 @@ export const updateDiaryService = async (
   inputData: Prisma.DiaryUpdateInput,
 ) => {
   if (inputData.content) {
-    inputData.emotion = await generateEmotionString(inputData.content as string);
+    inputData.emotion = await generateEmotionString(
+      inputData.content as string,
+    );
     inputData.emoji = '❎';
   }
 
@@ -510,10 +520,13 @@ export const searchDiaryService = async (
     take: limit,
     include: {
       author: {
-        select:{
-         id:true, username:true, email:true, profileImage:true
-        }
-       },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          profileImage: true,
+        },
+      },
     },
     where: {
       OR: [

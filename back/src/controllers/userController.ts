@@ -25,10 +25,11 @@ import { emptyApiResponseDTO } from '../utils/emptyResult';
 import { generateRefreshToken } from '../utils/tokenUtils';
 import { storeRefreshTokenInDatabase } from '../utils/tokenUtils';
 
+//TODO prismaClient.ts에서 import해와서 사용하기
 const prisma = new PrismaClient();
 
 export const userRegister = async (req: Request, res: Response) => {
-    // #swagger.tags = ['Users']
+  // #swagger.tags = ['Users']
   const { username, email, password } = req.body;
 
   await plainToClass(userValidateDTO, req.body);
@@ -145,7 +146,6 @@ export const updateUser = async (req: IRequest, res: Response) => {
          #swagger.security = [{
                "bearerAuth": []
         }] */
-
 
   const { email, username, description } = req.body;
 
@@ -293,8 +293,8 @@ export const testEmail = async (req: IRequest, res: Response) => {
   return res.status(userRegister.status).json(userRegister);
 };
 
-export const expire = async (req : IRequest, res : Response) => {
+export const expire = async (req: IRequest, res: Response) => {
   // #swagger.tags = ['Users']
 
-    res.status(200).json({ message: 'Token is valid' });
-}
+  res.status(200).json({ message: 'Token is valid' });
+};

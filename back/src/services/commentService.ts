@@ -85,7 +85,7 @@ export async function getCommentByDiaryId(
         },
         diaryId: true,
         content: true,
-        emoji : true,
+        emoji: true,
         createdAt: true,
         updatedAt: true,
         // 대댓글은 reComment에 배열로 포함하여 응답
@@ -101,7 +101,7 @@ export async function getCommentByDiaryId(
             },
             diaryId: true,
             content: true,
-            emoji : true,
+            emoji: true,
             createdAt: true,
             updatedAt: true,
           },

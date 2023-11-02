@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router } from 'express';
 import {
   userLogin,
   verifyEmail,
@@ -19,22 +19,26 @@ import {
   testEmail,
   searchKeyword,
   expire,
-} from "../controllers/userController";
-import { localAuthentication } from "../middlewares/authenticateLocal";
-import { jwtAuthentication } from "../middlewares/authenticateJwt";
-import { fileUpload } from "../middlewares/uploadMiddleware";
-import { wrapAsyncController } from "../utils/wrapper";
-import passport from "passport";
+} from '../controllers/userController';
+import { localAuthentication } from '../middlewares/authenticateLocal';
+import { jwtAuthentication } from '../middlewares/authenticateJwt';
+import { fileUpload } from '../middlewares/uploadMiddleware';
+import { wrapAsyncController } from '../utils/wrapper';
+import passport from 'passport';
 const userAuthRouter = Router();
 
 // 회원가입
-userAuthRouter.post("/register", wrapAsyncController(userRegister));
+userAuthRouter.post('/register', wrapAsyncController(userRegister));
 
 // 로그인
-userAuthRouter.post('/login', localAuthentication, wrapAsyncController(userLogin));
+userAuthRouter.post(
+  '/login',
+  localAuthentication,
+  wrapAsyncController(userLogin),
+);
 
 // 이메일 인증후 회원가입
-userAuthRouter.post("/testregister", wrapAsyncController(testEmail));
+userAuthRouter.post('/testregister', wrapAsyncController(testEmail));
 
 // 이메일 인증
 userAuthRouter.post('/email', wrapAsyncController(emailLink));
@@ -45,60 +49,88 @@ userAuthRouter.get('/verifyEmail/:token', wrapAsyncController(verifyEmail));
 // 이메일 인증되었는지 확인
 userAuthRouter.get('/verified', emailVerified);
 // 유저 키워드 검색
-userAuthRouter.get('/search', jwtAuthentication, wrapAsyncController(searchKeyword));
+userAuthRouter.get(
+  '/search',
+  jwtAuthentication,
+  wrapAsyncController(searchKeyword),
+);
 
 // 현재 유저 정보
-userAuthRouter.get('/current', jwtAuthentication, wrapAsyncController(getMyInfo));
+userAuthRouter.get(
+  '/current',
+  jwtAuthentication,
+  wrapAsyncController(getMyInfo),
+);
 
 // 모든 유저 정보
-userAuthRouter.get('/allUser', jwtAuthentication, wrapAsyncController(getAllUser));
+userAuthRouter.get(
+  '/allUser',
+  jwtAuthentication,
+  wrapAsyncController(getAllUser),
+);
 
 // 친구 유저 정보
-userAuthRouter.get('/myfriend', jwtAuthentication, wrapAsyncController(getMyFriend));
+userAuthRouter.get(
+  '/myfriend',
+  jwtAuthentication,
+  wrapAsyncController(getMyFriend),
+);
 
 // 로그아웃
-userAuthRouter.get("/logout", jwtAuthentication, wrapAsyncController(userLogout));
+userAuthRouter.get(
+  '/logout',
+  jwtAuthentication,
+  wrapAsyncController(userLogout),
+);
 
 // 토큰 만료 여부 체크
-userAuthRouter.get("/tokenExpire", jwtAuthentication, wrapAsyncController(expire));
+userAuthRouter.get(
+  '/tokenExpire',
+  jwtAuthentication,
+  wrapAsyncController(expire),
+);
 
 // 특정 유저 정보, 유저 수정, 유저 탈퇴
 userAuthRouter
-  .route("/:userId")
+  .route('/:userId')
   .get(jwtAuthentication, wrapAsyncController(getUserId))
   .put(jwtAuthentication, fileUpload, wrapAsyncController(updateUser))
-  .delete( jwtAuthentication, wrapAsyncController(deleteUser));
+  .delete(jwtAuthentication, wrapAsyncController(deleteUser));
 
 // 비밀번호 재설정 이메일 보내기
-userAuthRouter.post("/forgot-password", wrapAsyncController(forgotPassword));
+userAuthRouter.post('/forgot-password', wrapAsyncController(forgotPassword));
 
 // 비밀번호 재설정
-userAuthRouter.post("/reset-password", jwtAuthentication, wrapAsyncController(resetPassword));
+userAuthRouter.post(
+  '/reset-password',
+  jwtAuthentication,
+  wrapAsyncController(resetPassword),
+);
 
 // refresh token사용
 userAuthRouter.post('/refresh-token', wrapAsyncController(refresh));
 
 // 소셜 로그인
 userAuthRouter.get(
-  "/google",
-  passport.authenticate("google", {
+  '/google',
+  passport.authenticate('google', {
     scope: [
-      "https://www.googleapis.com/auth/userinfo.email",
-      "https://www.googleapis.com/auth/userinfo.profile",
+      'https://www.googleapis.com/auth/userinfo.email',
+      'https://www.googleapis.com/auth/userinfo.profile',
     ],
-  })
+  }),
 );
 
 // 소셜 로그인 리디렉션
 userAuthRouter.get(
-  "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/" }),
-  loginCallback
+  '/google/callback',
+  passport.authenticate('google', { failureRedirect: '/' }),
+  loginCallback,
 );
 
-
 // TODO :이모지 추가용 나중에 코드 없앨 것
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
+//TODO prismaClient.ts에서 import해와서 사용하기
 const prisma = new PrismaClient();
 userAuthRouter.post('/add-emoji', async (req, res) => {
   try {
@@ -107,11 +139,11 @@ userAuthRouter.post('/add-emoji', async (req, res) => {
       type,
       emotion, // 감정에 따른 이모지 데이터
     };
-    
+
     await prisma.emoji.create({
       data: emojiData,
     });
-    
+
     res.json({ message: '이모지가 추가되었습니다.' });
   } catch (error) {
     console.error('이모지 추가 중 오류 발생:', error);

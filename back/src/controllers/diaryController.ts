@@ -152,6 +152,10 @@ export const getOtherUsersDiary = async (
     query: { select, emotion },
     user: { id: userId },
   } = req;
+
+  console.log(emotion);
+  const decodedEmotion = decodeURIComponent(emotion as string);
+  console.log(decodedEmotion);
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 8;
 
