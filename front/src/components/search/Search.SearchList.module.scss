@@ -8,6 +8,20 @@
   padding: 20px;
   border-radius: 5px;
   width: 50vw;
+  position: relative;
+  .checkBox {
+    position: absolute;
+    right: 40px;
+    top: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 170px;
+    gap: 10px;
+    input {
+      width: 20px;
+    }
+  }
   h2 {
     font-size: 22px;
     font-weight: 700;
