@@ -11,7 +11,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '../../api/queryKeys';
 import ImagesComponent from '../ImagesComponent';
 import { DiaryItemType } from '../../api/get/useGetDiaryData.types';
-import getUserId from '../../utils/localStorageHandlers';
 import { usePutDiaryData } from '../../api/put/usePutDiaryData';
 import { useDeleteDiaryData } from '../../api/delete/useDeleteDiaryData';
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useGetMyDiaryData } from '../../api/get/useGetDiaryData';
 import Calendar from '../../components/calendar/Calendar';
 import useCalendar from '../../hooks/useCalendar';
@@ -18,10 +18,10 @@ const MainPage: React.FC = () => {
 
   return (
     <main className="column">
-      <Analysis 
+      <Analysis
         key={`${currentDate.year}-${currentDate.month}`}
-        year={currentDate.year} 
-        month={currentDate.month} 
+        year={currentDate.year}
+        month={currentDate.month}
       />
       <Calendar
         handleCurrentDate={handleCurrentDate}

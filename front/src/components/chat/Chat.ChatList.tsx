@@ -4,7 +4,6 @@ import ChatRoom from './Chat.ChatRoom';
 import styles from './Chat.ChatList.module.scss';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { chatState } from '../../atoms/chatState';
-import useCallByLocation from '../../hooks/useCallByLocation';
 
 const ChatList = ({ socket }: { socket: Socket }) => {
   const { isOpenChatList, isOpenChatRoom, chatUserId } =

@@ -7,10 +7,7 @@ import {
   useCancelFriendReqMutation,
   useRejectFriendReqMutation,
 } from '../../api/post/usePostFriendData';
-import {
-  FriendReqCommonResponseType,
-  GetFriendReqDataType,
-} from '../../api/get/useGetFriendData.types';
+import { FriendReqCommonResponseType } from '../../api/get/useGetFriendData.types';
 
 const FriendReqList = () => {
   const [isReqList, setIsReqList] = useState(true);
