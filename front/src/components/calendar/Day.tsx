@@ -41,7 +41,8 @@ const Day = ({
 
   // 현재 날짜를 기준으로 날짜를 담아서 매핑
   const [days, setDays] = useState<Date[]>([]);
-
+  // 드래그 종료 시점의 날짜를 담음
+  const [draggedDate, setDraggedDate] = useState<any>(null);
   const today = new Date();
 
   useEffect(() => {
@@ -63,8 +64,22 @@ const Day = ({
     setDays(newDays);
   }, [currentDate]);
 
-  const handleOnDragEnd = () => {
-    return;
+  const handleOnDragEnd = (result: any) => {
+    //alert('준비중인 기능입니다.');
+    //return;
+    console.log('드래그 종료됨');
+    if (!result.destination) {
+      console.log('잘못된 영역');
+      return;
+    }
+
+    const draggedIndex = result.source.index;
+    const droppedIndex = result.destination.index;
+
+    const date = days[draggedIndex];
+    console.log(draggedDate);
+    console.log(droppedIndex);
+    setDraggedDate(date);
   };
 
   return (
@@ -76,7 +91,7 @@ const Day = ({
       </div>
       <DragDropContext onDragEnd={handleOnDragEnd}>
         <Droppable droppableId="days">
-          {(provided) => (
+          {(provided, snapshot) => (
             <div
               {...provided.droppableProps}
               ref={provided.innerRef}
@@ -104,12 +119,15 @@ const Day = ({
                       day.getFullYear() === currentDate.year &&
                       day.getMonth() + 1 === currentDate.month &&
                       day <= today && (
-                        <DayItem
-                          day={day}
-                          data={data}
-                          index={index}
-                          isLogin={isLogin}
-                        />
+                        <>
+                          <DayItem
+                            day={day}
+                            data={data}
+                            index={index}
+                            isLogin={isLogin}
+                          />
+                          {provided.placeholder}
+                        </>
                       )}
                   </div>
                 </div>

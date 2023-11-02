@@ -23,3 +23,30 @@ export const useDeleteDiaryData = ({ id }: { id: string }) => {
 
   return deleteMutation;
 };
+
+export const useDeleteCommentData = ({
+  id,
+  diaryId,
+}: {
+  diaryId: string;
+  id: string;
+}) => {
+  const queryClient = useQueryClient();
+  const deleteMutation = useMutation(
+    async () => {
+      return await instance.delete(`/comments/${id}`);
+    },
+    {
+      onSuccess: (res) => {
+        queryClient.invalidateQueries(
+          queryKeys.diaryCommentData({ id: diaryId }),
+        );
+      },
+      onError: (error: Error) => {
+        console.error('useMutation api 요청 에러', error);
+      },
+    },
+  );
+
+  return deleteMutation;
+};

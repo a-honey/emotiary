@@ -4,6 +4,7 @@ import styles from './index.module.scss';
 import { ResEmojiType } from '../../../api/post/usePostDiaryData';
 import { SelectedEmojiType } from '../../../api/put/usePutDiaryData.types';
 import { usePutSelectedEmoji } from '../../../api/put/usePutDiaryData';
+import { instance } from '../../../api/instance';
 
 const EmojiSelect = ({
   id,
@@ -29,6 +30,10 @@ const EmojiSelect = ({
     putMutation.mutate({ id, body });
   };
 
+  const handleCancelClick = async () => {
+    await instance.delete(`/diary/${id}`);
+    handleDeleteEmojis();
+  };
   useEffect(() => {}, [emojis]);
 
   return (
@@ -60,7 +65,7 @@ const EmojiSelect = ({
           <button
             className="cancelBtn"
             type="button"
-            onClick={handleDeleteEmojis}
+            onClick={handleCancelClick}
           >
             다시쓰기
           </button>

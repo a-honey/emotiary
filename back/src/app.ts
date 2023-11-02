@@ -21,6 +21,7 @@ import path = require("path");
 import { CronJob } from 'cron';
 import { updateAudioUrlsPeriodically } from './utils/music';
 
+const prisma = new PrismaClient();
 
 const app: Express & { io?: any } = express();
 const server = http.createServer(app);
@@ -61,6 +62,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 const apiRouter = express.Router();
+const router = express.Router();
 
 apiRouter.use('/users', userAuthRouter);
 apiRouter.use('/test', testAuthRouter);
@@ -71,17 +73,14 @@ apiRouter.use('/comments', commentRouter);
 
 app.use('/api', apiRouter);
 
-// // 정적 파일 제공을 위한 미들웨어 설정
-// app.use(express.static("public"));
 app.use('/api/fileUpload', express.static('fileUpload'));
 app.use(errorMiddleware);
 
-// 웹소켓을 이용한 1:1 채팅
 const io = new SocketIoServer(server, {
   path: '/chat',
   cors: {
     origin: 'http://localhost:3000', // Replace with your actual frontend URL
-    methods: ['GET', 'POST', 'WEBSOCKET'],
+    methods: ['GET', 'POST',  'WEBSOCKET'],
   },
 });
 

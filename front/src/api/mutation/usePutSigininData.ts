@@ -21,9 +21,9 @@ export const usePutSigninData = (queryClient: QueryClient) => {
         // 프로필 이미지 받아와서 로컬스토리지에 위치만 넣음
         localStorage.setItem(
           'userImg',
-          data.data?.filesUpload?.length > 0
-            ? data.data.filesUpload[data.data.filesUpload.length - 1].url
-            : null,
+          data.data?.profileImage?.length > 0
+            ? data.data.profileImage[data.data.profileImage.length - 1].url
+            : null
         );
         localStorage.setItem('refreshToken', data.data.refreshToken);
 
@@ -32,7 +32,7 @@ export const usePutSigninData = (queryClient: QueryClient) => {
       onError: (error: any) => {
         console.log('로그인 실패', error);
       },
-    },
+    }
   );
 
   return signinMutation;

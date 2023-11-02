@@ -6,9 +6,6 @@ from pybo.views.emotion_predict import emotion_predict
 
 bp = Blueprint('main', __name__, url_prefix='/')
 
-# 모델 로드 함수
-# model = load_model()
-
 @bp.route('/')
 def index():
     return 'Pybo index'

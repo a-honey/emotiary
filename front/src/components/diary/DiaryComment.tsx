@@ -3,6 +3,8 @@ import styles from './DiaryComment.module.scss';
 import { usePostCommentData } from '../../api/post/usePostDiaryData';
 import { useNavigate } from 'react-router-dom';
 import ImageComponent from '../ImageComponent';
+import { useDeleteCommentData } from '../../api/delete/useDeleteDiaryData';
+import { usePutCommentData } from '../../api/put/usePutDiaryData';
 
 interface CommentDataType {
   id: string;
@@ -83,17 +85,64 @@ const CommentItem = ({
 }) => {
   const navigator = useNavigate();
   const [isAdding, setIsAdding] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [content, setContent] = useState(data.content);
+
+  const toggleIsEditing = () => {
+    setIsEditing((prev) => !prev);
+  };
+
+  const deleteMutation = useDeleteCommentData({
+    id: data.id,
+    diaryId: data.diaryId,
+  });
+  const putMutation = usePutCommentData(data.id, toggleIsEditing, data.diaryId);
+
+  const handleDeleteBtn = () => {
+    deleteMutation.mutate();
+  };
 
   const handleIsAdding = () => {
     setIsAdding((prev) => !prev);
   };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    putMutation.mutate({ body: { content } });
+  };
+
   return (
     <>
       <div className={styles.commentItemContainer}>
-        <div>
-          {isReply && parentUsername && <span>{`L @${parentUsername}`}</span>}
-          {`${data.content} ${data.emoji ?? ''}`}
-        </div>
+        {isEditing && (
+          <form onSubmit={handleSubmit} className={styles.contentText}>
+            <input
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+            />
+            <div className={styles.ownerBtns}>
+              <button type="submit" className="doneBtn">
+                수정
+              </button>
+            </div>
+          </form>
+        )}
+        {!isEditing && (
+          <div className={styles.contentText}>
+            {isReply && parentUsername && <span>{`L @${parentUsername}`}</span>}
+            {`${data.content} ${data.emoji ?? ''}`}
+            {localStorage.getItem('userId') === data.author.id && (
+              <div className={styles.ownerBtns}>
+                <button onClick={handleDeleteBtn} className="cancelBtn">
+                  삭제
+                </button>
+                <button className="doneBtn" onClick={() => setIsEditing(true)}>
+                  수정
+                </button>
+              </div>
+            )}
+          </div>
+        )}
         <div
           className={styles.userInfo}
           onClick={() => {

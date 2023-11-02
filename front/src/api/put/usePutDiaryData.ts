@@ -22,7 +22,30 @@ export const usePutDiaryData = (id: string) => {
   return postMutation;
 };
 
-export const usePutCommentData = (id: string, done?: () => void) => {
+export const usePutDiaryDate = (id: string) => {
+  const queryClient = useQueryClient();
+  const postMutation = useMutation(
+    async ({ body }: { body: { createdDate: string } }) => {
+      return await instance.put(`/diary/${id}`, body);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['calendarDiaryData']);
+      },
+      onError: (error) => {
+        console.error('useMutation api 요청 에러', error);
+      },
+    },
+  );
+
+  return postMutation;
+};
+
+export const usePutCommentData = (
+  id: string,
+  done?: () => void,
+  diaryId?: string,
+) => {
   const queryClient = useQueryClient();
   const postMutation = useMutation(
     async ({ body }: { body: any }) => {
@@ -30,7 +53,7 @@ export const usePutCommentData = (id: string, done?: () => void) => {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(['diaryData', id]);
+        queryClient.invalidateQueries(['diaryData', diaryId]);
         done?.();
       },
       onError: (error) => {
