@@ -9,12 +9,6 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 
-<<<<<<< HEAD
-//TODO prismaClient.ts에서 import해와서 사용하기
-const prisma = new PrismaClient();
-
-=======
->>>>>>> feature/back
 const handleFileUpload = async (
   req: IRequest,
   res: Response,
