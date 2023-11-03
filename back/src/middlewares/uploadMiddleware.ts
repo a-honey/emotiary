@@ -1,16 +1,14 @@
 import { Response, NextFunction } from 'express';
-import { PrismaClient } from '.prisma/client';
 import { fileUploadMiddleware } from './fileMiddleware';
 
 import { FileObjects } from '../types/upload';
 import { emptyApiResponseDTO } from '../utils/emptyResult';
+import { prisma } from '../../prisma/prismaClient';
+import { generateError } from '../utils/errorGenerator';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { IRequest } from 'types/request';
-
-//TODO prismaClient.ts에서 import해와서 사용하기
-const prisma = new PrismaClient();
 
 const handleFileUpload = async (
   req: IRequest,
@@ -26,14 +24,9 @@ const handleFileUpload = async (
       fileUploadMiddleware(req, res, async (err: any) => {
         try {
           if (err instanceof multer.MulterError) {
-            //TODO error 처리 generateError
-            return res
-              .status(400)
-              .json({ message: 'upload error', error: err.message });
+            generateError(400, 'upload error');
           } else if (err) {
-            return res
-              .status(500)
-              .json({ message: 'Internal server error', error: err.message });
+            generateError(500, 'Internal server error');
           }
 
           const files: FileObjects[] = req.files
@@ -48,9 +41,7 @@ const handleFileUpload = async (
               );
 
               if (!areAllFilesSameType) {
-                return res
-                  .status(400)
-                  .json({ message: 'Files have different types' });
+                generateError(400, 'Files have different types');
               }
             }
           }
@@ -60,6 +51,17 @@ const handleFileUpload = async (
           if (type === 'profile') {
             if (req.files) {
               const { userId } = req.params;
+              const foundUser = await prisma.user.findUnique({
+                where: { id: userId },
+                include: {
+                  profileImage: true,
+                },
+              });
+
+              if (!foundUser) {
+                const response = emptyApiResponseDTO();
+                return response;
+              }
               const fileUploadCount = await prisma.fileUpload.count({
                 where: {
                   userId,
@@ -68,18 +70,6 @@ const handleFileUpload = async (
 
               if (fileUploadCount >= 2) {
                 throw new Error('최대 1개의 파일만 허용됩니다.');
-              }
-              const foundUser = await prisma.user.findUnique({
-                where: { id: userId },
-                include: {
-                  profileImage: true,
-                },
-              });
-
-              //TODO 유저를 위에서 먼저 찾아서 없다면 얼리리턴 해주는 방식으로 바꾸는게 좋을 것 같아요
-              if (!foundUser) {
-                const response = emptyApiResponseDTO();
-                return response;
               }
 
               const oldFiles = foundUser.profileImage;
@@ -91,7 +81,6 @@ const handleFileUpload = async (
                     './fileUpload',
                     filenameToDelete,
                   );
-                  //db에서 완전히 변경이 되고나서 삭제해야하지 않을까요?
                   fs.unlink(filePathToDelete, async (err) => {
                     if (err) {
                       console.error('Error deleting old file:', err);
@@ -156,9 +145,7 @@ const handleFileUpload = async (
                 );
 
                 if (!areAllFilesSameType) {
-                  return res
-                    .status(400)
-                    .json({ message: 'Files have different types' });
+                  generateError(400, 'Files have different types');
                 }
               }
             }
@@ -190,12 +177,10 @@ const handleFileUpload = async (
               diaryId: diaryId,
             }));
 
-            // Create new diary file records
             await prisma.diaryFileUpload.createMany({
               data: FilesUpload,
             });
           } else if (type === 'postDiary') {
-            // Handle post diary file upload
             const userId = req.user.id;
             const foundDiary = await prisma.user.findUnique({
               where: { id: userId },

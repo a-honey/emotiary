@@ -1,18 +1,16 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useState, useEffect } from 'react';
 import styles from './index.module.scss';
-import { handleImgError } from '../../../utils/imgHandlers';
 import { useNavigate } from 'react-router-dom';
 import DiaryItemShow from '../../../components/diary/DiaryItemShow';
 import { useGetDiarysData } from '../../../api/get/useGetDiaryData';
-import { instance } from '../../../api/instance';
 import { GoHeartFill, GoHeart } from 'react-icons/go';
 import Pagination from '../../../components/Pagination';
 import Tab from './Network.Tab';
 import search from '../../../assets/search.png';
-import SearchList from '../../../components/search/Search.SearchList';
 import { DiaryItemType } from '../../../api/get/useGetDiaryData.types';
 import { usePostLikeDiaryData } from '../../../api/post/usePostDiaryData';
 import ImageComponent from '../../../components/ImageComponent';
+import SearchDiaryList from '../../../components/search/Search.SearchDiary';
 
 const DiaryList = () => {
   const [select, setSelect] = useState('all');
@@ -42,13 +40,13 @@ const DiaryList = () => {
     setSelect(newSelect);
   };
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [tapEmotion]);
   return (
     <>
       {isOpenSearchList && (
-        <SearchList
-          toggleIsOpenSearchList={toggleIsOpenList}
-          targetName="일기"
-        />
+        <SearchDiaryList toggleIsOpenSearchList={toggleIsOpenList} />
       )}
       <div className={styles.diaryBlock}>
         <div className={styles.nav}>

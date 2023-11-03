@@ -4,6 +4,16 @@ import post_none from '../assets/post_none.png';
 import { handleImgError } from '../utils/imgHandlers';
 
 const ImageComponent = ({ src, alt }: { src: string | null; alt: string }) => {
+  if (src?.endsWith('.mp4')) {
+    return (
+      <video
+        width={300}
+        height={300}
+        controls
+        src={`${process.env.REACT_APP_BASE_URL}/${src}`}
+      />
+    );
+  }
   return (
     <img
       src={src ? `${process.env.REACT_APP_BASE_URL}/${src}` : user_none}

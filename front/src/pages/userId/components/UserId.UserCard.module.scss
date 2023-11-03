@@ -3,13 +3,13 @@
   flex-direction: column;
   gap: 40px;
   img {
-    width: 400px;
-    height: 400px;
+    width: 350px;
+    height: 350px;
     border-radius: 50%;
   }
   .content {
     display: grid;
-    grid-template-rows: 1fr 1fr 1fr 1.2fr;
+    grid-template-rows: 1fr 1fr 1.2fr;
     gap: 10px;
     div {
       display: flex;

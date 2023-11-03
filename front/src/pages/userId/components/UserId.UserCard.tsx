@@ -67,7 +67,7 @@ const UserCard = () => {
             <h3>{description}</h3>
           </div>
           <div>
-            <label>유저 상태</label>
+            <label></label>
             <h4>{latestEmoji}</h4>
           </div>{' '}
           <button className="doneBtn" onClick={handleChatUserIdAndUsername}>

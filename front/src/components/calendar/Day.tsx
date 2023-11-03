@@ -7,14 +7,8 @@ import {
   startOfMonth,
   startOfWeek,
 } from 'date-fns';
-import { CalendarDiaryItemType } from '../../types/diaryType';
 import DiaryItemShow from '../diary/DiaryItemShow';
-import {
-  DragDropContext,
-  Droppable,
-  Draggable,
-  DroppableProvided,
-} from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import DiaryWriting from '../../pages/main/components/Main.DiaryWriting';
 import { DiaryItemType } from '../../api/get/useGetDiaryData.types';
 
