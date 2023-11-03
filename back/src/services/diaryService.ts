@@ -65,8 +65,8 @@ export const createDiaryService = async (
   inputData: Prisma.DiaryCreateInput,
   fileUrls: string[],
 ) => {
-  // inputData.emotion = await generateEmotionString(inputData.content);
-  // inputData.emoji = '❎';
+  inputData.emotion = await generateEmotionString(inputData.content);
+  inputData.emoji = '❎';
 
   const diaryData = {
     ...inputData,
@@ -319,6 +319,7 @@ export const getAllDiaryService = async (
   emotion: string,
   friendIdList: string[],
 ) => {
+  console.log(userId);
   const allDiaryQuery = {
     skip: (page - 1) * limit,
     take: limit,
@@ -480,7 +481,7 @@ export const selectedEmojis = async (
       audioUrl: true,
     },
   });
-  
+
   const audioUrl = emojiRecord.audioUrl;
   const emoji = selectedEmoji;
   const emotion = selectedEmotion;
@@ -517,7 +518,7 @@ export const searchDiaryService = async (
   const searchList = search.split(' ');
 
   const modifiedSearch = searchList.map((search) => {
-    return `*${search}*`;
+    return `${search}`;
   });
   const fullTextQuery = modifiedSearch.join(' ');
 

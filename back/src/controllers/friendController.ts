@@ -10,7 +10,7 @@ import {
   getMyFriends,
   deleteFriend,
 } from '../services/friendService';
-import { IRequest } from "types/user";
+import { IRequest } from 'types/request';
 
 /** @description 친구 요청 */
 /** @Tag(name = "book service", description = "the book API with description tag annotation") */
@@ -27,17 +27,15 @@ export const friendRequest = async (
   const requestId = req.params.userId;
 
   if (userId === requestId) {
-    return res
-      .status(400)
-      .json({ message: "셀프 친구 불가!" });
+    return res.status(400).json({ message: '셀프 친구 불가!' });
   }
   const alreadyFriends = await weAreFriends(userId, requestId);
   if (alreadyFriends) {
-    return res.status(400).json({ message: "이미 요청 했거나 우린 친구!" });
+    return res.status(400).json({ message: '이미 요청 했거나 우린 친구!' });
   }
   const existingFriendRequest = await weAreFriends(requestId, userId);
   if (existingFriendRequest) {
-    return res.status(400).json({ message: "이미 요청 했거나 우린 친구!" });
+    return res.status(400).json({ message: '이미 요청 했거나 우린 친구!' });
   }
   const request = await createFriends(userId, requestId);
   // TODO DTO STATUS?
@@ -111,7 +109,11 @@ export const friendAccept = async (
 };
 
 /** @description 친구 거절 */
-export const friendReject = async (req : IRequest, res : Response, next : NextFunction) => {
+export const friendReject = async (
+  req: IRequest,
+  res: Response,
+  next: NextFunction,
+) => {
   /**
    * #swagger.tags = ['Friend']
    * #swagger.summary = '친구 거절'
@@ -123,7 +125,11 @@ export const friendReject = async (req : IRequest, res : Response, next : NextFu
 };
 
 /** @description 친구 목록 */
-export const getFriends = async (req : IRequest, res : Response, next : NextFunction) => {
+export const getFriends = async (
+  req: IRequest,
+  res: Response,
+  next: NextFunction,
+) => {
   /**
    * #swagger.tags = ['Friend']
    * #swagger.summary = '친구 목록'
@@ -136,7 +142,11 @@ export const getFriends = async (req : IRequest, res : Response, next : NextFunc
 };
 
 /** @description 친구 삭제 */
-export const friendDelete = async (req : IRequest, res : Response, next : NextFunction) => {
+export const friendDelete = async (
+  req: IRequest,
+  res: Response,
+  next: NextFunction,
+) => {
   /**
    * #swagger.tags = ['Friend']
    * #swagger.summary = '친구 삭제'

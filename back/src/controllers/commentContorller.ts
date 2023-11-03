@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { IRequest } from 'types/user';
+
 import {
   createdComment,
   getCommentByDiaryId,
@@ -7,6 +7,7 @@ import {
   deletedComment,
 } from '../services/commentService';
 import { validate } from 'class-validator';
+import { IRequest } from 'types/request';
 
 // 댓글 작성
 export const createComment = async (

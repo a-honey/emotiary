@@ -1,6 +1,7 @@
 import { Response, NextFunction } from 'express';
 import passport from 'passport';
-import { IRequest, IUser } from 'types/user';
+import { IRequest } from 'types/request';
+import { IUser } from 'types/user';
 
 export const jwtAuthentication = async (
   req: IRequest,

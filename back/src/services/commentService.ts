@@ -253,6 +253,7 @@ export async function updatedGPTComment(
     },
   });
 
+  //TODO 지호님한테 질문
   if (comment.count == 0) {
     await createdGPTComment(testChatGPT, authorId, diaryId);
   }

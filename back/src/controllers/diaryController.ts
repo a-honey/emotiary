@@ -15,7 +15,7 @@ import {
   verifyDiaryAuthor,
   getEmotionOftheMonthService,
 } from '../services/diaryService';
-import { IRequest } from 'types/user';
+import { IRequest } from 'types/request';
 import { plainToClass } from 'class-transformer';
 import { DiaryValidateDTO } from '../dtos/diaryDTO';
 import { validate } from 'class-validator';
@@ -25,6 +25,8 @@ import {
   createdGPTComment,
   updatedGPTComment,
 } from '../services/commentService';
+import { wrapAsyncController } from '../utils/wrapper';
+import axios from 'axios';
 
 /**
  * 다이어리 생성
@@ -69,8 +71,14 @@ export const createDiary = async (
   console.log(createDiary);
 
   // 일기 작성시 chatGPT를 활용한 댓글 한마디 추가
-  createdGPTComment(inputData.content, userId, createdDiary.data.id);
-
+  // createdGPTComment(inputData.content, userId, createdDiary.data.id, next);
+  const inputAI = {
+    content: inputData.content,
+    userId: userId,
+    diaryId: createdDiary.data.id,
+  };
+  req.inputAI = inputAI;
+  next();
   return res.status(createdDiary.status).json(createdDiary);
 };
 
@@ -217,8 +225,16 @@ export const updateDiary = async (
   // return res.status(400).json(errors);
   const updatedDiary = await updateDiaryService(userId, diaryId, inputData);
 
-  updatedGPTComment(inputData.content, userId, diaryId);
+  const inputAI = {
+    content: inputData.content,
+    userId: userId,
+    diaryId: updatedDiary.data.id,
+  };
 
+  //updatedGPTComment(inputData.content, userId, diaryId);
+  req.inputAI = inputAI;
+
+  next();
   return res.status(updatedDiary.status).json(updatedDiary);
 };
 
