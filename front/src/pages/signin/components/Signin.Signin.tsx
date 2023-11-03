@@ -42,14 +42,13 @@ const InputField: React.FC<InputFieldProps> = ({
 const Signin: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  
+
   const queryClient = useQueryClient();
-  
+
   const signinMutation = usePutSigninData(queryClient);
 
   const responseGoogle = (response: any) => {
     if (response?.tokenId) {
-      console.log('로그인 성공', response);
     } else {
       console.log('로그인 실패', response);
     }
