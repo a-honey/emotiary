@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express';
 import { fileUploadMiddleware } from './fileMiddleware';
-import { IRequest } from '../types/user';
+
 import { FileObjects } from '../types/upload';
 import { emptyApiResponseDTO } from '../utils/emptyResult';
 import { prisma } from '../../prisma/prismaClient';
@@ -8,6 +8,7 @@ import { generateError } from '../utils/errorGenerator';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import { IRequest } from 'types/request';
 
 const handleFileUpload = async (
   req: IRequest,
@@ -16,6 +17,9 @@ const handleFileUpload = async (
   type: 'profile' | 'diary' | 'postDiary',
 ) => {
   try {
+    /**
+     * transaction을 제대로 해주려면 dairyCreate 부분에서 upload를 해줘야할 것 같다.
+     */
     await prisma.$transaction(async () => {
       fileUploadMiddleware(req, res, async (err: any) => {
         try {
@@ -82,7 +86,6 @@ const handleFileUpload = async (
                     './fileUpload',
                     filenameToDelete,
                   );
-
                   fs.unlink(filePathToDelete, async (err) => {
                     if (err) {
                       console.error('Error deleting old file:', err);

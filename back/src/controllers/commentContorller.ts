@@ -6,11 +6,8 @@ import {
   updatedComment,
   deletedComment,
 } from '../services/commentService';
-<<<<<<< HEAD
-=======
 import { validate } from 'class-validator';
 import { IRequest } from 'types/request';
->>>>>>> 6ca26dc (Fix: modify import request)
 
 // 댓글 작성
 export const createComment = async (
