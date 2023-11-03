@@ -14,10 +14,10 @@ const googleStrategy = new GoogleStrategy(
     clientID: process.env.GOOGLE_ID,
     clientSecret: process.env.GOOGLE_PASSWORD,
     // 콜백 URL 설정 (인증 완료 후 리디렉션되는 URL)
-    // callbackURL : '/users/google/callback',
+    callbackURL : '/api/users/google/callback',
 
     // 테스트용 콜백 URL 설정
-    callbackURL: '/test/google/fake',
+    // callbackURL: '/test/google/fake',
   },
   async (
     accessToken: string,
