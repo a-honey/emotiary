@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 
 import useIsScrollAnimation from '../../../hooks/useIsScrollAnimation';
 import styles from './index.module.scss';
