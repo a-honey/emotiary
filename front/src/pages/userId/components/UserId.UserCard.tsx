@@ -79,7 +79,7 @@ const UserCard = () => {
             </button>
           ) : (
             <button className="doneBtn" onClick={handleFriendBtnClick}>
-              친구추가
+              친구삭제
             </button>
           )}
         </div>

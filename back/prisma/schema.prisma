@@ -9,50 +9,51 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid())
+  id           String       @id @default(uuid())
   username     String?
-  email        String   @unique
+  email        String       @unique
   password     String?
   description  String?
   profileImage fileUpload[]
-  updatedAt    DateTime @default(now()) // 기본값 추가
-  createdAt    DateTime @default(now())
-  friendS      Friend[] @relation("UserFriendS")
-  friendR      Friend[] @relation("UserFriendR")
+  updatedAt    DateTime     @default(now()) // 기본값 추가
+  createdAt    DateTime     @default(now())
+  friendS      Friend[]     @relation("UserFriendS")
+  friendR      Friend[]     @relation("UserFriendR")
   Diary        Diary[]
 
   // 사용자와 Refresh Token 간의 일대다 관계 설정
   refreshTokens RefreshToken[]
 
-  favorites   Favorite[]
-  comments    Comment[]
-  latestEmoji String?
-  isFriend    Boolean   @default(false)
-  alarmSetting String      @default("1")
+  favorites    Favorite[]
+  comments     Comment[]
+  latestEmoji  String?
+  isFriend     Boolean       @default(false)
+  alarmSetting String        @default("1")
   chatMessage  ChatMessage[]
 
   // 이메일인증
-  verificationToken String?
+  verificationToken        String?
   verificationTokenExpires DateTime?
-  isVerified Boolean?
-
+  isVerified               Boolean?
+  ChatRoom                 ChatRoom[]
+  ChatRoom                 ChatRoom[]
 }
 
-model fileUpload{
+model fileUpload {
   id        Int      @id @default(autoincrement())
   url       String
-  user      User?   @relation(fields: [userId], references: [id])
+  user      User?    @relation(fields: [userId], references: [id])
   userId    String?
   createdAt DateTime @default(now())
 }
 
 model diaryFileUpload {
-  id        Int      @id @default(autoincrement())
-  url       String
-  diary     Diary?  @relation(fields : [diaryId], references : [id])
-  diaryId   String?
+  id         Int      @id @default(autoincrement())
+  url        String
+  diary      Diary?   @relation(fields: [diaryId], references: [id])
+  diaryId    String?
   deleteData String?
-  createdAt DateTime @default(now())
+  createdAt  DateTime @default(now())
 }
 
 model RefreshToken {
@@ -78,28 +79,27 @@ model Friend {
 }
 
 model Diary {
-  id            String   @id @default(uuid())
-  author        User     @relation(fields: [authorId], references: [id])
+  id            String            @id @default(uuid())
+  author        User              @relation(fields: [authorId], references: [id])
   authorId      String
   createdDate   DateTime
   title         String
-  content       String  @db.VarChar(1000)
+  content       String            @db.VarChar(1000)
   is_public     String
   emoji         String?
   emotion       String?
   filesUpload   diaryFileUpload[]
-  audioUrl      String?  @db.VarChar(1200)
-  favoriteCount Int      @default(value: 0)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  audioUrl      String?           @db.VarChar(1200)
+  favoriteCount Int               @default(value: 0)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
 
   favorites Favorite[]
   comments  Comment[]
 
-  @@fulltext([title])  
+  @@fulltext([title])
   @@fulltext([content])
   @@fulltext([content, title])
-
 }
 
 model Favorite {
@@ -130,10 +130,10 @@ model Comment {
 }
 
 model Emoji {
-  id            Int     @id @default(autoincrement())
-  type          String
-  emotion       String?
-  audioUrl      String?  @db.VarChar(1200)
+  id       Int     @id @default(autoincrement())
+  type     String
+  emotion  String?
+  audioUrl String? @db.VarChar(1200)
 }
 
 model ChatRoom {

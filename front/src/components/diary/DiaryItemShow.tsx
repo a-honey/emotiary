@@ -76,7 +76,10 @@ const DiaryItemShow = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    putMutation.mutate({ body: diaryBodyData });
+    putMutation.mutate({
+      title: diaryBodyData.title,
+      content: diaryBodyData.content,
+    });
   };
 
   const handleDeleteClick = () => {
