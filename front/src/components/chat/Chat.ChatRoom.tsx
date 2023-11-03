@@ -80,6 +80,7 @@ const ChatRoom = ({
       <form onSubmit={handleSubmit}>
         <input
           type="text"
+          value={message}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setMessage(e.target.value)
           }
