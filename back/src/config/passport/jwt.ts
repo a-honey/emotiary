@@ -1,6 +1,5 @@
 import passportJWT from 'passport-jwt';
 import jwtSecret from '../jwtSecret';
-import { PrismaClient } from '@prisma/client';
 import { prisma } from '../../../prisma/prismaClient';
 
 // Passport-JWT에서 필요한 모듈 및 객체를 가져옵니다.

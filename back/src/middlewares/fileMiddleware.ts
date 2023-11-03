@@ -11,8 +11,7 @@ const FileFilter = (req: any, file: Express.Multer.File, cb: any) => {
   ) {
     cb(null, true);
   } else {
-    //TODO 이젠 생각해야할 시간인 것 같아요
-    cb(new Error('나중에 생각'), false);
+    cb(new Error('mp4,jpeg,png이외에는 업로드가 불가능합니다.'), false);
   }
 };
 

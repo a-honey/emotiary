@@ -1,17 +1,15 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { generateRandomPassowrd } from '../utils/password';
 import bcrypt from 'bcrypt';
 import { plainToClass } from 'class-transformer';
 import { userResponseDTO } from '../dtos/userDTO';
 import { successApiResponseDTO } from '../utils/successResult';
-import { userCalculatePageInfo } from '../utils/pageInfo';
+import { calculatePageInfo } from '../utils/pageInfo';
 import { PaginationResponseDTO } from '../dtos/diaryDTO';
 import { emailToken, sendEmail } from '../utils/email';
 import { emptyApiResponseDTO } from '../utils/emptyResult';
 import { getMyWholeFriends } from './friendService';
-
-//TODO prismaClient.ts에서 import해와서 사용하기
-const prisma = new PrismaClient();
+import { prisma } from '../../prisma/prismaClient';
 
 export const createUser = async (inputData: Prisma.UserCreateInput) => {
   const { username, password, email } = inputData;
@@ -89,7 +87,7 @@ export const getAllUsers = async (
     return friend;
   });
 
-  const { totalItem, totalPage } = await userCalculatePageInfo(limit, {});
+  const { totalItem, totalPage } = await calculatePageInfo('user', limit, {});
 
   const pageInfo = { totalItem, totalPage, currentPage: page, limit };
 
@@ -360,7 +358,11 @@ export const getUsers = async (
     },
   });
 
-  const { totalItem, totalPage } = await userCalculatePageInfo(limit, where);
+  const { totalItem, totalPage } = await calculatePageInfo(
+    'user',
+    limit,
+    where,
+  );
 
   const pageInfo = { totalItem, totalPage, currentPage: page, limit };
 

@@ -23,10 +23,34 @@
     },
     "/api/users/register": {
       "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "회원가입",
         "description": "",
         "responses": {
           "default": {
             "description": ""
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "example": "any"
+                  },
+                  "email": {
+                    "example": "any"
+                  },
+                  "password": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -83,10 +107,14 @@
     },
     "/api/users/verified": {
       "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "이메일 인증 확인",
         "description": "",
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -95,8 +123,8 @@
       "get": {
         "description": "",
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -105,8 +133,8 @@
       "get": {
         "description": "",
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -115,8 +143,8 @@
       "get": {
         "description": "",
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -125,8 +153,8 @@
       "get": {
         "description": "",
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -135,8 +163,18 @@
       "get": {
         "description": "",
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/users/tokenExpire": {
+      "get": {
+        "description": "",
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -155,8 +193,8 @@
           }
         ],
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       },
@@ -173,8 +211,8 @@
           }
         ],
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       },
@@ -191,8 +229,8 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -211,8 +249,8 @@
       "post": {
         "description": "",
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -221,8 +259,8 @@
       "post": {
         "description": "",
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "default": {
+            "description": ""
           }
         }
       }
@@ -383,8 +421,8 @@
           "400": {
             "description": "Bad Request"
           },
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -416,8 +454,8 @@
           "200": {
             "description": "OK"
           },
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -443,8 +481,8 @@
           "200": {
             "description": "OK"
           },
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -476,8 +514,8 @@
           "200": {
             "description": "OK"
           },
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -503,8 +541,8 @@
           "200": {
             "description": "OK"
           },
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -530,8 +568,8 @@
           "200": {
             "description": "OK"
           },
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -563,8 +601,8 @@
           "200": {
             "description": "OK"
           },
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -590,8 +628,8 @@
           "200": {
             "description": "OK"
           },
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -600,8 +638,8 @@
       "post": {
         "description": "",
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -620,22 +658,8 @@
           }
         ],
         "responses": {
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "friendEmail": {
-                    "example": "any"
-                  }
-                }
-              }
-            }
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -654,22 +678,8 @@
           }
         ],
         "responses": {
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "selectedEmotion": {
-                    "example": "any"
-                  }
-                }
-              }
-            }
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -678,8 +688,8 @@
       "get": {
         "description": "",
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -698,8 +708,8 @@
           }
         ],
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -708,8 +718,18 @@
       "get": {
         "description": "",
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/diary/emotions": {
+      "get": {
+        "description": "",
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -718,8 +738,8 @@
       "get": {
         "description": "",
         "responses": {
-          "default": {
-            "description": ""
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -738,8 +758,8 @@
           }
         ],
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       },
@@ -756,8 +776,8 @@
           }
         ],
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       },
@@ -774,8 +794,8 @@
           }
         ],
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -794,8 +814,8 @@
           }
         ],
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -814,8 +834,8 @@
           }
         ],
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       },
@@ -852,8 +872,8 @@
           }
         ],
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       },
@@ -870,8 +890,8 @@
           }
         ],
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }

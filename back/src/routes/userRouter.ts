@@ -26,10 +26,8 @@ import { fileUpload } from '../middlewares/uploadMiddleware';
 import { wrapAsyncController } from '../utils/wrapper';
 import passport from 'passport';
 const userAuthRouter = Router();
-// TODO 스웨거 양식 추가
-// TODO VALIDATE 좀더 찾아보기
 // 회원가입
-userAuthRouter.post('/register', wrapAsyncController(userRegister));
+userAuthRouter.post("/register", userRegister);
 
 // 로그인
 userAuthRouter.post(
@@ -149,15 +147,11 @@ userAuthRouter.post('/add-emoji', async (req, res) => {
       emotion, // 감정에 따른 이모지 데이터
       audioUrl,
     };
-<<<<<<< HEAD
-
-=======
     if (!musicData) {
       const errorMessage = '음악데이터가없습니다.';
       throw errorMessage;
     }
     
->>>>>>> feature/back
     await prisma.emoji.create({
       data: emojiData,
     });
