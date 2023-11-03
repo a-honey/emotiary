@@ -73,6 +73,14 @@
 ![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=ffffff)
 ![GitLab](https://img.shields.io/badge/GitLab-FCA121?style=for-the-badge&logo=gitlab&logoColor=ffffff)
 
+## 학습 데이터
+  - 감성대화 말뭉치
+  - 한국어 단발성 대화 데이터셋
+
+## 감정분류
+  - 감정을 7가지의 라벨로 분류함
+  - 종류 : 분노. 행복, 불안, 당황, 슬픔, 중립, 혐오
+
 ## **프로젝트 팀원 및 역할 분담**
 
 |  이름  |             역할              |
@@ -85,11 +93,11 @@
 | 최은진 |      백엔드       |
 | 박지호 |      백엔드       |
 
-#### 김지안
+#### 김지안 - AI
 - 감정분석 데이터 선정, AI 모델 및 Flask 서버 구축
 -  스크럼 진행
 
-#### 정아현
+#### 정아현 - FE
 - axios interceptor, atom, react-query 등 프론트 프로젝트 세팅
 - 인트로, 유저별, 네트워크, 모든 유저, 마이페이지 등 UI 디자인 및 구현
 - 게시글, 댓글, 캘린더 모달 UI 디자인 및 구현
@@ -97,26 +105,26 @@
 - storybook 및 recoil을 통한 알림 메시지 및 음악 재생 모달 구현
 - socket.io를 활용한 채팅 기능 구현
 
-#### 김용우
+#### 김용우 - FE
 - 소셜 로그인 및 회원가입 페이지 UI 디자인 및 구현
 - 분석 컴포넌트 UI 디자인 및 구현
 
-#### 이창근
+#### 이창근 - BE
 - 유저 관련 CRUD 및 검색 API 구현
 - 비디오 및 멀티 이미지 업로드 구현
 - flask 배포 진행
 - youtube data api를 활용한 음악 재생 구현
 
-#### 이혜빈
+#### 이혜빈 - BE
 - 다이어리 관련 CRUD 및 검색 API 구현
 - front, back docker 배포 진행
 - SSL 인증을 활용한 https 배포
 
-#### 최은진
+#### 최은진 - BE
 - 친구 관련 요청 및 조회 API 구현
 - socket.io를 활용한 채팅 기능 구현
 
-#### 박지호
+#### 박지호 - BE
 - 댓글/대댓글 관련 API 구현
 - 다이어리 좋아요 토글 API 구현
 - 알림 메일 발송 기능 구현
