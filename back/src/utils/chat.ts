@@ -26,6 +26,7 @@ export const chat =  (io: SocketIoServer) => {
     const token = socket.handshake.query.token as string;
 
     if (!token) {
+      console.error('No token provided');
       return next(new Error('No token provided'));
     }
 
@@ -73,10 +74,13 @@ export const chat =  (io: SocketIoServer) => {
     if (user) {
       const roomId = await createRoomId(currentUserId, chatPartnerId);
       const existingRoom = await getMyRoom(roomId);
+
       if (existingRoom) {
         connectedUsers[currentUserId].roomId = roomId;
+
         socket.join(roomId);
         const messages = await getMyMessages(roomId);
+
         for (let message of messages) {
           if (message.sendUserId !== currentUserId) {
             if (!message.isRead) {
@@ -85,6 +89,7 @@ export const chat =  (io: SocketIoServer) => {
           }
         }
         socket.emit('messages', messages);
+
       } else {
         const newRoom = await createChatRoom(roomId);
         connectedUsers[currentUserId].roomId = roomId;
@@ -109,9 +114,11 @@ export const chat =  (io: SocketIoServer) => {
         },
       });
 
+
       if (connectedUsers[chatPartnerId]) {
         const chatPartnerSocketId = connectedUsers[chatPartnerId].socketId;
 
+        console.log('파트너아이디', chatPartnerId);
         if (connectedUsers[chatPartnerId].roomId === roomId) {
           socket.broadcast.to(roomId).emit('newMessage', {
             sendUserId: currentUserId,
