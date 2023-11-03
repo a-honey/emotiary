@@ -8,7 +8,7 @@ import {
   getAllMyDiariesService,
   updateDiaryService,
   getFriendsDiaryService,
-  mailService,
+  // mailService,
   selectedEmojis,
   searchDiaryService,
   getDiaryByDateService,
@@ -40,6 +40,13 @@ export const createDiary = async (
   res: Response,
   next: NextFunction,
 ) => {
+  /**
+   * #swagger.tags = ['Diary']
+   * #swagger.security = [{
+   *            "bearerAuth": []
+   *          }]
+   * #swagger.summary = '다이어리 작성'
+   */
   const fileUrls = res.locals.myData;
   const {
     body: inputData,
@@ -94,7 +101,13 @@ export const getAllMyDiaries = async (
   res: Response,
   next: NextFunction,
 ) => {
-  //authorId
+  /**
+   * #swagger.tags = ['Diary']
+   * #swagger.security = [{
+   *            "bearerAuth": []
+   *          }]
+   * #swagger.summary = '나의 모든 글 가져오기'
+   */
   const { id: userId } = req.user;
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 8;
@@ -109,7 +122,13 @@ export const getDiaryByDate = async (
   res: Response,
   next: NextFunction,
 ) => {
-  //authorId
+    /**
+   * #swagger.tags = ['Diary']
+   * #swagger.security = [{
+   *            "bearerAuth": []
+   *          }]
+   * #swagger.summary = '한달 다이어리 가져오기 '
+   */
 
   const { userId } = req.params;
   const year = parseInt(req.query.year as string);
@@ -134,7 +153,13 @@ export const getOneDiary = async (
     params: { diaryId },
     user: { id: userId },
   } = req;
-
+  /**
+   * #swagger.tags = ['Diary']
+   * #swagger.security = [{
+   *            "bearerAuth": []
+   *          }]
+   * #swagger.summary = '다이어리 하나 불러오기 '
+   */
   const diary = await getOneDiaryService(userId, diaryId);
 
   return res.status(diary.status).json(diary);
@@ -154,7 +179,10 @@ export const getOtherUsersDiary = async (
 ) => {
   /**
    * #swagger.tags = ['Diary']
-   * #swagger.summary = '친구 요청'
+   * #swagger.security = [{
+   *            "bearerAuth": []
+   *          }]
+   * #swagger.summary = '다른 사람의 다이어리 가져오기'
    */
   const {
     query: { select, emotion },
@@ -201,6 +229,13 @@ export const updateDiary = async (
   res: Response,
   next: NextFunction,
 ) => {
+  /**
+   * #swagger.tags = ['Diary']
+   * #swagger.security = [{
+   *            "bearerAuth": []
+   *          }]
+   * #swagger.summary = '다이어리 업데이트'
+   */
   const {
     body: inputData,
     params: { diaryId },
@@ -250,6 +285,13 @@ export const deleteDiary = async (
   res: Response,
   next: NextFunction,
 ) => {
+  /**
+   * #swagger.tags = ['Diary']
+   * #swagger.security = [{
+   *            "bearerAuth": []
+   *          }]
+   * #swagger.summary = '다이어리 삭제'
+   */
   const {
     params: { diaryId },
     user: { id: userId },
@@ -262,25 +304,32 @@ export const deleteDiary = async (
   return res.status(deletedDiary.status).json(deletedDiary);
 };
 
-export const sendRecommendationEmail = async (
-  req: IRequest,
-  res: Response,
-  next: NextFunction,
-) => {
-  const { diaryId } = req.params;
-  const { username } = req.user;
-  const { friendEmail } = req.body;
+// export const sendRecommendationEmail = async (
+//   req: IRequest,
+//   res: Response,
+//   next: NextFunction,
+// ) => {
+//   const { diaryId } = req.params;
+//   const { username } = req.user;
+//   const { friendEmail } = req.body;
 
-  const sendMail = await mailService(friendEmail, diaryId, username);
+//   const sendMail = await mailService(friendEmail, diaryId, username);
 
-  return res.status(sendMail.status).json(sendMail);
-};
+//   return res.status(sendMail.status).json(sendMail);
+// };
 
 export const selectEmotion = async (
   req: IRequest,
   res: Response,
   next: NextFunction,
 ) => {
+    /**
+   * #swagger.tags = ['Diary']
+   * #swagger.security = [{
+   *            "bearerAuth": []
+   *          }]
+   * #swagger.summary = '감정 선택 '
+   */
   const { diaryId } = req.params;
   const { id: userId } = req.user;
   const { selectedEmotion, selectedEmoji } = req.body;
@@ -309,6 +358,13 @@ export const searchDiary = async (
   res: Response,
   next: NextFunction,
 ) => {
+  /**
+   * #swagger.tags = ['Diary']
+   * #swagger.security = [{
+   *            "bearerAuth": []
+   *          }]
+   * #swagger.summary = '다이어리 검색
+   */
   const {
     user: { id: userId },
   } = req;
@@ -340,6 +396,13 @@ export const getEmotionOftheMonth = async (
   res: Response,
   next: NextFunction,
 ) => {
+  /**
+   * #swagger.tags = ['Diary']
+   * #swagger.security = [{
+   *            "bearerAuth": []
+   *          }]
+   * #swagger.summary = '한달 중 가장 많이 도출된 감정 가져오기'
+   */
   const {
     user: { id: userId },
   } = req;

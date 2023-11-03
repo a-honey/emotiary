@@ -27,7 +27,7 @@ import { wrapAsyncController } from '../utils/wrapper';
 import passport from 'passport';
 const userAuthRouter = Router();
 // 회원가입
-userAuthRouter.post('/register', userRegister);
+userAuthRouter.post('/register', wrapAsyncController(userRegister));
 
 // 로그인
 userAuthRouter.post(
