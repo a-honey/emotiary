@@ -19,7 +19,5 @@ def emotion_predict(sentence):
     predict_sentence = classifier(sentence)
     first_prediction = predict_sentence[0]
     emotion = first_prediction['label']
-    print('결과(emotion) : ', emotion)
-    # print('결과(emotion) : ', predict_sentence)
     return emotion
 

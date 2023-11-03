@@ -36,42 +36,37 @@ def emotion_predicts(sentence):
         sentence_predict = text_classifier(kiwi_sentenc_list[i])
         sentence_predict_list.append(sentence_predict)
 
-    sentence_cnt = len(sentence_predict_list)
-
     # 3중 리스트 -> 2중 리스트
     result = list(itertools.chain(*sentence_predict_list))
-    # 2중 리스트 -> 1차원 리스트
-    result_re = list(itertools.chain(*result))
 
-    # 문장의 각 감정 확률의 총합 구하기
-    label_scores = {}
+    # 각 문장을 'score'값 기준으로 내림차순 정렬
+    # 각 문장의 최댓값을 뽑아 dictionary 저장
+    largest_score_dicts = []
+    for sublist in result:
+        sorted_sublist = sorted(sublist, key=lambda item: item['score'], reverse=True)
+        largest_dict = sorted_sublist[0]
+        largest_score_dicts.append(largest_dict)
 
-    for dictionaries in result_re:
-        label = dictionaries['label']
-        score = dictionaries['score']
+    label_counts = []
+    for item in largest_score_dicts:
+        label = item['label']
+        label_exists = False
 
-        if label in label_scores:
-            label_scores[label] += score
-        else:
-            label_scores[label] = score
+        for count_dict in label_counts:
+            if count_dict['label'] == label:
+                count_dict['num'] += 1
+                label_exists = True
+                break
 
-    # 확률의 총합 / 문장 개수 = 감정 확률의 평균
-    # sentence_cnt : 문장 개수
-    scores_avarage = {}
+        if not label_exists:
+            label_counts.append({'label': label, 'num': 1})
 
-    for label in label_scores:
-        scores_avarage[label] = label_scores[label] / sentence_cnt
+    sorted_label_counts = sorted(label_counts, key=lambda x: x['num'], reverse=True)
+    labels_only = [item['label'] for item in sorted_label_counts]
 
-    sorted_labels = sorted(scores_avarage, key=lambda x: scores_avarage[x], reverse=True)
+    min_emotions = 1
+    max_emotions = 4
 
-    # top_labels : 반환할 상위 3개의 감정
-    top_labels = [
-        {
-            "label": label,
-            "average_score": scores_avarage[label] * 100,
-            "label_scores": label_scores[label] * 100
-        }
-        for label in sorted_labels[:3]
-    ]
+    filtered_labels = [label for label in labels_only if min_emotions <= len(set(labels_only)) <= max_emotions]
 
-    return top_labels
+    return filtered_labels
