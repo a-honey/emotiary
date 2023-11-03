@@ -10,10 +10,8 @@ import {
   deleteMessage,
   deleteRoom,
 } from '../services/chatService';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../../prisma/prismaClient';
 import { Server as SocketIoServer, Socket } from 'socket.io';
-//TODO prismaClient.ts에서 import해와서 사용하기
-const prisma = new PrismaClient();
 import * as jwt from 'jsonwebtoken';
 
 // 웹소켓을 이용한 1:1 채팅

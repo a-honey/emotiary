@@ -52,14 +52,16 @@ const Header = () => {
 
   useEffect(() => {
     if (token) {
-      socketRef.current = io('wss://kdt-ai-8-team02.elicecoding.com', {
+      socketRef.current = io('ws://kdt-ai-8-team02.elicecoding.com', {
         path: '/chat',
         extraHeaders: {
           Authorization: `Bearer ${token}`,
         },
+        transports: ['websocket'],
         query: {
           token: `${token}`,
         },
+        withCredentials: true,
       });
 
       socketRef.current.on('connect', () => {

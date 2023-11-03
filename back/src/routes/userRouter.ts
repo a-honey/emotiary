@@ -149,15 +149,12 @@ userAuthRouter.post('/add-emoji', async (req, res) => {
       emotion, // 감정에 따른 이모지 데이터
       audioUrl,
     };
-<<<<<<< HEAD
 
-=======
     if (!musicData) {
       const errorMessage = '음악데이터가없습니다.';
       throw errorMessage;
     }
-    
->>>>>>> feature/back
+
     await prisma.emoji.create({
       data: emojiData,
     });

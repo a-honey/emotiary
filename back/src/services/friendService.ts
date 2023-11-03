@@ -1,5 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+import { prisma } from '../../prisma/prismaClient';
 import { FriendResponseDTO, PaginationResponseDTO } from '../dtos/friendDTO';
 import { userResponseDTO } from '../dtos/userDTO';
 import { emptyApiResponseDTO } from '../utils/emptyResult';
