@@ -401,6 +401,9 @@ export const updateDiaryService = async (
   const updatedDiary = await prisma.diary.update({
     where: { id: diaryId, authorId: userId },
     data: inputData,
+    include: {
+      filesUpload: true,
+    },
   });
 
   if (updatedDiary == null) {
@@ -471,7 +474,6 @@ export const selectedEmojis = async (
   });
 
   const audioUrl = emojiRecord.audioUrl;
-
 
   const emoji = selectedEmoji;
   const emotion = selectedEmotion;
