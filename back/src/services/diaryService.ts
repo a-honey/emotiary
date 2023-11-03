@@ -462,17 +462,6 @@ export const selectedEmojis = async (
   diaryId: string,
   userId: string,
 ) => {
-  // const musicData = await searchMusic(selectedEmotion);
-  // const videoId = musicData.videoId;
-
-  // const info = await ytdl.getInfo(videoId);
-  // // 오디오 스트림 URL 가져오기
-  // const audioUrl = ytdl.chooseFormat(info.formats, { filter: 'audioonly' }).url;
-
-  // if (!musicData) {
-  //   const errorMessage = '음악데이터가없습니다.';
-  //   throw errorMessage;
-  // }
   const emojiRecord = await prisma.emoji.findFirst({
     where: {
       type: selectedEmotion,
@@ -483,6 +472,8 @@ export const selectedEmojis = async (
   });
 
   const audioUrl = emojiRecord.audioUrl;
+
+
   const emoji = selectedEmoji;
   const emotion = selectedEmotion;
 

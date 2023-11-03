@@ -21,27 +21,9 @@ import path = require("path");
 import { CronJob } from 'cron';
 import { updateAudioUrlsPeriodically } from './utils/music';
 
-// const httpProxy = require('http-proxy');
-
-
-
 const app: Express & { io?: any } = express();
 const server = http.createServer(app);
-
-// app.use(cors({
-//   origin: ['https://kdt-ai-8-team02.elicecoding.com', 'http://localhost:3000'],
-//   credentials: true,
-// }));
-
-app.use(cors({
-  origin: '*',
-  credentials: true,
-}));
-
-// app.use(cors());
-
-
-
+app.use(cors());
 app.use(bodyParser.json());
 app.use(Logger);
 sendAlarm();
@@ -61,7 +43,6 @@ app.use(express.urlencoded({ extended: true }));
 
 const job = new CronJob('0 */6 * * *', () => {
   updateAudioUrlsPeriodically();
-  console.log(1);
 });
 
 // CronJob 시작
@@ -78,7 +59,6 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 const apiRouter = express.Router();
-const router = express.Router();
 
 apiRouter.use('/users', userAuthRouter);
 apiRouter.use('/test', testAuthRouter);
@@ -92,14 +72,6 @@ app.use('/api', apiRouter);
 app.use('/api/fileUpload', express.static('fileUpload'));
 app.use(errorMiddleware);
 
-// const io = new SocketIoServer(server, {
-//   path: '/chat',
-//   cors: {
-//     origin:['https://kdt-ai-8-team02.elicecoding.com', 'http://localhost:3000'],
-//     methods: ['GET', 'POST',  'WEBSOCKET'],
-//     credentials: true,
-//   },
-// });
 const io = new SocketIoServer(server, {
   path: '/chat',
   cors: {
