@@ -30,10 +30,20 @@
     border-radius: 5px;
     padding: 10px;
     .other {
-      background-color:  map-get($colors, bg);
+      background-color: #ededed;
+      padding: 10px;
+      margin-left: 40px;
+      border-radius: 5px;
+    }
+    .my {
+      background-color: map-get($colors, bg);
+      padding: 10px;
+      margin-right: 30px;
+      border-radius: 5px;
     }
     &::-webkit-scrollbar {
       width: 10px;
+      display: contents;
       background-color: transparent;
     }
 

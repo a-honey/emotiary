@@ -6,7 +6,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { chatState } from '../../atoms/chatState';
 
 const ChatList = ({ socket }: { socket: Socket }) => {
-  const { isOpenChatList, isOpenChatRoom, chatUserId } =
+  const { isOpenChatList, isOpenChatRoom, chatUserId, chatUsername } =
     useRecoilValue(chatState);
   const setChatStateRecoil = useSetRecoilState(chatState);
 
@@ -27,6 +27,7 @@ const ChatList = ({ socket }: { socket: Socket }) => {
           socket={socket}
           toggleIsOpenChatRoom={toggleIsOpenChatRoom}
           userId={chatUserId}
+          username={chatUsername}
         />
       )}
       <div className={styles.container}>
