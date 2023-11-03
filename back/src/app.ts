@@ -12,24 +12,23 @@ import commentRouter from './routes/commentRouter';
 import roomRouter from './routes/roomRouter';
 import { jwtStrategy, localStrategy, googleStrategy } from './config/passport';
 import { Logger } from './config/logger';
-import testAuthRouter from './routes/testRouter';
 import { errorMiddleware } from './middlewares/errorMiddleware';
 import { sendAlarm } from './utils/alarm';
 import http from 'http';
 import { chat } from './utils/chat';
-import { Server as SocketIoServer, Socket } from 'socket.io';
-import path = require("path");
+import { Server as SocketIoServer } from 'socket.io';
 import { CronJob } from 'cron';
 import { updateAudioUrlsPeriodically } from './utils/music';
 
 const app: Express & { io?: any } = express();
 const server = http.createServer(app);
-app.use(cors({
-  origin: '*',
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: '*',
+    credentials: true,
+  }),
+);
 
-// app.use(cors());
 app.use(bodyParser.json());
 app.use(Logger);
 sendAlarm();
@@ -67,7 +66,6 @@ app.get('/', (req: Request, res: Response) => {
 const apiRouter = express.Router();
 
 apiRouter.use('/users', userAuthRouter);
-apiRouter.use('/test', testAuthRouter);
 apiRouter.use('/friend', friendRouter);
 apiRouter.use('/diary', diaryRouter);
 apiRouter.use('/favorites', favoriteRouter);
@@ -83,7 +81,7 @@ const io = new SocketIoServer(server, {
   path: '/chat',
   cors: {
     origin: 'https://kdt-ai-8-team02.elicecoding.com',
-    methods: ['GET', 'POST',  'WEBSOCKET'],
+    methods: ['GET', 'POST', 'WEBSOCKET'],
     credentials: true,
   },
 });

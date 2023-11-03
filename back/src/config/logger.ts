@@ -2,7 +2,7 @@ import winston from 'winston';
 import winstonDaily from 'winston-daily-rotate-file';
 import path from 'path';
 import morgan from 'morgan';
-import { Request, Response, NextFunction } from 'express';
+import { Request } from 'express';
 
 const logDir = 'logs';
 const infoLogDir = path.join(logDir, 'info'); // info 로그를 저장할 폴더 경로

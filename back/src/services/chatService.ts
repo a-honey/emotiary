@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-//TODO prismaClient.ts에서 import해와서 사용하기
-const prisma = new PrismaClient();
+import { prisma } from '../../prisma/prismaClient';
 
 /** @description 현재 사용자 */
 export const currentUser = async (currentUserId: string) => {
@@ -37,7 +35,7 @@ export const getAllMyRoom = async (currentUserId: string) => {
       id: currentUserId,
     },
     include: {
-      message:{
+      message: {
         select: {
           sendUser: true,
         },

@@ -7,7 +7,6 @@ import {
   getDiaryByMonth,
   getOtherUsersDiary,
   getAllMyDiaries,
-  // sendRecommendationEmail,
   selectEmotion,
   searchDiary,
   getEmotionOftheMonth,

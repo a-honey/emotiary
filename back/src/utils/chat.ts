@@ -21,7 +21,7 @@ interface ConnectedUsers {
   user: any; // Replace with the actual user type
 }
 
-export const chat =  (io: SocketIoServer) => {
+export const chat = (io: SocketIoServer) => {
   io.use((socket: Socket, next) => {
     const token = socket.handshake.query.token as string;
 
@@ -54,116 +54,106 @@ export const chat =  (io: SocketIoServer) => {
       };
     }
 
+    socket.onAny((eventName: string, ...args: any[]) => {});
 
+    socket.on('initialize', async (userId: string) => {
+      if (user) {
+        const messages = await unreadMessage(userId);
+        socket.emit('messages', messages);
+      }
+    });
 
+    socket.on('join', async (chatPartnerId: string) => {
+      if (user) {
+        const roomId = await createRoomId(currentUserId, chatPartnerId);
+        const existingRoom = await getMyRoom(roomId);
 
+        if (existingRoom) {
+          connectedUsers[currentUserId].roomId = roomId;
 
+          socket.join(roomId);
+          const messages = await getMyMessages(roomId);
 
-
-  socket.onAny((eventName: string, ...args: any[]) => {
-  });
-
-  socket.on('initialize', async (userId: string) => {
-    if (user) {
-      const messages = await unreadMessage(userId);
-      socket.emit('messages', messages);
-    }
-  });
-
-  socket.on('join', async (chatPartnerId: string) => {
-    if (user) {
-      const roomId = await createRoomId(currentUserId, chatPartnerId);
-      const existingRoom = await getMyRoom(roomId);
-
-      if (existingRoom) {
-        connectedUsers[currentUserId].roomId = roomId;
-
-        socket.join(roomId);
-        const messages = await getMyMessages(roomId);
-
-        for (let message of messages) {
-          if (message.sendUserId !== currentUserId) {
-            if (!message.isRead) {
-              await changeReadStatus(message.id);
+          for (let message of messages) {
+            if (message.sendUserId !== currentUserId) {
+              if (!message.isRead) {
+                await changeReadStatus(message.id);
+              }
             }
           }
+          socket.emit('messages', messages);
+        } else {
+          const newRoom = await createChatRoom(roomId);
+          connectedUsers[currentUserId].roomId = roomId;
+          socket.join(newRoom.id);
         }
-        socket.emit('messages', messages);
-
-      } else {
-        const newRoom = await createChatRoom(roomId);
-        connectedUsers[currentUserId].roomId = roomId;
-        socket.join(newRoom.id);
       }
-    }
-  });
+    });
 
-  socket.on('sendMessage', async (chatPartnerId: string, message: string) => {
-    if (user) {
-      const roomId = await createRoomId(currentUserId, chatPartnerId);
-      let room = await getMyRoom(roomId);
-      if (!room) {
-        await createChatRoom(roomId);
-      }
+    socket.on('sendMessage', async (chatPartnerId: string, message: string) => {
+      if (user) {
+        const roomId = await createRoomId(currentUserId, chatPartnerId);
+        let room = await getMyRoom(roomId);
+        if (!room) {
+          await createChatRoom(roomId);
+        }
 
-      const createdMessage = await prisma.chatMessage.create({
-        data: {
-          roomId,
-          message,
-          sendUserId: currentUserId,
-        },
-      });
-
-
-      if (connectedUsers[chatPartnerId]) {
-        const chatPartnerSocketId = connectedUsers[chatPartnerId].socketId;
-
-        console.log('파트너아이디', chatPartnerId);
-        if (connectedUsers[chatPartnerId].roomId === roomId) {
-          socket.broadcast.to(roomId).emit('newMessage', {
-            sendUserId: currentUserId,
-            username: user.username,
+        const createdMessage = await prisma.chatMessage.create({
+          data: {
+            roomId,
             message,
-          });
-
-          await changeReadStatus(createdMessage.id);
-        }
-
-        if (connectedUsers[chatPartnerId].roomId === null) {
-          io.to(chatPartnerSocketId).emit('message', {
             sendUserId: currentUserId,
-            username: user.username,
-            messageId: createdMessage.id,
-          });
+          },
+        });
+
+        if (connectedUsers[chatPartnerId]) {
+          const chatPartnerSocketId = connectedUsers[chatPartnerId].socketId;
+
+          if (connectedUsers[chatPartnerId].roomId === roomId) {
+            socket.broadcast.to(roomId).emit('newMessage', {
+              sendUserId: currentUserId,
+              username: user.username,
+              message,
+            });
+
+            await changeReadStatus(createdMessage.id);
+          }
+
+          if (connectedUsers[chatPartnerId].roomId === null) {
+            io.to(chatPartnerSocketId).emit('message', {
+              sendUserId: currentUserId,
+              username: user.username,
+              messageId: createdMessage.id,
+            });
+          }
         }
       }
-    }
-  });
+    });
 
-  socket.on('leave', async (chatPartnerId: string) => {
-    const roomId = await createRoomId(currentUserId, chatPartnerId);
-    connectedUsers[currentUserId].roomId = null;
-    socket.leave(roomId);
-  });
+    socket.on('leave', async (chatPartnerId: string) => {
+      const roomId = await createRoomId(currentUserId, chatPartnerId);
+      connectedUsers[currentUserId].roomId = null;
+      socket.leave(roomId);
+    });
 
-  socket.on('delete', async (chatPartnerId: string) => {
-    if (user) {
-      const roomId = `${currentUserId}-${chatPartnerId}`;
-      await deleteMessage(roomId);
-      await deleteRoom(roomId);
-    }
-  });
+    socket.on('delete', async (chatPartnerId: string) => {
+      if (user) {
+        const roomId = `${currentUserId}-${chatPartnerId}`;
+        await deleteMessage(roomId);
+        await deleteRoom(roomId);
+      }
+    });
 
-  socket.on('messageViewed', async (messageId: string) => {
-    if (user) {
-      await changeReadStatus(messageId);
-    }
-  });
+    socket.on('messageViewed', async (messageId: string) => {
+      if (user) {
+        await changeReadStatus(messageId);
+      }
+    });
 
-  socket.on('disconnect', () => {
-    if (user) {
-      delete connectedUsers[currentUserId];
-    }
-  })
-});
+    socket.on('disconnect', () => {
+      if (user) {
+        delete connectedUsers[currentUserId];
+      }
+    });
+  });
 };
