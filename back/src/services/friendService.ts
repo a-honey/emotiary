@@ -10,12 +10,18 @@ import {
 import { plainToClass } from 'class-transformer';
 
 export const checkFriend = async (userId: string, requestId: string) => {
-  const friend = await prisma.friend.findUnique({
+  const friend = await prisma.friend.findFirst({
     where: {
-      sentUserId_receivedUserId: {
-        sentUserId: userId,
-        receivedUserId: requestId,
-      },
+      OR: [
+        {
+          sentUserId: userId,
+          receivedUserId: requestId,
+        },
+        {
+          sentUserId: requestId,
+          receivedUserId: userId,
+        },
+      ],
       status: true,
     },
   });
