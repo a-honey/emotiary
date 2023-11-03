@@ -9,6 +9,7 @@ import diaryRouter from './routes/diaryRouter';
 import favoriteRouter from './routes/favoriteRouter';
 import friendRouter from './routes/friendRouter';
 import commentRouter from './routes/commentRouter';
+import roomRouter from './routes/roomRouter';
 import { jwtStrategy, localStrategy, googleStrategy } from './config/passport';
 import { Logger } from './config/logger';
 import testAuthRouter from './routes/testRouter';
@@ -71,6 +72,7 @@ apiRouter.use('/friend', friendRouter);
 apiRouter.use('/diary', diaryRouter);
 apiRouter.use('/favorites', favoriteRouter);
 apiRouter.use('/comments', commentRouter);
+apiRouter.use('/room', roomRouter);
 
 app.use('/api', apiRouter);
 
