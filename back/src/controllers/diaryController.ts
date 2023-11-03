@@ -8,7 +8,7 @@ import {
   getAllMyDiariesService,
   updateDiaryService,
   getFriendsDiaryService,
-  mailService,
+  // mailService,
   selectedEmojis,
   searchDiaryService,
   getDiaryByDateService,
@@ -59,23 +59,17 @@ export const createDiary = async (
   const checkExistedDiary = await getDiaryByDateService(userId, createdDate);
 
   if (checkExistedDiary) {
-    console.log('이미 존재하지롱');
-    return res.json('이미 존재하는 다이어리가 있어용 메롱 ');
+    throw generateError(409, '해당 날짜에 이미 일기가 존재합니다.');
   }
   const diaryInput = plainToClass(DiaryValidateDTO, inputData);
 
-  // TODO 밸리데이터 수정 필요
   const errors = await validate(diaryInput);
 
-  //TODO 추루 수정
   if (errors.length > 0) {
-    const errorMessages = errors.map((error) => {
-      return error.constraints;
-    });
+    throw generateError(500, '양식에 맞춰서 입력해주세요');
   }
 
   const createdDiary = await createDiaryService(userId, inputData, fileUrls);
-  console.log(createDiary);
 
   // 일기 작성시 chatGPT를 활용한 댓글 한마디 추가
   // createdGPTComment(inputData.content, userId, createdDiary.data.id, next);
@@ -246,17 +240,12 @@ export const updateDiary = async (
 
   const diaryInput = plainToClass(DiaryValidateDTO, updatedData);
 
-  // TODO 밸리데이터 수정 필요
   const errors = await validate(diaryInput);
-  // const errorMessages = [];
+
   if (errors.length > 0) {
-    console.log('!!!!!!!!!!!!', errors[0].constraints);
-    // errorMessages = errors.map((error) => {
-    //   return error.constraints;
-    // });
+    throw generateError(500, '양식에 맞춰서 입력해주세요');
   }
-  // throw generateError(400, errors[0].constraints?.isString);
-  // return res.status(400).json(errors);
+
   const updatedDiary = await updateDiaryService(userId, diaryId, inputData);
 
   const inputAI = {
@@ -265,7 +254,6 @@ export const updateDiary = async (
     diaryId: updatedDiary.data.id,
   };
 
-  //updatedGPTComment(inputData.content, userId, diaryId);
   req.inputAI = inputAI;
 
   next();
@@ -303,25 +291,32 @@ export const deleteDiary = async (
   return res.status(deletedDiary.status).json(deletedDiary);
 };
 
-export const sendRecommendationEmail = async (
-  req: IRequest,
-  res: Response,
-  next: NextFunction,
-) => {
-  const { diaryId } = req.params;
-  const { username } = req.user;
-  const { friendEmail } = req.body;
+// export const sendRecommendationEmail = async (
+//   req: IRequest,
+//   res: Response,
+//   next: NextFunction,
+// ) => {
+//   const { diaryId } = req.params;
+//   const { username } = req.user;
+//   const { friendEmail } = req.body;
 
-  const sendMail = await mailService(friendEmail, diaryId, username);
+//   const sendMail = await mailService(friendEmail, diaryId, username);
 
-  return res.status(sendMail.status).json(sendMail);
-};
+//   return res.status(sendMail.status).json(sendMail);
+// };
 
 export const selectEmotion = async (
   req: IRequest,
   res: Response,
   next: NextFunction,
 ) => {
+  /**
+   * #swagger.tags = ['Diary']
+   * #swagger.security = [{
+   *            "bearerAuth": []
+   *          }]
+   * #swagger.summary = '감정 선택 '
+   */
   const { diaryId } = req.params;
   const { id: userId } = req.user;
   const { selectedEmotion, selectedEmoji } = req.body;

@@ -318,7 +318,6 @@ export const getAllDiaryService = async (
   emotion: string,
   friendIdList: string[],
 ) => {
-  console.log(userId);
   const allDiaryQuery = {
     skip: (page - 1) * limit,
     take: limit,
@@ -431,32 +430,32 @@ export const deleteDiaryService = async (userId: string, diaryId: string) => {
   return response;
 };
 
-export const mailService = async (
-  friendEmail: string,
-  diaryId: string,
-  username: string,
-) => {
-  const diary = await prisma.diary.findUnique({
-    where: {
-      id: diaryId, // diaryId를 사용하여 다이어리를 식별
-    },
-  });
+// export const mailService = async (
+//   friendEmail: string,
+//   diaryId: string,
+//   username: string,
+// ) => {
+//   const diary = await prisma.diary.findUnique({
+//     where: {
+//       id: diaryId, // diaryId를 사용하여 다이어리를 식별
+//     },
+//   });
 
-  if (!diary) {
-    // 다이어리를 찾을 수 없을 때의 처리
-    console.error('다이어리를 찾을 수 없습니다.');
-    return;
-  }
-  const currentUrl = `http://localhost:5001`;
-  await sendEmail(
-    friendEmail,
-    `추천 유저: ${username}`,
-    `다음 다이어리를 추천드립니다: ${currentUrl}`,
-    ``,
-  );
-  const response = successApiResponseDTO(null);
-  return response;
-};
+//   if (!diary) {
+//     // 다이어리를 찾을 수 없을 때의 처리
+//     console.error('다이어리를 찾을 수 없습니다.');
+//     return;
+//   }
+//   const currentUrl = `http://localhost:5001`;
+//   await sendEmail(
+//     friendEmail,
+//     `추천 유저: ${username}`,
+//     `다음 다이어리를 추천드립니다: ${currentUrl}`,
+//     ``,
+//   );
+//   const response = successApiResponseDTO(null);
+//   return response;
+// };
 
 export const selectedEmojis = async (
   selectedEmotion: string,

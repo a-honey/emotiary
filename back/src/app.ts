@@ -23,7 +23,12 @@ import { updateAudioUrlsPeriodically } from './utils/music';
 
 const app: Express & { io?: any } = express();
 const server = http.createServer(app);
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  credentials: true,
+}));
+
+// app.use(cors());
 app.use(bodyParser.json());
 app.use(Logger);
 sendAlarm();
@@ -75,7 +80,7 @@ app.use(errorMiddleware);
 const io = new SocketIoServer(server, {
   path: '/chat',
   cors: {
-    origin: 'http://localhost:3000',
+    origin: 'https://kdt-ai-8-team02.elicecoding.com',
     methods: ['GET', 'POST',  'WEBSOCKET'],
     credentials: true,
   },

@@ -249,6 +249,9 @@ export const refresh = async (req: IRequest, res: Response) => {
 };
 
 export const loginCallback = (req: IRequest, res: Response) => {
+  // #swagger.tags = ['Users']
+  // #swagger.summary = '소셜 로그인 성공 시 홈 페이지로 리다이렉션'
+
   // 소셜 로그인 성공 시 홈 페이지로 리다이렉션
   res.redirect('/');
 };
