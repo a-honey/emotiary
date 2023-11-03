@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export async function generateEmotionString(content: string) {
   const responseData = await axios.post(
-    'http://kdt-ai-8-team02.elicecoding.com:5000/flask/predict/diary',
+    'https://kdt-ai-8-team02.elicecoding.com/flask/predict/diary',
     {
       text: content,
     },
@@ -11,7 +11,7 @@ export async function generateEmotionString(content: string) {
   const labels = responseData.data.map((item: string) => item);
 
   const emojis = await Promise.all(
-    labels.map(async (label : string) => {
+    labels.map(async (label: string) => {
       const emotions = await prisma.emoji.findMany({
         where: {
           type: label,
