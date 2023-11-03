@@ -17,7 +17,7 @@ import {
   registerUser,
 } from '../services/authService';
 import { generateAccessToken, verifyRefreshToken } from '../utils/tokenUtils';
-import { IRequest } from 'types/user';
+import { IRequest } from 'types/request';
 import { PrismaClient } from '@prisma/client';
 import { userValidateDTO } from '../dtos/userDTO';
 import { plainToClass } from 'class-transformer';

@@ -15,6 +15,8 @@ import {
 import { Router } from 'express';
 import { diaryUpload, postDiaryUpload } from '../middlewares/uploadMiddleware';
 import { wrapAsyncController } from '../utils/wrapper';
+import { createdGPTCommentMiddleware } from '../middlewares/chatGPTMiddleware';
+import { updatedGPTComment } from '../middlewares/updatedGPTMiddleware';
 
 const diaryRouter = Router();
 
@@ -52,6 +54,7 @@ diaryRouter.post(
   jwtAuthentication,
   postDiaryUpload,
   wrapAsyncController(createDiary),
+  wrapAsyncController(createdGPTCommentMiddleware),
 );
 
 // 일기 초대 메일?
@@ -109,7 +112,12 @@ diaryRouter
   .route('/:diaryId')
   // 다이어리 하나 가져오기
   .get(jwtAuthentication, wrapAsyncController(getOneDiary))
-  .put(jwtAuthentication, diaryUpload, wrapAsyncController(updateDiary))
+  .put(
+    jwtAuthentication,
+    diaryUpload,
+    wrapAsyncController(updateDiary),
+    wrapAsyncController(updatedGPTComment),
+  )
   .delete(jwtAuthentication, wrapAsyncController(deleteDiary));
 
 export default diaryRouter;
