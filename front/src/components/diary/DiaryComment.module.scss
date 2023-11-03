@@ -1,10 +1,26 @@
 .comments {
   display: flex;
+  max-height: 300px;
   flex-direction: column;
   gap: 10px;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    width: 10px;
+    display: contents;
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
   .commentItemContainer {
     display: grid;
-    grid-template-columns: 10fr 1.7fr 1fr;
+    grid-template-columns: 10fr 150px 50px;
     align-items: center;
     gap: 10px;
     .contentText {
