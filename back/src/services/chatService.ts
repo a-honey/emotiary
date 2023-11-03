@@ -36,6 +36,13 @@ export const getAllMyRoom = async (currentUserId: string) => {
     where: {
       id: currentUserId,
     },
+    include: {
+      message:{
+        select: {
+          sendUser: true,
+        },
+      },
+    },
   });
   return room;
 };

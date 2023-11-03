@@ -12,10 +12,10 @@ export const AllMyRoom = async (
   next: NextFunction,
 ) => {
   /**
-   * #swagger.tags = ['Friend']
-   * #swagger.summary = '친구 요청 취소'
+   * #swagger.tags = ['chat']
+   * #swagger.summary = '챝킹룸 가져오기'
    */
-  const userId = req.user.id;
-  const roomList = await getAllMyRoom(userId);
+  const chatPartnerId = req.user.id;
+  const roomList = await getAllMyRoom(chatPartnerId);
   res.status(200).json(roomList);
 };
