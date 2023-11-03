@@ -168,7 +168,11 @@ const DayItem = ({
   if (filteredData?.length > 0) {
     const data = filteredData[0];
     return (
-      <Draggable draggableId={day.toString()} index={index}>
+      <Draggable
+        key={day.toString()}
+        draggableId={day.toString()}
+        index={index}
+      >
         {(provided, snapshot) => (
           <div
             ref={provided.innerRef}

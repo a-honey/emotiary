@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { IRequest } from 'types/user';
+import { IRequest } from 'types/request';
 import {
   searchFavorite,
   addFavorite,

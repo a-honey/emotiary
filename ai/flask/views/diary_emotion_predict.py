@@ -47,16 +47,8 @@ def emotion_predicts(sentence):
         largest_dict = sorted_sublist[0]
         largest_score_dicts.append(largest_dict)
 
-    # 'score'의 값 : threshold 이상
-    threshold = 0.7
-    filtered_results = []
-
-    for entry in largest_score_dicts:
-        if entry['score'] >= threshold:
-            filtered_results.append(entry)
-
     label_counts = []
-    for item in filtered_results:
+    for item in largest_score_dicts:
         label = item['label']
         label_exists = False
 

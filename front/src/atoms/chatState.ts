@@ -5,7 +5,7 @@ export const chatState = atom({
   default: {
     isOpenChatList: false,
     isOpenChatRoom: false,
-    chatUserId: '아현',
-    chatUsername: '아현',
+    chatUserId: '',
+    chatUsername: '',
   },
 });

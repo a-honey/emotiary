@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { jwtAuthentication } from '../middlewares/authenticateJwt';
 import {
   friendRequest,
   sentList,
@@ -9,32 +9,64 @@ import {
   getFriends,
   friendDelete,
 } from '../controllers/friendController';
-import { jwtAuthentication } from '../middlewares/authenticateJwt';
+import { Router } from 'express';
+import { wrapAsyncController } from '../utils/wrapper';
 const friendRouter = Router();
 
-//TODO wrapper 감싸기
 /** @description 친구 요청 */
-friendRouter.post('/req/:userId', jwtAuthentication, friendRequest);
+friendRouter.post(
+  '/req/:userId',
+  jwtAuthentication,
+  wrapAsyncController(friendRequest),
+);
 
 /** @description 보낸 친구 요청 리스트 */
-friendRouter.get('/sent/list', jwtAuthentication, sentList);
+friendRouter.get(
+  '/sent/list',
+  jwtAuthentication,
+  wrapAsyncController(sentList),
+);
 
 /** @description 요청 취소 */
-friendRouter.delete('/req/drop/:userId', jwtAuthentication, requestCancel);
+friendRouter.delete(
+  '/req/drop/:userId',
+  jwtAuthentication,
+  wrapAsyncController(requestCancel),
+);
 
 /** @description 받은 친구 요청 리스트 */
-friendRouter.get('/received/list', jwtAuthentication, receivedList);
+friendRouter.get(
+  '/received/list',
+  jwtAuthentication,
+  wrapAsyncController(receivedList),
+);
 
 /** @description 친구 수락 */
-friendRouter.post('/accept/:userId', jwtAuthentication, friendAccept);
+friendRouter.post(
+  '/accept/:userId',
+  jwtAuthentication,
+  wrapAsyncController(friendAccept),
+);
 
 /** @description 친구 거절 */
-friendRouter.delete('/reject/:userId', jwtAuthentication, friendReject);
+friendRouter.delete(
+  '/reject/:userId',
+  jwtAuthentication,
+  wrapAsyncController(friendReject),
+);
 
 /** @description 친구 목록 */
-friendRouter.get('/list', jwtAuthentication, getFriends);
+friendRouter.get(
+  '/list',
+  jwtAuthentication,
+  wrapAsyncController(getFriends),
+);
 
 /** @description 친구 삭제 */
-friendRouter.delete('/drop/:userId', jwtAuthentication, friendDelete);
+friendRouter.delete(
+  '/drop/:userId',
+  jwtAuthentication,
+  wrapAsyncController(friendDelete),
+);
 
 export default friendRouter;

@@ -23,46 +23,232 @@
     },
     "/api/users/register": {
       "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "회원가입",
         "description": "",
         "responses": {
           "default": {
             "description": ""
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "example": "any"
+                  },
+                  "email": {
+                    "example": "any"
+                  },
+                  "password": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
     "/api/users/login": {
       "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "로그인",
         "description": "",
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "example": "any"
+                  },
+                  "password": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/forgot-password": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "임시 비밀번호 발급",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/reset-password": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "비밀번호 초기화",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "example": "any"
+                  },
+                  "password": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/refresh-token": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "리프레시 토큰",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
     "/api/users/testregister": {
       "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "이메일 인증 후 회원가입",
         "description": "",
         "responses": {
           "default": {
             "description": ""
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "example": "any"
+                  },
+                  "username": {
+                    "example": "any"
+                  },
+                  "password": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
     "/api/users/email": {
       "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "회원가입 전 이메일 인증",
         "description": "",
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
     "/api/users/verifyEmail/{token}": {
       "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "이메일 인증 토큰 확인",
         "description": "",
         "parameters": [
           {
@@ -83,38 +269,130 @@
     },
     "/api/users/verified": {
       "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "이메일 인증 확인",
         "description": "",
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "OK"
           }
         }
       }
     },
     "/api/users/search": {
       "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "키워드에 맞는 유저 정보 검색",
         "description": "",
-        "responses": {
-          "403": {
-            "description": "Forbidden"
+        "parameters": [
+          {
+            "name": "searchTerm",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "field",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
-        }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/api/users/current": {
       "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "현재 유저 정보",
         "description": "",
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/api/users/allUser": {
       "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "모든 유저 정보",
         "description": "",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "searchTerm",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "field",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
           "403": {
             "description": "Forbidden"
           }
@@ -123,112 +401,84 @@
     },
     "/api/users/myfriend": {
       "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "친구 유저 정보",
         "description": "",
-        "responses": {
-          "403": {
-            "description": "Forbidden"
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
-        }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/api/users/logout": {
       "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "로그아웃",
         "description": "",
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
-    "/api/users/{userId}": {
+    "/api/users/tokenExpire": {
       "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
+        "tags": [
+          "Users"
         ],
-        "responses": {
-          "403": {
-            "description": "Forbidden"
-          }
-        }
-      },
-      "put": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "403": {
-            "description": "Forbidden"
-          }
-        }
-      },
-      "delete": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/api/users/forgot-password": {
-      "post": {
+        "summary": "토큰 만료 여부 확인",
         "description": "",
         "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/api/users/reset-password": {
-      "post": {
-        "description": "",
-        "responses": {
-          "403": {
-            "description": "Forbidden"
-          }
-        }
-      }
-    },
-    "/api/users/refresh-token": {
-      "post": {
-        "description": "",
-        "responses": {
-          "403": {
-            "description": "Forbidden"
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
     },
     "/api/users/google": {
       "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "소셜 로그인",
         "description": "",
         "responses": {
           "default": {
@@ -239,6 +489,10 @@
     },
     "/api/users/google/callback": {
       "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "소셜 로그인 성공 시 홈 페이지로 리다이렉션",
         "description": "",
         "responses": {
           "default": {
@@ -247,27 +501,73 @@
         }
       }
     },
-    "/api/users/add-emoji": {
-      "post": {
+    "/api/users/{userId}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "특정 유저 정보",
         "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
+          "401": {
+            "description": "Unauthorized"
           }
         },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "유저 정보 수정",
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "type": {
+                  "email": {
                     "example": "any"
                   },
-                  "emotion": {
+                  "username": {
+                    "example": "any"
+                  },
+                  "description": {
                     "example": "any"
                   }
                 }
@@ -275,19 +575,39 @@
             }
           }
         }
-      }
-    },
-    "/api/users/delete-all-emojis": {
-      "post": {
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "유저 탈퇴",
         "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
           },
-          "500": {
-            "description": "Internal Server Error"
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/api/test/predict": {
@@ -383,8 +703,35 @@
           "400": {
             "description": "Bad Request"
           },
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/friend/accept/{userId}": {
+      "post": {
+        "tags": [
+          "Friend"
+        ],
+        "summary": "친구 수락",
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -416,35 +763,8 @@
           "200": {
             "description": "OK"
           },
-          "403": {
-            "description": "Forbidden"
-          }
-        }
-      }
-    },
-    "/api/friend/req/drop/{userId}": {
-      "delete": {
-        "tags": [
-          "Friend"
-        ],
-        "summary": "친구 요청 취소",
-        "description": "",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -476,62 +796,8 @@
           "200": {
             "description": "OK"
           },
-          "403": {
-            "description": "Forbidden"
-          }
-        }
-      }
-    },
-    "/api/friend/accept/{userId}": {
-      "post": {
-        "tags": [
-          "Friend"
-        ],
-        "summary": "친구 수락",
-        "description": "",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        }
-      }
-    },
-    "/api/friend/reject/{userId}": {
-      "delete": {
-        "tags": [
-          "Friend"
-        ],
-        "summary": "친구 거절",
-        "description": "",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -563,8 +829,62 @@
           "200": {
             "description": "OK"
           },
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/friend/req/drop/{userId}": {
+      "delete": {
+        "tags": [
+          "Friend"
+        ],
+        "summary": "친구 요청 취소",
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/friend/reject/{userId}": {
+      "delete": {
+        "tags": [
+          "Friend"
+        ],
+        "summary": "친구 거절",
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -590,58 +910,36 @@
           "200": {
             "description": "OK"
           },
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
     },
     "/api/diary/": {
       "post": {
-        "description": "",
-        "responses": {
-          "403": {
-            "description": "Forbidden"
-          }
-        }
-      }
-    },
-    "/api/diary/recommendation/{diaryId}": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "diaryId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
+        "tags": [
+          "Diary"
         ],
+        "summary": "다이어리 작성",
+        "description": "",
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "friendEmail": {
-                    "example": "any"
-                  }
-                }
-              }
-            }
-          }
-        }
+        "security": []
       }
     },
     "/api/diary/selectEmotion/{diaryId}": {
       "put": {
+        "tags": [
+          "Diary"
+        ],
+        "summary": "감정 선택 ",
         "description": "",
         "parameters": [
           {
@@ -654,10 +952,11 @@
           }
         ],
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
         },
+        "security": [],
         "requestBody": {
           "content": {
             "application/json": {
@@ -665,6 +964,9 @@
                 "type": "object",
                 "properties": {
                   "selectedEmotion": {
+                    "example": "any"
+                  },
+                  "selectedEmoji": {
                     "example": "any"
                   }
                 }
@@ -676,16 +978,41 @@
     },
     "/api/diary/views/users": {
       "get": {
+        "tags": [
+          "Diary"
+        ],
+        "summary": "다른 사람의 다이어리 가져오기",
         "description": "",
-        "responses": {
-          "403": {
-            "description": "Forbidden"
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
-        }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": []
       }
     },
     "/api/diary/views/date/{userId}": {
       "get": {
+        "tags": [
+          "Diary"
+        ],
+        "summary": "한달 다이어리 가져오기 ",
         "description": "",
         "parameters": [
           {
@@ -695,37 +1022,116 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "month",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
-        }
+        },
+        "security": []
       }
     },
     "/api/diary/views": {
       "get": {
+        "tags": [
+          "Diary"
+        ],
+        "summary": "나의 모든 글 가져오기",
         "description": "",
-        "responses": {
-          "403": {
-            "description": "Forbidden"
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
-        }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/diary/emotions": {
+      "get": {
+        "tags": [
+          "Diary"
+        ],
+        "summary": "한달 중 가장 많이 도출된 감정 가져오기",
+        "description": "",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "month",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": []
       }
     },
     "/api/diary/search": {
       "get": {
+        "tags": [
+          "Diary"
+        ],
+        "summary": "다이어리 검색",
         "description": "",
         "responses": {
-          "default": {
-            "description": ""
+          "401": {
+            "description": "Unauthorized"
           }
-        }
+        },
+        "security": []
       }
     },
     "/api/diary/{diaryId}": {
       "get": {
+        "tags": [
+          "Diary"
+        ],
+        "summary": "다이어리 하나 불러오기 ",
         "description": "",
         "parameters": [
           {
@@ -738,12 +1144,17 @@
           }
         ],
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
-        }
+        },
+        "security": []
       },
       "put": {
+        "tags": [
+          "Diary"
+        ],
+        "summary": "다이어리 업데이트",
         "description": "",
         "parameters": [
           {
@@ -756,12 +1167,17 @@
           }
         ],
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
-        }
+        },
+        "security": []
       },
       "delete": {
+        "tags": [
+          "Diary"
+        ],
+        "summary": "다이어리 삭제",
         "description": "",
         "parameters": [
           {
@@ -774,14 +1190,19 @@
           }
         ],
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "401": {
+            "description": "Unauthorized"
           }
-        }
+        },
+        "security": []
       }
     },
     "/api/favorites/{diaryId}": {
       "post": {
+        "tags": [
+          "Favorite"
+        ],
+        "summary": "좋아요",
         "description": "",
         "parameters": [
           {
@@ -794,14 +1215,26 @@
           }
         ],
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/api/comments/{diaryId}": {
       "post": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "댓글 작성",
         "description": "",
         "parameters": [
           {
@@ -814,12 +1247,24 @@
           }
         ],
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       },
       "get": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "댓글 조회",
         "description": "",
         "parameters": [
           {
@@ -829,17 +1274,35 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "OK"
           }
         }
       }
     },
     "/api/comments/{commentId}": {
       "put": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "댓글 수정",
         "description": "",
         "parameters": [
           {
@@ -852,12 +1315,24 @@
           }
         ],
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       },
       "delete": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "댓글 삭제",
         "description": "",
         "parameters": [
           {
@@ -870,10 +1345,18 @@
           }
         ],
         "responses": {
-          "403": {
-            "description": "Forbidden"
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     }
   },

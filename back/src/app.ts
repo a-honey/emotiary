@@ -9,6 +9,7 @@ import diaryRouter from './routes/diaryRouter';
 import favoriteRouter from './routes/favoriteRouter';
 import friendRouter from './routes/friendRouter';
 import commentRouter from './routes/commentRouter';
+import roomRouter from './routes/roomRouter';
 import { jwtStrategy, localStrategy, googleStrategy } from './config/passport';
 import { Logger } from './config/logger';
 import testAuthRouter from './routes/testRouter';
@@ -23,7 +24,12 @@ import { updateAudioUrlsPeriodically } from './utils/music';
 
 const app: Express & { io?: any } = express();
 const server = http.createServer(app);
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  credentials: true,
+}));
+
+// app.use(cors());
 app.use(bodyParser.json());
 app.use(Logger);
 sendAlarm();
@@ -43,7 +49,6 @@ app.use(express.urlencoded({ extended: true }));
 
 const job = new CronJob('0 */6 * * *', () => {
   updateAudioUrlsPeriodically();
-  console.log(1);
 });
 
 // CronJob 시작
@@ -60,7 +65,6 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 const apiRouter = express.Router();
-const router = express.Router();
 
 apiRouter.use('/users', userAuthRouter);
 apiRouter.use('/test', testAuthRouter);
@@ -68,6 +72,7 @@ apiRouter.use('/friend', friendRouter);
 apiRouter.use('/diary', diaryRouter);
 apiRouter.use('/favorites', favoriteRouter);
 apiRouter.use('/comments', commentRouter);
+apiRouter.use('/room', roomRouter);
 
 app.use('/api', apiRouter);
 
@@ -77,11 +82,11 @@ app.use(errorMiddleware);
 const io = new SocketIoServer(server, {
   path: '/chat',
   cors: {
-    origin: 'http://localhost:3000', // Replace with your actual frontend URL
+    origin: 'https://kdt-ai-8-team02.elicecoding.com',
     methods: ['GET', 'POST',  'WEBSOCKET'],
+    credentials: true,
   },
 });
-
 chat(io);
 app.io = io;
 

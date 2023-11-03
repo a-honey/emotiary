@@ -24,7 +24,7 @@ export async function createdComment(
 
   // 댓글 이모지 넣는 코드
   const responseData = await axios.post(
-    'http://kdt-ai-8-team02.elicecoding.com:5000/predict',
+    'http://kdt-ai-8-team02.elicecoding.com:5000/flask/predict',
     {
       text: inputData.content,
     },
@@ -141,7 +141,7 @@ export async function updatedComment(
 ) {
   // 댓글 이모지 넣는 코드
   const responseData = await axios.post(
-    'http://kdt-ai-8-team02.elicecoding.com:5000/predict',
+    'http://kdt-ai-8-team02.elicecoding.com:5000/flask/predict',
     {
       text: inputData.content,
     },
@@ -254,6 +254,7 @@ export async function updatedGPTComment(
     },
   });
 
+  //TODO 지호님한테 질문
   if (comment.count == 0) {
     await createdGPTComment(testChatGPT, authorId, diaryId);
   }

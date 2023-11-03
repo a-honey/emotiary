@@ -1,11 +1,12 @@
 import passport from 'passport';
 import { Response, NextFunction } from 'express';
-import { IRequest, IUser } from 'types/user';
+import { IUser } from 'types/user';
 import {
   generateAccessToken,
   generateRefreshToken,
   storeRefreshTokenInDatabase,
 } from '../utils/tokenUtils';
+import { IRequest } from 'types/request';
 
 export const localAuthentication = (
   req: IRequest,

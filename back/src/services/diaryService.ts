@@ -65,9 +65,8 @@ export const createDiaryService = async (
   inputData: Prisma.DiaryCreateInput,
   fileUrls: string[],
 ) => {
-  // inputData.emotion = await generateEmotionString(inputData.content);
-  // inputData.emoji = '❎';
-
+  inputData.emotion = await generateEmotionString(inputData.content);
+  inputData.emoji = '❎';
   const diaryData = {
     ...inputData,
     author: {
@@ -319,6 +318,7 @@ export const getAllDiaryService = async (
   emotion: string,
   friendIdList: string[],
 ) => {
+  console.log(userId);
   const allDiaryQuery = {
     skip: (page - 1) * limit,
     take: limit,
@@ -401,6 +401,9 @@ export const updateDiaryService = async (
   const updatedDiary = await prisma.diary.update({
     where: { id: diaryId, authorId: userId },
     data: inputData,
+    include: {
+      filesUpload: true,
+    },
   });
 
   if (updatedDiary == null) {
@@ -428,32 +431,32 @@ export const deleteDiaryService = async (userId: string, diaryId: string) => {
   return response;
 };
 
-export const mailService = async (
-  friendEmail: string,
-  diaryId: string,
-  username: string,
-) => {
-  const diary = await prisma.diary.findUnique({
-    where: {
-      id: diaryId, // diaryId를 사용하여 다이어리를 식별
-    },
-  });
+// export const mailService = async (
+//   friendEmail: string,
+//   diaryId: string,
+//   username: string,
+// ) => {
+//   const diary = await prisma.diary.findUnique({
+//     where: {
+//       id: diaryId, // diaryId를 사용하여 다이어리를 식별
+//     },
+//   });
 
-  if (!diary) {
-    // 다이어리를 찾을 수 없을 때의 처리
-    console.error('다이어리를 찾을 수 없습니다.');
-    return;
-  }
-  const currentUrl = `http://localhost:5001`;
-  await sendEmail(
-    friendEmail,
-    `추천 유저: ${username}`,
-    `다음 다이어리를 추천드립니다: ${currentUrl}`,
-    ``,
-  );
-  const response = successApiResponseDTO(null);
-  return response;
-};
+//   if (!diary) {
+//     // 다이어리를 찾을 수 없을 때의 처리
+//     console.error('다이어리를 찾을 수 없습니다.');
+//     return;
+//   }
+//   const currentUrl = `http://localhost:5001`;
+//   await sendEmail(
+//     friendEmail,
+//     `추천 유저: ${username}`,
+//     `다음 다이어리를 추천드립니다: ${currentUrl}`,
+//     ``,
+//   );
+//   const response = successApiResponseDTO(null);
+//   return response;
+// };
 
 export const selectedEmojis = async (
   selectedEmotion: string,
@@ -461,17 +464,6 @@ export const selectedEmojis = async (
   diaryId: string,
   userId: string,
 ) => {
-  // const musicData = await searchMusic(selectedEmotion);
-  // const videoId = musicData.videoId;
-
-  // const info = await ytdl.getInfo(videoId);
-  // // 오디오 스트림 URL 가져오기
-  // const audioUrl = ytdl.chooseFormat(info.formats, { filter: 'audioonly' }).url;
-
-  // if (!musicData) {
-  //   const errorMessage = '음악데이터가없습니다.';
-  //   throw errorMessage;
-  // }
   const emojiRecord = await prisma.emoji.findFirst({
     where: {
       type: selectedEmotion,
@@ -480,8 +472,9 @@ export const selectedEmojis = async (
       audioUrl: true,
     },
   });
-  
+
   const audioUrl = emojiRecord.audioUrl;
+
   const emoji = selectedEmoji;
   const emotion = selectedEmotion;
 
@@ -517,7 +510,7 @@ export const searchDiaryService = async (
   const searchList = search.split(' ');
 
   const modifiedSearch = searchList.map((search) => {
-    return `*${search}*`;
+    return `${search}`;
   });
   const fullTextQuery = modifiedSearch.join(' ');
 

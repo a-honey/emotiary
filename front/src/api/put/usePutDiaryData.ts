@@ -8,7 +8,7 @@ import { useSetRecoilState } from 'recoil';
 
 export const usePutDiaryData = (id: string) => {
   const postMutation = useMutation(
-    async ({ body }: { body: DiaryItemType }) => {
+    async (body: { title: string; content: string }) => {
       return await instance.put(`/diary/${id}`, body);
     },
     {
