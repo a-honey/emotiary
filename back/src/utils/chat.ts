@@ -22,22 +22,16 @@ interface ConnectedUsers {
 }
 
 export const chat =  (io: SocketIoServer) => {
-  console.log('test');
   io.use((socket: Socket, next) => {
     const token = socket.handshake.query.token as string;
 
-    console.log('ws', token);
     if (!token) {
-      console.error('No token provided');
       return next(new Error('No token provided'));
     }
 
     try {
-      console.log('ㅌ');
       const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
-      console.log(decodedToken);
       socket.data.decodedToken = decodedToken;
-      console.log(socket.data.decodedToken.id);
       next();
     } catch (error) {
       console.error('JWT verification failed:', error);
@@ -48,7 +42,6 @@ export const chat =  (io: SocketIoServer) => {
   const connectedUsers: { [key: string]: ConnectedUsers } = {};
 
   io.on('connection', async (socket: Socket) => {
-    console.log('connection');
     const currentUserId = socket.data.decodedToken.id.toString();
     const user = await currentUser(currentUserId); // Replace with your user retrieval logic
 
@@ -58,7 +51,6 @@ export const chat =  (io: SocketIoServer) => {
         roomId: null,
         user,
       };
-      console.log(`[${user.username}] connected`);
     }
 
 
@@ -68,30 +60,23 @@ export const chat =  (io: SocketIoServer) => {
 
 
   socket.onAny((eventName: string, ...args: any[]) => {
-    console.log(`이벤트 발생: ${eventName}, 데이터: ${args}`);
   });
 
   socket.on('initialize', async (userId: string) => {
     if (user) {
       const messages = await unreadMessage(userId);
       socket.emit('messages', messages);
-      console.log(messages, 'New messages');
     }
   });
 
   socket.on('join', async (chatPartnerId: string) => {
     if (user) {
       const roomId = await createRoomId(currentUserId, chatPartnerId);
-      console.log('roomId:' , roomId);
       const existingRoom = await getMyRoom(roomId);
-      console.log('existingRoom', existingRoom);
       if (existingRoom) {
         connectedUsers[currentUserId].roomId = roomId;
-        console.log(connectedUsers[currentUserId].roomId, 'Currently joined room');
         socket.join(roomId);
-        console.log(`${user.username} joined [${roomId}] room`);
         const messages = await getMyMessages(roomId);
-        console.log(messages);
         for (let message of messages) {
           if (message.sendUserId !== currentUserId) {
             if (!message.isRead) {
@@ -100,10 +85,8 @@ export const chat =  (io: SocketIoServer) => {
           }
         }
         socket.emit('messages', messages);
-        console.log(`${user.username}'s chat history loaded`);
       } else {
         const newRoom = await createChatRoom(roomId);
-        console.log(`Room [${newRoom}] created`);
         connectedUsers[currentUserId].roomId = roomId;
         socket.join(newRoom.id);
       }
@@ -112,15 +95,11 @@ export const chat =  (io: SocketIoServer) => {
 
   socket.on('sendMessage', async (chatPartnerId: string, message: string) => {
     if (user) {
-      console.log('시작')
       const roomId = await createRoomId(currentUserId, chatPartnerId);
-      console.log(roomId);
       let room = await getMyRoom(roomId);
-      console.log(roomId, 'd')
       if (!room) {
         await createChatRoom(roomId);
       }
-      console.log('방아이디', roomId);
 
       const createdMessage = await prisma.chatMessage.create({
         data: {
@@ -130,19 +109,15 @@ export const chat =  (io: SocketIoServer) => {
         },
       });
 
-      console.log('createMessage', createdMessage);
-
       if (connectedUsers[chatPartnerId]) {
         const chatPartnerSocketId = connectedUsers[chatPartnerId].socketId;
 
-        console.log('파트너아이디', chatPartnerId);
         if (connectedUsers[chatPartnerId].roomId === roomId) {
           socket.broadcast.to(roomId).emit('newMessage', {
             sendUserId: currentUserId,
             username: user.username,
             message,
           });
-          console.log(`[${chatPartnerId}] sent a message: ${message}`);
 
           await changeReadStatus(createdMessage.id);
         }
@@ -153,7 +128,6 @@ export const chat =  (io: SocketIoServer) => {
             username: user.username,
             messageId: createdMessage.id,
           });
-          console.log('새로운메시지', message);
         }
       }
     }
@@ -161,7 +135,6 @@ export const chat =  (io: SocketIoServer) => {
 
   socket.on('leave', async (chatPartnerId: string) => {
     const roomId = await createRoomId(currentUserId, chatPartnerId);
-    console.log(`[${roomId}] Leaving the room`);
     connectedUsers[currentUserId].roomId = null;
     socket.leave(roomId);
   });
@@ -171,7 +144,6 @@ export const chat =  (io: SocketIoServer) => {
       const roomId = `${currentUserId}-${chatPartnerId}`;
       await deleteMessage(roomId);
       await deleteRoom(roomId);
-      console.log(`Room [${roomId}] deleted`);
     }
   });
 
@@ -183,7 +155,6 @@ export const chat =  (io: SocketIoServer) => {
 
   socket.on('disconnect', () => {
     if (user) {
-      console.log(`User ${currentUserId} disconnected`);
       delete connectedUsers[currentUserId];
     }
   })
