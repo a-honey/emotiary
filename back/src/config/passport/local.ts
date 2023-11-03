@@ -1,8 +1,6 @@
 import passportLocal from 'passport-local';
-import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
-
-const prisma = new PrismaClient();
+import { prisma } from '../../../prisma/prismaClient';
 
 // Passport-Local에서 필요한 모듈 및 객체를 가져옵니다.
 const LocalStrategy = passportLocal.Strategy;

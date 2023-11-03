@@ -40,7 +40,6 @@ export const friendRequest = async (
     return res.status(400).json({ message: "이미 요청 했거나 우린 친구!" });
   }
   const request = await createFriends(userId, requestId);
-  // TODO DTO STATUS?
   res.status(200).json(request);
 };
 

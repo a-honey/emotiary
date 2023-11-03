@@ -18,17 +18,17 @@ import {
 } from '../services/authService';
 import { generateAccessToken, verifyRefreshToken } from '../utils/tokenUtils';
 import { IRequest } from 'types/user';
-import { PrismaClient } from '@prisma/client';
 import { userValidateDTO } from '../dtos/userDTO';
 import { plainToClass } from 'class-transformer';
 import { emptyApiResponseDTO } from '../utils/emptyResult';
 import { generateRefreshToken } from '../utils/tokenUtils';
 import { storeRefreshTokenInDatabase } from '../utils/tokenUtils';
-
-const prisma = new PrismaClient();
+import { prisma } from '../../prisma/prismaClient';
+import { generateError } from '../utils/errorGenerator';
 
 export const userRegister = async (req: Request, res: Response) => {
-    // #swagger.tags = ['Users']
+  // #swagger.tags = ['Users']
+  // #swagger.summary = '회원가입'
   const { username, email, password } = req.body;
 
   await plainToClass(userValidateDTO, req.body);
@@ -41,6 +41,7 @@ export const userRegister = async (req: Request, res: Response) => {
 
 export const userLogin = async (req: IRequest, res: Response) => {
   // #swagger.tags = ['Users']
+  // #swagger.summary = '로그인'
   const { email, password } = req.body;
 
   await plainToClass(userValidateDTO, req.body);
@@ -73,6 +74,7 @@ export const getMyInfo = async (req: IRequest, res: Response) => {
   /* #swagger.tags = ['Users']
          #swagger.security = [{
                "bearerAuth": []
+     #swagger.summary = '현재 유저 정보'
         }] */
 
   const userId = req.user.id;
@@ -87,7 +89,8 @@ export const getAllUser = async (req: IRequest, res: Response) => {
   // #swagger.tags = ['Users']
   //     #swagger.security = [{
   //         "bearerAuth": []
-  //  }] */
+  // #swagger.summary = '모든 유저 정보'
+  //  }]
 
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 10;
@@ -102,6 +105,7 @@ export const getMyFriend = async (req: IRequest, res: Response) => {
   /* #swagger.tags = ['Users']
          #swagger.security = [{
                "bearerAuth": []
+     #swagger.summary = '친구 유저 정보'
         }] */
 
   const page = parseInt(req.query.page as string) || 1;
@@ -117,6 +121,7 @@ export const getUserId = async (req: IRequest, res: Response) => {
   /* #swagger.tags = ['Users']
          #swagger.security = [{
                "bearerAuth": []
+     #swagger.summary = '특정 유저 정보'               
         }] */
 
   const userId = req.params.userId;
@@ -131,6 +136,7 @@ export const userLogout = async (req: IRequest, res: Response) => {
   /* #swagger.tags = ['Users']
          #swagger.security = [{
                "bearerAuth": []
+     #swagger.summary = '로그아웃'               
         }] */
 
   const userId = req.user.id;
@@ -144,8 +150,8 @@ export const updateUser = async (req: IRequest, res: Response) => {
   /* #swagger.tags = ['Users']
          #swagger.security = [{
                "bearerAuth": []
+     #swagger.summary = '유저 정보 수정'               
         }] */
-
 
   const { email, username, description } = req.body;
 
@@ -161,6 +167,7 @@ export const deleteUser = async (req: IRequest, res: Response) => {
   /* #swagger.tags = ['Users']
          #swagger.security = [{
                "bearerAuth": []
+     #swagger.summary = '유저 탈퇴'
         }] */
 
   const loginId = req.user.id;
@@ -178,6 +185,7 @@ export const deleteUser = async (req: IRequest, res: Response) => {
 
 export const forgotPassword = async (req: IRequest, res: Response) => {
   // #swagger.tags = ['Users']
+  // #swagger.summary = '임시 비밀번호 발급'
 
   const { email } = req.body;
 
@@ -193,6 +201,7 @@ export const resetPassword = async (req: IRequest, res: Response) => {
   /* #swagger.tags = ['Users']
          #swagger.security = [{
                "bearerAuth": []
+     #swagger.summary = '비밀번호 초기화'
         }] */
   const { email, password } = req.body;
 
@@ -204,6 +213,7 @@ export const resetPassword = async (req: IRequest, res: Response) => {
 
 export const refresh = async (req: IRequest, res: Response) => {
   // #swagger.tags = ['Users']
+  // #swagger.summary = '리프레시 토큰'
 
   const refreshToken = req.body.token;
 
@@ -216,18 +226,16 @@ export const refresh = async (req: IRequest, res: Response) => {
   const userId = await verifyRefreshToken(refreshToken);
 
   if (!userId) {
-    return (
-      res
-        //TODO 에러 보내줄 때는 generateError(STATUSCODE, message) 로 보내주기
-        .status(403)
-        .json({ message: 'Refresh Token 만료 또는 유효하지 않음' })
-    );
+      generateError(403,"refreshToken이 유효하지않음");
   }
 
-  // 데이터베이스에서 사용자 정보 가져오고 재발급
+  // 유저 정보 가져오고
   const user = await getUserFromDatabase(userId);
+  // accessToken 재발급
   const accessToken = generateAccessToken(user);
+  // refreshToken 재발급
   const newRefreshToken = generateRefreshToken(user);
+  // 생성한 refreshToken DB에 저장
   await storeRefreshTokenInDatabase(userId, newRefreshToken);
 
   res.json({ data: { accessToken, newRefreshToken }, message: '성공' });
@@ -242,6 +250,7 @@ export const searchKeyword = async (req: IRequest, res: Response) => {
   /* #swagger.tags = ['Users']
          #swagger.security = [{
                "bearerAuth": []
+     #swagger.summary = '키워드에 맞는 유저 정보 검색'
         }] */
 
   const searchTerm = req.query.searchTerm as string;
@@ -257,6 +266,7 @@ export const searchKeyword = async (req: IRequest, res: Response) => {
 // 선 이메일 인증 요청
 export const emailLink = async (req: IRequest, res: Response) => {
   // #swagger.tags = ['Users']
+  // #swagger.summary = '회원가입 전 이메일 인증'
 
   const { email } = req.body;
 
@@ -268,6 +278,7 @@ export const emailLink = async (req: IRequest, res: Response) => {
 // 이메일인증 확인
 export const verifyEmail = async (req: IRequest, res: Response) => {
   // #swagger.tags = ['Users']
+  // #swagger.summary = '이메일 인증 토큰 확인'
 
   const { token } = req.params;
 
@@ -278,6 +289,7 @@ export const verifyEmail = async (req: IRequest, res: Response) => {
 
 export const emailVerified = (req: IRequest, res: Response) => {
   // #swagger.tags = ['Users']
+  // #swagger.summary = '이메일 인증 확인'
 
   res.send('이메일이 성공적으로 인증되었습니다.');
 };
@@ -285,6 +297,7 @@ export const emailVerified = (req: IRequest, res: Response) => {
 // 이메일 인증 후 회원가입
 export const testEmail = async (req: IRequest, res: Response) => {
   // #swagger.tags = ['Users']
+  // #swagger.summary = '이메일 인증 후 회원가입'
 
   const { email, username, password } = req.body;
 
@@ -293,8 +306,9 @@ export const testEmail = async (req: IRequest, res: Response) => {
   return res.status(userRegister.status).json(userRegister);
 };
 
-export const expire = async (req : IRequest, res : Response) => {
+export const expire = async (req: IRequest, res: Response) => {
   // #swagger.tags = ['Users']
+  // #swagger.summary = '토큰 만료 여부 확인'
 
-    res.status(200).json({ message: 'Token is valid' });
-}
+  res.status(200).json({ message: 'Token is valid' });
+};

@@ -5,9 +5,6 @@ import ytdl from 'ytdl-core';
 const prisma = new PrismaClient();
 
 const youtubeApiKey = process.env.youtubeApiKey;
-const subKey = process.env.subYoutubeApiKey;
-
-let currentApiKey = youtubeApiKey;
 
 export async function searchMusic(emotion: string): Promise<any | null> {
   try {
@@ -52,12 +49,6 @@ export async function searchMusic(emotion: string): Promise<any | null> {
       videoId: randomVideo.id,
     };
 
-    if (currentApiKey === youtubeApiKey) {
-      currentApiKey = subKey;
-    } else {
-      currentApiKey = youtubeApiKey;
-    }
-
     return musicData;
   } catch (error) {
     console.error(error);
@@ -83,17 +74,9 @@ export async function updateAudioUrlsPeriodically() {
         type: true,
       },
     });
+    console.log(emojiTypes);
 
     for (const emojiType of emojiTypes) {
-      const emojisWithAudio = await prisma.emoji.findMany({
-        where: {
-          type: emojiType.type,
-        },
-      });
-
-      if (emojisWithAudio.length === 0) {
-        continue; // Skip if there are no emojis of this type
-      }
 
       const musicData = await searchMusic(emojiType.type);
       const videoId = musicData.videoId;
@@ -101,7 +84,6 @@ export async function updateAudioUrlsPeriodically() {
       const info = await ytdl.getInfo(videoId);
       const audioUrl = ytdl.chooseFormat(info.formats, { filter: 'audioonly' }).url;
 
-      // Update audio URL for all emojis of this type
       await prisma.emoji.updateMany({
         where: {
           type: emojiType.type,

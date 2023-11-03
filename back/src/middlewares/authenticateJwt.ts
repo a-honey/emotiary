@@ -16,9 +16,11 @@ export const jwtAuthentication = async (
           console.log(error);
           next(error);
         }
-        if (info && info.name === 'TokenExpiredError') {
-          console.log(info);
-          res.status(401).json({ expired: true });
+        if (info ) {
+          if(info.name === 'TokenExpiredError'){
+            console.log(info);
+            res.status(401).json({ expired: true });
+          }
         }
         req.user = user;
         next();

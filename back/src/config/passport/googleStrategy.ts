@@ -6,10 +6,7 @@ import {
   generateRefreshToken,
 } from '../../utils/tokenUtils';
 import { storeRefreshTokenInDatabase } from '../../utils/tokenUtils';
-
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '../../../prisma/prismaClient';
 
 const googleStrategy = new GoogleStrategy(
   {

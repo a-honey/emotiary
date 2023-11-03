@@ -26,10 +26,8 @@ import { fileUpload } from "../middlewares/uploadMiddleware";
 import { wrapAsyncController } from "../utils/wrapper";
 import passport from "passport";
 const userAuthRouter = Router();
-// TODO 스웨거 양식 추가
-// TODO VALIDATE 좀더 찾아보기
 // 회원가입
-userAuthRouter.post("/register", wrapAsyncController(userRegister));
+userAuthRouter.post("/register", userRegister);
 
 // 로그인
 userAuthRouter.post('/login', localAuthentication, wrapAsyncController(userLogin));

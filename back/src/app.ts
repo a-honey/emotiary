@@ -43,7 +43,6 @@ app.use(express.urlencoded({ extended: true }));
 
 const job = new CronJob('0 */6 * * *', () => {
   updateAudioUrlsPeriodically();
-  console.log(1);
 });
 
 // CronJob 시작
@@ -60,7 +59,6 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 const apiRouter = express.Router();
-const router = express.Router();
 
 apiRouter.use('/users', userAuthRouter);
 apiRouter.use('/test', testAuthRouter);
