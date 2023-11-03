@@ -57,6 +57,11 @@ const handleFileUpload = async (
                   profileImage: true,
                 },
               });
+              await prisma.fileUpload.deleteMany({
+                where: {
+                  userId: userId,
+                },
+              });
 
               if (!foundUser) {
                 const response = emptyApiResponseDTO();
@@ -95,12 +100,6 @@ const handleFileUpload = async (
                 userId: userId,
               }));
 
-              await prisma.fileUpload.deleteMany({
-                where: {
-                  userId: userId,
-                },
-              });
-
               await prisma.fileUpload.createMany({
                 data: profileImage,
               });
@@ -111,6 +110,14 @@ const handleFileUpload = async (
             // 삭제할 데이터가 있을시
             if (req.body.deleteData) {
               const urlsToDelete = req.body.deleteData;
+
+              await prisma.diaryFileUpload.deleteMany({
+                where: {
+                  url: {
+                    in: urlsToDelete,
+                  },
+                },
+              });
 
               // Delete files from disk storage
               urlsToDelete.forEach(async (url: string) => {
@@ -126,14 +133,6 @@ const handleFileUpload = async (
                     next(err);
                   }
                 });
-              });
-
-              await prisma.diaryFileUpload.deleteMany({
-                where: {
-                  url: {
-                    in: urlsToDelete,
-                  },
-                },
               });
             }
 

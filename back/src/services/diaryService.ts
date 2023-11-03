@@ -67,7 +67,6 @@ export const createDiaryService = async (
 ) => {
   inputData.emotion = await generateEmotionString(inputData.content);
   inputData.emoji = '❎';
-
   const diaryData = {
     ...inputData,
     author: {
