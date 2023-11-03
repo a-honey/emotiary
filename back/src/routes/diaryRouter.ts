@@ -4,7 +4,7 @@ import {
   deleteDiary,
   getOneDiary,
   updateDiary,
-  getDiaryByDate,
+  getDiaryByMonth,
   getOtherUsersDiary,
   getAllMyDiaries,
   sendRecommendationEmail,
@@ -84,7 +84,7 @@ diaryRouter.get(
 diaryRouter.get(
   '/views/date/:userId',
   jwtAuthentication,
-  wrapAsyncController(getDiaryByDate),
+  wrapAsyncController(getDiaryByMonth),
 );
 
 // 내 글 전체 가져오기 (Done)

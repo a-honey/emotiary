@@ -117,13 +117,18 @@ export const getAllMyDiaries = async (
   return res.status(myDiaries.status).json(myDiaries);
 };
 
-export const getDiaryByDate = async (
+export const getDiaryByMonth = async (
   req: IRequest,
   res: Response,
   next: NextFunction,
 ) => {
-  //authorId
-
+  /**
+   * #swagger.tags = ['Diary']
+   * #swagger.security = [{
+   *            "bearerAuth": []
+   *          }]
+   * #swagger.summary = '한달 다이어리 가져오기 '
+   */
   const { userId } = req.params;
   const year = parseInt(req.query.year as string);
   const month = parseInt(req.query.month as string);
