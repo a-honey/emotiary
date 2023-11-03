@@ -75,11 +75,11 @@ app.use(errorMiddleware);
 const io = new SocketIoServer(server, {
   path: '/chat',
   cors: {
-    origin: 'http://localhost:3000', // Replace with your actual frontend URL
+    origin: 'http://localhost:3000',
     methods: ['GET', 'POST',  'WEBSOCKET'],
+    credentials: true,
   },
 });
-
 chat(io);
 app.io = io;
 

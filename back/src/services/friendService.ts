@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-//TODO prismaClient.ts에서 import해와서 사용하기
-const prisma = new PrismaClient();
+import { prisma } from '../../prisma/prismaClient';
 import { FriendResponseDTO, PaginationResponseDTO } from '../dtos/friendDTO';
 import { userResponseDTO } from '../dtos/userDTO';
 import { emptyApiResponseDTO } from '../utils/emptyResult';
