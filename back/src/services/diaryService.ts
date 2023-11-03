@@ -65,9 +65,9 @@ export const createDiaryService = async (
   inputData: Prisma.DiaryCreateInput,
   fileUrls: string[],
 ) => {
-  // inputData.emotion = await generateEmotionString(inputData.content);
-  // inputData.emoji = '❎';
-
+  inputData.emotion = await generateEmotionString(inputData.content);
+  inputData.emoji = '❎';
+  
   const diaryData = {
     ...inputData,
     author: {

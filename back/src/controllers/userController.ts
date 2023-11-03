@@ -74,8 +74,9 @@ export const getMyInfo = async (req: IRequest, res: Response) => {
   /* #swagger.tags = ['Users']
          #swagger.security = [{
                "bearerAuth": []
-     #swagger.summary = '현재 유저 정보'
-        }] */
+        }] 
+     #swagger.summary = '현재 유저 정보'        
+        */
 
   const userId = req.user.id;
 
@@ -89,8 +90,8 @@ export const getAllUser = async (req: IRequest, res: Response) => {
   // #swagger.tags = ['Users']
   //     #swagger.security = [{
   //         "bearerAuth": []
+    //  }]
   // #swagger.summary = '모든 유저 정보'
-  //  }]
 
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 10;
@@ -105,8 +106,9 @@ export const getMyFriend = async (req: IRequest, res: Response) => {
   /* #swagger.tags = ['Users']
          #swagger.security = [{
                "bearerAuth": []
-     #swagger.summary = '친구 유저 정보'
-        }] */
+        }] 
+     #swagger.summary = '친구 유저 정보'        
+        */
 
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 10;
@@ -120,9 +122,10 @@ export const getMyFriend = async (req: IRequest, res: Response) => {
 export const getUserId = async (req: IRequest, res: Response) => {
   /* #swagger.tags = ['Users']
          #swagger.security = [{
-               "bearerAuth": []
-     #swagger.summary = '특정 유저 정보'               
-        }] */
+               "bearerAuth": []              
+        }] 
+     #swagger.summary = '특정 유저 정보'         
+        */
 
   const userId = req.params.userId;
 
@@ -135,9 +138,10 @@ export const getUserId = async (req: IRequest, res: Response) => {
 export const userLogout = async (req: IRequest, res: Response) => {
   /* #swagger.tags = ['Users']
          #swagger.security = [{
-               "bearerAuth": []
-     #swagger.summary = '로그아웃'               
-        }] */
+               "bearerAuth": []             
+        }] 
+     #swagger.summary = '로그아웃'          
+        */
 
   const userId = req.user.id;
   await logout(userId);
@@ -149,9 +153,10 @@ export const updateUser = async (req: IRequest, res: Response) => {
   // swagger 데이터전용
   /* #swagger.tags = ['Users']
          #swagger.security = [{
-               "bearerAuth": []
-     #swagger.summary = '유저 정보 수정'               
-        }] */
+               "bearerAuth": []             
+        }] 
+     #swagger.summary = '유저 정보 수정'          
+        */
 
   const { email, username, description } = req.body;
 
@@ -167,8 +172,9 @@ export const deleteUser = async (req: IRequest, res: Response) => {
   /* #swagger.tags = ['Users']
          #swagger.security = [{
                "bearerAuth": []
-     #swagger.summary = '유저 탈퇴'
-        }] */
+        }] 
+     #swagger.summary = '유저 탈퇴'        
+        */
 
   const loginId = req.user.id;
   const userIdToDelete = req.params.userId;
@@ -201,8 +207,9 @@ export const resetPassword = async (req: IRequest, res: Response) => {
   /* #swagger.tags = ['Users']
          #swagger.security = [{
                "bearerAuth": []
-     #swagger.summary = '비밀번호 초기화'
-        }] */
+        }] 
+     #swagger.summary = '비밀번호 초기화'        
+        */
   const { email, password } = req.body;
 
   // resetUserPassword 함수를 사용하여 비밀번호 재설정
@@ -250,8 +257,9 @@ export const searchKeyword = async (req: IRequest, res: Response) => {
   /* #swagger.tags = ['Users']
          #swagger.security = [{
                "bearerAuth": []
-     #swagger.summary = '키워드에 맞는 유저 정보 검색'
-        }] */
+        }] 
+     #swagger.summary = '키워드에 맞는 유저 정보 검색'        
+        */
 
   const searchTerm = req.query.searchTerm as string;
   const field = req.query.field as string;
