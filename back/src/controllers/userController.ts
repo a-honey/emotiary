@@ -31,7 +31,7 @@ export const userRegister = async (req: Request, res: Response) => {
   // #swagger.summary = '회원가입'
   const { username, email, password } = req.body;
 
-  await plainToClass(userValidateDTO, req.body);
+  plainToClass(userValidateDTO, req.body);
 
   // createUser 함수를 사용하여 새 사용자 생성
   const user = await createUser(req.body);
@@ -44,7 +44,7 @@ export const userLogin = async (req: IRequest, res: Response) => {
   // #swagger.summary = '로그인'
   const { email, password } = req.body;
 
-  await plainToClass(userValidateDTO, req.body);
+  plainToClass(userValidateDTO, req.body);
   const myInfo = await prisma.user.findUnique({
     where: {
       id: req.user.id,
@@ -90,7 +90,7 @@ export const getAllUser = async (req: IRequest, res: Response) => {
   // #swagger.tags = ['Users']
   //     #swagger.security = [{
   //         "bearerAuth": []
-    //  }]
+  //  }]
   // #swagger.summary = '모든 유저 정보'
 
   const page = parseInt(req.query.page as string) || 1;
@@ -233,7 +233,7 @@ export const refresh = async (req: IRequest, res: Response) => {
   const userId = await verifyRefreshToken(refreshToken);
 
   if (!userId) {
-      generateError(403,"refreshToken이 유효하지않음");
+    generateError(403, 'refreshToken이 유효하지않음');
   }
 
   // 유저 정보 가져오고

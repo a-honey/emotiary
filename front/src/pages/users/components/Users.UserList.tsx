@@ -33,6 +33,7 @@ const UserList = () => {
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newSelect = e.target.checked ? 'friends' : 'all';
     setSelect(newSelect);
+    setCurrentPage(1);
   };
 
   return (
@@ -82,12 +83,12 @@ const UserItem = ({ data }: { data: UserItemType }) => {
   const postMutation = usePostFriendReqMutation();
 
   const handleFriendReqBtnClick = async (
-    e: React.MouseEvent<HTMLButtonElement>,
+    e: React.MouseEvent<HTMLButtonElement>
   ) => {
     e.stopPropagation();
 
     const confirm = window.confirm(
-      `${username}님에게 친구 요청을 보내겠습니까?`,
+      `${username}님에게 친구 요청을 보내겠습니까?`
     );
     if (confirm) {
       postMutation.mutate({ id });

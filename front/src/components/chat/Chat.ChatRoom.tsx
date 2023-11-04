@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Socket } from 'socket.io-client';
 import styles from './Chat.ChatRoom.module.scss';
+import getUserId from '../../utils/localStorageHandlers';
+const myId = getUserId ?? '';
 
 const ChatRoom = ({
   socket,
@@ -31,7 +33,7 @@ const ChatRoom = ({
 
       setMessages((prev) => [
         ...prev,
-        { id: userId, sendUserId: userId, message },
+        { id: userId, sendUserId: myId, message },
       ]);
       setMessage('');
     } catch (err) {
@@ -39,10 +41,8 @@ const ChatRoom = ({
     }
   };
 
-  console.log('받은 메시지', messages);
   useEffect(() => {
     // 채팅방이 마운트되면 채팅방에 들어감
-    console.log('join', userId);
     socket?.emit('join', userId);
     // 채팅방에 들어가면 messages 이벤트에서 이전 내역을 가져옴
     socket?.on(

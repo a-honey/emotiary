@@ -318,7 +318,6 @@ export const getAllDiaryService = async (
   emotion: string,
   friendIdList: string[],
 ) => {
-  console.log(userId);
   const allDiaryQuery = {
     skip: (page - 1) * limit,
     take: limit,

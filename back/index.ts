@@ -1,6 +1,5 @@
 import 'dotenv/config';
 import { app } from './src/app';
-import { NextFunction, Request, Response } from 'express';
 
 const PORT: number = parseInt(process.env.SERVER_PORT as string, 10) || 5001;
 

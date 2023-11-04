@@ -42,9 +42,6 @@ const ChatList = ({ socket }: { socket: Socket }) => {
         >
           채팅목록닫기
         </button>
-        <div onClick={toggleIsOpenChatRoom}>user1과의 채팅</div>
-        <ChatListItem />
-        <ChatListItem />
         <ChatListItem />
       </div>
     </>
@@ -60,14 +57,14 @@ const ChatListItem = () => {
     setChatStateRecoil({
       chatUserId: '3',
       chatUsername: '이름',
-      isOpenChatList: true,
-      isOpenChatRoom: true,
+      isOpenChatList: false,
+      isOpenChatRoom: false,
     });
   };
 
   return (
     <div className={styles.item} onClick={handleChatUserIdAndUsername}>
-      user4과의 채팅
+      준비중인기능입니다.
     </div>
   );
 };

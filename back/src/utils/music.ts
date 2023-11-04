@@ -1,9 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
-import { PrismaClient } from '@prisma/client';
 import ytdl from 'ytdl-core';
-
-//TODO prismaClient.ts에서 import해와서 사용하기
-const prisma = new PrismaClient();
+import { prisma } from '../../prisma/prismaClient';
 
 const youtubeApiKey = process.env.youtubeApiKey;
 
@@ -76,12 +73,13 @@ export async function updateAudioUrlsPeriodically() {
     console.log(emojiTypes);
 
     for (const emojiType of emojiTypes) {
-
       const musicData = await searchMusic(emojiType.type);
       const videoId = musicData.videoId;
 
       const info = await ytdl.getInfo(videoId);
-      const audioUrl = ytdl.chooseFormat(info.formats, { filter: 'audioonly' }).url;
+      const audioUrl = ytdl.chooseFormat(info.formats, {
+        filter: 'audioonly',
+      }).url;
 
       await prisma.emoji.updateMany({
         where: {

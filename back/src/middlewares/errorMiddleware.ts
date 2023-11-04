@@ -1,4 +1,4 @@
-import { Logger, logger } from '../config/logger';
+import { logger } from '../config/logger';
 import { NextFunction, Request, Response } from 'express';
 import { IError } from '../types/error';
 

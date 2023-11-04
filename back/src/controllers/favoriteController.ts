@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { IRequest } from 'types/request';
 import {
   searchFavorite,

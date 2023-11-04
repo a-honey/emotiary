@@ -11,7 +11,6 @@ export const usePutSigninData = (queryClient: QueryClient) => {
     },
     {
       onSuccess: (data: any) => {
-        console.log('로그인 성공', data.data);
         localStorage.setItem('email', data.data.email);
         localStorage.setItem('userId', data.data.id);
         localStorage.setItem('username', data.data.name);
@@ -30,8 +29,7 @@ export const usePutSigninData = (queryClient: QueryClient) => {
         navigate('/main');
       },
       onError: (error: any) => {
-        console.log('로그인 실패', error);
-        alert("로그인에 실패했습니다! 다시 시도해주세요!");
+        alert('로그인에 실패했습니다! 다시 시도해주세요!');
       },
     }
   );

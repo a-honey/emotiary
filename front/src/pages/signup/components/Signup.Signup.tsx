@@ -61,7 +61,6 @@ const Signup: React.FC = () => {
 
   const responseGoogle = (response: any) => {
     if (response?.tokenId) {
-      console.log('로그인 성공', response);
     } else {
       console.log('로그인 실패', response);
     }
@@ -109,7 +108,7 @@ const Signup: React.FC = () => {
       const han = /^[가-힣]+$/;
       if (!han.test(value)) {
         alert('한글만 입력해주세요.');
-        setUserInfo(prev => ({ ...prev, username: '' }));
+        setUserInfo((prev) => ({ ...prev, username: '' }));
       }
     }
   };
@@ -136,32 +135,32 @@ const Signup: React.FC = () => {
   };
 
   return (
-  <div className={styles.centerContainer}>
-    <form onSubmit={handleSubmit} className={styles.signupForm}>
-      {signupInputForms.map((input, index) => (
-        <InputField
-          key={index}
-          id={input.id}
-          name={input.name}
-          type={input.type}
-          placeholder={input.placeholder}
-          value={input.value}
-          onChange={handleChange}
-          boxStyle={input.boxStyle}
-          onBlur={handleBlur}
+    <div className={styles.centerContainer}>
+      <form onSubmit={handleSubmit} className={styles.signupForm}>
+        {signupInputForms.map((input, index) => (
+          <InputField
+            key={index}
+            id={input.id}
+            name={input.name}
+            type={input.type}
+            placeholder={input.placeholder}
+            value={input.value}
+            onChange={handleChange}
+            boxStyle={input.boxStyle}
+            onBlur={handleBlur}
+          />
+        ))}
+        <button type="submit" className={styles.submitButton}>
+          SIGN UP
+        </button>
+        <GoogleLogin
+          clientId="594577452303-n7paj5690d9l35dg3sskk755prrmv389.apps.googleusercontent.com"
+          buttonText="Sign up with Google"
+          onSuccess={responseGoogle}
+          onFailure={responseGoogle}
         />
-      ))}
-      <button type="submit" className={styles.submitButton}>
-        SIGN UP
-      </button>
-      <GoogleLogin
-        clientId="594577452303-n7paj5690d9l35dg3sskk755prrmv389.apps.googleusercontent.com"
-        buttonText="Sign up with Google"
-        onSuccess={responseGoogle}
-        onFailure={responseGoogle}
-      />
-    </form>
-  </div>
+      </form>
+    </div>
   );
 };
 

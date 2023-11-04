@@ -1,10 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-import {
-  getAllMyRoom
-} from '../services/chatService';
+import { Response, NextFunction } from 'express';
+import { getAllMyRoom } from '../services/chatService';
 import { IRequest } from 'types/request';
-
-
 
 export const AllMyRoom = async (
   req: IRequest,
