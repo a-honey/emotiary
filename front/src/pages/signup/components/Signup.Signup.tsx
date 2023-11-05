@@ -49,6 +49,7 @@ const InputField: React.FC<InputFieldProps> = ({
 );
 
 const Signup: React.FC = () => {
+  const clientId = process.env.REACT_APP_CLIENT_ID || '';
   const [userInfo, setUserInfo] = useState<UserData>({
     username: '',
     email: '',
@@ -154,7 +155,7 @@ const Signup: React.FC = () => {
           SIGN UP
         </button>
         <GoogleLogin
-          clientId="594577452303-n7paj5690d9l35dg3sskk755prrmv389.apps.googleusercontent.com"
+          clientId={clientId}
           buttonText="Sign up with Google"
           onSuccess={responseGoogle}
           onFailure={responseGoogle}
