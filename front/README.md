@@ -30,7 +30,8 @@
 1. `front/` 폴더로 이동합니다.
 2. .env 파일을 설정합니다.
 ```
-REACT_APP_BASE_URL="http://localhost:5001/api"
+REACT_APP_BASE_URL="http://localhost:5001/api"  // 백서버 실행 주소 설정
+REACT_APP_CLIENT_ID="GOOGLE_API_KEY"  // 구글 클라이언트 ID 키 설정
 ```
 3. 프론트엔드 애플리케이션 의존성 모듈을 설치합니다:
 
