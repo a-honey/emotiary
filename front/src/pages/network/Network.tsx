@@ -10,4 +10,4 @@ const NetworkPage: React.FC = () => {
   );
 };
 
-export default withLogin(NetworkPage);
+export default NetworkPage;

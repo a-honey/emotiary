@@ -9,4 +9,4 @@ const UsersPage: React.FC = () => {
   );
 };
 
-export default withLogin(UsersPage);
+export default UsersPage;
