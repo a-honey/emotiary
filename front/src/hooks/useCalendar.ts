@@ -5,8 +5,8 @@ const useCalendar = () => {
 
   // 초반 currentDate에 현재 날짜를 보관
   const [currentDate, setCurrentDate] = useState({
-    year: today.getFullYear(),
-    month: today.getMonth() + 1,
+    year: 2023, // today.getFullYear()
+    month: 10, // today.getMonth() + 1
   });
 
   const handleBeforeMonth = () => {

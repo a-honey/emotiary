@@ -14,6 +14,8 @@ import { io, Socket } from 'socket.io-client';
 import ChatButton from '../chat/Chat.ChatButton';
 import { audioState } from '../../atoms/audioState';
 
+import 짱구 from '../../assets/짱구.jpg';
+
 const locations = [
   { name: 'MY CALENDAR', to: '/main' },
   { name: 'LATEST DIARY', to: '/network' },
@@ -108,7 +110,7 @@ const Header = () => {
             </Link>
           ))}
         </nav>
-        {isLogin ? (
+        {location.pathname !== '/' ? (
           <>
             {audio && (
               <video controls width="300" height="30" autoPlay>
@@ -123,10 +125,10 @@ const Header = () => {
                 }}
               >
                 <ImageComponent
-                  src={localStorage.getItem('userImg')}
+                  src={localStorage.getItem('userImg') ?? 짱구}
                   alt={`${localStorage.getItem('username')}의 프로필사진`}
                 />
-                <div>{localStorage.getItem('username')}</div>
+                <div>{localStorage.getItem('username') ?? '대감마님'}</div>
               </div>
               <GrNotification
                 onClick={() => {
