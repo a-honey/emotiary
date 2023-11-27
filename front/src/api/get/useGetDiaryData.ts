@@ -55,7 +55,9 @@ export const useGetMyDiaryData = ({
       }).toString();
 
       return instance
-        .get(`/diary/views/date/${user_id}?${urlQueryString}`)
+        .get(
+          `/diary/views/date/1670b871-fcdb-4e69-b08a-186800499a02?year=2023&month=10`
+        )
         .then((res) => {
           if (res.data.data) {
             return res.data.data;
@@ -66,7 +68,7 @@ export const useGetMyDiaryData = ({
     },
     {
       initialData: [],
-    },
+    }
   );
 };
 
@@ -96,7 +98,7 @@ export const useGetMyAllDiarysData = ({
     },
     {
       initialData: [],
-    },
+    }
   );
 };
 
@@ -104,7 +106,9 @@ export const useGetMyAllDiarysData = ({
 export const useGetDiaryData = ({ id }: { id: string }) => {
   return useQuery(queryKeys.diaryData({ id }), () => {
     return instance
-      .get<{ data: DiaryItemType }>(`/diary/${id}`)
+      .get<{ data: DiaryItemType }>(
+        `/diary/25602ce5-a789-4d57-9280-8c27347f2a60`
+      )
       .then((res) => res.data.data);
   });
 };

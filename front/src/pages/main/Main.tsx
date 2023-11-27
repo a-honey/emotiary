@@ -36,4 +36,4 @@ const MainPage: React.FC = () => {
   );
 };
 
-export default withLogin(MainPage);
+export default MainPage;

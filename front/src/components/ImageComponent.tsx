@@ -14,13 +14,7 @@ const ImageComponent = ({ src, alt }: { src: string | null; alt: string }) => {
       />
     );
   }
-  return (
-    <img
-      src={src ? `${process.env.REACT_APP_BASE_URL}/${src}` : user_none}
-      alt={alt}
-      onError={handleImgError}
-    />
-  );
+  return <img src={src ? src : user_none} alt={alt} onError={handleImgError} />;
 };
 
 // 이미지 여러개 혹은 비디오
